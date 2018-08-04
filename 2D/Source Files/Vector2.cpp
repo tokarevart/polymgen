@@ -3,6 +3,11 @@
 
 const double PI_DIV_180 = 3.141592653589793 / 180.0;
 
+const double Vector2::DotProduct(const Vector2& vec0, const Vector2& vec1)
+{
+	return vec0._coors[0] * vec1._coors[0] + vec0._coors[1] * vec1._coors[1];
+}
+
 const double Vector2::GetLength()
 {
 	return sqrt(GetSqrLength());
@@ -10,7 +15,7 @@ const double Vector2::GetLength()
 
 const double Vector2::GetSqrLength()
 {
-	return _coors[0] * _coors[0] + _coors[1] * _coors[1];
+	return DotProduct(*this, *this);
 }
 
 Vector2& Vector2::Normalize()

@@ -15,6 +15,8 @@ private:
 	double _coors[2];
 
 public:
+	static const double DotProduct(const Vector2& vec0, const Vector2& vec1);
+
 	const double GetLength();
 	const double GetSqrLength();
 	Vector2& Normalize();

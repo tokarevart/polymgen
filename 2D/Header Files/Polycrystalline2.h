@@ -11,17 +11,23 @@ using namespace std;
 class Polycrystalline2
 {
 private:
-	double minShellNodesCoor[2]; // Add its calculation
-	double maxShellNodesCoor[2]; // Add its calculation
-	double l_min, l_av, l_max;   // Add its calculation
+	double minShellNodesCoor[2];
+	double maxShellNodesCoor[2];
+	double l_min, l_av, l_max;  // l_av must be less than the least shell edge.
 
 public:
 	list<Crystallite2*> crystallites;
-	list<Simplex2*> freeSimplexes; // In GenerateUniformGrid() also use local list<Node2*> or vector<Node2*>
+	list<Simplex2*> freeSimplexes;
+	list<Node2*> freeNodes;
 
 	void AddCrystallite();                          // May be useless if link from crystallite to polycrystalline will not be used.
 	void AddCrystallite(Crystallite2* const& crys); // May be useless if link from crystallite to polycrystalline will not be used.
-	void GenerateUniformGrid();
+	void GenerateFreeUniformMesh(); // There may will not be significant performance improvement. But if you want you can parallize 1-st step.
+	void FitFreeMeshToShells(); // There may will not be significant performance improvement. But if you want you can parallize 1-st step.
+	void DeleteExternalNodes();
+	void FillDataWithRemainingDependences(); // 1-st step can be well parallelized by nodes.
+	void DistributeNodesEvenly();
+	void GenerateFiniteElementMesh(); // Executes other functions.
 	// Use when simplexes list already filled.
 	const bool IsContaining(const Crystallite2& crys);
 	const bool IsContaining(const Simplex2& simp);
