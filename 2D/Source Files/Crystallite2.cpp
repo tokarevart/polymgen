@@ -6,7 +6,7 @@ bool Crystallite2::IsContaining(Simplex2 &simp)
 	return find(simplexes.begin(), simplexes.end(), &simp) != simplexes.end();
 }
 
-bool Crystallite2::IsContaining(Edge &edge)
+bool Crystallite2::IsContaining(Edge2 &edge)
 {
 	for (auto simp : simplexes)
 	{
@@ -39,7 +39,7 @@ bool Crystallite2::Contains(Simplex2 &simp)
 	return false;
 }
 
-bool Crystallite2::Contains(Edge &edge)
+bool Crystallite2::Contains(Edge2 &edge)
 {
 	// Do something
 

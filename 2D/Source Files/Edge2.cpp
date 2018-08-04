@@ -1,6 +1,6 @@
-#include "Edge.h"
+#include "Edge2.h"
 
-bool Edge::IsContaining(Node2 &node)
+bool Edge2::IsContaining(Node2 &node)
 {
 	if (nodes[0] == &node ||
 		nodes[1] == &node)
@@ -11,25 +11,25 @@ bool Edge::IsContaining(Node2 &node)
 	return false;
 }
 
-void Edge::DestroyIfNoLinks()
+void Edge2::DestroyIfNoLinks()
 {
-	if (inclInSimplexes.empty() && !isShellPart)
+	if (inclInSimplexes.empty())
 	{
 		delete this;
 	}
 }
 
-Edge::Edge()
+Edge2::Edge2()
 {
 }
 
-Edge::Edge(Node2 &node0, Node2 &node1)
+Edge2::Edge2(Node2 &node0, Node2 &node1)
 {
 	nodes[0] = &node0;
 	nodes[1] = &node1;
 }
 
-Edge::~Edge()
+Edge2::~Edge2()
 {
 	for (auto &nodei : nodes)
 	{
@@ -38,7 +38,7 @@ Edge::~Edge()
 			nodei->inclInEdges.remove(this);
 			for (auto nodej : nodes)
 			{
-				if (nodej != nodei)
+				if (nodej && nodej != nodei)
 				{
 					nodei->neighbors.remove(nodej);
 				}

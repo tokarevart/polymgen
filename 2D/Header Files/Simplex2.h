@@ -7,13 +7,14 @@
 class Simplex2
 {
 public:
-	Edge* edges[3];
+	Edge2* edges[3];
 	Crystallite2* inclInCrys;
 
-	bool IsContaining(Edge &edge);
+	bool IsContaining(Edge2 &edge);
 	bool IsContaining(Node2 &node);
 
 	Simplex2();
-	Simplex2(Edge edge0, Edge edge1, Edge edge2);
+	Simplex2(Edge2 &edge0, Edge2 &edge1, Edge2 &edge2);
+	Simplex2(Node2 &node0, Node2 &node1, Node2 &node2);
 	~Simplex2();
 };

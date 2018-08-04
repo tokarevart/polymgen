@@ -6,17 +6,17 @@
 using namespace std;
 
 
-class ShellEdge
+class ShellEdge2
 {
 public:
 	ShellNode2* nodes[2];
-	// Vector2 normal;
+	Vector2* normal;
 	list<Node2*> attachedNodes;
 
 	bool Contains(ShellNode2 &node);
 	bool IsAttached(Node2 &node);
 
-	ShellEdge();
-	ShellEdge(ShellNode2 &node0, ShellNode2 &node1);
-	~ShellEdge();
+	ShellEdge2();
+	ShellEdge2(ShellNode2 &node0, ShellNode2 &node1);
+	~ShellEdge2();
 };
