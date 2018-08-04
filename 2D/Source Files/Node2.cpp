@@ -6,7 +6,13 @@ void Node2::SetPosition(const Vector2& newPos)
 	*_position = newPos;
 }
 
-const Vector2 Node2::GetPosition()
+void Node2::SetPosition(const double& coor0, const double& coor1)
+{
+	(*_position)[0] = coor0;
+	(*_position)[1] = coor1;
+}
+
+const Vector2& Node2::GetPosition()
 {
 	return *_position;
 }

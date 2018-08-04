@@ -22,7 +22,8 @@ public:
 	Polycrystalline2* inclInPolycrys;
 
 	void SetPosition(const Vector2& newPos);
-	const Vector2 GetPosition();
+	void SetPosition(const double& coor0, const double& coor1);
+	const Vector2& GetPosition();
 	void DestroyIfNoLinks();
 
 	Node2& operator=(const Node2& node);
