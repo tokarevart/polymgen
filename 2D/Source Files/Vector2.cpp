@@ -69,10 +69,34 @@ Vector2 Vector2::operator-()
 	return Vector2(-_coors[0], -_coors[1]);
 }
 
+Vector2 Vector2::operator+(const Vector2& right)
+{
+	return Vector2(_coors[0] + right._coors[0], _coors[1] + right._coors[1]);
+}
+
+Vector2 Vector2::operator-(const Vector2 & right)
+{
+	return Vector2(_coors[0] - right._coors[0], _coors[1] - right._coors[1]);
+}
+
+Vector2& Vector2::operator+=(const Vector2& right)
+{
+	_coors[0] += right._coors[0];
+	_coors[1] += right._coors[1];
+
+	return *this;
+}
+
+Vector2& Vector2::operator-=(const Vector2& right)
+{
+	_coors[0] -= right._coors[0];
+	_coors[1] -= right._coors[1];
+
+	return *this;
+}
+
 Vector2::Vector2()
 {
-	_coors[0] = 0.0;
-	_coors[1] = 0.0;
 }
 
 Vector2::Vector2(const Vector2& vec)

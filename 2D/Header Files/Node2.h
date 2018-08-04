@@ -19,6 +19,7 @@ public:
 	list<Node2*> neighbors;
 	list<Edge2*> inclInEdges;
 	list<Simplex2*> inclInSimplexes;
+	list<Crystallite2*> inclInCryses;
 	Polycrystalline2* inclInPolycrys;
 
 	void SetPosition(const Vector2& newPos);
@@ -26,16 +27,12 @@ public:
 	const Vector2& GetPosition();
 	void DestroyIfNoLinks();
 
-	Node2& operator=(const Node2& node);
 	double& operator[](const int& axisIndex);
 	Vector2 operator-(const Node2& right);
-	Node2& operator+(const Vector2& right);
-	Node2& operator-(const Vector2& right);
 	Node2& operator+=(const Vector2& right);
 	Node2& operator-=(const Vector2& right);
 
 	Node2();
-	Node2(const Node2& node);
 	Node2(const double& coor0, const double& coor1);
 	Node2(const Vector2& position);
 	~Node2();

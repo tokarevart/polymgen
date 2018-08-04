@@ -241,15 +241,34 @@ void AddFENodesData(vector<size_t>& feNodesData, const list<Crystallite2*>& crys
 }
 
 // Different for 3 dimensions.
-void Polycrystalline2::InputData(ifstream& shell_nodes, ifstream& crys_edges)
+void Polycrystalline2::InputData(ifstream& shell_nodes, ifstream& crys_edges, ifstream& gener_params)
 {
 	vector<ShellNode2*> v_shell_nodes;
+
+	minShellNodesCoor[0] = minShellNodesCoor[1] = DBL_MAX;
+	maxShellNodesCoor[0] = maxShellNodesCoor[1] = DBL_MIN;
 
 	double dbuf[2];
 	while (!shell_nodes.eof())
 	{
 		shell_nodes >> dbuf[0];
+		if (dbuf[0] < minShellNodesCoor[0])
+		{
+			minShellNodesCoor[0] = dbuf[0];
+		}
+		if (dbuf[0] > maxShellNodesCoor[0])
+		{
+			maxShellNodesCoor[0] = dbuf[0];
+		}
 		shell_nodes >> dbuf[1];
+		if (dbuf[1] < minShellNodesCoor[1])
+		{
+			minShellNodesCoor[1] = dbuf[1];
+		}
+		if (dbuf[1] > maxShellNodesCoor[1])
+		{
+			maxShellNodesCoor[1] = dbuf[1];
+		}
 		v_shell_nodes.push_back(
 			new ShellNode2(
 				dbuf[0], 
@@ -288,15 +307,42 @@ void Polycrystalline2::InputData(ifstream& shell_nodes, ifstream& crys_edges)
 	}
 	crys_edges.clear();
 	crys_edges.seekg(0);
+
+	gener_params >> l_min;
+	gener_params >> l_max;
+	gener_params.clear();
+	gener_params.seekg(0);
+
+	l_av = (l_min + l_max) * 0.5;
 }
 
 // Different for 3 dimensions.
-void Polycrystalline2::InputData(const vector<double>& shell_nodes, const vector<size_t>& crys_edges)
+void Polycrystalline2::InputData(const vector<double>& shell_nodes, const vector<size_t>& crys_edges, const vector<size_t>& gener_params)
 {
 	vector<ShellNode2*> v_shell_nodes;
 
+	minShellNodesCoor[0] = minShellNodesCoor[1] = DBL_MAX;
+	maxShellNodesCoor[0] = maxShellNodesCoor[1] = DBL_MIN;
+
 	for (size_t i = 0, max = shell_nodes.size(); i < max; i += 2) // i += 3 for 3 dimensions
 	{
+		if (shell_nodes[i] < minShellNodesCoor[0])
+		{
+			minShellNodesCoor[0] = shell_nodes[i];
+		}
+		if (shell_nodes[i] > maxShellNodesCoor[0])
+		{
+			maxShellNodesCoor[0] = shell_nodes[i];
+		}
+		if (shell_nodes[i + 1] < minShellNodesCoor[1])
+		{
+			minShellNodesCoor[1] = shell_nodes[i + 1];
+		}
+		if (shell_nodes[i + 1] > maxShellNodesCoor[1])
+		{
+			maxShellNodesCoor[1] = shell_nodes[i + 1];
+		}
+
 		v_shell_nodes.push_back(
 			new ShellNode2(
 				shell_nodes[i], 
@@ -332,6 +378,8 @@ void Polycrystalline2::InputData(const vector<double>& shell_nodes, const vector
 			}
 		}
 	}
+	l_min = gener_params[0];
+	l_max = gener_params[1];
 }
 
 void Polycrystalline2::OutputData(ofstream& nodesData, ofstream& feNodesData)

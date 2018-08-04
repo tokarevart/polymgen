@@ -6,18 +6,13 @@ const Vector2& ShellNode2::GetPosition()
 	return *_position;
 }
 
-const double& ShellNode2::operator[](const int& axisIndex)
+double& ShellNode2::operator[](const int& axisIndex)
 {
 	return (*_position)[axisIndex];
 }
 
 ShellNode2::ShellNode2()
 {
-}
-
-ShellNode2::ShellNode2(const ShellNode2& node)
-{
-	*this = node;
 }
 
 ShellNode2::ShellNode2(const double& coor0, const double& coor1)

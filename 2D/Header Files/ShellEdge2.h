@@ -16,6 +16,7 @@ private:
 public:
 	ShellNode2* nodes[2];
 	list<Node2*> attachedNodes;
+	list<Crystallite2*> inclInCryses;
 
 	const bool IsContaining(const ShellNode2& node);
 	const bool IsAttached(const Node2& node);

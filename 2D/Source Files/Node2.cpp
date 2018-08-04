@@ -30,13 +30,23 @@ double& Node2::operator[](const int& axisIndex)
 	return (*_position)[axisIndex];
 }
 
-Node2::Node2()
+Vector2 Node2::operator-(const Node2& right)
 {
+	return *_position - *right._position;
 }
 
-Node2::Node2(const Node2& node)
+Node2& Node2::operator+=(const Vector2& right)
 {
-	*this = node;
+	(*_position) += right;
+}
+
+Node2 & Node2::operator-=(const Vector2 & right)
+{
+	(*_position) -= right;
+}
+
+Node2::Node2()
+{
 }
 
 Node2::Node2(const double& coor0, const double& coor1)
