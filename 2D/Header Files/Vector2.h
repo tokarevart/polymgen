@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 #include "AllClassInclusions.h"
 #include "AllClassDefinitions.h"
 
@@ -14,10 +15,19 @@ private:
 	double _coors[2];
 
 public:
-	const double GetCoordinate(const int& axisIndex);
-	void Rotate(const double& angle, AngleUnit unit);
+	const double GetLength();
+	const double GetSqrLength();
+	Vector2& Normalize();
+	Vector2& Rotate(const double& angle, AngleUnit unit);
 
 	Vector2& operator=(const Vector2& vec);
+	double& operator[](const int& axisIndex);
+	Vector2 operator+();
+	Vector2 operator-();
+	Vector2 operator+(const Vector2& right);
+	Vector2 operator-(const Vector2& right);
+	Vector2& operator+=(const Vector2& right);
+	Vector2& operator-=(const Vector2& right);
 
 	Vector2();
 	Vector2(const Vector2& vec);

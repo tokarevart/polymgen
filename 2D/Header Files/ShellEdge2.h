@@ -8,15 +8,19 @@ using namespace std;
 
 class ShellEdge2
 {
+private:
+	Vector2* const _normal = new Vector2();
+
+	void SetNormal();
+
 public:
 	ShellNode2* nodes[2];
-	Vector2* normal;
 	list<Node2*> attachedNodes;
 
-	bool Contains(ShellNode2 &node);
-	bool IsAttached(Node2 &node);
+	const bool IsContaining(const ShellNode2& node);
+	const bool IsAttached(const Node2& node);
 
 	ShellEdge2();
-	ShellEdge2(ShellNode2 &node0, ShellNode2 &node1);
+	ShellEdge2(ShellNode2& node0, ShellNode2& node1);
 	~ShellEdge2();
 };

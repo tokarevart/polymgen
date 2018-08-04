@@ -10,18 +10,18 @@ void Polycrystalline2::AddCrystallite()
 	buf->inclInPolycrys = this;
 }
 
-void Polycrystalline2::AddCrystallite(Crystallite2* &crys)
+void Polycrystalline2::AddCrystallite(Crystallite2* const& crys)
 {
 	crystallites.push_back(crys);
 	crys->inclInPolycrys = this;
 }
 
-bool Polycrystalline2::IsContaining(Crystallite2 &crys)
+const bool Polycrystalline2::IsContaining(const Crystallite2& crys)
 {
 	return find(crystallites.begin(), crystallites.end(), &crys) != crystallites.end();
 }
 
-bool Polycrystalline2::IsContaining(Simplex2 &simp)
+const bool Polycrystalline2::IsContaining(const Simplex2& simp)
 {
 	for (auto crys : crystallites)
 	{
@@ -34,7 +34,7 @@ bool Polycrystalline2::IsContaining(Simplex2 &simp)
 	return false;
 }
 
-bool Polycrystalline2::IsContaining(Edge2 &edge)
+const bool Polycrystalline2::IsContaining(const Edge2& edge)
 {
 	for (auto crys : crystallites)
 	{
@@ -47,7 +47,7 @@ bool Polycrystalline2::IsContaining(Edge2 &edge)
 	return false;
 }
 
-bool Polycrystalline2::IsContaining(Node2 &node)
+const bool Polycrystalline2::IsContaining(const Node2& node)
 {
 	for (auto crys : crystallites)
 	{
@@ -60,7 +60,7 @@ bool Polycrystalline2::IsContaining(Node2 &node)
 	return false;
 }
 
-bool Polycrystalline2::Contains(Simplex2 &simp)
+const bool Polycrystalline2::Contains(const Simplex2& simp)
 {
 	for (auto crys : crystallites)
 	{
@@ -73,7 +73,7 @@ bool Polycrystalline2::Contains(Simplex2 &simp)
 	return false;
 }
 
-bool Polycrystalline2::Contains(Edge2 &edge)
+const bool Polycrystalline2::Contains(const Edge2& edge)
 {
 	for (auto crys : crystallites)
 	{
@@ -86,7 +86,7 @@ bool Polycrystalline2::Contains(Edge2 &edge)
 	return false;
 }
 
-bool Polycrystalline2::Contains(Node2 &node)
+const bool Polycrystalline2::Contains(const Node2& node)
 {
 	for (auto crys : crystallites)
 	{
@@ -99,16 +99,16 @@ bool Polycrystalline2::Contains(Node2 &node)
 	return false;
 }
 
-void AddNodesData(ofstream &nodesData, list<Crystallite2*> &crystallites)
+void AddNodesData(ofstream& nodesData, const list<Crystallite2*>& crystallites)
 {
 	// Can be parallelized, but it's a bad idea.
-	int index = 0;
+	size_t index = 0;
 	Vector2 bufPos;
-	for (list<Crystallite2*>::iterator crys_iter = crystallites.begin();
+	for (list<Crystallite2*>::const_iterator crys_iter = crystallites.begin();
 		crys_iter != crystallites.end();
 		crys_iter++)
 	{
-		for (list<Simplex2*>::iterator simp_iter = (*crys_iter)->simplexes.begin();
+		for (list<Simplex2*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
 			simp_iter != (*crys_iter)->simplexes.end();
 			simp_iter++)
 		{
@@ -119,8 +119,8 @@ void AddNodesData(ofstream &nodesData, list<Crystallite2*> &crystallites)
 					if (!(*simp_iter)->edges[i]->nodes[j]->isAddedToNodesData)
 					{
 						bufPos = (*simp_iter)->edges[i]->nodes[j]->GetPosition();
-						nodesData << bufPos.GetCoordinate(0) << ' ';
-						nodesData << bufPos.GetCoordinate(1) << '\n';
+						nodesData << bufPos[0] << ' ';
+						nodesData << bufPos[1] << '\n';
 						(*simp_iter)->edges[i]->nodes[j]->isAddedToNodesData = true;
 						(*simp_iter)->edges[i]->nodes[j]->globalNum = index;
 						index++;
@@ -131,16 +131,16 @@ void AddNodesData(ofstream &nodesData, list<Crystallite2*> &crystallites)
 	}
 }
 
-void AddNodesData(vector<double> &nodesData, list<Crystallite2*> &crystallites)
+void AddNodesData(vector<double>& nodesData, const list<Crystallite2*>& crystallites)
 {
 	// Can be parallelized, but it's a bad idea.
-	int index = 0;
+	size_t index = 0;
 	Vector2 bufPos;
-	for (list<Crystallite2*>::iterator crys_iter = crystallites.begin();
+	for (list<Crystallite2*>::const_iterator crys_iter = crystallites.begin();
 		crys_iter != crystallites.end();
 		crys_iter++)
 	{
-		for (list<Simplex2*>::iterator simp_iter = (*crys_iter)->simplexes.begin();
+		for (list<Simplex2*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
 			simp_iter != (*crys_iter)->simplexes.end();
 			simp_iter++)
 		{
@@ -151,8 +151,8 @@ void AddNodesData(vector<double> &nodesData, list<Crystallite2*> &crystallites)
 					if (!(*simp_iter)->edges[i]->nodes[j]->isAddedToNodesData)
 					{
 						bufPos = (*simp_iter)->edges[i]->nodes[j]->GetPosition();
-						nodesData.push_back(bufPos.GetCoordinate(0));
-						nodesData.push_back(bufPos.GetCoordinate(1));
+						nodesData.push_back(bufPos[0]);
+						nodesData.push_back(bufPos[1]);
 						(*simp_iter)->edges[i]->nodes[j]->isAddedToNodesData = true;
 						(*simp_iter)->edges[i]->nodes[j]->globalNum = index;
 						index++;
@@ -164,7 +164,7 @@ void AddNodesData(vector<double> &nodesData, list<Crystallite2*> &crystallites)
 }
 
 // Different for 3 dimensions.
-void AddFENodesDataFromSimpex(ofstream &fenData, Simplex2 &simp)
+void AddFENodesDataFromSimpex(ofstream& fenData, const Simplex2& simp)
 {
 	fenData << simp.edges[0]->nodes[0]->globalNum << ' ';
 	fenData << simp.edges[0]->nodes[1]->globalNum << ' ';
@@ -181,7 +181,7 @@ void AddFENodesDataFromSimpex(ofstream &fenData, Simplex2 &simp)
 }
 
 // Different for 3 dimensions.
-void AddFENodesDataFromSimpex(vector<size_t> &fenData, Simplex2 &simp)
+void AddFENodesDataFromSimpex(vector<size_t>& fenData, const Simplex2& simp)
 {
 	fenData.push_back(simp.edges[0]->nodes[0]->globalNum);
 	fenData.push_back(simp.edges[0]->nodes[1]->globalNum);
@@ -196,16 +196,16 @@ void AddFENodesDataFromSimpex(vector<size_t> &fenData, Simplex2 &simp)
 	}
 }
 
-void AddFENodesData(ofstream &feNodesData, list<Crystallite2*> &crystallites)
+void AddFENodesData(ofstream& feNodesData, const list<Crystallite2*>& crystallites)
 {
 	// Can be parallelized, but it's a bad idea.
-	for (list<Crystallite2*>::iterator crys_iter = crystallites.begin();
+	for (list<Crystallite2*>::const_iterator crys_iter = crystallites.begin();
 		crys_iter != crystallites.end();
 		crys_iter++)
 	{
 		if (*crys_iter)
 		{
-			for (list<Simplex2*>::iterator simp_iter = (*crys_iter)->simplexes.begin();
+			for (list<Simplex2*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
 				simp_iter != (*crys_iter)->simplexes.end();
 				simp_iter++)
 			{
@@ -218,16 +218,16 @@ void AddFENodesData(ofstream &feNodesData, list<Crystallite2*> &crystallites)
 	}
 }
 
-void AddFENodesData(vector<size_t> &feNodesData, list<Crystallite2*> &crystallites)
+void AddFENodesData(vector<size_t>& feNodesData, const list<Crystallite2*>& crystallites)
 {
 	// Can be parallelized, but it's a bad idea.
-	for (list<Crystallite2*>::iterator crys_iter = crystallites.begin();
+	for (list<Crystallite2*>::const_iterator crys_iter = crystallites.begin();
 		crys_iter != crystallites.end();
 		crys_iter++)
 	{
 		if (*crys_iter)
 		{
-			for (list<Simplex2*>::iterator simp_iter = (*crys_iter)->simplexes.begin();
+			for (list<Simplex2*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
 				simp_iter != (*crys_iter)->simplexes.end();
 				simp_iter++)
 			{
@@ -241,7 +241,7 @@ void AddFENodesData(vector<size_t> &feNodesData, list<Crystallite2*> &crystallit
 }
 
 // Different for 3 dimensions.
-void Polycrystalline2::InputData(ifstream &shell_nodes, ifstream &crys_edges)
+void Polycrystalline2::InputData(ifstream& shell_nodes, ifstream& crys_edges)
 {
 	vector<ShellNode2*> v_shell_nodes;
 
@@ -276,7 +276,7 @@ void Polycrystalline2::InputData(ifstream &shell_nodes, ifstream &crys_edges)
 		}
 		crys_edges >> numsNum;
 		numsNum *= 2; // numsNum *= 3; for 3 dimensions.
-		for (int j = 0; j < numsNum; j++)
+		for (size_t j = 0; j < numsNum; j++)
 		{
 			crys_edges >> ibuf[0];
 			crys_edges >> ibuf[1];
@@ -291,11 +291,11 @@ void Polycrystalline2::InputData(ifstream &shell_nodes, ifstream &crys_edges)
 }
 
 // Different for 3 dimensions.
-void Polycrystalline2::InputData(vector<double> &shell_nodes, vector<size_t> &crys_edges)
+void Polycrystalline2::InputData(const vector<double>& shell_nodes, const vector<size_t>& crys_edges)
 {
 	vector<ShellNode2*> v_shell_nodes;
 
-	for (int i = 0, max = shell_nodes.size(); i < max; i += 2) // i += 3 for 3 dimensions
+	for (size_t i = 0, max = shell_nodes.size(); i < max; i += 2) // i += 3 for 3 dimensions
 	{
 		v_shell_nodes.push_back(
 			new ShellNode2(
@@ -304,7 +304,7 @@ void Polycrystalline2::InputData(vector<double> &shell_nodes, vector<size_t> &cr
 
 		size_t ibuf[2];
 		size_t numsNum;
-		vector<size_t>::iterator cp_iter = crys_edges.begin();
+		vector<size_t>::const_iterator cp_iter = crys_edges.begin();
 		for (list<Crystallite2*>::iterator crys_iter; cp_iter != crys_edges.end(); crys_iter++)
 		{
 			if (crystallites.empty())
@@ -321,7 +321,7 @@ void Polycrystalline2::InputData(vector<double> &shell_nodes, vector<size_t> &cr
 			}
 			numsNum = *(cp_iter++); // numsNum = *cp_iter; cp_iter++;
 			numsNum *= 2; // numsNum *= 3; for 3 dimensions.
-			for (int j = 0; j < numsNum; j++)
+			for (size_t j = 0; j < numsNum; j++)
 			{
 				(*crys_iter)->shellEdges.push_back(
 					new ShellEdge2(
@@ -334,13 +334,13 @@ void Polycrystalline2::InputData(vector<double> &shell_nodes, vector<size_t> &cr
 	}
 }
 
-void Polycrystalline2::OutputData(ofstream &nodesData, ofstream &feNodesData)
+void Polycrystalline2::OutputData(ofstream& nodesData, ofstream& feNodesData)
 {
 	AddNodesData(nodesData, crystallites);
 	AddFENodesData(feNodesData, crystallites);
 }
 
-void Polycrystalline2::OutputData(vector<double> &nodesData, vector<size_t> &feNodesData)
+void Polycrystalline2::OutputData(vector<double>& nodesData, vector<size_t>& feNodesData)
 {
 	AddNodesData(nodesData, crystallites);
 	AddFENodesData(feNodesData, crystallites);

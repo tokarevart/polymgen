@@ -1,6 +1,6 @@
 #include "Edge2.h"
 
-bool Edge2::IsContaining(Node2 &node)
+const bool Edge2::IsContaining(const Node2 &node)
 {
 	if (nodes[0] == &node ||
 		nodes[1] == &node)
@@ -27,6 +27,12 @@ Edge2::Edge2(Node2 &node0, Node2 &node1)
 {
 	nodes[0] = &node0;
 	nodes[1] = &node1;
+
+	nodes[0]->inclInEdges.push_back(this);
+	nodes[0]->neighbors.push_back(nodes[1]);
+
+	nodes[1]->inclInEdges.push_back(this);
+	nodes[1]->neighbors.push_back(nodes[0]);
 }
 
 Edge2::~Edge2()

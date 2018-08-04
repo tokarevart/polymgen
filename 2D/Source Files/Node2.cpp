@@ -19,9 +19,13 @@ void Node2::DestroyIfNoLinks()
 	}
 }
 
+double& Node2::operator[](const int& axisIndex)
+{
+	return (*_position)[axisIndex];
+}
+
 Node2::Node2()
 {
-	_position = new Vector2();
 }
 
 Node2::Node2(const Node2& node)
@@ -29,9 +33,10 @@ Node2::Node2(const Node2& node)
 	*this = node;
 }
 
-Node2::Node2(double coor0, double coor1)
+Node2::Node2(const double& coor0, const double& coor1)
 {
-	_position = new Vector2(coor0, coor1);
+	(*_position)[0] = coor0;
+	(*_position)[1] = coor1;
 }
 
 Node2::Node2(const Vector2& position)

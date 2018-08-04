@@ -14,13 +14,14 @@ public:
 	Polycrystalline2* inclInPolycrys;
 
 	// Use when simplexes list already filled.
-	bool IsContaining(Simplex2 &simp);
-	bool IsContaining(Edge2 &edge);
-	bool IsContaining(Node2 &node);
+	const bool IsContaining(const Simplex2& simp);
+	const bool IsContaining(const Edge2& edge);
+	const bool IsContaining(const Node2& node);
 	// Calculate based on position in space.
-	bool Contains(Simplex2 &simp);
-	bool Contains(Edge2 &edge);
-	bool Contains(Node2 &node);
+	const bool Contains(const Simplex2& simp);
+	const bool Contains(const Edge2& edge);
+	const bool Contains(const Node2& node);
+	// void CalculateContainsData(something);
 
 	Crystallite2();
 	~Crystallite2();
