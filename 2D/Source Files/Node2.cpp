@@ -69,5 +69,8 @@ Node2::~Node2()
 			delete edge;
 		}
 	}
-	delete _position;
+	if (_position)
+	{
+		delete _position;
+	}
 }

@@ -35,5 +35,8 @@ ShellNode2::~ShellNode2()
 			delete edge;
 		}
 	}
-	delete _position;
+	if (_position)
+	{
+		delete _position;
+	}
 }
