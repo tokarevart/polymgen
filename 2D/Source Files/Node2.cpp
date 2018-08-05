@@ -49,7 +49,7 @@ Node2::Node2()
 {
 }
 
-Node2::Node2(double coor0, double coor1)
+Node2::Node2(const double& coor0, const double& coor1)
 {
 	(*_position)[0] = coor0;
 	(*_position)[1] = coor1;

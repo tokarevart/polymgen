@@ -22,6 +22,6 @@ public:
 	Vector2 operator-(const ShellNode2& right);
 
 	ShellNode2();
-	ShellNode2(double coor0, double coor1);
+	ShellNode2(const double& coor0, const double& coor1);
 	~ShellNode2();
 };
