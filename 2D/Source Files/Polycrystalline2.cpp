@@ -16,6 +16,82 @@ void Polycrystalline2::AddCrystallite(Crystallite2* const& crys)
 	crys->inclInPolycrys = this;
 }
 
+size_t Polycrystalline2::GenerateFreeNodesEvenly(double* polycrysSizeAxis, size_t* minNodesNumAxis)
+{
+	double startGenCoor[2];
+	startGenCoor[0] = minShellNodesCoor[0] + (polycrysSizeAxis[0] - (minNodesNumAxis[0] + 1) * l_av) * 0.5;
+	startGenCoor[1] = minShellNodesCoor[1] + (polycrysSizeAxis[1] - minNodesNumAxis[1] * l_av) * 0.5;
+
+	size_t freeNodesNum = minNodesNumAxis[0] * minNodesNumAxis[1] + (minNodesNumAxis[1] + 1) / 2;
+
+	double node_coors[2];
+	node_coors[0] = startGenCoor[0];
+	node_coors[1] = startGenCoor[1];
+	freeNodes.reserve(freeNodesNum);
+	double delta_node_coors_1 = 0.5 * sqrt(3) * l_av;
+	for (size_t i = 0; i < freeNodesNum;)
+	{
+		freeNodes.push_back(
+			new Node2(
+				node_coors[0],
+				node_coors[1]));
+		i++;
+		for (size_t j = 0; j < minNodesNumAxis[0]; j++)
+		{
+			node_coors[0] += l_av;
+			freeNodes.push_back(
+				new Node2(
+					node_coors[0],
+					node_coors[1]));
+			i++;
+		}
+
+		if (!i < freeNodesNum)
+		{
+			break;
+		}
+		node_coors[0] -= minNodesNumAxis[0] * l_av + l_av * 0.5;
+		node_coors[1] += delta_node_coors_1;
+		freeNodes.push_back(
+			new Node2(
+				node_coors[0],
+				node_coors[1]));
+		i++;
+		for (size_t j = 0; j < minNodesNumAxis[0] - 1; j++)
+		{
+			node_coors[0] += l_av;
+			freeNodes.push_back(
+				new Node2(
+					node_coors[0],
+					node_coors[1]));
+			i++;
+		}
+	}
+
+	return freeNodesNum;
+}
+
+void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes()
+{
+
+}
+
+void Polycrystalline2::GenerateFreeUniformMesh()
+{
+	double polycrysSizeAxis[2];
+	polycrysSizeAxis[0] = maxShellNodesCoor[0] - minShellNodesCoor[0];
+	polycrysSizeAxis[1] = maxShellNodesCoor[1] - minShellNodesCoor[1];
+
+	size_t minNodesNumAxis[2];
+	minNodesNumAxis[0] = (size_t)(polycrysSizeAxis[0] / l_av) + 1;
+	minNodesNumAxis[1] = (size_t)(polycrysSizeAxis[1] / l_av) + 1;
+
+	size_t freeNodesNum = GenerateFreeNodesEvenly(polycrysSizeAxis, minNodesNumAxis);
+
+	freeEdges.reserve(3 + 2 * (freeNodesNum - 3) + minNodesNumAxis[1] - 2);
+	GenerateFreeSimplexesFromFreeNodes();
+}
+
 const bool Polycrystalline2::IsContaining(const Crystallite2& crys)
 {
 	return find(crystallites.begin(), crystallites.end(), &crys) != crystallites.end();

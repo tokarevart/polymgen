@@ -10,6 +10,17 @@ void ShellEdge2::SetNormal()
 	_normal->Rotate(MINUS_PI_DIV_2, Radian).Normalize();
 }
 
+const double ShellEdge2::GetLength()
+{
+	return sqrt(GetSqrLength());
+}
+
+const double ShellEdge2::GetSqrLength()
+{
+	Vector2 buf = (*nodes)[1] - (*nodes)[0];
+	return Vector2::DotProduct(buf, buf);
+}
+
 const bool ShellEdge2::IsContaining(const ShellNode2& node)
 {
 	if (nodes[0] == &node ||

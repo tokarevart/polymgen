@@ -13,15 +13,18 @@ class Polycrystalline2
 private:
 	double minShellNodesCoor[2];
 	double maxShellNodesCoor[2];
-	double l_min, l_av, l_max;  // l_av must be less than the least shell edge.
+	double l_min, l_av, l_max;
 
 public:
 	list<Crystallite2*> crystallites;
 	list<Simplex2*> freeSimplexes;
-	list<Node2*> freeNodes;
+	vector<Edge2*> freeEdges;
+	vector<Node2*> freeNodes;
 
 	void AddCrystallite();                          // May be useless if link from crystallite to polycrystalline will not be used.
 	void AddCrystallite(Crystallite2* const& crys); // May be useless if link from crystallite to polycrystalline will not be used.
+	size_t GenerateFreeNodesEvenly(double* polycrysSizeAxis, size_t* minNodesNumAxis);
+	void GenerateFreeSimplexesFromFreeNodes();
 	void GenerateFreeUniformMesh(); // There may will not be significant performance improvement. But if you want you can parallize 1-st step.
 	void FitFreeMeshToShells(); // There may will not be significant performance improvement. But if you want you can parallize 1-st step.
 	void DeleteExternalNodes();

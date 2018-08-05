@@ -11,11 +11,16 @@ double& ShellNode2::operator[](const int& axisIndex)
 	return (*_position)[axisIndex];
 }
 
+Vector2 ShellNode2::operator-(const ShellNode2& right)
+{
+	return *_position - *right._position;
+}
+
 ShellNode2::ShellNode2()
 {
 }
 
-ShellNode2::ShellNode2(const double& coor0, const double& coor1)
+ShellNode2::ShellNode2(double coor0, double coor1)
 {
 	(*_position)[0] = coor0;
 	(*_position)[1] = coor1;

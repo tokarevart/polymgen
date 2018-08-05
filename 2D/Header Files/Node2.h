@@ -33,7 +33,7 @@ public:
 	Node2& operator-=(const Vector2& right);
 
 	Node2();
-	Node2(const double& coor0, const double& coor1);
+	Node2(double coor0, double coor1);
 	Node2(const Vector2& position);
 	~Node2();
 };
