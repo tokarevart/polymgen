@@ -1,12 +1,12 @@
 #include "Crystallite2.h"
 
 
-bool Crystallite2::IsContaining(Simplex2 &simp)
+const bool Crystallite2::IsContaining(const Simplex2& simp) const
 {
 	return find(simplexes.begin(), simplexes.end(), &simp) != simplexes.end();
 }
 
-bool Crystallite2::IsContaining(Edge2 &edge)
+const bool Crystallite2::IsContaining(const Edge2& edge) const
 {
 	for (auto simp : simplexes)
 	{
@@ -19,7 +19,7 @@ bool Crystallite2::IsContaining(Edge2 &edge)
 	return false;
 }
 
-bool Crystallite2::IsContaining(Node2 &node)
+const bool Crystallite2::IsContaining(const Node2& node) const
 {
 	for (auto simp : simplexes)
 	{
@@ -32,30 +32,28 @@ bool Crystallite2::IsContaining(Node2 &node)
 	return false;
 }
 
-bool Crystallite2::Contains(Simplex2 &simp)
+const bool Crystallite2::Contains(const Simplex2& simp) const
 {
 	// Do something
 
 	return false;
 }
 
-bool Crystallite2::Contains(Edge2 &edge)
+const bool Crystallite2::Contains(const Edge2& edge) const
 {
 	// Do something
 
 	return false;
 }
 
-bool Crystallite2::Contains(Node2 &node)
+const bool Crystallite2::Contains(const Node2& node) const
 {
 	// Do something
 
 	return false;
 }
 
-Crystallite2::Crystallite2()
-{
-}
+Crystallite2::Crystallite2() {}
 
 Crystallite2::~Crystallite2()
 {

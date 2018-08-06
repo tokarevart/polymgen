@@ -1,15 +1,15 @@
 #include "Edge2.h"
 
-const double Edge2::GetLength()
+const double Edge2::Magnitude() const
 {
 	Vector2 buf = (*nodes)[1] - (*nodes)[0];
-	return buf.GetLength();
+	return buf.Magnitude();
 }
 
-const double Edge2::GetSqrLength()
+const double Edge2::SqrMagnitude() const
 {
 	Vector2 buf = (*nodes)[1] - (*nodes)[0];
-	return buf.GetSqrLength();
+	return buf.SqrMagnitude();
 }
 
 const bool Edge2::IsContaining(const Node2 &node)
@@ -31,9 +31,7 @@ void Edge2::DestroyIfNoLinks()
 	}
 }
 
-Edge2::Edge2()
-{
-}
+Edge2::Edge2() {}
 
 Edge2::Edge2(Node2 &node0, Node2 &node1)
 {

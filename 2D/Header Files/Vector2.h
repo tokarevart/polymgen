@@ -16,18 +16,20 @@ private:
 
 public:
 	static const double DotProduct(const Vector2& vec0, const Vector2& vec1);
+	static const double CrossProductMagnitude(const Vector2& vec0, const Vector2& vec1);
 
-	const double GetLength();
-	const double GetSqrLength();
+	const double Magnitude() const;
+	const double SqrMagnitude() const;
 	Vector2& Normalize();
-	Vector2& Rotate(const double& angle, AngleUnit unit);
+	Vector2& Rotate(const double& angle, const AngleUnit& unit);
+	Vector2& Mirror(const Vector2& vec);
 
 	Vector2& operator=(const Vector2& vec);
 	double& operator[](const int& axisIndex);
-	Vector2 operator+();
-	Vector2 operator-();
-	Vector2 operator+(const Vector2& right);
-	Vector2 operator-(const Vector2& right);
+	Vector2 operator+() const;
+	Vector2 operator-() const;
+	Vector2 operator+(const Vector2& right) const;
+	Vector2 operator-(const Vector2& right) const;
 	Vector2& operator+=(const Vector2& right);
 	Vector2& operator-=(const Vector2& right);
 

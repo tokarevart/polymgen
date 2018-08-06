@@ -18,10 +18,10 @@ public:
 	list<Node2*> attachedNodes;
 	list<Crystallite2*> inclInCryses;
 
-	const double GetLength();
-	const double GetSqrLength();
-	const bool IsContaining(const ShellNode2& node);
-	const bool IsAttached(const Node2& node);
+	const double Magnitude() const;
+	const double SqrMagnitude() const;
+	const bool IsContaining(const ShellNode2& node) const;
+	const bool IsAttached(const Node2& node) const;
 
 	ShellEdge2();
 	ShellEdge2(ShellNode2& node0, ShellNode2& node1);

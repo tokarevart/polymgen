@@ -16,7 +16,7 @@ void Polycrystalline2::AddCrystallite(Crystallite2* const& crys)
 	crys->inclInPolycrys = this;
 }
 
-size_t Polycrystalline2::GenerateFreeNodesEvenly(double* polycrysSizeAxis, size_t* minNodesNumAxis)
+size_t Polycrystalline2::GenerateFreeNodesEvenly(double* const& polycrysSizeAxis, size_t* const& minNodesNumAxis)
 {
 	double startGenCoor[2];
 	startGenCoor[0] = minShellNodesCoor[0] + (polycrysSizeAxis[0] - (minNodesNumAxis[0] + 1) * l_av) * 0.5;
@@ -92,12 +92,12 @@ void Polycrystalline2::GenerateFreeUniformMesh()
 	GenerateFreeSimplexesFromFreeNodes();
 }
 
-const bool Polycrystalline2::IsContaining(const Crystallite2& crys)
+const bool Polycrystalline2::IsContaining(const Crystallite2& crys) const
 {
 	return find(crystallites.begin(), crystallites.end(), &crys) != crystallites.end();
 }
 
-const bool Polycrystalline2::IsContaining(const Simplex2& simp)
+const bool Polycrystalline2::IsContaining(const Simplex2& simp) const
 {
 	for (auto crys : crystallites)
 	{
@@ -110,7 +110,7 @@ const bool Polycrystalline2::IsContaining(const Simplex2& simp)
 	return false;
 }
 
-const bool Polycrystalline2::IsContaining(const Edge2& edge)
+const bool Polycrystalline2::IsContaining(const Edge2& edge) const
 {
 	for (auto crys : crystallites)
 	{
@@ -123,7 +123,7 @@ const bool Polycrystalline2::IsContaining(const Edge2& edge)
 	return false;
 }
 
-const bool Polycrystalline2::IsContaining(const Node2& node)
+const bool Polycrystalline2::IsContaining(const Node2& node) const
 {
 	for (auto crys : crystallites)
 	{
@@ -136,7 +136,7 @@ const bool Polycrystalline2::IsContaining(const Node2& node)
 	return false;
 }
 
-const bool Polycrystalline2::Contains(const Simplex2& simp)
+const bool Polycrystalline2::Contains(const Simplex2& simp) const
 {
 	for (auto crys : crystallites)
 	{
@@ -149,7 +149,7 @@ const bool Polycrystalline2::Contains(const Simplex2& simp)
 	return false;
 }
 
-const bool Polycrystalline2::Contains(const Edge2& edge)
+const bool Polycrystalline2::Contains(const Edge2& edge) const
 {
 	for (auto crys : crystallites)
 	{
@@ -162,7 +162,7 @@ const bool Polycrystalline2::Contains(const Edge2& edge)
 	return false;
 }
 
-const bool Polycrystalline2::Contains(const Node2& node)
+const bool Polycrystalline2::Contains(const Node2& node) const
 {
 	for (auto crys : crystallites)
 	{
@@ -458,21 +458,19 @@ void Polycrystalline2::InputData(const vector<double>& shell_nodes, const vector
 	l_max = gener_params[1];
 }
 
-void Polycrystalline2::OutputData(ofstream& nodesData, ofstream& feNodesData)
+void Polycrystalline2::OutputData(ofstream& nodesData, ofstream& feNodesData) const
 {
 	AddNodesData(nodesData, crystallites);
 	AddFENodesData(feNodesData, crystallites);
 }
 
-void Polycrystalline2::OutputData(vector<double>& nodesData, vector<size_t>& feNodesData)
+void Polycrystalline2::OutputData(vector<double>& nodesData, vector<size_t>& feNodesData) const
 {
 	AddNodesData(nodesData, crystallites);
 	AddFENodesData(feNodesData, crystallites);
 }
 
-Polycrystalline2::Polycrystalline2()
-{
-}
+Polycrystalline2::Polycrystalline2() {}
 
 Polycrystalline2::~Polycrystalline2()
 {

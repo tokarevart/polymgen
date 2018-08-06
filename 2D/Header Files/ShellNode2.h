@@ -16,10 +16,10 @@ public:
 	list<ShellEdge2*> inclInEdges;
 	list<Crystallite2*> inclInCryses;
 
-	const Vector2& GetPosition();
+	const Vector2& GetPosition() const;
 
 	double& operator[](const int& axisIndex);
-	Vector2 operator-(const ShellNode2& right);
+	Vector2 operator-(const ShellNode2& right) const;
 
 	ShellNode2();
 	ShellNode2(const double& coor0, const double& coor1);

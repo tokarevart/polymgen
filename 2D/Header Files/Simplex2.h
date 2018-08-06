@@ -10,8 +10,8 @@ public:
 	Edge2* edges[3];
 	Crystallite2* inclInCrys;
 
-	const bool IsContaining(const Edge2& edge);
-	const bool IsContaining(const Node2& node);
+	const bool IsContaining(const Edge2& edge) const;
+	const bool IsContaining(const Node2& node) const;
 
 	Simplex2();
 	Simplex2(Edge2& edge0, Edge2& edge1, Edge2& edge2);

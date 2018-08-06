@@ -12,7 +12,7 @@ void Node2::SetPosition(const double& coor0, const double& coor1)
 	(*_position)[1] = coor1;
 }
 
-const Vector2& Node2::GetPosition()
+const Vector2& Node2::GetPosition() const
 {
 	return *_position;
 }
@@ -30,7 +30,7 @@ double& Node2::operator[](const int& axisIndex)
 	return (*_position)[axisIndex];
 }
 
-Vector2 Node2::operator-(const Node2& right)
+Vector2 Node2::operator-(const Node2& right) const
 {
 	return *_position - *right._position;
 }
@@ -45,9 +45,7 @@ Node2 & Node2::operator-=(const Vector2 & right)
 	(*_position) -= right;
 }
 
-Node2::Node2()
-{
-}
+Node2::Node2() {}
 
 Node2::Node2(const double& coor0, const double& coor1)
 {

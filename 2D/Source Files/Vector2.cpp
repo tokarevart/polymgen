@@ -8,26 +8,31 @@ const double Vector2::DotProduct(const Vector2& vec0, const Vector2& vec1)
 	return vec0._coors[0] * vec1._coors[0] + vec0._coors[1] * vec1._coors[1];
 }
 
-const double Vector2::GetLength()
+const double Vector2::CrossProductMagnitude(const Vector2& vec0, const Vector2& vec1)
 {
-	return sqrt(GetSqrLength());
+	return vec0._coors[0] * vec1._coors[1] - vec0._coors[1] * vec1._coors[0];
 }
 
-const double Vector2::GetSqrLength()
+const double Vector2::Magnitude() const
+{
+	return sqrt(SqrMagnitude());
+}
+
+const double Vector2::SqrMagnitude() const
 {
 	return DotProduct(*this, *this);
 }
 
 Vector2& Vector2::Normalize()
 {
-	double buf = 1.0 / GetLength();
+	double buf = 1.0 / Magnitude();
 	_coors[0] *= buf;
 	_coors[1] *= buf;
 
 	return *this;
 }
 
-Vector2& Vector2::Rotate(const double& angle, AngleUnit unit)
+Vector2& Vector2::Rotate(const double& angle, const AngleUnit& unit)
 {
 	switch (unit)
 	{
@@ -51,6 +56,15 @@ Vector2& Vector2::Rotate(const double& angle, AngleUnit unit)
 	return *this;
 }
 
+Vector2& Vector2::Mirror(const Vector2& vec)
+{
+	double angle = acos(DotProduct(*this, vec) / sqrt(this->SqrMagnitude() * vec.SqrMagnitude()));
+
+	return CrossProductMagnitude(vec, *this) > 0 ? 
+		Rotate(-2.0 * angle, Radian) :
+		Rotate(2.0 * angle, Radian);
+}
+
 Vector2& Vector2::operator=(const Vector2& vec)
 {
 	_coors[0] = vec._coors[0];
@@ -64,22 +78,22 @@ double& Vector2::operator[](const int& axisIndex)
 	return _coors[axisIndex];
 }
 
-Vector2 Vector2::operator+()
+Vector2 Vector2::operator+() const
 {
 	return Vector2(*this);
 }
 
-Vector2 Vector2::operator-()
+Vector2 Vector2::operator-() const
 {
 	return Vector2(-_coors[0], -_coors[1]);
 }
 
-Vector2 Vector2::operator+(const Vector2& right)
+Vector2 Vector2::operator+(const Vector2& right) const
 {
 	return Vector2(_coors[0] + right._coors[0], _coors[1] + right._coors[1]);
 }
 
-Vector2 Vector2::operator-(const Vector2 & right)
+Vector2 Vector2::operator-(const Vector2 & right) const
 {
 	return Vector2(_coors[0] - right._coors[0], _coors[1] - right._coors[1]);
 }
@@ -100,9 +114,7 @@ Vector2& Vector2::operator-=(const Vector2& right)
 	return *this;
 }
 
-Vector2::Vector2()
-{
-}
+Vector2::Vector2() {}
 
 Vector2::Vector2(const Vector2& vec)
 {
@@ -115,6 +127,4 @@ Vector2::Vector2(const double& coor0, const double& coor1)
 	_coors[1] = coor1;
 }
 
-Vector2::~Vector2()
-{
-}
+Vector2::~Vector2() {}

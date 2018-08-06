@@ -10,18 +10,18 @@ void ShellEdge2::SetNormal()
 	_normal->Rotate(MINUS_PI_DIV_2, Radian).Normalize();
 }
 
-const double ShellEdge2::GetLength()
+const double ShellEdge2::Magnitude() const
 {
-	return sqrt(GetSqrLength());
+	return sqrt(SqrMagnitude());
 }
 
-const double ShellEdge2::GetSqrLength()
+const double ShellEdge2::SqrMagnitude() const
 {
 	Vector2 buf = (*nodes)[1] - (*nodes)[0];
 	return Vector2::DotProduct(buf, buf);
 }
 
-const bool ShellEdge2::IsContaining(const ShellNode2& node)
+const bool ShellEdge2::IsContaining(const ShellNode2& node) const
 {
 	if (nodes[0] == &node ||
 		nodes[1] == &node)
@@ -32,14 +32,12 @@ const bool ShellEdge2::IsContaining(const ShellNode2& node)
 	return false;
 }
 
-const bool ShellEdge2::IsAttached(const Node2& node)
+const bool ShellEdge2::IsAttached(const Node2& node) const
 {
 	return find(attachedNodes.begin(), attachedNodes.end(), &node) != attachedNodes.end();
 }
 
-ShellEdge2::ShellEdge2()
-{
-}
+ShellEdge2::ShellEdge2() {}
 
 ShellEdge2::ShellEdge2(ShellNode2& node0, ShellNode2& node1)
 {
@@ -68,5 +66,8 @@ ShellEdge2::~ShellEdge2()
 			attedNode->belongsToShellEdge = nullptr;
 		}
 	}
-	delete _normal;
+	if (_normal)
+	{
+		delete _normal;
+	}
 }

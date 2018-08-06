@@ -12,8 +12,8 @@ public:
 	Node2* nodes[2];
 	list<Simplex2*> inclInSimplexes;
 
-	const double GetLength();
-	const double GetSqrLength();
+	const double Magnitude() const;
+	const double SqrMagnitude() const;
 	const bool IsContaining(const Node2& node);
 	void DestroyIfNoLinks();
 

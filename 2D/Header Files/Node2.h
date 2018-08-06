@@ -24,11 +24,11 @@ public:
 
 	void SetPosition(const Vector2& newPos);
 	void SetPosition(const double& coor0, const double& coor1);
-	const Vector2& GetPosition();
+	const Vector2& GetPosition() const;
 	void DestroyIfNoLinks();
 
 	double& operator[](const int& axisIndex);
-	Vector2 operator-(const Node2& right);
+	Vector2 operator-(const Node2& right) const;
 	Node2& operator+=(const Vector2& right);
 	Node2& operator-=(const Vector2& right);
 

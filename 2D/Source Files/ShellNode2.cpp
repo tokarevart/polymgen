@@ -1,7 +1,7 @@
 #include "ShellNode2.h"
 
 
-const Vector2& ShellNode2::GetPosition()
+const Vector2& ShellNode2::GetPosition() const
 {
 	return *_position;
 }
@@ -11,14 +11,12 @@ double& ShellNode2::operator[](const int& axisIndex)
 	return (*_position)[axisIndex];
 }
 
-Vector2 ShellNode2::operator-(const ShellNode2& right)
+Vector2 ShellNode2::operator-(const ShellNode2& right) const
 {
 	return *_position - *right._position;
 }
 
-ShellNode2::ShellNode2()
-{
-}
+ShellNode2::ShellNode2() {}
 
 ShellNode2::ShellNode2(const double& coor0, const double& coor1)
 {

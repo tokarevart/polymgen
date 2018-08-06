@@ -1,7 +1,7 @@
 #include "Simplex2.h"
 
 
-const bool Simplex2::IsContaining(const Edge2& edge)
+const bool Simplex2::IsContaining(const Edge2& edge) const
 {
 	for (int i = 0; i < 3; i++)
 	{
@@ -14,7 +14,7 @@ const bool Simplex2::IsContaining(const Edge2& edge)
 	return false;
 }
 
-const bool Simplex2::IsContaining(const Node2& node)
+const bool Simplex2::IsContaining(const Node2& node) const
 {
 	for (auto &edge : edges)
 	{
@@ -27,9 +27,7 @@ const bool Simplex2::IsContaining(const Node2& node)
 	return false;
 }
 
-Simplex2::Simplex2()
-{
-}
+Simplex2::Simplex2() {}
 
 Simplex2::Simplex2(Edge2& edge0, Edge2& edge1, Edge2& edge2)
 {
