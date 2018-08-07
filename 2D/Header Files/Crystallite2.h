@@ -10,8 +10,6 @@ public:
 	std::list<ShellEdge2*> shellEdges;
 	std::list<Simplex2*> simplexes;
 
-	Polycrystalline2* inclInPolycrys;
-
 	// Use when simplexes list already filled.
 	const bool IsContaining(const Simplex2& simp) const;
 	const bool IsContaining(const Edge2& edge) const;

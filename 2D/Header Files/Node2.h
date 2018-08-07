@@ -20,7 +20,6 @@ public:
 	std::list<Edge2*> inclInEdges;
 	std::list<Simplex2*> inclInSimplexes;
 	std::list<Crystallite2*> inclInCryses;
-	Polycrystalline2* inclInPolycrys;
 
 	void SetPosition(const Vector2& newPos);
 	void SetPosition(const double& coor0, const double& coor1);

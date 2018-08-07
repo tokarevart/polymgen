@@ -9,22 +9,20 @@
 class Polycrystalline2
 {
 private:
-	double minShellNodesCoor[2];
-	double maxShellNodesCoor[2];
-	double l_min, l_av, l_max;
+	double _minShellNodesCoor[2];
+	double _maxShellNodesCoor[2];
+	double _l_min, _l_av, _l_max;
+
+	std::list<Simplex2*> _freeSimplexes;
+	std::vector<Edge2*> _freeEdges;
+	std::vector<Node2*> _freeNodes;
 
 public:
 	std::list<Crystallite2*> crystallites;
 
-	std::list<Simplex2*> freeSimplexes;
-	std::vector<Edge2*> freeEdges;
-	std::vector<Node2*> freeNodes;
-
-	void AddCrystallite();                          // May be useless if link from crystallite to polycrystalline will not be used.
-	void AddCrystallite(Crystallite2* const& crys); // May be useless if link from crystallite to polycrystalline will not be used.
-	
-	size_t GenerateFreeNodesEvenly(double* const& polycrysSizeAxis, size_t* const& minNodesNumAxis);
-	void GenerateFreeSimplexesFromFreeNodes();
+	size_t GenerateFreeNodesEvenly(double* const polycrysSizeAxis, size_t* const minNodesNumAxis);
+	Edge2* FindFreeEdge(const Node2& node0, const Node2& node1);
+	void GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis_0);
 	void GenerateFreeUniformMesh(); // There may will not be significant performance improvement. But if you want you can parallize 1-st step.
 	//void FitFreeMeshToShells(); // There may will not be significant performance improvement. But if you want you can parallize 1-st step.
 	//void DeleteExternalNodes();

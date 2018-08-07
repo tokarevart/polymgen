@@ -3,43 +3,30 @@
 using namespace std;
 
 
-void Polycrystalline2::AddCrystallite()
-{
-	Crystallite2* buf;
-	crystallites.push_back(buf = new Crystallite2());
-	buf->inclInPolycrys = this;
-}
-
-void Polycrystalline2::AddCrystallite(Crystallite2* const& crys)
-{
-	crystallites.push_back(crys);
-	crys->inclInPolycrys = this;
-}
-
-size_t Polycrystalline2::GenerateFreeNodesEvenly(double* const& polycrysSizeAxis, size_t* const& minNodesNumAxis)
+size_t Polycrystalline2::GenerateFreeNodesEvenly(double* const polycrysSizeAxis, size_t* const minNodesNumAxis)
 {
 	double startGenCoor[2];
-	startGenCoor[0] = minShellNodesCoor[0] + (polycrysSizeAxis[0] - (minNodesNumAxis[0] + 1) * l_av) * 0.5;
-	startGenCoor[1] = minShellNodesCoor[1] + (polycrysSizeAxis[1] - minNodesNumAxis[1] * l_av) * 0.5;
+	startGenCoor[0] = _minShellNodesCoor[0] + (polycrysSizeAxis[0] - (minNodesNumAxis[0] + 1) * _l_av) * 0.5;
+	startGenCoor[1] = _minShellNodesCoor[1] + (polycrysSizeAxis[1] - minNodesNumAxis[1] * _l_av) * 0.5;
 
 	size_t freeNodesNum = minNodesNumAxis[0] * minNodesNumAxis[1] + (minNodesNumAxis[1] + 1) / 2;
 
 	double node_coors[2];
 	node_coors[0] = startGenCoor[0];
 	node_coors[1] = startGenCoor[1];
-	freeNodes.reserve(freeNodesNum);
-	double delta_node_coors_1 = 0.5 * sqrt(3) * l_av;
+	_freeNodes.reserve(freeNodesNum);
+	double delta_node_coors_1 = 0.5 * sqrt(3) * _l_av;
 	for (size_t i = 0; i < freeNodesNum;)
 	{
-		freeNodes.push_back(
+		_freeNodes.push_back(
 			new Node2(
 				node_coors[0],
 				node_coors[1]));
 		i++;
 		for (size_t j = 0; j < minNodesNumAxis[0]; j++)
 		{
-			node_coors[0] += l_av;
-			freeNodes.push_back(
+			node_coors[0] += _l_av;
+			_freeNodes.push_back(
 				new Node2(
 					node_coors[0],
 					node_coors[1]));
@@ -50,17 +37,18 @@ size_t Polycrystalline2::GenerateFreeNodesEvenly(double* const& polycrysSizeAxis
 		{
 			break;
 		}
-		node_coors[0] -= minNodesNumAxis[0] * l_av + l_av * 0.5;
+
+		node_coors[0] -= minNodesNumAxis[0] * _l_av + _l_av * 0.5;
 		node_coors[1] += delta_node_coors_1;
-		freeNodes.push_back(
+		_freeNodes.push_back(
 			new Node2(
 				node_coors[0],
 				node_coors[1]));
 		i++;
 		for (size_t j = 0; j < minNodesNumAxis[0] - 1; j++)
 		{
-			node_coors[0] += l_av;
-			freeNodes.push_back(
+			node_coors[0] += _l_av;
+			_freeNodes.push_back(
 				new Node2(
 					node_coors[0],
 					node_coors[1]));
@@ -71,25 +59,167 @@ size_t Polycrystalline2::GenerateFreeNodesEvenly(double* const& polycrysSizeAxis
 	return freeNodesNum;
 }
 
-void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes()
+Edge2* Polycrystalline2::FindFreeEdge(const Node2& node0, const Node2& node1)
 {
+	if (std::find(node0.neighbors.begin(), node0.neighbors.end(), &node1) == node0.neighbors.end())
+	{
+		return nullptr;
+	}
 
+	for (list<Edge2*>::const_iterator edges_iter = node0.inclInEdges.begin(), end = node0.inclInEdges.end(); 
+		edges_iter != end; 
+		edges_iter++)
+	{
+		if ((*edges_iter)->nodes[0] == &node0 && (*edges_iter)->nodes[1] == &node1 ||
+			(*edges_iter)->nodes[0] == &node1 && (*edges_iter)->nodes[1] == &node0)
+		{
+			return *edges_iter;
+		}
+	}
+
+	throw exception("Error in function Polycrystalline2::FindFreeEdge");
+	return nullptr;
+}
+
+void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis_0)
+{
+	Simplex2* simp_buf;
+	
+	for (size_t i = 0, max = _freeNodes.size() - minNodesNumAxis_0 - 1; i < max;)
+	{
+		for (size_t j = 0; j < minNodesNumAxis_0; j++)
+		{
+			_freeSimplexes.push_back(simp_buf = new Simplex2());
+			simp_buf->edges[0] = new Edge2(*_freeNodes[i], *_freeNodes[i + 1]);
+			simp_buf->edges[1] = new Edge2(*_freeNodes[i + 1], *_freeNodes[i + 1 + minNodesNumAxis_0]);
+			simp_buf->edges[2] = new Edge2(*_freeNodes[i + 1 + minNodesNumAxis_0], *_freeNodes[i]);
+
+			simp_buf->edges[0]->inclInSimplexes.push_back(simp_buf);
+			simp_buf->edges[1]->inclInSimplexes.push_back(simp_buf);
+			simp_buf->edges[2]->inclInSimplexes.push_back(simp_buf);
+
+			i++;
+		}
+		i++;
+
+		if (!i < max)
+		{
+			break;
+		}
+
+		for (size_t j = 0; j < minNodesNumAxis_0 - 1; j++)
+		{
+			_freeSimplexes.push_back(simp_buf = new Simplex2());
+			simp_buf->edges[0] = new Edge2(*_freeNodes[i], *_freeNodes[i + 1]);
+			simp_buf->edges[1] = new Edge2(*_freeNodes[i + 1], *_freeNodes[i + 1 + minNodesNumAxis_0]);
+			simp_buf->edges[2] = new Edge2(*_freeNodes[i + 1 + minNodesNumAxis_0], *_freeNodes[i]);
+
+			simp_buf->edges[0]->inclInSimplexes.push_back(simp_buf);
+			simp_buf->edges[1]->inclInSimplexes.push_back(simp_buf);
+			simp_buf->edges[2]->inclInSimplexes.push_back(simp_buf);
+
+			i++;
+		}
+		i++;
+	}
+
+	Edge2* edge_buf;
+	
+	for (size_t i = 0, max = _freeNodes.size() - minNodesNumAxis_0 - 1; i < max;)
+	{
+		for (size_t j = 0; j < minNodesNumAxis_0 - 1; j++)
+		{
+			_freeSimplexes.push_back(simp_buf = new Simplex2());
+			if (edge_buf = FindFreeEdge(*_freeNodes[i], *_freeNodes[i + 1 + minNodesNumAxis_0]))
+			{
+				simp_buf->edges[0] = edge_buf;
+			}
+			else
+			{
+				simp_buf->edges[0] = new Edge2(*_freeNodes[i], *_freeNodes[i + 1 + minNodesNumAxis_0]);
+			}
+			if (edge_buf = FindFreeEdge(*_freeNodes[i + 1 + minNodesNumAxis_0], *_freeNodes[i + minNodesNumAxis_0]))
+			{
+				simp_buf->edges[1] = edge_buf;
+			}
+			else
+			{
+				simp_buf->edges[1] = new Edge2(*_freeNodes[i + 1 + minNodesNumAxis_0], *_freeNodes[i + minNodesNumAxis_0]);
+			}
+			if (edge_buf = FindFreeEdge(*_freeNodes[i], *_freeNodes[i + minNodesNumAxis_0]))
+			{
+				simp_buf->edges[2] = edge_buf;
+			}
+			else
+			{
+				simp_buf->edges[2] = new Edge2(*_freeNodes[i], *_freeNodes[i + minNodesNumAxis_0]);
+			}
+
+			simp_buf->edges[0]->inclInSimplexes.push_back(simp_buf);
+			simp_buf->edges[1]->inclInSimplexes.push_back(simp_buf);
+			simp_buf->edges[2]->inclInSimplexes.push_back(simp_buf);
+
+			i++;
+		}
+		i++;
+
+		if (!i < max)
+		{
+			break;
+		}
+
+		for (size_t j = 0; j < minNodesNumAxis_0; j++)
+		{
+			_freeSimplexes.push_back(simp_buf = new Simplex2());
+			if (edge_buf = FindFreeEdge(*_freeNodes[i], *_freeNodes[i + 1 + minNodesNumAxis_0]))
+			{
+				simp_buf->edges[0] = edge_buf;
+			}
+			else
+			{
+				simp_buf->edges[0] = new Edge2(*_freeNodes[i], *_freeNodes[i + 1 + minNodesNumAxis_0]);
+			}
+			if (edge_buf = FindFreeEdge(*_freeNodes[i + 1 + minNodesNumAxis_0], *_freeNodes[i + minNodesNumAxis_0]))
+			{
+				simp_buf->edges[1] = edge_buf;
+			}
+			else
+			{
+				simp_buf->edges[1] = new Edge2(*_freeNodes[i + 1 + minNodesNumAxis_0], *_freeNodes[i + minNodesNumAxis_0]);
+			}
+			if (edge_buf = FindFreeEdge(*_freeNodes[i], *_freeNodes[i + minNodesNumAxis_0]))
+			{
+				simp_buf->edges[2] = edge_buf;
+			}
+			else
+			{
+				simp_buf->edges[2] = new Edge2(*_freeNodes[i], *_freeNodes[i + minNodesNumAxis_0]);
+			}
+
+			simp_buf->edges[0]->inclInSimplexes.push_back(simp_buf);
+			simp_buf->edges[1]->inclInSimplexes.push_back(simp_buf);
+			simp_buf->edges[2]->inclInSimplexes.push_back(simp_buf);
+
+			i++;
+		}
+		i++;
+	}
 }
 
 void Polycrystalline2::GenerateFreeUniformMesh()
 {
 	double polycrysSizeAxis[2];
-	polycrysSizeAxis[0] = maxShellNodesCoor[0] - minShellNodesCoor[0];
-	polycrysSizeAxis[1] = maxShellNodesCoor[1] - minShellNodesCoor[1];
+	polycrysSizeAxis[0] = _maxShellNodesCoor[0] - _minShellNodesCoor[0];
+	polycrysSizeAxis[1] = _maxShellNodesCoor[1] - _minShellNodesCoor[1];
 
 	size_t minNodesNumAxis[2];
-	minNodesNumAxis[0] = (size_t)(polycrysSizeAxis[0] / l_av) + 1;
-	minNodesNumAxis[1] = (size_t)(polycrysSizeAxis[1] / l_av) + 1;
+	minNodesNumAxis[0] = (size_t)(polycrysSizeAxis[0] / _l_av) + 1;
+	minNodesNumAxis[1] = (size_t)(polycrysSizeAxis[1] / _l_av) + 1;
 
 	size_t freeNodesNum = GenerateFreeNodesEvenly(polycrysSizeAxis, minNodesNumAxis);
 
-	freeEdges.reserve(3 + 2 * (freeNodesNum - 3) + minNodesNumAxis[1] - 2);
-	GenerateFreeSimplexesFromFreeNodes();
+	_freeEdges.reserve(3 + 2 * (_freeNodes.size() - 3) + minNodesNumAxis[1] - 2);
+	GenerateFreeSimplexesFromFreeNodes(minNodesNumAxis[0]);
 }
 
 const bool Polycrystalline2::IsContaining(const Crystallite2& crys) const
@@ -321,29 +451,29 @@ void Polycrystalline2::InputData(ifstream& shell_nodes, ifstream& cryses_edges, 
 {
 	vector<ShellNode2*> v_shell_nodes;
 
-	minShellNodesCoor[0] = minShellNodesCoor[1] = DBL_MAX;
-	maxShellNodesCoor[0] = maxShellNodesCoor[1] = DBL_MIN;
+	_minShellNodesCoor[0] = _minShellNodesCoor[1] = DBL_MAX;
+	_maxShellNodesCoor[0] = _maxShellNodesCoor[1] = DBL_MIN;
 
 	double dbuf[2];
 	while (!shell_nodes.eof())
 	{
 		shell_nodes >> dbuf[0];
-		if (dbuf[0] < minShellNodesCoor[0])
+		if (dbuf[0] < _minShellNodesCoor[0])
 		{
-			minShellNodesCoor[0] = dbuf[0];
+			_minShellNodesCoor[0] = dbuf[0];
 		}
-		if (dbuf[0] > maxShellNodesCoor[0])
+		if (dbuf[0] > _maxShellNodesCoor[0])
 		{
-			maxShellNodesCoor[0] = dbuf[0];
+			_maxShellNodesCoor[0] = dbuf[0];
 		}
 		shell_nodes >> dbuf[1];
-		if (dbuf[1] < minShellNodesCoor[1])
+		if (dbuf[1] < _minShellNodesCoor[1])
 		{
-			minShellNodesCoor[1] = dbuf[1];
+			_minShellNodesCoor[1] = dbuf[1];
 		}
-		if (dbuf[1] > maxShellNodesCoor[1])
+		if (dbuf[1] > _maxShellNodesCoor[1])
 		{
-			maxShellNodesCoor[1] = dbuf[1];
+			_maxShellNodesCoor[1] = dbuf[1];
 		}
 		v_shell_nodes.push_back(
 			new ShellNode2(
@@ -359,14 +489,12 @@ void Polycrystalline2::InputData(ifstream& shell_nodes, ifstream& cryses_edges, 
 	{
 		if (crystallites.empty())
 		{
-			// crystallites.push_back(new Crystallite2()); instead of AddCrystallite();
-			AddCrystallite();
+			crystallites.push_back(new Crystallite2());
 			crys_iter = crystallites.begin();
 		}
 		else
 		{
-			// crystallites.push_back(new Crystallite2()); instead of AddCrystallite();
-			AddCrystallite();
+			crystallites.push_back(new Crystallite2());
 			crys_iter++;
 		}
 		cryses_edges >> numsNum;
@@ -384,12 +512,12 @@ void Polycrystalline2::InputData(ifstream& shell_nodes, ifstream& cryses_edges, 
 	cryses_edges.clear();
 	cryses_edges.seekg(0);
 
-	gener_params >> l_min;
-	gener_params >> l_max;
+	gener_params >> _l_min;
+	gener_params >> _l_max;
 	gener_params.clear();
 	gener_params.seekg(0);
 
-	l_av = (l_min + l_max) * 0.5;
+	_l_av = (_l_min + _l_max) * 0.5;
 }
 
 // Different for 3 dimensions.
@@ -397,26 +525,26 @@ void Polycrystalline2::InputData(const vector<double>& shell_nodes, const vector
 {
 	vector<ShellNode2*> v_shell_nodes;
 
-	minShellNodesCoor[0] = minShellNodesCoor[1] = DBL_MAX;
-	maxShellNodesCoor[0] = maxShellNodesCoor[1] = DBL_MIN;
+	_minShellNodesCoor[0] = _minShellNodesCoor[1] = DBL_MAX;
+	_maxShellNodesCoor[0] = _maxShellNodesCoor[1] = DBL_MIN;
 
 	for (size_t i = 0, max = shell_nodes.size(); i < max; i += 2) // i += 3 for 3 dimensions
 	{
-		if (shell_nodes[i] < minShellNodesCoor[0])
+		if (shell_nodes[i] < _minShellNodesCoor[0])
 		{
-			minShellNodesCoor[0] = shell_nodes[i];
+			_minShellNodesCoor[0] = shell_nodes[i];
 		}
-		if (shell_nodes[i] > maxShellNodesCoor[0])
+		if (shell_nodes[i] > _maxShellNodesCoor[0])
 		{
-			maxShellNodesCoor[0] = shell_nodes[i];
+			_maxShellNodesCoor[0] = shell_nodes[i];
 		}
-		if (shell_nodes[i + 1] < minShellNodesCoor[1])
+		if (shell_nodes[i + 1] < _minShellNodesCoor[1])
 		{
-			minShellNodesCoor[1] = shell_nodes[i + 1];
+			_minShellNodesCoor[1] = shell_nodes[i + 1];
 		}
-		if (shell_nodes[i + 1] > maxShellNodesCoor[1])
+		if (shell_nodes[i + 1] > _maxShellNodesCoor[1])
 		{
-			maxShellNodesCoor[1] = shell_nodes[i + 1];
+			_maxShellNodesCoor[1] = shell_nodes[i + 1];
 		}
 
 		v_shell_nodes.push_back(
@@ -431,14 +559,12 @@ void Polycrystalline2::InputData(const vector<double>& shell_nodes, const vector
 		{
 			if (crystallites.empty())
 			{
-				// crystallites.push_back(new Crystallite2()); instead of AddCrystallite();
-				AddCrystallite();
+				crystallites.push_back(new Crystallite2());
 				crys_iter = crystallites.begin();
 			}
 			else
 			{
-				// crystallites.push_back(new Crystallite2()); instead of AddCrystallite();
-				AddCrystallite();
+				crystallites.push_back(new Crystallite2());
 				crys_iter++;
 			}
 			numsNum = *(cp_iter++); // numsNum = *cp_iter; cp_iter++;
@@ -454,8 +580,9 @@ void Polycrystalline2::InputData(const vector<double>& shell_nodes, const vector
 			}
 		}
 	}
-	l_min = gener_params[0];
-	l_max = gener_params[1];
+	_l_min = gener_params[0];
+	_l_max = gener_params[1];
+	_l_av = (_l_min + _l_max) * 0.5;
 }
 
 void Polycrystalline2::OutputData(ofstream& nodesData, ofstream& feNodesData) const
