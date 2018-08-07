@@ -3,18 +3,16 @@
 #include "AllClassInclusions.h"
 #include "AllClassDefinitions.h"
 
-using namespace std;
-
 
 class ShellNode2
 {
 private:
-	Vector2* const _position = new Vector2();
+	Vector2* _position;
 
 public:
 	Node2* attachedNode;
-	list<ShellEdge2*> inclInEdges;
-	list<Crystallite2*> inclInCryses;
+	std::list<ShellEdge2*> inclInEdges;
+	std::list<Crystallite2*> inclInCryses;
 
 	const Vector2& GetPosition() const;
 

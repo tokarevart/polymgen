@@ -37,10 +37,15 @@ const bool ShellEdge2::IsAttached(const Node2& node) const
 	return find(attachedNodes.begin(), attachedNodes.end(), &node) != attachedNodes.end();
 }
 
-ShellEdge2::ShellEdge2() {}
+ShellEdge2::ShellEdge2()
+{
+	_normal = new Vector2();
+}
 
 ShellEdge2::ShellEdge2(ShellNode2& node0, ShellNode2& node1)
 {
+	_normal = new Vector2();
+
 	nodes[0] = &node0;
 	nodes[1] = &node1;
 

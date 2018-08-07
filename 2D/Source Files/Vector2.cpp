@@ -34,16 +34,15 @@ Vector2& Vector2::Normalize()
 
 Vector2& Vector2::Rotate(const double& angle, const AngleUnit& unit)
 {
+	double buf = _coors[0];
 	switch (unit)
 	{
 	case Radian:
-		double buf = _coors[0];
 		_coors[0] = cos(angle) * _coors[0] - sin(angle) * _coors[1];
 		_coors[1] = sin(angle) * buf       + cos(angle) * _coors[1];
 		break;
 
 	case Degree:
-		double buf = _coors[0];
 		double angle_rad = angle * PI_DIV_180;
 		_coors[0] = cos(angle_rad) * _coors[0] - sin(angle_rad) * _coors[1];
 		_coors[1] = sin(angle_rad) * buf       + cos(angle_rad) * _coors[1];
@@ -65,8 +64,22 @@ Vector2& Vector2::Mirror(const Vector2& vec)
 		Rotate(2.0 * angle, Radian);
 }
 
+Vector2& Vector2::Project(const Vector2& vec)
+{
+	Vector2 res = (DotProduct(*this, vec) / vec.SqrMagnitude()) * vec;
+	_coors[0] = res._coors[0];
+	_coors[1] = res._coors[1];
+
+	return *this;
+}
+
 Vector2& Vector2::operator=(const Vector2& vec)
 {
+	if (this == &vec)
+	{
+		return *this;
+	}
+
 	_coors[0] = vec._coors[0];
 	_coors[1] = vec._coors[1];
 
@@ -93,7 +106,7 @@ Vector2 Vector2::operator+(const Vector2& right) const
 	return Vector2(_coors[0] + right._coors[0], _coors[1] + right._coors[1]);
 }
 
-Vector2 Vector2::operator-(const Vector2 & right) const
+Vector2 Vector2::operator-(const Vector2& right) const
 {
 	return Vector2(_coors[0] - right._coors[0], _coors[1] - right._coors[1]);
 }
@@ -114,6 +127,14 @@ Vector2& Vector2::operator-=(const Vector2& right)
 	return *this;
 }
 
+Vector2& Vector2::operator*=(const double& scalar)
+{
+	_coors[0] *= scalar;
+	_coors[1] *= scalar;
+
+	return *this;
+}
+
 Vector2::Vector2() {}
 
 Vector2::Vector2(const Vector2& vec)
@@ -128,3 +149,19 @@ Vector2::Vector2(const double& coor0, const double& coor1)
 }
 
 Vector2::~Vector2() {}
+
+const Vector2 operator*(const Vector2& vec, const double& scalar)
+{
+	return Vector2(vec._coors[0] * scalar, vec._coors[1] * scalar);
+}
+
+const Vector2 operator*(const double& scalar, const Vector2& vec)
+{
+	return Vector2(scalar * vec._coors[0], scalar * vec._coors[1]);
+}
+
+const Vector2 operator/(const Vector2 & vec, const double & scalar)
+{
+	double inv_scalar = 1.0 / scalar;
+	return Vector2(vec._coors[0] * inv_scalar, vec._coors[1] * inv_scalar);
+}

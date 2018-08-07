@@ -1,31 +1,30 @@
 #include <iostream>
 #include <fstream>
 #include "Polycrystalline2.h"
-
-using namespace std;
+#include "Timer.h"
 
 
 int main(int argc, char* argv[])
 {
-	ifstream cryses_nodes_pos("Input/cryses_nodes_pos.txt");
-	ifstream cryses_edges("Input/cryses_edges.txt");
-	ifstream gener_params("Input/gener_params.txt");
+	std::ifstream cryses_nodes_pos("Input/cryses_nodes_pos.txt");
+	std::ifstream cryses_edges("Input/cryses_edges.txt");
+	std::ifstream gener_params("Input/gener_params.txt");
 
-
+	Polycrystalline2 polycr;
 
 	cryses_nodes_pos.close();
 	cryses_edges.close();
 	gener_params.close();
 
-	ofstream nodes_pos("Output/nodes_pos.txt");
-	ofstream fe_nodes("Output/fe_nodes.txt");
+	// Calculation
 
-
+	std::ofstream nodes_pos("Output/nodes_pos.txt");
+	std::ofstream fe_nodes("Output/fe_nodes.txt");
 
 	nodes_pos.close();
 	fe_nodes.close();
 
-	cout << '\n';
+	std::cout << '\n';
 	system("pause");
 	return 0;
 }

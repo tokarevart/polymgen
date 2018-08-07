@@ -1,7 +1,5 @@
 #pragma once
 #include <cmath>
-#include "AllClassInclusions.h"
-#include "AllClassDefinitions.h"
 
 enum AngleUnit
 {
@@ -20,9 +18,11 @@ public:
 
 	const double Magnitude() const;
 	const double SqrMagnitude() const;
+
 	Vector2& Normalize();
 	Vector2& Rotate(const double& angle, const AngleUnit& unit);
 	Vector2& Mirror(const Vector2& vec);
+	Vector2& Project(const Vector2& vec);
 
 	Vector2& operator=(const Vector2& vec);
 	double& operator[](const int& axisIndex);
@@ -32,6 +32,10 @@ public:
 	Vector2 operator-(const Vector2& right) const;
 	Vector2& operator+=(const Vector2& right);
 	Vector2& operator-=(const Vector2& right);
+	Vector2& operator*=(const double& scalar);
+	friend const Vector2 operator*(const Vector2& vec, const double& scalar);
+	friend const Vector2 operator*(const double& scalar, const Vector2& vec);
+	friend const Vector2 operator/(const Vector2& vec, const double& scalar);
 
 	Vector2();
 	Vector2(const Vector2& vec);

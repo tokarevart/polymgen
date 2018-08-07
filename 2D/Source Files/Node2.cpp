@@ -45,12 +45,14 @@ Node2 & Node2::operator-=(const Vector2 & right)
 	(*_position) -= right;
 }
 
-Node2::Node2() {}
+Node2::Node2() 
+{
+	_position = new Vector2();
+}
 
 Node2::Node2(const double& coor0, const double& coor1)
 {
-	(*_position)[0] = coor0;
-	(*_position)[1] = coor1;
+	_position = new Vector2(coor0, coor1);
 }
 
 Node2::Node2(const Vector2& position)

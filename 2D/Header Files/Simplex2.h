@@ -8,6 +8,7 @@ class Simplex2
 {
 public:
 	Edge2* edges[3];
+
 	Crystallite2* inclInCrys;
 
 	const bool IsContaining(const Edge2& edge) const;

@@ -3,18 +3,19 @@
 #include "AllClassInclusions.h"
 #include "AllClassDefinitions.h"
 
-using namespace std;
-
 
 class Edge2
 {
 public:
 	Node2* nodes[2];
-	list<Simplex2*> inclInSimplexes;
+
+	std::list<Simplex2*> inclInSimplexes;
 
 	const double Magnitude() const;
 	const double SqrMagnitude() const;
+
 	const bool IsContaining(const Node2& node);
+
 	void DestroyIfNoLinks();
 
 	Edge2();

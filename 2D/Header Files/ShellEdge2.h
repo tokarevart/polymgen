@@ -3,23 +3,22 @@
 #include "AllClassInclusions.h"
 #include "AllClassDefinitions.h"
 
-using namespace std;
-
 
 class ShellEdge2
 {
 private:
-	Vector2* const _normal = new Vector2();
+	Vector2* _normal;
 
 	void SetNormal();
 
 public:
 	ShellNode2* nodes[2];
-	list<Node2*> attachedNodes;
-	list<Crystallite2*> inclInCryses;
+	std::list<Node2*> attachedNodes;
+	std::list<Crystallite2*> inclInCryses;
 
 	const double Magnitude() const;
 	const double SqrMagnitude() const;
+
 	const bool IsContaining(const ShellNode2& node) const;
 	const bool IsAttached(const Node2& node) const;
 
