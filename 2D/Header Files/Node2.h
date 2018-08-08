@@ -30,6 +30,7 @@ public:
 
 	double& operator[](const int& axisIndex);
 	Vector2 operator-(const Node2& right) const;
+	Vector2 operator-(const ShellNode2& right) const;
 	Node2& operator+=(const Vector2& right);
 	Node2& operator-=(const Vector2& right);
 
@@ -37,4 +38,6 @@ public:
 	Node2(const double& coor0, const double& coor1);
 	Node2(const Vector2& position);
 	~Node2();
+
+	friend ShellNode2;
 };

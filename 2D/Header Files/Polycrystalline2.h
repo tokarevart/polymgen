@@ -13,6 +13,8 @@ private:
 	double _maxShellNodesCoor[2];
 	double _l_min, _l_av, _l_max;
 
+	std::vector<ShellNode2*> _shellNodes;
+
 	std::list<Simplex2*> _freeSimplexes;
 	std::vector<Edge2*> _freeEdges;
 	std::vector<Node2*> _freeNodes;
@@ -20,11 +22,13 @@ private:
 public:
 	std::list<Crystallite2*> crystallites;
 
-	size_t GenerateFreeNodesEvenly(double* const polycrysSizeAxis, size_t* const minNodesNumAxis);
+	void Debug();
+	void GenerateFreeNodesEvenly(double* const polycrysSizeAxis, size_t* const minNodesNumAxis);
 	Edge2* FindFreeEdge(const Node2& node0, const Node2& node1);
 	void GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis_0);
 	void GenerateFreeUniformMesh(); // There may will not be significant performance improvement. But if you want you can parallize 1-st step.
-	//void FitFreeMeshToShells(); // There may will not be significant performance improvement. But if you want you can parallize 1-st step.
+	void FitFreeNodesToShellNodes();
+	void FitFreeMeshToShells(); // There may will not be significant performance improvement. But if you want you can parallize 1-st step.
 	//void DeleteExternalNodes();
 	//void FillDataWithRemainingDependences(); // 1-st step can be well parallelized by nodes.
 	//void DistributeNodesEvenly();

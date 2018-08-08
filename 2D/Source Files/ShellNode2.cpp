@@ -16,6 +16,11 @@ Vector2 ShellNode2::operator-(const ShellNode2& right) const
 	return *_position - *right._position;
 }
 
+Vector2 ShellNode2::operator-(const Node2& right) const
+{
+	return *_position - *right._position;
+}
+
 ShellNode2::ShellNode2() 
 {
 	_position = new Vector2();

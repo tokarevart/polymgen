@@ -35,6 +35,11 @@ Vector2 Node2::operator-(const Node2& right) const
 	return *_position - *right._position;
 }
 
+Vector2 Node2::operator-(const ShellNode2& right) const
+{
+	return *_position - *right._position;
+}
+
 Node2& Node2::operator+=(const Vector2& right)
 {
 	(*_position) += right;
