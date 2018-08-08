@@ -220,8 +220,6 @@ void Polycrystalline2::GenerateFreeUniformMesh()
 	minNodesNumAxis[1] = (size_t)(polycrysSizeAxis[1] / (0.5 * sqrt(3) * _l_av)) + 2;
 
 	GenerateFreeNodesEvenly(polycrysSizeAxis, minNodesNumAxis);
-
-	_freeEdges.reserve(3 + 2 * (_freeNodes.size() - 3) + minNodesNumAxis[1] - 2);
 	GenerateFreeSimplexesFromFreeNodes(minNodesNumAxis[0]);
 }
 
