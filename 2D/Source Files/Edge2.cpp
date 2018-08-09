@@ -31,9 +31,9 @@ void Edge2::DestroyIfNoLinks()
 	}
 }
 
-Edge2::Edge2() : unique_ptr_helper(this) {}
+Edge2::Edge2() : unique_ptr_helper<Edge2>(this) {}
 
-Edge2::Edge2(Node2& node0, Node2& node1) : unique_ptr_helper(this)
+Edge2::Edge2(Node2& node0, Node2& node1) : unique_ptr_helper<Edge2>(this)
 {
 	nodes[0] = node0.GetPtrToUniquePtr();
 	nodes[1] = node1.GetPtrToUniquePtr();

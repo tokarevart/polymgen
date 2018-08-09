@@ -1,11 +1,12 @@
 #pragma once
 #include <list>
-#include "AllClassInclusions.h"
+#include <memory>
 #include "AllClassDefinitions.h"
+#include "AllClassInclusions.h"
 
 using std::unique_ptr;
 
-
+#include "unique_ptr_helper.h"
 class Simplex2 : public unique_ptr_helper<Simplex2>
 {
 public:

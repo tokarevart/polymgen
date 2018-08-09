@@ -1,12 +1,13 @@
 #pragma once
 #include <list>
-#include "AllClassInclusions.h"
+#include <memory>
 #include "AllClassDefinitions.h"
+#include "AllClassInclusions.h"
 
 using std::unique_ptr;
 using std::list;
 
-
+#include "unique_ptr_helper.h"
 class Edge2 : public unique_ptr_helper<Edge2>
 {
 public:

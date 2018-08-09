@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "Polycrystalline2.h"
-#include "Timer.h"
+//#include "Timer.h"
 
 
 int main(int argc, char* argv[])

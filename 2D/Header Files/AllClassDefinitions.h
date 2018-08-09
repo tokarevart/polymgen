@@ -7,3 +7,5 @@ class ShellEdge2;
 class Node2;
 class ShellNode2;
 class Vector2;
+//template<class T>
+//class unique_ptr_helper;

@@ -3,8 +3,8 @@
 #include <list>
 #include <vector>
 #include <memory>
-#include "AllClassInclusions.h"
 #include "AllClassDefinitions.h"
+#include "AllClassInclusions.h"
 
 using std::ifstream;
 using std::ofstream;
@@ -31,7 +31,7 @@ public:
 
 	void Debug();
 	void GenerateFreeNodesEvenly(double* const polycrysSizeAxis, size_t* const minNodesNumAxis);
-	unique_ptr<Edge2>* FindFreeEdge(const Node2& node0, const Node2& node1);
+	unique_ptr<Edge2>* FindFreeEdge(Node2& node0, Node2& node1);
 	void GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis_0);
 	void GenerateFreeUniformMesh(); // There may will not be significant performance improvement. But if you want you can parallize 1-st step.
 	void FitFreeNodesToShellNodes();

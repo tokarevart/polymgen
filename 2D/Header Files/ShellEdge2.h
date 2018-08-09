@@ -1,13 +1,13 @@
 #pragma once
 #include <list>
 #include <memory>
-#include "AllClassInclusions.h"
 #include "AllClassDefinitions.h"
+#include "AllClassInclusions.h"
 
 using std::unique_ptr;
 using std::list;
 
-
+#include "unique_ptr_helper.h"
 class ShellEdge2 : public unique_ptr_helper<ShellEdge2>
 {
 private:

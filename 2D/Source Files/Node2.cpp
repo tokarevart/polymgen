@@ -49,10 +49,12 @@ Node2& Node2::operator+=(const Vector2& right)
 	else if (belongsToShellEdge)
 	{
 		(*_position) += Vector2(right).Project(**(*belongsToShellEdge)->nodes[0] - **(*belongsToShellEdge)->nodes[1]);
+		return *this;
 	}
 	else
 	{
 		(*_position) += right;
+		return *this;
 	}
 }
 
@@ -65,24 +67,26 @@ Node2& Node2::operator-=(const Vector2& right)
 	else if (*belongsToShellEdge)
 	{
 		(*_position) -= Vector2(right).Project(**(*belongsToShellEdge)->nodes[0] - **(*belongsToShellEdge)->nodes[1]);
+		return *this;
 	}
 	else
 	{
 		(*_position) -= right;
+		return *this;
 	}
 }
 
-Node2::Node2() : unique_ptr_helper(this)
+Node2::Node2() : unique_ptr_helper<Node2>(this)
 {
 	_position.reset(new Vector2());
 }
 
-Node2::Node2(const double& coor0, const double& coor1) : unique_ptr_helper(this)
+Node2::Node2(const double& coor0, const double& coor1) : unique_ptr_helper<Node2>(this)
 {
 	_position.reset(new Vector2(coor0, coor1));
 }
 
-Node2::Node2(const Vector2& position) : unique_ptr_helper(this)
+Node2::Node2(const Vector2& position) : unique_ptr_helper<Node2>(this)
 {
 	_position.reset(new Vector2(position));
 }
