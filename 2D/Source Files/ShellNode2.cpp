@@ -18,17 +18,22 @@ Vector2 ShellNode2::operator-(const ShellNode2& right) const
 
 Vector2 ShellNode2::operator-(const Node2& right) const
 {
-	return *_position - *right._position;
+	return *_position - right.GetPosition();
 }
 
-ShellNode2::ShellNode2() 
+ShellNode2::ShellNode2() : unique_ptr_helper(this)
 {
 	_position.reset(new Vector2());
 }
 
-ShellNode2::ShellNode2(const double& coor0, const double& coor1)
+ShellNode2::ShellNode2(const double& coor0, const double& coor1) : unique_ptr_helper(this)
 {
 	_position.reset(new Vector2(coor0, coor1));
+}
+
+ShellNode2::ShellNode2(const Vector2& position) : unique_ptr_helper(this)
+{
+	_position.reset(new Vector2(position));
 }
 
 ShellNode2::~ShellNode2()
@@ -38,7 +43,6 @@ ShellNode2::~ShellNode2()
 		if (*edge)
 		{
 			edge->release();
-			delete edge;
 		}
 	}
 }

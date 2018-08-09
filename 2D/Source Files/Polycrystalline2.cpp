@@ -443,8 +443,8 @@ void AddFENodesDataFromSimpex(ofstream& fenData, const Simplex2& simp, bool isFi
 	{
 		fenData << '\n';
 	}
-	fenData << simp.edges[0]->nodes[0]->globalNum << ' ';
-	fenData << simp.edges[0]->nodes[1]->globalNum << ' ';
+	fenData << (*(*simp.edges[0])->nodes[0])->globalNum << ' ';
+	fenData << (*(*simp.edges[0])->nodes[1])->globalNum << ' ';
 	if (simp.edges[1]->nodes[0] == simp.edges[0]->nodes[0] ||
 		simp.edges[1]->nodes[0] == simp.edges[0]->nodes[1])
 	{
@@ -459,16 +459,16 @@ void AddFENodesDataFromSimpex(ofstream& fenData, const Simplex2& simp, bool isFi
 // Different for 3 dimensions.
 void AddFENodesDataFromSimpex(vector<size_t>& fenData, const Simplex2& simp)
 {
-	fenData.push_back(simp.edges[0]->nodes[0]->globalNum);
-	fenData.push_back(simp.edges[0]->nodes[1]->globalNum);
-	if (simp.edges[1]->nodes[0] == simp.edges[0]->nodes[0] ||
-		simp.edges[1]->nodes[0] == simp.edges[0]->nodes[1])
+	fenData.push_back((*(*simp.edges[0])->nodes[0])->globalNum);
+	fenData.push_back((*(*simp.edges[0])->nodes[1])->globalNum);
+	if ((*simp.edges[1])->nodes[0] == (*simp.edges[0])->nodes[0] ||
+		(*simp.edges[1])->nodes[0] == (*simp.edges[0])->nodes[1])
 	{
-		fenData.push_back(simp.edges[1]->nodes[1]->globalNum);
+		fenData.push_back((*(*simp.edges[1])->nodes[1])->globalNum);
 	}
 	else
 	{
-		fenData.push_back(simp.edges[1]->nodes[0]->globalNum);
+		fenData.push_back((*(*simp.edges[1])->nodes[0])->globalNum);
 	}
 }
 
@@ -483,13 +483,13 @@ void AddFENodesData(ofstream& feNodesData, const list<Crystallite2*>& crystallit
 		size_t simp_size = (*crys_iter)->simplexes.size();
 		if (*crys_iter && (*crys_iter)->simplexes.size() > 0)
 		{
-			for (list<Simplex2*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
+			for (list<unique_ptr<Simplex2>*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
 				simp_iter != (*crys_iter)->simplexes.end();
 				simp_iter++)
 			{
 				if (*simp_iter)
 				{
-					AddFENodesDataFromSimpex(feNodesData, **simp_iter, isFirst);
+					AddFENodesDataFromSimpex(feNodesData, ***simp_iter, isFirst);
 					isFirst = false;
 				}
 			}
@@ -506,13 +506,13 @@ void AddFENodesData(vector<size_t>& feNodesData, const list<Crystallite2*>& crys
 	{
 		if (*crys_iter)
 		{
-			for (list<Simplex2*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
+			for (list<unique_ptr<Simplex2>*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
 				simp_iter != (*crys_iter)->simplexes.end();
 				simp_iter++)
 			{
 				if (*simp_iter)
 				{
-					AddFENodesDataFromSimpex(feNodesData, **simp_iter);
+					AddFENodesDataFromSimpex(feNodesData, ***simp_iter);
 				}
 			}
 		}
@@ -549,7 +549,7 @@ void Polycrystalline2::InputData(ifstream& shell_nodes, ifstream& cryses_edges, 
 		_shellNodes.push_back(
 			new ShellNode2(
 				dbuf[0], 
-				dbuf[1]));
+				dbuf[1])->GetPtrToUniquePtr());
 	}
 	shell_nodes.clear();
 	shell_nodes.seekg(0);
@@ -643,8 +643,8 @@ void Polycrystalline2::InputData(const vector<double>& shell_nodes, const vector
 
 		_shellNodes.push_back(
 			new ShellNode2(
-				shell_nodes[i], 
-				shell_nodes[i + 1]));
+				shell_nodes[i],
+				shell_nodes[i + 1])->GetPtrToUniquePtr());
 
 		size_t ibuf[2];
 		size_t numsNum;
@@ -684,10 +684,9 @@ void Polycrystalline2::InputData(const vector<double>& shell_nodes, const vector
 				{
 					(*crys_iter)->shellEdges.push_back(
 						shell_edge_buf =
-						new unique_ptr<ShellEdge2>(
 							new ShellEdge2(
 								**_shellNodes[*(cp_iter)],
-								**_shellNodes[*(cp_iter + 1)])));
+								**_shellNodes[*(cp_iter + 1)])->GetPtrToUniquePtr());
 					(*shell_edge_buf)->inclInCryses.push_back(*crys_iter);
 					_shellEdges.push_back(shell_edge_buf);
 				}

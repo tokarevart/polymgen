@@ -3,11 +3,13 @@
 #include "AllClassInclusions.h"
 #include "AllClassDefinitions.h"
 
+using std::unique_ptr;
 
-class Simplex2
+
+class Simplex2 : public unique_ptr_helper<Simplex2>
 {
 public:
-	std::unique_ptr<Edge2>* edges[3];
+	unique_ptr<Edge2>* edges[3];
 
 	const bool IsContaining(const Edge2& edge) const;
 	const bool IsContaining(const Node2& node) const;

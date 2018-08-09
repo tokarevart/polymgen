@@ -1,12 +1,14 @@
 #pragma once
 #include <list>
+#include <memory>
 #include "AllClassInclusions.h"
 #include "AllClassDefinitions.h"
 
 using std::unique_ptr;
 using std::list;
 
-class ShellNode2
+
+class ShellNode2 : public unique_ptr_helper<ShellNode2>
 {
 private:
 	unique_ptr<Vector2> _position;
@@ -23,7 +25,6 @@ public:
 
 	ShellNode2();
 	ShellNode2(const double& coor0, const double& coor1);
+	ShellNode2(const Vector2& position);
 	~ShellNode2();
-
-	friend Node2;
 };

@@ -3,13 +3,16 @@
 #include "AllClassInclusions.h"
 #include "AllClassDefinitions.h"
 
+using std::unique_ptr;
+using std::list;
 
-class Edge2
+
+class Edge2 : public unique_ptr_helper<Edge2>
 {
 public:
-	std::unique_ptr<Node2>* nodes[2];
+	unique_ptr<Node2>* nodes[2];
 
-	std::list<std::unique_ptr<Simplex2>*> inclInSimplexes;
+	list<unique_ptr<Simplex2>*> inclInSimplexes;
 
 	const double Magnitude() const;
 	const double SqrMagnitude() const;

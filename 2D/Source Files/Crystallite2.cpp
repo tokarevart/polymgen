@@ -1,20 +1,6 @@
 #include "Crystallite2.h"
 
 
-const bool Crystallite2::Contains(const Simplex2& simp) const
-{
-	// Do something
-
-	return false;
-}
-
-const bool Crystallite2::Contains(const Edge2& edge) const
-{
-	// Do something
-
-	return false;
-}
-
 const bool Crystallite2::Contains(const Node2& node) const
 {
 	// Do something
@@ -31,7 +17,6 @@ Crystallite2::~Crystallite2()
 		if (*edge)
 		{
 			edge->release();
-			delete edge;
 		}
 	}
 	for (auto &simp : simplexes)
@@ -39,7 +24,6 @@ Crystallite2::~Crystallite2()
 		if (*simp)
 		{
 			simp->release();
-			delete simp;
 		}
 	}
 }

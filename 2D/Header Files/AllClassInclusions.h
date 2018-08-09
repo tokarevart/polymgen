@@ -7,3 +7,4 @@
 #include "Node2.h"
 #include "ShellNode2.h"
 #include "Vector2.h"
+#include "unique_ptr_helper.h"

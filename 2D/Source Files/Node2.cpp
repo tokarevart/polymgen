@@ -37,7 +37,7 @@ Vector2 Node2::operator-(const Node2& right) const
 
 Vector2 Node2::operator-(const ShellNode2& right) const
 {
-	return *_position - *right._position;
+	return *_position - right.GetPosition();
 }
 
 Node2& Node2::operator+=(const Vector2& right)
@@ -48,7 +48,7 @@ Node2& Node2::operator+=(const Vector2& right)
 	}
 	else if (belongsToShellEdge)
 	{
-		(*_position) += Vector2(right).Project(*belongsToShellEdge->nodes[0] - *belongsToShellEdge->nodes[1]);
+		(*_position) += Vector2(right).Project(**(*belongsToShellEdge)->nodes[0] - **(*belongsToShellEdge)->nodes[1]);
 	}
 	else
 	{
@@ -56,15 +56,15 @@ Node2& Node2::operator+=(const Vector2& right)
 	}
 }
 
-Node2 & Node2::operator-=(const Vector2 & right)
+Node2& Node2::operator-=(const Vector2& right)
 {
-	if (belongsToShellNode)
+	if (*belongsToShellNode)
 	{
 		return *this;
 	}
-	else if (belongsToShellEdge)
+	else if (*belongsToShellEdge)
 	{
-		(*_position) -= Vector2(right).Project(*belongsToShellEdge->nodes[0] - *belongsToShellEdge->nodes[1]);
+		(*_position) -= Vector2(right).Project(**(*belongsToShellEdge)->nodes[0] - **(*belongsToShellEdge)->nodes[1]);
 	}
 	else
 	{
@@ -72,19 +72,19 @@ Node2 & Node2::operator-=(const Vector2 & right)
 	}
 }
 
-Node2::Node2() 
+Node2::Node2() : unique_ptr_helper(this)
 {
 	_position.reset(new Vector2());
 }
 
-Node2::Node2(const double& coor0, const double& coor1)
+Node2::Node2(const double& coor0, const double& coor1) : unique_ptr_helper(this)
 {
 	_position.reset(new Vector2(coor0, coor1));
 }
 
-Node2::Node2(const Vector2& position)
+Node2::Node2(const Vector2& position) : unique_ptr_helper(this)
 {
-	*_position = position;
+	_position.reset(new Vector2(position));
 }
 
 Node2::~Node2()
@@ -94,7 +94,6 @@ Node2::~Node2()
 		if (*edge)
 		{
 			edge->release();
-			delete edge;
 		}
 	}
 }
