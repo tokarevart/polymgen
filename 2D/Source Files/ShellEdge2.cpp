@@ -39,12 +39,12 @@ const bool ShellEdge2::IsContaining(const ShellNode2& node) const
 
 ShellEdge2::ShellEdge2()
 {
-	_normal = new Vector2();
+	_normal.reset(new Vector2());
 }
 
 ShellEdge2::ShellEdge2(ShellNode2& node0, ShellNode2& node1)
 {
-	_normal = new Vector2();
+	_normal.reset(new Vector2());
 
 	nodes[0] = &node0;
 	nodes[1] = &node1;
@@ -64,16 +64,5 @@ ShellEdge2::~ShellEdge2()
 	if (nodes[1])
 	{
 		nodes[1]->inclInEdges.remove(this);
-	}
-	//for (auto attedNode : attachedNodes)
-	//{
-	//	if (attedNode)
-	//	{
-	//		attedNode->belongsToShellEdge = nullptr;
-	//	}
-	//}
-	if (_normal)
-	{
-		delete _normal;
 	}
 }

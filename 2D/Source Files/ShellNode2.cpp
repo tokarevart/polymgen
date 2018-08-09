@@ -23,25 +23,22 @@ Vector2 ShellNode2::operator-(const Node2& right) const
 
 ShellNode2::ShellNode2() 
 {
-	_position = new Vector2();
+	_position.reset(new Vector2());
 }
 
 ShellNode2::ShellNode2(const double& coor0, const double& coor1)
 {
-	_position = new Vector2(coor0, coor1);
+	_position.reset(new Vector2(coor0, coor1));
 }
 
 ShellNode2::~ShellNode2()
 {
 	for (auto &edge : inclInEdges)
 	{
-		if (edge)
+		if (*edge)
 		{
+			edge->release();
 			delete edge;
 		}
-	}
-	if (_position)
-	{
-		delete _position;
 	}
 }

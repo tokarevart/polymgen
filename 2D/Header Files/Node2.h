@@ -19,7 +19,6 @@ public:
 	std::list<std::unique_ptr<Node2>*> neighbors;
 	std::list<std::unique_ptr<Edge2>*> inclInEdges;
 	std::list<std::unique_ptr<Simplex2>*> inclInSimplexes;
-	std::list<Crystallite2*> inclInCryses;
 
 	void SetPosition(const Vector2& newPos);
 	void SetPosition(const double& coor0, const double& coor1);

@@ -91,8 +91,9 @@ Node2::~Node2()
 {
 	for (auto &edge : inclInEdges)
 	{
-		if (edge)
+		if (*edge)
 		{
+			edge->release();
 			delete edge;
 		}
 	}

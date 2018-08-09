@@ -68,14 +68,14 @@ void Polycrystalline2::GenerateFreeNodesEvenly(double* const polycrysSizeAxis, s
 	}
 }
 
-Edge2* Polycrystalline2::FindFreeEdge(const Node2& node0, const Node2& node1)
+unique_ptr<Edge2>* Polycrystalline2::FindFreeEdge(const Node2& node0, const Node2& node1)
 {
 	if (std::find(node0.neighbors.begin(), node0.neighbors.end(), &node1) == node0.neighbors.end())
 	{
 		return nullptr;
 	}
 
-	for (std::list<Edge2*>::const_iterator edges_iter = node0.inclInEdges.begin(), end = node0.inclInEdges.end();
+	for (list<Edge2*>::const_iterator edges_iter = node0.inclInEdges.begin(), end = node0.inclInEdges.end();
 		edges_iter != end; 
 		edges_iter++)
 	{
@@ -352,76 +352,6 @@ void Polycrystalline2::FitFreeMeshToShells()
 	FitFreeNodesToShellEdges();
 }
 
-const bool Polycrystalline2::IsContaining(const Crystallite2& crys) const
-{
-	return find(crystallites.begin(), crystallites.end(), &crys) != crystallites.end();
-}
-
-const bool Polycrystalline2::IsContaining(const Simplex2& simp) const
-{
-	for (auto crys : crystallites)
-	{
-		if (crys->IsContaining(simp))
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-const bool Polycrystalline2::IsContaining(const Edge2& edge) const
-{
-	for (auto crys : crystallites)
-	{
-		if (crys->IsContaining(edge))
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-const bool Polycrystalline2::IsContaining(const Node2& node) const
-{
-	for (auto crys : crystallites)
-	{
-		if (crys->IsContaining(node))
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-const bool Polycrystalline2::Contains(const Simplex2& simp) const
-{
-	for (auto crys : crystallites)
-	{
-		if (crys->Contains(simp))
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-const bool Polycrystalline2::Contains(const Edge2& edge) const
-{
-	for (auto crys : crystallites)
-	{
-		if (crys->Contains(edge))
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
 const bool Polycrystalline2::Contains(const Node2& node) const
 {
 	for (auto crys : crystallites)
@@ -435,16 +365,16 @@ const bool Polycrystalline2::Contains(const Node2& node) const
 	return false;
 }
 
-void AddNodesData(std::ofstream& nodesData, const std::list<Crystallite2*>& crystallites)
+void AddNodesData(ofstream& nodesData, const list<Crystallite2*>& crystallites)
 {
 	// Can be parallelized, but it's a bad idea.
 	size_t index = 0;
 	Vector2 bufPos;
-	for (std::list<Crystallite2*>::const_iterator crys_iter = crystallites.begin();
+	for (list<Crystallite2*>::const_iterator crys_iter = crystallites.begin();
 		crys_iter != crystallites.end();
 		crys_iter++)
 	{
-		for (std::list<Simplex2*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
+		for (list<Simplex2*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
 			simp_iter != (*crys_iter)->simplexes.end();
 			simp_iter++)
 		{
@@ -474,16 +404,16 @@ void AddNodesData(std::ofstream& nodesData, const std::list<Crystallite2*>& crys
 	}
 }
 
-void AddNodesData(std::vector<double>& nodesData, const std::list<Crystallite2*>& crystallites)
+void AddNodesData(vector<double>& nodesData, const list<Crystallite2*>& crystallites)
 {
 	// Can be parallelized, but it's a bad idea.
 	size_t index = 0;
 	Vector2 bufPos;
-	for (std::list<Crystallite2*>::const_iterator crys_iter = crystallites.begin();
+	for (list<Crystallite2*>::const_iterator crys_iter = crystallites.begin();
 		crys_iter != crystallites.end();
 		crys_iter++)
 	{
-		for (std::list<Simplex2*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
+		for (list<Simplex2*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
 			simp_iter != (*crys_iter)->simplexes.end();
 			simp_iter++)
 		{
@@ -507,7 +437,7 @@ void AddNodesData(std::vector<double>& nodesData, const std::list<Crystallite2*>
 }
 
 // Different for 3 dimensions.
-void AddFENodesDataFromSimpex(std::ofstream& fenData, const Simplex2& simp, bool isFirst)
+void AddFENodesDataFromSimpex(ofstream& fenData, const Simplex2& simp, bool isFirst)
 {
 	if (!isFirst)
 	{
@@ -527,7 +457,7 @@ void AddFENodesDataFromSimpex(std::ofstream& fenData, const Simplex2& simp, bool
 }
 
 // Different for 3 dimensions.
-void AddFENodesDataFromSimpex(std::vector<size_t>& fenData, const Simplex2& simp)
+void AddFENodesDataFromSimpex(vector<size_t>& fenData, const Simplex2& simp)
 {
 	fenData.push_back(simp.edges[0]->nodes[0]->globalNum);
 	fenData.push_back(simp.edges[0]->nodes[1]->globalNum);
@@ -542,18 +472,18 @@ void AddFENodesDataFromSimpex(std::vector<size_t>& fenData, const Simplex2& simp
 	}
 }
 
-void AddFENodesData(std::ofstream& feNodesData, const std::list<Crystallite2*>& crystallites)
+void AddFENodesData(ofstream& feNodesData, const list<Crystallite2*>& crystallites)
 {
 	// Can be parallelized, but it's a bad idea.
 	bool isFirst = true;
-	for (std::list<Crystallite2*>::const_iterator crys_iter = crystallites.begin();
+	for (list<Crystallite2*>::const_iterator crys_iter = crystallites.begin();
 		crys_iter != crystallites.end();
 		crys_iter++)
 	{
 		size_t simp_size = (*crys_iter)->simplexes.size();
 		if (*crys_iter && (*crys_iter)->simplexes.size() > 0)
 		{
-			for (std::list<Simplex2*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
+			for (list<Simplex2*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
 				simp_iter != (*crys_iter)->simplexes.end();
 				simp_iter++)
 			{
@@ -567,16 +497,16 @@ void AddFENodesData(std::ofstream& feNodesData, const std::list<Crystallite2*>& 
 	}
 }
 
-void AddFENodesData(std::vector<size_t>& feNodesData, const std::list<Crystallite2*>& crystallites)
+void AddFENodesData(vector<size_t>& feNodesData, const list<Crystallite2*>& crystallites)
 {
 	// Can be parallelized, but it's a bad idea.
-	for (std::list<Crystallite2*>::const_iterator crys_iter = crystallites.begin();
+	for (list<Crystallite2*>::const_iterator crys_iter = crystallites.begin();
 		crys_iter != crystallites.end();
 		crys_iter++)
 	{
 		if (*crys_iter)
 		{
-			for (std::list<Simplex2*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
+			for (list<Simplex2*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
 				simp_iter != (*crys_iter)->simplexes.end();
 				simp_iter++)
 			{
@@ -590,7 +520,7 @@ void AddFENodesData(std::vector<size_t>& feNodesData, const std::list<Crystallit
 }
 
 // Different for 3 dimensions.
-void Polycrystalline2::InputData(std::ifstream& shell_nodes, std::ifstream& cryses_edges, std::ifstream& gener_params)
+void Polycrystalline2::InputData(ifstream& shell_nodes, ifstream& cryses_edges, ifstream& gener_params)
 {
 	_minShellNodesCoor[0] = _minShellNodesCoor[1] = DBL_MAX;
 	_maxShellNodesCoor[0] = _maxShellNodesCoor[1] = DBL_MIN;
@@ -626,8 +556,8 @@ void Polycrystalline2::InputData(std::ifstream& shell_nodes, std::ifstream& crys
 
 	size_t ibuf[2];
 	size_t numsNum;
-	ShellEdge2** shell_edge_buf = nullptr;
-	for (std::list<Crystallite2*>::iterator crys_iter; !cryses_edges.eof();)
+	unique_ptr<ShellEdge2>* shell_edge_buf = nullptr;
+	for (list<Crystallite2*>::iterator crys_iter; !cryses_edges.eof();)
 	{
 		if (crystallites.empty())
 		{
@@ -646,13 +576,13 @@ void Polycrystalline2::InputData(std::ifstream& shell_nodes, std::ifstream& crys
 			cryses_edges >> ibuf[0];
 			cryses_edges >> ibuf[1];
 			
-			for (auto &s_edge : _shellNodes[ibuf[0]]->inclInEdges)
+			for (auto &s_edge : (*_shellNodes[ibuf[0]])->inclInEdges)
 			{
 				//if (s_edge->nodes[1] == _shellNodes[ibuf[1]] ||
 				//	  s_edge->nodes[1] == _shellNodes[ibuf[0]])
-				if (s_edge->IsContaining(*_shellNodes[ibuf[1]]))
+				if ((*s_edge)->IsContaining(**_shellNodes[ibuf[1]]))
 				{
-					shell_edge_buf = &s_edge;
+					shell_edge_buf = s_edge;
 				}
 			}
 			if (shell_edge_buf)
@@ -665,12 +595,12 @@ void Polycrystalline2::InputData(std::ifstream& shell_nodes, std::ifstream& crys
 
 				(*crys_iter)->shellEdges.push_back(
 					shell_edge_buf =
-					new ShellEdge2*(
+					new unique_ptr<ShellEdge2>(
 						new ShellEdge2(
-							*_shellNodes[ibuf[0]],
-							*_shellNodes[ibuf[1]])));
+							**_shellNodes[ibuf[0]],
+							**_shellNodes[ibuf[1]])));
 				(*shell_edge_buf)->inclInCryses.push_back(*crys_iter);
-				_shellEdges.push_back(*shell_edge_buf);
+				_shellEdges.push_back(shell_edge_buf);
 			}
 			shell_edge_buf = nullptr;
 		}
@@ -687,7 +617,7 @@ void Polycrystalline2::InputData(std::ifstream& shell_nodes, std::ifstream& crys
 }
 
 // Different for 3 dimensions.
-void Polycrystalline2::InputData(const std::vector<double>& shell_nodes, const std::vector<size_t>& cryses_edges, const std::vector<size_t>& gener_params)
+void Polycrystalline2::InputData(const vector<double>& shell_nodes, const vector<size_t>& cryses_edges, const vector<size_t>& gener_params)
 {
 	_minShellNodesCoor[0] = _minShellNodesCoor[1] = DBL_MAX;
 	_maxShellNodesCoor[0] = _maxShellNodesCoor[1] = DBL_MIN;
@@ -718,9 +648,9 @@ void Polycrystalline2::InputData(const std::vector<double>& shell_nodes, const s
 
 		size_t ibuf[2];
 		size_t numsNum;
-		std::unique_ptr<ShellEdge2>* shell_edge_buf;
-		std::vector<size_t>::const_iterator cp_iter = cryses_edges.begin();
-		for (std::list<Crystallite2*>::iterator crys_iter; cp_iter != cryses_edges.end(); crys_iter++)
+		unique_ptr<ShellEdge2>* shell_edge_buf;
+		vector<size_t>::const_iterator cp_iter = cryses_edges.begin();
+		for (list<Crystallite2*>::iterator crys_iter; cp_iter != cryses_edges.end(); crys_iter++)
 		{
 			if (crystallites.empty())
 			{
@@ -736,16 +666,13 @@ void Polycrystalline2::InputData(const std::vector<double>& shell_nodes, const s
 			//numsNum *= 2; // numsNum *= 3; for 3 dimensions.
 			for (size_t j = 0; j < numsNum; j++)
 			{
-				for (auto &s_edge : _shellNodes[ibuf[0]]->inclInEdges)
+				for (auto &s_edge : (*_shellNodes[ibuf[0]])->inclInEdges)
 				{
-					//if ((s_edge->nodes[0] == _shellNodes[ibuf[0]] &&
-					//	s_edge->nodes[1] == _shellNodes[ibuf[1]]) ||
-					//	(s_edge->nodes[1] == _shellNodes[ibuf[0]] &&
-					//	s_edge->nodes[0] == _shellNodes[ibuf[1]]))
-					if (s_edge->IsContaining(*_shellNodes[ibuf[0]]) &&
-						s_edge->IsContaining(*_shellNodes[ibuf[1]]))
+					//if (s_edge->nodes[1] == _shellNodes[ibuf[1]] ||
+					//	  s_edge->nodes[0] == _shellNodes[ibuf[1]])
+					if ((*s_edge)->IsContaining(**_shellNodes[ibuf[1]]))
 					{
-						shell_edge_buf = &s_edge;
+						shell_edge_buf = s_edge;
 					}
 				}
 				if (shell_edge_buf)
@@ -757,12 +684,12 @@ void Polycrystalline2::InputData(const std::vector<double>& shell_nodes, const s
 				{
 					(*crys_iter)->shellEdges.push_back(
 						shell_edge_buf =
-						new std::unique_ptr<ShellEdge2>(
+						new unique_ptr<ShellEdge2>(
 							new ShellEdge2(
-								*_shellNodes[*(cp_iter)],
-								*_shellNodes[*(cp_iter + 1)])));
+								**_shellNodes[*(cp_iter)],
+								**_shellNodes[*(cp_iter + 1)])));
 					(*shell_edge_buf)->inclInCryses.push_back(*crys_iter);
-					_shellEdges.push_back(shell_edge_buf->get());
+					_shellEdges.push_back(shell_edge_buf);
 				}
 				shell_edge_buf = nullptr;
 
@@ -775,13 +702,13 @@ void Polycrystalline2::InputData(const std::vector<double>& shell_nodes, const s
 	_l_av = (_l_min + _l_max) * 0.5;
 }
 
-void Polycrystalline2::OutputData(std::ofstream& nodesData, std::ofstream& feNodesData) const
+void Polycrystalline2::OutputData(ofstream& nodesData, ofstream& feNodesData) const
 {
 	AddNodesData(nodesData, crystallites);
 	AddFENodesData(feNodesData, crystallites);
 }
 
-void Polycrystalline2::OutputData(std::vector<double>& nodesData, std::vector<size_t>& feNodesData) const
+void Polycrystalline2::OutputData(vector<double>& nodesData, vector<size_t>& feNodesData) const
 {
 	AddNodesData(nodesData, crystallites);
 	AddFENodesData(feNodesData, crystallites);
@@ -789,12 +716,12 @@ void Polycrystalline2::OutputData(std::vector<double>& nodesData, std::vector<si
 
 Polycrystalline2::Polycrystalline2() {}
 
-Polycrystalline2::Polycrystalline2(std::ifstream& shell_nodes, std::ifstream& cryses_edges, std::ifstream& gener_params)
+Polycrystalline2::Polycrystalline2(ifstream& shell_nodes, ifstream& cryses_edges, ifstream& gener_params)
 {
 	InputData(shell_nodes, cryses_edges, gener_params);
 }
 
-Polycrystalline2::Polycrystalline2(const std::vector<double>& shell_nodes, const std::vector<size_t>& cryses_edges, const std::vector<size_t>& gener_params)
+Polycrystalline2::Polycrystalline2(const vector<double>& shell_nodes, const vector<size_t>& cryses_edges, const vector<size_t>& gener_params)
 {
 	InputData(shell_nodes, cryses_edges, gener_params);
 }

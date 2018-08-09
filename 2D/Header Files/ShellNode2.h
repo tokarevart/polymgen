@@ -3,16 +3,17 @@
 #include "AllClassInclusions.h"
 #include "AllClassDefinitions.h"
 
+using std::unique_ptr;
+using std::list;
 
 class ShellNode2
 {
 private:
-	Vector2* _position;
+	unique_ptr<Vector2> _position;
 
 public:
-	//Node2* attachedNode = nullptr;
-	std::list<ShellEdge2*> inclInEdges;
-	std::list<Crystallite2*> inclInCryses;
+	list<unique_ptr<ShellEdge2>*> inclInEdges;
+	list<Crystallite2*> inclInCryses;
 
 	const Vector2& GetPosition() const;
 

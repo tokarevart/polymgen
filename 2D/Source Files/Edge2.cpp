@@ -65,8 +65,9 @@ Edge2::~Edge2()
 
 	for (auto &simp : inclInSimplexes)
 	{
-		if (simp)
+		if (*simp)
 		{
+			simp->release();
 			delete simp;
 		}
 	}
