@@ -32,10 +32,10 @@ const bool ShellEdge2::IsContaining(const ShellNode2& node) const
 	return false;
 }
 
-const bool ShellEdge2::IsAttached(const Node2& node) const
-{
-	return find(attachedNodes.begin(), attachedNodes.end(), &node) != attachedNodes.end();
-}
+//const bool ShellEdge2::IsAttached(const Node2& node) const
+//{
+//	return find(attachedNodes.begin(), attachedNodes.end(), &node) != attachedNodes.end();
+//}
 
 ShellEdge2::ShellEdge2()
 {
@@ -57,20 +57,21 @@ ShellEdge2::ShellEdge2(ShellNode2& node0, ShellNode2& node1)
 
 ShellEdge2::~ShellEdge2()
 {
-	for (auto &node : nodes)
+	if (nodes[0])
 	{
-		if (node)
-		{
-			node->inclInEdges.remove(this);
-		}
+		nodes[0]->inclInEdges.remove(this);
 	}
-	for (auto attedNode : attachedNodes)
+	if (nodes[1])
 	{
-		if (attedNode)
-		{
-			attedNode->belongsToShellEdge = nullptr;
-		}
+		nodes[1]->inclInEdges.remove(this);
 	}
+	//for (auto attedNode : attachedNodes)
+	//{
+	//	if (attedNode)
+	//	{
+	//		attedNode->belongsToShellEdge = nullptr;
+	//	}
+	//}
 	if (_normal)
 	{
 		delete _normal;

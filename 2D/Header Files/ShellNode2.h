@@ -10,7 +10,7 @@ private:
 	Vector2* _position;
 
 public:
-	Node2* attachedNode;
+	//Node2* attachedNode = nullptr;
 	std::list<ShellEdge2*> inclInEdges;
 	std::list<Crystallite2*> inclInCryses;
 

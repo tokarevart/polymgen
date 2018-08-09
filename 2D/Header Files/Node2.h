@@ -7,18 +7,18 @@
 class Node2
 {
 private:
-	Vector2* _position;
+	std::unique_ptr<Vector2> _position;
 
 public:
 	bool isAddedToNodesData = false;
 	size_t globalNum;
 
-	ShellEdge2* belongsToShellEdge;
-	ShellNode2* belongsToShellNode;
+	std::unique_ptr<ShellEdge2>* belongsToShellEdge = nullptr;
+	std::unique_ptr<ShellNode2>* belongsToShellNode = nullptr;
 
-	std::list<Node2*> neighbors;
-	std::list<Edge2*> inclInEdges;
-	std::list<Simplex2*> inclInSimplexes;
+	std::list<std::unique_ptr<Node2>*> neighbors;
+	std::list<std::unique_ptr<Edge2>*> inclInEdges;
+	std::list<std::unique_ptr<Simplex2>*> inclInSimplexes;
 	std::list<Crystallite2*> inclInCryses;
 
 	void SetPosition(const Vector2& newPos);

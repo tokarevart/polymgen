@@ -1,4 +1,10 @@
 #include "Polycrystalline2.h"
+#include <algorithm>
+
+#define DET(a, b, c, d) \
+		(a * d - b * c)
+#define BETWEEN(p0_coor, p1_coor, p) \
+		(std::min(p0_coor, p1_coor) - DBL_EPSILON < p && p < std::max(p0_coor, p1_coor) + DBL_EPSILON)
 
 void Polycrystalline2::Debug()
 {
@@ -86,7 +92,7 @@ Edge2* Polycrystalline2::FindFreeEdge(const Node2& node0, const Node2& node1)
 
 void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis_0)
 {
-	Simplex2* simp_buf;
+	Simplex2* simp_buf = nullptr;
 	
 	for (size_t i = 0, max = _freeNodes.size() - minNodesNumAxis_0 - 1; i < max;)
 	{
@@ -96,6 +102,11 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 			simp_buf->edges[0] = new Edge2(*_freeNodes[i], *_freeNodes[i + 1]);
 			simp_buf->edges[1] = new Edge2(*_freeNodes[i + 1], *_freeNodes[i + 1 + minNodesNumAxis_0]);
 			simp_buf->edges[2] = new Edge2(*_freeNodes[i + 1 + minNodesNumAxis_0], *_freeNodes[i]);
+			_freeEdges.insert(
+				_freeEdges.end(),
+				{ simp_buf->edges[0],
+				  simp_buf->edges[1],
+				  simp_buf->edges[2] });
 
 			simp_buf->edges[0]->inclInSimplexes.push_back(simp_buf);
 			simp_buf->edges[1]->inclInSimplexes.push_back(simp_buf);
@@ -116,6 +127,11 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 			simp_buf->edges[0] = new Edge2(*_freeNodes[i], *_freeNodes[i + 1]);
 			simp_buf->edges[1] = new Edge2(*_freeNodes[i + 1], *_freeNodes[i + 1 + minNodesNumAxis_0]);
 			simp_buf->edges[2] = new Edge2(*_freeNodes[i + 1 + minNodesNumAxis_0], *_freeNodes[i]);
+			_freeEdges.insert(
+				_freeEdges.end(), 
+				{ simp_buf->edges[0], 
+				  simp_buf->edges[1], 
+				  simp_buf->edges[2] });
 
 			simp_buf->edges[0]->inclInSimplexes.push_back(simp_buf);
 			simp_buf->edges[1]->inclInSimplexes.push_back(simp_buf);
@@ -126,7 +142,7 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 		i++;
 	}
 
-	Edge2* edge_buf;
+	Edge2* edge_buf = nullptr;
 	
 	for (size_t i = 1, max = _freeNodes.size() - minNodesNumAxis_0 - 1; i < max;)
 	{
@@ -140,6 +156,7 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 			else
 			{
 				simp_buf->edges[0] = new Edge2(*_freeNodes[i], *_freeNodes[i + 1 + minNodesNumAxis_0]);
+				_freeEdges.push_back(simp_buf->edges[0]);
 			}
 			if (edge_buf = FindFreeEdge(*_freeNodes[i + 1 + minNodesNumAxis_0], *_freeNodes[i + minNodesNumAxis_0]))
 			{
@@ -148,6 +165,7 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 			else
 			{
 				simp_buf->edges[1] = new Edge2(*_freeNodes[i + 1 + minNodesNumAxis_0], *_freeNodes[i + minNodesNumAxis_0]);
+				_freeEdges.push_back(simp_buf->edges[1]);
 			}
 			if (edge_buf = FindFreeEdge(*_freeNodes[i], *_freeNodes[i + minNodesNumAxis_0]))
 			{
@@ -156,6 +174,7 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 			else
 			{
 				simp_buf->edges[2] = new Edge2(*_freeNodes[i], *_freeNodes[i + minNodesNumAxis_0]);
+				_freeEdges.push_back(simp_buf->edges[2]);
 			}
 
 			simp_buf->edges[0]->inclInSimplexes.push_back(simp_buf);
@@ -181,6 +200,7 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 			else
 			{
 				simp_buf->edges[0] = new Edge2(*_freeNodes[i], *_freeNodes[i + 1 + minNodesNumAxis_0]);
+				_freeEdges.push_back(simp_buf->edges[0]);
 			}
 			if (edge_buf = FindFreeEdge(*_freeNodes[i + 1 + minNodesNumAxis_0], *_freeNodes[i + minNodesNumAxis_0]))
 			{
@@ -189,6 +209,7 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 			else
 			{
 				simp_buf->edges[1] = new Edge2(*_freeNodes[i + 1 + minNodesNumAxis_0], *_freeNodes[i + minNodesNumAxis_0]);
+				_freeEdges.push_back(simp_buf->edges[1]);
 			}
 			if (edge_buf = FindFreeEdge(*_freeNodes[i], *_freeNodes[i + minNodesNumAxis_0]))
 			{
@@ -197,6 +218,7 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 			else
 			{
 				simp_buf->edges[2] = new Edge2(*_freeNodes[i], *_freeNodes[i + minNodesNumAxis_0]);
+				_freeEdges.push_back(simp_buf->edges[2]);
 			}
 
 			simp_buf->edges[0]->inclInSimplexes.push_back(simp_buf);
@@ -242,7 +264,7 @@ void Polycrystalline2::FitFreeNodesToShellNodes()
 			}
 		}
 
-		//#pragma omp critical(section0)
+		//#pragma omp critical(FitFreeNodesToShellNodes)
 		//{
 		node_with_min_sqr_dist->SetPosition(_shellNodes[i]->GetPosition());
 		node_with_min_sqr_dist->belongsToShellNode = _shellNodes[i];
@@ -250,9 +272,84 @@ void Polycrystalline2::FitFreeNodesToShellNodes()
 	}
 }
 
+void Polycrystalline2::FitFreeNodesToShellEdges()
+{
+	size_t maxi = _freeEdges.size();
+	//#pragma omp parallel for firstprivate(maxi)
+	for (size_t i = 0; i < maxi; i++)
+	{
+		for (size_t j = 0, maxj = _shellEdges.size(); j < maxj; j++)
+		{
+			if (_freeEdges[i]->nodes[0]->belongsToShellNode ||
+				_freeEdges[i]->nodes[1]->belongsToShellNode)
+			{
+				continue;
+			}
+			if (((*_freeEdges[i]->nodes[0])[0] < (*_shellEdges[j]->nodes[0])[0]  &&
+				 (*_freeEdges[i]->nodes[1])[0] < (*_shellEdges[j]->nodes[0])[0]  &&
+				 (*_freeEdges[i]->nodes[0])[0] < (*_shellEdges[j]->nodes[1])[0]  &&
+				 (*_freeEdges[i]->nodes[1])[0] < (*_shellEdges[j]->nodes[1])[0]) ||
+
+				((*_freeEdges[i]->nodes[0])[1] < (*_shellEdges[j]->nodes[0])[1]  &&
+				 (*_freeEdges[i]->nodes[1])[1] < (*_shellEdges[j]->nodes[0])[1]  &&
+				 (*_freeEdges[i]->nodes[0])[1] < (*_shellEdges[j]->nodes[1])[1]  &&
+				 (*_freeEdges[i]->nodes[1])[1] < (*_shellEdges[j]->nodes[1])[1]) ||
+
+				((*_freeEdges[i]->nodes[0])[0] > (*_shellEdges[j]->nodes[0])[0]  &&
+				 (*_freeEdges[i]->nodes[1])[0] > (*_shellEdges[j]->nodes[0])[0]  &&
+				 (*_freeEdges[i]->nodes[0])[0] > (*_shellEdges[j]->nodes[1])[0]  &&
+				 (*_freeEdges[i]->nodes[1])[0] > (*_shellEdges[j]->nodes[1])[0]) ||
+
+				((*_freeEdges[i]->nodes[0])[1] > (*_shellEdges[j]->nodes[0])[1]  &&
+				 (*_freeEdges[i]->nodes[1])[1] > (*_shellEdges[j]->nodes[0])[1]  &&
+				 (*_freeEdges[i]->nodes[0])[1] > (*_shellEdges[j]->nodes[1])[1]  &&
+				 (*_freeEdges[i]->nodes[1])[1] > (*_shellEdges[j]->nodes[1])[1]))
+			{
+				continue;
+			}
+			//_freeEdges[i]->nodes[0]->SetPosition(0, 0);
+			//_freeEdges[i]->nodes[1]->SetPosition(0, 0);
+			double A1 = (*_freeEdges [i]->nodes[0])[1] - (*_freeEdges [i]->nodes[1])[1];
+			double B1 = (*_freeEdges [i]->nodes[1])[0] - (*_freeEdges [i]->nodes[0])[0]; 
+			double C1 = -A1 * (*_freeEdges [i]->nodes[0])[0] - B1 * (*_freeEdges [i]->nodes[0])[1];
+			double A2 = (*_shellEdges[j]->nodes[0])[1] - (*_shellEdges[j]->nodes[1])[1];
+			double B2 = (*_shellEdges[j]->nodes[1])[0] - (*_shellEdges[j]->nodes[0])[0];
+			double C2 = -A2 * (*_shellEdges[j]->nodes[0])[0] - B2 * (*_shellEdges[j]->nodes[0])[1];
+			double minus_inv_zn = -1.0 / DET(A1, B1, A2, B2);
+			double x = DET(C1, B1, C2, B2) * minus_inv_zn;
+			double y = DET(A1, C1, A2, C2) * minus_inv_zn;
+			if ((std::min((*_freeEdges[i]->nodes[0])[0], (*_freeEdges[i]->nodes[1])[0]) - DBL_EPSILON < x && x < std::max((*_freeEdges[i]->nodes[0])[0], (*_freeEdges[i]->nodes[1])[0]) + DBL_EPSILON) &&//BETWEEN((*_freeEdges [i]->nodes[0])[0], (*_freeEdges [i]->nodes[1])[0], x) &&
+				BETWEEN((*_freeEdges [i]->nodes[0])[1], (*_freeEdges [i]->nodes[1])[1], y) &&
+				BETWEEN((*_shellEdges[j]->nodes[0])[0], (*_shellEdges[j]->nodes[1])[0], x) &&
+				BETWEEN((*_shellEdges[j]->nodes[0])[1], (*_shellEdges[j]->nodes[1])[1], y))
+			{
+				Vector2 intersect_point(x, y);
+				if ((_freeEdges[i]->nodes[0]->GetPosition() - intersect_point).SqrMagnitude() <
+					(_freeEdges[i]->nodes[1]->GetPosition() - intersect_point).SqrMagnitude())
+				{
+					//#pragma omp critical(FitFreeNodesToShellEdges)
+					//{
+					_freeEdges[i]->nodes[0]->SetPosition(intersect_point);
+					_freeEdges[i]->nodes[0]->belongsToShellEdge = _shellEdges[j];
+					//}
+				}
+				else
+				{
+					//#pragma omp critical(FitFreeNodesToShellEdges)
+					//{
+					_freeEdges[i]->nodes[1]->SetPosition(intersect_point);
+					_freeEdges[i]->nodes[1]->belongsToShellEdge = _shellEdges[j];
+					//}
+				}
+			}
+		}
+	}
+}
+
 void Polycrystalline2::FitFreeMeshToShells()
 {
 	FitFreeNodesToShellNodes();
+	FitFreeNodesToShellEdges();
 }
 
 const bool Polycrystalline2::IsContaining(const Crystallite2& crys) const
@@ -453,7 +550,8 @@ void AddFENodesData(std::ofstream& feNodesData, const std::list<Crystallite2*>& 
 		crys_iter != crystallites.end();
 		crys_iter++)
 	{
-		if (*crys_iter)
+		size_t simp_size = (*crys_iter)->simplexes.size();
+		if (*crys_iter && (*crys_iter)->simplexes.size() > 0)
 		{
 			for (std::list<Simplex2*>::const_iterator simp_iter = (*crys_iter)->simplexes.begin();
 				simp_iter != (*crys_iter)->simplexes.end();
@@ -528,6 +626,7 @@ void Polycrystalline2::InputData(std::ifstream& shell_nodes, std::ifstream& crys
 
 	size_t ibuf[2];
 	size_t numsNum;
+	ShellEdge2** shell_edge_buf = nullptr;
 	for (std::list<Crystallite2*>::iterator crys_iter; !cryses_edges.eof();)
 	{
 		if (crystallites.empty())
@@ -541,15 +640,39 @@ void Polycrystalline2::InputData(std::ifstream& shell_nodes, std::ifstream& crys
 			crys_iter++;
 		}
 		cryses_edges >> numsNum;
-		numsNum *= 2; // numsNum *= 3; for 3 dimensions.
+		//numsNum *= 2; // numsNum *= 3; for 3 dimensions.
 		for (size_t j = 0; j < numsNum; j++)
 		{
 			cryses_edges >> ibuf[0];
 			cryses_edges >> ibuf[1];
-			(*crys_iter)->shellEdges.push_back(
-				new ShellEdge2(
-					*_shellNodes[ibuf[0]],
-					*_shellNodes[ibuf[1]]));
+			
+			for (auto &s_edge : _shellNodes[ibuf[0]]->inclInEdges)
+			{
+				//if (s_edge->nodes[1] == _shellNodes[ibuf[1]] ||
+				//	  s_edge->nodes[1] == _shellNodes[ibuf[0]])
+				if (s_edge->IsContaining(*_shellNodes[ibuf[1]]))
+				{
+					shell_edge_buf = &s_edge;
+				}
+			}
+			if (shell_edge_buf)
+			{
+				(*crys_iter)->shellEdges.push_back(shell_edge_buf);
+				(*shell_edge_buf)->inclInCryses.push_back(*crys_iter);
+			}
+			else
+			{
+
+				(*crys_iter)->shellEdges.push_back(
+					shell_edge_buf =
+					new ShellEdge2*(
+						new ShellEdge2(
+							*_shellNodes[ibuf[0]],
+							*_shellNodes[ibuf[1]])));
+				(*shell_edge_buf)->inclInCryses.push_back(*crys_iter);
+				_shellEdges.push_back(*shell_edge_buf);
+			}
+			shell_edge_buf = nullptr;
 		}
 	}
 	cryses_edges.clear();
@@ -595,6 +718,7 @@ void Polycrystalline2::InputData(const std::vector<double>& shell_nodes, const s
 
 		size_t ibuf[2];
 		size_t numsNum;
+		std::unique_ptr<ShellEdge2>* shell_edge_buf;
 		std::vector<size_t>::const_iterator cp_iter = cryses_edges.begin();
 		for (std::list<Crystallite2*>::iterator crys_iter; cp_iter != cryses_edges.end(); crys_iter++)
 		{
@@ -609,13 +733,38 @@ void Polycrystalline2::InputData(const std::vector<double>& shell_nodes, const s
 				crys_iter++;
 			}
 			numsNum = *(cp_iter++); // numsNum = *cp_iter; cp_iter++;
-			numsNum *= 2; // numsNum *= 3; for 3 dimensions.
+			//numsNum *= 2; // numsNum *= 3; for 3 dimensions.
 			for (size_t j = 0; j < numsNum; j++)
 			{
-				(*crys_iter)->shellEdges.push_back(
-					new ShellEdge2(
-						*_shellNodes[*(cp_iter)],
-						*_shellNodes[*(cp_iter + 1)]));
+				for (auto &s_edge : _shellNodes[ibuf[0]]->inclInEdges)
+				{
+					//if ((s_edge->nodes[0] == _shellNodes[ibuf[0]] &&
+					//	s_edge->nodes[1] == _shellNodes[ibuf[1]]) ||
+					//	(s_edge->nodes[1] == _shellNodes[ibuf[0]] &&
+					//	s_edge->nodes[0] == _shellNodes[ibuf[1]]))
+					if (s_edge->IsContaining(*_shellNodes[ibuf[0]]) &&
+						s_edge->IsContaining(*_shellNodes[ibuf[1]]))
+					{
+						shell_edge_buf = &s_edge;
+					}
+				}
+				if (shell_edge_buf)
+				{
+					(*crys_iter)->shellEdges.push_back(shell_edge_buf);
+					(*shell_edge_buf)->inclInCryses.push_back(*crys_iter);
+				}
+				else
+				{
+					(*crys_iter)->shellEdges.push_back(
+						shell_edge_buf =
+						new std::unique_ptr<ShellEdge2>(
+							new ShellEdge2(
+								*_shellNodes[*(cp_iter)],
+								*_shellNodes[*(cp_iter + 1)])));
+					(*shell_edge_buf)->inclInCryses.push_back(*crys_iter);
+					_shellEdges.push_back(shell_edge_buf->get());
+				}
+				shell_edge_buf = nullptr;
 
 				cp_iter += 2;
 			}

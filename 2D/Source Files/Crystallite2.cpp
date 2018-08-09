@@ -59,16 +59,21 @@ Crystallite2::~Crystallite2()
 {
 	for (auto &edge : shellEdges)
 	{
-		if (edge)
+		if (*edge)
 		{
+			delete *edge;
 			delete edge;
+			edge = nullptr;
 		}
 	}
-	for (auto &simp : simplexes)
+	if (!simplexes.empty())
 	{
-		if (simp)
+		for (auto &simp : simplexes)
 		{
-			delete simp;
+			if (simp)
+			{
+				delete simp;
+			}
 		}
 	}
 }

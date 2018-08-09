@@ -7,9 +7,9 @@
 class Edge2
 {
 public:
-	Node2* nodes[2];
+	std::unique_ptr<Node2>* nodes[2];
 
-	std::list<Simplex2*> inclInSimplexes;
+	std::list<std::unique_ptr<Simplex2>*> inclInSimplexes;
 
 	const double Magnitude() const;
 	const double SqrMagnitude() const;

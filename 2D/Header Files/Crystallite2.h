@@ -1,5 +1,6 @@
 #pragma once
 #include <list>
+#include <memory>
 #include "AllClassInclusions.h"
 #include "AllClassDefinitions.h"
 
@@ -7,7 +8,7 @@
 class Crystallite2
 {
 public:
-	std::list<ShellEdge2*> shellEdges;
+	std::list<std::unique_ptr<ShellEdge2>*> shellEdges;
 	std::list<Simplex2*> simplexes;
 
 	// Use when simplexes list already filled.

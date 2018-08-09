@@ -42,22 +42,44 @@ Vector2 Node2::operator-(const ShellNode2& right) const
 
 Node2& Node2::operator+=(const Vector2& right)
 {
-	(*_position) += right;
+	if (belongsToShellNode)
+	{
+		return *this;
+	}
+	else if (belongsToShellEdge)
+	{
+		(*_position) += Vector2(right).Project(*belongsToShellEdge->nodes[0] - *belongsToShellEdge->nodes[1]);
+	}
+	else
+	{
+		(*_position) += right;
+	}
 }
 
 Node2 & Node2::operator-=(const Vector2 & right)
 {
-	(*_position) -= right;
+	if (belongsToShellNode)
+	{
+		return *this;
+	}
+	else if (belongsToShellEdge)
+	{
+		(*_position) -= Vector2(right).Project(*belongsToShellEdge->nodes[0] - *belongsToShellEdge->nodes[1]);
+	}
+	else
+	{
+		(*_position) -= right;
+	}
 }
 
 Node2::Node2() 
 {
-	_position = new Vector2();
+	_position.reset(new Vector2());
 }
 
 Node2::Node2(const double& coor0, const double& coor1)
 {
-	_position = new Vector2(coor0, coor1);
+	_position.reset(new Vector2(coor0, coor1));
 }
 
 Node2::Node2(const Vector2& position)
@@ -73,9 +95,5 @@ Node2::~Node2()
 		{
 			delete edge;
 		}
-	}
-	if (_position)
-	{
-		delete _position;
 	}
 }

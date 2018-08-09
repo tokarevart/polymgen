@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 	gener_params.close();
 
 	polycr.GenerateFreeUniformMesh();
-	polycr.FitFreeNodesToShellNodes();
+	polycr.FitFreeMeshToShells();
 	polycr.Debug();
 
 	std::ofstream nodes_pos("Output/nodes_pos.txt");

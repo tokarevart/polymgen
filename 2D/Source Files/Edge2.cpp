@@ -12,7 +12,7 @@ const double Edge2::SqrMagnitude() const
 	return buf.SqrMagnitude();
 }
 
-const bool Edge2::IsContaining(const Node2 &node)
+const bool Edge2::IsContaining(const Node2& node)
 {
 	if (nodes[0] == &node ||
 		nodes[1] == &node)
@@ -33,7 +33,7 @@ void Edge2::DestroyIfNoLinks()
 
 Edge2::Edge2() {}
 
-Edge2::Edge2(Node2 &node0, Node2 &node1)
+Edge2::Edge2(Node2& node0, Node2& node1)
 {
 	nodes[0] = &node0;
 	nodes[1] = &node1;
@@ -49,17 +49,17 @@ Edge2::~Edge2()
 {
 	for (auto &nodei : nodes)
 	{
-		if (nodei)
+		if (*nodei)
 		{
-			nodei->inclInEdges.remove(this);
-			for (auto nodej : nodes)
+			(*nodei)->inclInEdges.remove(this);
+			for (auto &nodej : nodes)
 			{
-				if (nodej && nodej != nodei)
+				if (nodej && (nodej != nodei))
 				{
-					nodei->neighbors.remove(nodej);
+					(*nodei)->neighbors.remove(*nodej);
 				}
 			}
-			nodei->DestroyIfNoLinks();
+			(*nodei)->DestroyIfNoLinks();
 		}
 	}
 

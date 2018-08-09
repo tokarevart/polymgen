@@ -2,6 +2,7 @@
 #include <fstream>
 #include <list>
 #include <vector>
+#include <memory>
 #include "AllClassInclusions.h"
 #include "AllClassDefinitions.h"
 
@@ -13,7 +14,8 @@ private:
 	double _maxShellNodesCoor[2];
 	double _l_min, _l_av, _l_max;
 
-	std::vector<ShellNode2*> _shellNodes;
+	std::vector<std::unique_ptr<ShellEdge2>> _shellEdges;
+	std::vector<std::unique_ptr<ShellEdge2>> _shellNodes;
 
 	std::list<Simplex2*> _freeSimplexes;
 	std::vector<Edge2*> _freeEdges;
@@ -28,6 +30,7 @@ public:
 	void GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis_0);
 	void GenerateFreeUniformMesh(); // There may will not be significant performance improvement. But if you want you can parallize 1-st step.
 	void FitFreeNodesToShellNodes();
+	void FitFreeNodesToShellEdges();
 	void FitFreeMeshToShells(); // There may will not be significant performance improvement. But if you want you can parallize 1-st step.
 	//void DeleteExternalNodes();
 	//void FillDataWithRemainingDependences(); // 1-st step can be well parallelized by nodes.

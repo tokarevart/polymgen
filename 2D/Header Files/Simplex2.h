@@ -7,7 +7,7 @@
 class Simplex2
 {
 public:
-	Edge2* edges[3];
+	Edge2** edges[3];
 
 	Crystallite2* inclInCrys;
 
