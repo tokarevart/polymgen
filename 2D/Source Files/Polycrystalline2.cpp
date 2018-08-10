@@ -3,8 +3,9 @@
 
 #define DET(a, b, c, d) \
 		(a * d - b * c)
+#define EPS 1e-10
 #define BETWEEN(p0_coor, p1_coor, p) \
-		(std::min(p0_coor, p1_coor) - DBL_EPSILON < p && p < std::max(p0_coor, p1_coor) + DBL_EPSILON)
+		(std::min(p0_coor, p1_coor) - EPS < p && p < std::max(p0_coor, p1_coor) + EPS)
 
 void Polycrystalline2::Debug()
 {
@@ -363,7 +364,9 @@ void Polycrystalline2::FitFreeNodesToShellEdges()
 		for (size_t j = 0, maxj = _shellEdges.size(); j < maxj; j++)
 		{
 			if ((*(*_freeEdges[i])->nodes[0])->belongsToShellNode ||
-				(*(*_freeEdges[i])->nodes[1])->belongsToShellNode)
+				(*(*_freeEdges[i])->nodes[1])->belongsToShellNode ||
+				(*(*_freeEdges[i])->nodes[0])->belongsToShellEdge ||
+				(*(*_freeEdges[i])->nodes[1])->belongsToShellEdge)
 			{
 				continue;
 			}
@@ -652,7 +655,6 @@ void Polycrystalline2::InputData(ifstream& shell_nodes, ifstream& cryses_edges, 
 			crys_iter++;
 		}
 		cryses_edges >> numsNum;
-		//numsNum *= 2; // numsNum *= 3; for 3 dimensions.
 		for (size_t j = 0; j < numsNum; j++)
 		{
 			cryses_edges >> ibuf[0];
@@ -660,8 +662,6 @@ void Polycrystalline2::InputData(ifstream& shell_nodes, ifstream& cryses_edges, 
 			
 			for (auto &s_edge : (*_shellNodes[ibuf[0]])->inclInEdges)
 			{
-				//if (s_edge->nodes[1] == _shellNodes[ibuf[1]] ||
-				//	  s_edge->nodes[1] == _shellNodes[ibuf[0]])
 				if ((*s_edge)->IsContaining(**_shellNodes[ibuf[1]]))
 				{
 					shell_edge_buf = s_edge;
@@ -745,14 +745,11 @@ void Polycrystalline2::InputData(const vector<double>& shell_nodes, const vector
 				crystallites.push_back(new Crystallite2());
 				crys_iter++;
 			}
-			numsNum = *(cp_iter++); // numsNum = *cp_iter; cp_iter++;
-			//numsNum *= 2; // numsNum *= 3; for 3 dimensions.
+			numsNum = *(cp_iter++);
 			for (size_t j = 0; j < numsNum; j++)
 			{
 				for (auto &s_edge : (*_shellNodes[ibuf[0]])->inclInEdges)
 				{
-					//if (s_edge->nodes[1] == _shellNodes[ibuf[1]] ||
-					//	  s_edge->nodes[0] == _shellNodes[ibuf[1]])
 					if ((*s_edge)->IsContaining(**_shellNodes[ibuf[1]]))
 					{
 						shell_edge_buf = s_edge;
