@@ -3,8 +3,8 @@
 #include <list>
 #include <vector>
 #include <memory>
-#include "AllClassDefinitions.h"
-#include "AllClassInclusions.h"
+#include "ClassDefinitions.h"
+#include "ClassInclusions.h"
 
 using std::ifstream;
 using std::ofstream;
