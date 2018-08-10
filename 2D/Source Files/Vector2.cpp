@@ -1,6 +1,9 @@
 #include "Vector2.h"
 
 
+#define DET(a, b, c, d) \
+		(a * d - b * c)
+
 const double PI_DIV_180 = 3.141592653589793 / 180.0;
 
 const double Vector2::DotProduct(const Vector2& vec0, const Vector2& vec1)
@@ -11,6 +14,27 @@ const double Vector2::DotProduct(const Vector2& vec0, const Vector2& vec1)
 const double Vector2::CrossProductMagnitude(const Vector2& vec0, const Vector2& vec1)
 {
 	return vec0._coors[0] * vec1._coors[1] - vec0._coors[1] * vec1._coors[0];
+}
+
+const double Vector2::Cos(const Vector2& vec0, const Vector2& vec1)
+{
+	return Vector2::DotProduct(vec0, vec1) / sqrt(vec0.SqrMagnitude() * vec1.SqrMagnitude());
+}
+
+Vector2 Vector2::LinesIntersection(Vector2& line0p0, Vector2& line0p1, Vector2& line1p0, Vector2& line1p1)
+{
+	double A1 = line0p0[1] - line0p1[1];
+	double B1 = line0p1[0] - line0p0[0];
+	double C1 = -A1 * line0p0[0] - B1 * line0p0[1];
+	double A2 = line1p0[1] - line1p1[1];
+	double B2 = line1p1[0] - line1p0[0];
+	double C2 = -A2 * line1p0[0] - B2 * line1p0[1];
+
+	double minus_inv_zn = -1.0 / DET(A1, B1, A2, B2);
+
+	double x = DET(C1, B1, C2, B2) * minus_inv_zn;
+	double y = DET(A1, C1, A2, C2) * minus_inv_zn;
+	return Vector2(x, y);
 }
 
 const double Vector2::Magnitude() const
@@ -57,7 +81,7 @@ Vector2& Vector2::Rotate(const double& angle, const AngleUnit& unit)
 
 Vector2& Vector2::Mirror(const Vector2& vec)
 {
-	double angle = acos(DotProduct(*this, vec) / sqrt(this->SqrMagnitude() * vec.SqrMagnitude()));
+	double angle = acos(Cos(*this, vec)); //acos(DotProduct(*this, vec) / sqrt(this->SqrMagnitude() * vec.SqrMagnitude()));
 
 	return CrossProductMagnitude(vec, *this) > 0 ? 
 		Rotate(-2.0 * angle, Radian) :

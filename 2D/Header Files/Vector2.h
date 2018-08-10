@@ -15,6 +15,8 @@ private:
 public:
 	static const double DotProduct(const Vector2& vec0, const Vector2& vec1);
 	static const double CrossProductMagnitude(const Vector2& vec0, const Vector2& vec1);
+	static const double Cos(const Vector2& vec0, const Vector2& vec1);
+	static Vector2 LinesIntersection(Vector2& line0p0, Vector2& line0p1, Vector2& line1p0, Vector2& line1p1);
 
 	const double Magnitude() const;
 	const double SqrMagnitude() const;

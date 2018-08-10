@@ -12,7 +12,6 @@ class Crystallite2
 {
 public:
 	list<unique_ptr<ShellEdge2>*> shellEdges;
-	list<unique_ptr<Simplex2>*> simplexes;
 
 	// Calculate based on position in space.
 	const bool Contains(const Node2& node) const;
