@@ -17,7 +17,7 @@ public:
 	list<unique_ptr<ShellEdge2>*> inclInEdges;
 	list<Crystallite2*> inclInCryses;
 
-	const Vector2& GetPosition() const;
+	Vector2& GetPosition() const;
 
 	void DestroyIfNoLinks();
 

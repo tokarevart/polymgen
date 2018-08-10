@@ -1,7 +1,7 @@
 #include "ShellNode2.h"
 
 
-const Vector2& ShellNode2::GetPosition() const
+Vector2& ShellNode2::GetPosition() const
 {
 	return *_position;
 }

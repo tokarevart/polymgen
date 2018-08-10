@@ -27,7 +27,7 @@ public:
 	void SetPosition(const Vector2& newPos);
 	void SetPosition(const double& coor0, const double& coor1);
 
-	const Vector2& GetPosition() const;
+	Vector2& GetPosition() const;
 
 	void DestroyIfNoLinks();
 

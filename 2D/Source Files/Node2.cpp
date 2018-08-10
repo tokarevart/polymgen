@@ -12,7 +12,7 @@ void Node2::SetPosition(const double& coor0, const double& coor1)
 	(*_position)[1] = coor1;
 }
 
-const Vector2& Node2::GetPosition() const
+Vector2& Node2::GetPosition() const
 {
 	return *_position;
 }

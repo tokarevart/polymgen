@@ -6,6 +6,29 @@
 #define EPS 1e-10
 #define BETWEEN(p0_coor, p1_coor, p) \
 		(std::min(p0_coor, p1_coor) - EPS < p && p < std::max(p0_coor, p1_coor) + EPS)
+#define INSIDE_RECTANGLE(corner0, corner1, point) \
+		(BETWEEN(corner0[0], corner1[0], point[0]) && \
+		 BETWEEN(corner0[1], corner1[1], point[1]))
+#define NOT_INTERSECT_2ND_CHECK(edge0node0, edge0node1, edge1node0, edge1node1) \
+		(edge0node0[0] < edge1node0[0]  && \
+		 edge0node1[0] < edge1node0[0] && \
+		 edge0node0[0] < edge1node1[0] && \
+		 edge0node1[0] < edge1node1[0]) || \
+		\
+		(edge0node0[1] < edge1node0[1] && \
+		 edge0node1[1] < edge1node0[1] && \
+		 edge0node0[1] < edge1node1[1] && \
+		 edge0node1[1] < edge1node1[1]) || \
+		\
+		(edge0node0[0] > edge1node0[0]  && \
+		 edge0node1[0] > edge1node0[0] && \
+		 edge0node0[0] > edge1node1[0] && \
+		 edge0node1[0] > edge1node1[0]) || \
+		\
+		(edge0node0[1] > edge1node0[1] && \
+		 edge0node1[1] > edge1node0[1] && \
+		 edge0node0[1] > edge1node1[1] && \
+		 edge0node1[1] > edge1node1[1])
 
 void Polycrystalline2::Debug()
 {
@@ -330,15 +353,17 @@ void Polycrystalline2::GenerateFreeUniformMesh()
 
 void Polycrystalline2::FitFreeNodesToShellNodes()
 {
-	size_t max = _shellNodes.size();
-	//#pragma omp parallel for firstprivate(max)
-	for (size_t i = 0; i < max; i++)
+	size_t maxi = _shellNodes.size();
+	unique_ptr<Node2>* node_with_min_sqr_dist;
+	double sqr_magn_buf;
+	double min_sqr_dist;
+	//#pragma omp parallel for private(node_with_min_sqr_dist, sqr_magn_buf, min_sqr_dist) firstprivate(maxi)
+	for (size_t i = 0; i < maxi; i++)
 	{
-		unique_ptr<Node2>* node_with_min_sqr_dist = _freeNodes[0];
+		node_with_min_sqr_dist = _freeNodes[0];
 
-		double min_sqr_dist = (**_freeNodes[0] - **_shellNodes[i]).SqrMagnitude();
-		double sqr_magn_buf;
-		for (size_t j = 1, max = _freeNodes.size(); j < max; j++)
+		min_sqr_dist = (**_freeNodes[0] - **_shellNodes[i]).SqrMagnitude();
+		for (size_t j = 1, maxj = _freeNodes.size(); j < maxj; j++)
 		{
 			if ((sqr_magn_buf = (**_freeNodes[j] - **_shellNodes[i]).SqrMagnitude()) < min_sqr_dist)
 			{
@@ -355,59 +380,60 @@ void Polycrystalline2::FitFreeNodesToShellNodes()
 	}
 }
 
+Vector2 LinesIntersection(Vector2& line0p0, Vector2& line0p1, Vector2& line1p0, Vector2& line1p1)
+{
+	double A1 = line0p0[1] - line0p1[1];
+	double B1 = line0p1[0] - line0p0[0];
+	double C1 = -A1 * line0p0[0] - B1 * line0p0[1];
+	double A2 = line1p0[1] - line1p1[1];
+	double B2 = line1p1[0] - line1p0[0];
+	double C2 = -A2 * line1p0[0] - B2 * line1p0[1];
+	double minus_inv_zn = -1.0 / DET(A1, B1, A2, B2);
+
+	double x = DET(C1, B1, C2, B2) * minus_inv_zn;
+	double y = DET(A1, C1, A2, C2) * minus_inv_zn;
+	return Vector2(x, y);
+}
+
 void Polycrystalline2::FitFreeNodesToShellEdges()
 {
 	size_t maxi = _freeEdges.size();
 	//#pragma omp parallel for firstprivate(maxi)
 	for (size_t i = 0; i < maxi; i++)
 	{
+		if ((*(*_freeEdges[i])->nodes[0])->belongsToShellNode ||
+			(*(*_freeEdges[i])->nodes[1])->belongsToShellNode ||
+			(*(*_freeEdges[i])->nodes[0])->belongsToShellEdge ||
+			(*(*_freeEdges[i])->nodes[1])->belongsToShellEdge)
+		{
+			continue;
+		}
+
 		for (size_t j = 0, maxj = _shellEdges.size(); j < maxj; j++)
 		{
-			if ((*(*_freeEdges[i])->nodes[0])->belongsToShellNode ||
-				(*(*_freeEdges[i])->nodes[1])->belongsToShellNode ||
-				(*(*_freeEdges[i])->nodes[0])->belongsToShellEdge ||
-				(*(*_freeEdges[i])->nodes[1])->belongsToShellEdge)
-			{
-				continue;
-			}
-			if (((**(*_freeEdges[i])->nodes[0])[0] < (**(*_shellEdges[j])->nodes[0])[0]  &&
-				 (**(*_freeEdges[i])->nodes[1])[0] < (**(*_shellEdges[j])->nodes[0])[0]  &&
-				 (**(*_freeEdges[i])->nodes[0])[0] < (**(*_shellEdges[j])->nodes[1])[0]  &&
-				 (**(*_freeEdges[i])->nodes[1])[0] < (**(*_shellEdges[j])->nodes[1])[0]) ||
-
-				((**(*_freeEdges[i])->nodes[0])[1] < (**(*_shellEdges[j])->nodes[0])[1]  &&
-				 (**(*_freeEdges[i])->nodes[1])[1] < (**(*_shellEdges[j])->nodes[0])[1]  &&
-				 (**(*_freeEdges[i])->nodes[0])[1] < (**(*_shellEdges[j])->nodes[1])[1]  &&
-				 (**(*_freeEdges[i])->nodes[1])[1] < (**(*_shellEdges[j])->nodes[1])[1]) ||
-
-				((**(*_freeEdges[i])->nodes[0])[0] > (**(*_shellEdges[j])->nodes[0])[0]  &&
-				 (**(*_freeEdges[i])->nodes[1])[0] > (**(*_shellEdges[j])->nodes[0])[0]  &&
-				 (**(*_freeEdges[i])->nodes[0])[0] > (**(*_shellEdges[j])->nodes[1])[0]  &&
-				 (**(*_freeEdges[i])->nodes[1])[0] > (**(*_shellEdges[j])->nodes[1])[0]) ||
-
-				((**(*_freeEdges[i])->nodes[0])[1] > (**(*_shellEdges[j])->nodes[0])[1]  &&
-				 (**(*_freeEdges[i])->nodes[1])[1] > (**(*_shellEdges[j])->nodes[0])[1]  &&
-				 (**(*_freeEdges[i])->nodes[0])[1] > (**(*_shellEdges[j])->nodes[1])[1]  &&
-				 (**(*_freeEdges[i])->nodes[1])[1] > (**(*_shellEdges[j])->nodes[1])[1]))
+			if (NOT_INTERSECT_2ND_CHECK(
+					(**(*_freeEdges[i])->nodes[0]),
+					(**(*_freeEdges[i])->nodes[1]),
+					(**(*_shellEdges[j])->nodes[0]),
+					(**(*_shellEdges[j])->nodes[1])))
 			{
 				continue;
 			}
 			
-			double A1 = (**(*_freeEdges[i])->nodes[0])[1] - (**(*_freeEdges[i])->nodes[1])[1];
-			double B1 = (**(*_freeEdges[i])->nodes[1])[0] - (**(*_freeEdges[i])->nodes[0])[0];
-			double C1 = -A1 * (**(*_freeEdges[i])->nodes[0])[0] - B1 * (**(*_freeEdges[i])->nodes[0])[1];
-			double A2 = (**(*_shellEdges[j])->nodes[0])[1] - (**(*_shellEdges[j])->nodes[1])[1];
-			double B2 = (**(*_shellEdges[j])->nodes[1])[0] - (**(*_shellEdges[j])->nodes[0])[0];
-			double C2 = -A2 * (**(*_shellEdges[j])->nodes[0])[0] - B2 * (**(*_shellEdges[j])->nodes[0])[1];
-			double minus_inv_zn = -1.0 / DET(A1, B1, A2, B2);
-			double x = DET(C1, B1, C2, B2) * minus_inv_zn;
-			double y = DET(A1, C1, A2, C2) * minus_inv_zn;
-			if (BETWEEN((**(*_freeEdges[i])->nodes[0])[0], (**(*_freeEdges[i])->nodes[1])[0], x) &&
-				BETWEEN((**(*_freeEdges[i])->nodes[0])[1], (**(*_freeEdges[i])->nodes[1])[1], y) &&
-				BETWEEN((**(*_shellEdges[j])->nodes[0])[0], (**(*_shellEdges[j])->nodes[1])[0], x) &&
-				BETWEEN((**(*_shellEdges[j])->nodes[0])[1], (**(*_shellEdges[j])->nodes[1])[1], y))
+			Vector2 intersect_point = 
+				LinesIntersection(
+					(*(*_freeEdges[i])->nodes[0])->GetPosition(), 
+					(*(*_freeEdges[i])->nodes[1])->GetPosition(),
+					(*(*_shellEdges[j])->nodes[0])->GetPosition(),
+					(*(*_shellEdges[j])->nodes[1])->GetPosition());
+
+			if (INSIDE_RECTANGLE((*(*_freeEdges[i])->nodes[0])->GetPosition(),
+								 (*(*_freeEdges[i])->nodes[1])->GetPosition(),
+								 intersect_point) &&
+				INSIDE_RECTANGLE((*(*_shellEdges[j])->nodes[0])->GetPosition(),
+								 (*(*_shellEdges[j])->nodes[1])->GetPosition(),
+								 intersect_point))
 			{
-				Vector2 intersect_point(x, y);
 				if (((*(*_freeEdges[i])->nodes[0])->GetPosition() - intersect_point).SqrMagnitude() <
 					((*(*_freeEdges[i])->nodes[1])->GetPosition() - intersect_point).SqrMagnitude())
 				{
@@ -423,6 +449,66 @@ void Polycrystalline2::FitFreeNodesToShellEdges()
 					//{
 					(*(*_freeEdges[i])->nodes[1])->SetPosition(intersect_point);
 					(*(*_freeEdges[i])->nodes[1])->belongsToShellEdge = _shellEdges[j];
+					//}
+				}
+			}
+		}
+	}
+	
+	//#pragma omp parallel for firstprivate(maxi)
+	for (size_t i = 0; i < maxi; i++)
+	{
+		if (!((*(*_freeEdges[i])->nodes[0])->belongsToShellEdge ||
+			(*(*_freeEdges[i])->nodes[1])->belongsToShellEdge) ||
+			(*(*_freeEdges[i])->nodes[0])->belongsToShellNode ||
+			(*(*_freeEdges[i])->nodes[1])->belongsToShellNode ||
+			((*(*_freeEdges[i])->nodes[0])->belongsToShellEdge &&
+			 (*(*_freeEdges[i])->nodes[1])->belongsToShellEdge))
+		{
+			continue;
+		}
+
+		for (size_t j = 0, maxj = _shellEdges.size(); j < maxj; j++)
+		{			
+			if (NOT_INTERSECT_2ND_CHECK(
+					(**(*_freeEdges[i])->nodes[0]),
+					(**(*_freeEdges[i])->nodes[1]),
+					(**(*_shellEdges[j])->nodes[0]),
+					(**(*_shellEdges[j])->nodes[1])))
+			{
+				continue;
+			}
+
+			Vector2 intersect_point =
+				LinesIntersection(
+					(*(*_freeEdges[i])->nodes[0])->GetPosition(),
+					(*(*_freeEdges[i])->nodes[1])->GetPosition(),
+					(*(*_shellEdges[j])->nodes[0])->GetPosition(),
+					(*(*_shellEdges[j])->nodes[1])->GetPosition());
+
+			if (INSIDE_RECTANGLE((*(*_freeEdges[i])->nodes[0])->GetPosition(),
+								 (*(*_freeEdges[i])->nodes[1])->GetPosition(),
+								 intersect_point) &&
+				INSIDE_RECTANGLE((*(*_shellEdges[j])->nodes[0])->GetPosition(),
+								 (*(*_shellEdges[j])->nodes[1])->GetPosition(),
+								 intersect_point))
+			{
+				if (!(*(*_freeEdges[i])->nodes[1])->belongsToShellEdge &&
+					(*(*_freeEdges[i])->nodes[0])->belongsToShellEdge != _shellEdges[j])
+				{
+					//#pragma omp critical(FitFreeNodesToShellEdges)
+					//{
+					(*(*_freeEdges[i])->nodes[1])->SetPosition(intersect_point);
+					(*(*_freeEdges[i])->nodes[1])->belongsToShellEdge = _shellEdges[j];
+					//}
+				}
+				else if (!(*(*_freeEdges[i])->nodes[0])->belongsToShellEdge &&
+					(*(*_freeEdges[i])->nodes[1])->belongsToShellEdge != _shellEdges[j])
+				{
+					//#pragma omp critical(FitFreeNodesToShellEdges)
+					//{
+					(*(*_freeEdges[i])->nodes[0])->SetPosition(intersect_point);
+					(*(*_freeEdges[i])->nodes[0])->belongsToShellEdge = _shellEdges[j];
 					//}
 				}
 			}
