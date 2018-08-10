@@ -10,7 +10,7 @@ void Polycrystalline2::Debug()
 {
 	//Crystallite2* crys_buf;
 	//crystallites.push_back(crys_buf = new Crystallite2());
-	(*crystallites.begin())->simplexes = std::move(_freeSimplexes);
+	(*crystallites.begin())->simplexes = _freeSimplexes;
 }
 
 void Polycrystalline2::GenerateFreeNodesEvenly(double* const polycrysSizeAxis, size_t* const minNodesNumAxis)
@@ -667,6 +667,7 @@ void Polycrystalline2::InputData(ifstream& shell_nodes, ifstream& cryses_edges, 
 					shell_edge_buf = s_edge;
 				}
 			}
+
 			if (shell_edge_buf)
 			{
 				(*crys_iter)->shellEdges.push_back(shell_edge_buf);
@@ -677,10 +678,9 @@ void Polycrystalline2::InputData(ifstream& shell_nodes, ifstream& cryses_edges, 
 
 				(*crys_iter)->shellEdges.push_back(
 					shell_edge_buf =
-					new unique_ptr<ShellEdge2>(
-						new ShellEdge2(
+						(new ShellEdge2(
 							**_shellNodes[ibuf[0]],
-							**_shellNodes[ibuf[1]])));
+							**_shellNodes[ibuf[1]]))->GetPtrToUniquePtr());
 				(*shell_edge_buf)->inclInCryses.push_back(*crys_iter);
 				_shellEdges.push_back(shell_edge_buf);
 			}
@@ -816,6 +816,28 @@ Polycrystalline2::~Polycrystalline2()
 		if (crys)
 		{
 			delete crys;
+			crys = nullptr;
 		}
+	}
+
+	for (auto &ptr : _shellEdges)
+	{
+		delete ptr;
+	}
+	for (auto &ptr : _shellNodes)
+	{
+		delete ptr;
+	}
+	for (auto &ptr : _freeSimplexes)
+	{
+		delete ptr;
+	}
+	for (auto &ptr : _freeEdges)
+	{
+		delete ptr;
+	}
+	for (auto &ptr : _freeNodes)
+	{
+		delete ptr;
 	}
 }

@@ -16,14 +16,15 @@ Crystallite2::~Crystallite2()
 	{
 		if (*edge)
 		{
-			edge->release();
+			delete edge->release();
 		}
 	}
+
 	for (auto &simp : simplexes)
 	{
 		if (*simp)
 		{
-			simp->release();
+			delete simp->release();
 		}
 	}
 }

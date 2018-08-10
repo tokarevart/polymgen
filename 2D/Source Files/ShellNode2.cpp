@@ -6,6 +6,14 @@ const Vector2& ShellNode2::GetPosition() const
 	return *_position;
 }
 
+void ShellNode2::DestroyIfNoLinks()
+{
+	if (inclInEdges.empty())
+	{
+		delete _uniquePtr->release();
+	}
+}
+
 double& ShellNode2::operator[](const int& axisIndex)
 {
 	return (*_position)[axisIndex];
@@ -42,7 +50,7 @@ ShellNode2::~ShellNode2()
 	{
 		if (*edge)
 		{
-			edge->release();
+			delete edge->release();
 		}
 	}
 }

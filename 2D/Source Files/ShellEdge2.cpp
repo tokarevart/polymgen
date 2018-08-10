@@ -34,6 +34,8 @@ const bool ShellEdge2::IsContaining(const ShellNode2& node) const
 
 ShellEdge2::ShellEdge2() : unique_ptr_helper<ShellEdge2>(this)
 {
+	nodes[0] = nullptr;
+	nodes[1] = nullptr;
 	_normal.reset(new Vector2());
 }
 
@@ -57,6 +59,7 @@ ShellEdge2::~ShellEdge2()
 		if (*node)
 		{
 			(*node)->inclInEdges.remove(GetPtrToUniquePtr());
+			(*node)->DestroyIfNoLinks();
 		}
 	}
 }

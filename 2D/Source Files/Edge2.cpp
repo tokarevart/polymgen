@@ -27,7 +27,7 @@ void Edge2::DestroyIfNoLinks()
 {
 	if (inclInSimplexes.empty())
 	{
-		delete this;
+		delete _uniquePtr->release();
 	}
 }
 
@@ -67,7 +67,7 @@ Edge2::~Edge2()
 	{
 		if (*simp)
 		{
-			simp->release();
+			delete simp->release();
 		}
 	}
 }

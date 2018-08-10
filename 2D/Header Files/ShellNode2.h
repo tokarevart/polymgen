@@ -19,6 +19,8 @@ public:
 
 	const Vector2& GetPosition() const;
 
+	void DestroyIfNoLinks();
+
 	double& operator[](const int& axisIndex);
 	Vector2 operator-(const ShellNode2& right) const;
 	Vector2 operator-(const Node2& right) const;

@@ -21,7 +21,7 @@ void Node2::DestroyIfNoLinks()
 {
 	if (inclInEdges.empty())
 	{
-		delete this;
+		delete _uniquePtr->release();
 	}
 }
 
@@ -97,7 +97,7 @@ Node2::~Node2()
 	{
 		if (*edge)
 		{
-			edge->release();
+			delete edge->release();
 		}
 	}
 }
