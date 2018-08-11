@@ -38,7 +38,7 @@ public:
 	void FitFreeNodesToShellEdges();
 	void FitFreeMeshToShells();
 	void DeleteExternalNodes();
-	void SetNodesNeighbors();
+	//void SetNodesNeighbors(); Done earlier
 	void MinMaxEdges(double& min, double& max);
 	Vector2 Shift(const Node2& node, double& min);
 	void DistributeNodesEvenly();

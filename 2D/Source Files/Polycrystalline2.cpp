@@ -573,30 +573,30 @@ void Polycrystalline2::DeleteExternalNodes()
 	}
 }
 
-void Polycrystalline2::SetNodesNeighbors()
-{
-	size_t nodes_num = _freeNodes.size();
-	//#pragma omp parallel for firstprivate(nodes_num)
-	for (size_t i = 0; i < nodes_num; i++)
-	{
-		if (*_freeNodes[i])
-		{
-			for (auto &edge : (*_freeNodes[i])->inclInEdges)
-			{
-				if (*edge)
-				{
-					for (auto &some_node : (*edge)->nodes)
-					{
-						if (*some_node && some_node != _freeNodes[i])
-						{
-							(*_freeNodes[i])->neighbors.push_back(some_node);
-						}
-					}
-				}
-			}
-		}
-	}
-}
+//void Polycrystalline2::SetNodesNeighbors()
+//{
+//	size_t nodes_num = _freeNodes.size();
+//	//#pragma omp parallel for firstprivate(nodes_num)
+//	for (size_t i = 0; i < nodes_num; i++)
+//	{
+//		if (*_freeNodes[i])
+//		{
+//			for (auto &edge : (*_freeNodes[i])->inclInEdges)
+//			{
+//				if (*edge)
+//				{
+//					for (auto &some_node : (*edge)->nodes)
+//					{
+//						if (*some_node && some_node != _freeNodes[i])
+//						{
+//							(*_freeNodes[i])->neighbors.push_back(some_node);
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
+//}
 
 void Polycrystalline2::MinMaxEdges(double& min, double& max)
 {
