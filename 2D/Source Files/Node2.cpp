@@ -49,6 +49,7 @@ Node2& Node2::operator+=(const Vector2& right)
 	else if (belongsToShellEdge)
 	{
 		(*_position) += Vector2(right).Project(**(*belongsToShellEdge)->nodes[0] - **(*belongsToShellEdge)->nodes[1]);
+
 		return *this;
 	}
 	else

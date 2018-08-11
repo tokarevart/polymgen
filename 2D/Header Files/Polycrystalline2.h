@@ -38,8 +38,10 @@ public:
 	void FitFreeNodesToShellEdges();
 	void FitFreeMeshToShells();
 	void DeleteExternalNodes();
-	//void FillDataWithRemainingDependences(); // 1-st step can be well parallelized by nodes.
-	//void DistributeNodesEvenly();
+	void SetNodesNeighbors();
+	void MinMaxEdges(double& min, double& max);
+	Vector2 Shift(const Node2& node, double& min);
+	void DistributeNodesEvenly();
 	//void GenerateFiniteElementMesh(); // Executes other functions.
 	
 	// Calculate based on position in space.

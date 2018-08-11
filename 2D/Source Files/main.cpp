@@ -19,6 +19,8 @@ int main(int argc, char* argv[])
 	polycr.GenerateFreeUniformMesh();
 	polycr.FitFreeMeshToShells();
 	polycr.DeleteExternalNodes();
+	//polycr.SetNodesNeighbors();
+	polycr.DistributeNodesEvenly();
 	polycr.Debug();
 
 	std::ofstream nodes_pos("Output/nodes_pos.txt");
@@ -29,7 +31,5 @@ int main(int argc, char* argv[])
 	nodes_pos.close();
 	fe_nodes.close();
 
-	//std::cout << '\n';
-	//system("pause");
 	return 0;
 }

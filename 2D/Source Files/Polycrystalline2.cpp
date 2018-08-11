@@ -170,6 +170,7 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 		for (size_t j = 0; j < minNodesNumAxis_0 - 1; j++)
 		{
 			_freeSimplexes.push_back(simp_buf = (new Simplex2())->GetPtrToUniquePtr());
+
 			(*simp_buf)->edges[0] = 
 				(new Edge2(
 					**_freeNodes[i], 
@@ -570,6 +571,153 @@ void Polycrystalline2::DeleteExternalNodes()
 			delete node->release();
 		}
 	}
+}
+
+void Polycrystalline2::SetNodesNeighbors()
+{
+	size_t nodes_num = _freeNodes.size();
+	//#pragma omp parallel for firstprivate(nodes_num)
+	for (size_t i = 0; i < nodes_num; i++)
+	{
+		if (*_freeNodes[i])
+		{
+			for (auto &edge : (*_freeNodes[i])->inclInEdges)
+			{
+				if (*edge)
+				{
+					for (auto &some_node : (*edge)->nodes)
+					{
+						if (*some_node && some_node != _freeNodes[i])
+						{
+							(*_freeNodes[i])->neighbors.push_back(some_node);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void Polycrystalline2::MinMaxEdges(double& min, double& max)
+{
+	size_t edges_num = _freeEdges.size();
+
+	min = ULLONG_MAX;
+	max = 0;
+	double sqr_length_buf = -1.0;
+	for (size_t i = 0; i < edges_num; i++)
+	{
+		if (*_freeEdges[i] &&
+			(*_freeEdges[i])->nodes[0] &&
+			(*_freeEdges[i])->nodes[1])
+		{
+			sqr_length_buf = (**(*_freeEdges[i])->nodes[0] - **(*_freeEdges[i])->nodes[1]).SqrMagnitude();
+			if (sqr_length_buf > max)
+			{
+				max = sqr_length_buf;
+			}
+			if (sqr_length_buf < min)
+			{
+				min = sqr_length_buf;
+			}
+		}
+	}
+
+	min = sqrt(min);
+	max = sqrt(max);
+}
+
+Vector2 Polycrystalline2::Shift(const Node2& node, double& min)
+{
+	Vector2 shift;
+	double g;
+	for (auto &neighbor : node.neighbors)
+	{
+		if (*neighbor)
+		{
+			Vector2& vec = **neighbor - node;
+			g = 1.0 - _l_av / vec.Magnitude();
+			if ((*neighbor)->belongsToShellNode)
+			{
+				shift += vec * (0.15 * g - 0.045 * g * g);
+			}
+			else if ((*neighbor)->belongsToShellEdge)
+			{
+				shift += vec * (2.0 - Vector2::Cos(vec, **(*(*neighbor)->belongsToShellEdge)->nodes[0] - **(*(*neighbor)->belongsToShellEdge)->nodes[1])) * (0.05 * g - 0.015 * g * g);
+			}
+			else
+			{
+				shift += vec * (0.05 * g - 0.015 * g * g);
+			}
+		}
+	}
+
+	return shift;
+}
+
+#include <iostream>
+void Polycrystalline2::DistributeNodesEvenly()
+{
+	size_t nodes_num = _freeNodes.size();
+	Vector2* shifts = new Vector2[nodes_num];
+
+	int continue_flag = 1;
+	double sufficient_delta = (_l_max - _l_min) * 0.0005;
+	double prev_min, prev_max;
+	double min, max;
+	double d_min, d_max;
+	int iterations;
+	std::cout << "Enter the iterations number: ";
+	std::cin >> iterations;
+	MinMaxEdges(min, max);
+	for (int iter = 0; iter < iterations; iter++)
+	{
+		prev_min = min;
+		prev_max = max;
+
+		//#pragma omp parallel for firstprivate(nodes_num)
+		for (size_t i = 0; i < nodes_num; i++)
+		{
+			if (*_freeNodes[i])
+			{
+				shifts[i] = Shift(**_freeNodes[i], min);
+			}
+		}
+		//#pragma omp parallel for firstprivate(nodes_num)
+		for (size_t i = 0; i < nodes_num; i++)
+		{
+			if (*_freeNodes[i])
+			{
+				**_freeNodes[i] += shifts[i];
+			}
+		}
+
+		MinMaxEdges(min, max);
+		d_min = min - prev_min;
+		d_max = max - prev_max;
+		
+		if (continue_flag == 1 &&
+			abs(d_min) < sufficient_delta &&
+			abs(d_max) < sufficient_delta)
+		{
+			std::cout << "Stoped after " << iter << " iterations.\n"
+						 "Average delta at the end: " << (abs(d_min) + abs(d_max)) * 0.5;
+			std::cout << "\nEnter '0' to continue and '1' to stop\n";
+			std::cin >> continue_flag;
+			if (continue_flag == 1)
+			{
+				break;
+			}
+		}
+	}
+	if (continue_flag == 0)
+	{
+		std::cout << "Stoped after " << iterations << " iterations.\n"
+			"Average delta at the end: " << (abs(d_min) + abs(d_max)) * 0.5;
+	}
+	system("pause>>void");
+
+	delete[] shifts;
 }
 
 const bool Polycrystalline2::Contains(const Node2& node) const

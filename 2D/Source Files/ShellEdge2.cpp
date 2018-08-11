@@ -58,7 +58,10 @@ ShellEdge2::~ShellEdge2()
 	{
 		if (*node)
 		{
-			(*node)->inclInEdges.remove(GetPtrToUniquePtr());
+			if (std::find((*node)->inclInEdges.begin(), (*node)->inclInEdges.end(), GetPtrToUniquePtr()) != (*node)->inclInEdges.end())
+			{
+				(*node)->inclInEdges.remove(GetPtrToUniquePtr());
+			}
 			(*node)->DestroyIfNoLinks();
 		}
 	}

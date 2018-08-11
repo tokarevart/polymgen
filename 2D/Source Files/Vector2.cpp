@@ -159,21 +159,6 @@ Vector2& Vector2::operator*=(const double& scalar)
 	return *this;
 }
 
-Vector2::Vector2() {}
-
-Vector2::Vector2(const Vector2& vec)
-{
-	*this = vec;
-}
-
-Vector2::Vector2(const double& coor0, const double& coor1)
-{
-	_coors[0] = coor0;
-	_coors[1] = coor1;
-}
-
-Vector2::~Vector2() {}
-
 const Vector2 operator*(const Vector2& vec, const double& scalar)
 {
 	return Vector2(vec._coors[0] * scalar, vec._coors[1] * scalar);
@@ -189,3 +174,22 @@ const Vector2 operator/(const Vector2 & vec, const double & scalar)
 	double inv_scalar = 1.0 / scalar;
 	return Vector2(vec._coors[0] * inv_scalar, vec._coors[1] * inv_scalar);
 }
+
+Vector2::Vector2() 
+{
+	_coors[0] = 0.0;
+	_coors[1] = 0.0;
+}
+
+Vector2::Vector2(const Vector2& vec)
+{
+	*this = vec;
+}
+
+Vector2::Vector2(const double& coor0, const double& coor1)
+{
+	_coors[0] = coor0;
+	_coors[1] = coor1;
+}
+
+Vector2::~Vector2() {}
