@@ -38,9 +38,9 @@ public:
 	void FitFreeNodesToShellEdges();
 	void FitFreeMeshToShells();
 	void DeleteExternalNodes();
-	//void SetNodesNeighbors(); Done earlier
+	void DivideExtendedSimplexes();
 	void MinMaxEdges(double& min, double& max);
-	Vector2 Shift(const Node2& node, double& min);
+	Vector2 Shift(const Node2& node);
 	void DistributeNodesEvenly();
 	//void GenerateFiniteElementMesh(); // Executes other functions.
 	

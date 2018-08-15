@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 	polycr.GenerateFreeUniformMesh();
 	polycr.FitFreeMeshToShells();
 	polycr.DeleteExternalNodes();
-	//polycr.SetNodesNeighbors();
+	polycr.DivideExtendedSimplexes();
 	polycr.DistributeNodesEvenly();
 	polycr.Debug();
 
