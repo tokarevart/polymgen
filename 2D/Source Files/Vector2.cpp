@@ -52,6 +52,27 @@ const double Vector2::Cos(const Vector2& vec0, const Vector2& vec1)
 	return Vector2::DotProduct(vec0, vec1) / sqrt(vec0.SqrMagnitude() * vec1.SqrMagnitude());
 }
 
+Vector2 Vector2::Project(const Vector2& point, const Vector2& linePoint0, const Vector2& linePoint1)
+{
+	return Vector2(point).Project(linePoint0, linePoint1);
+}
+
+const bool Vector2::Project(Vector2& out, const Vector2& point, const Vector2& segmPoint0, const Vector2& segmPoint1)
+{
+	Vector2 res(point);
+	res.Project(segmPoint0, segmPoint1);
+
+	if (INSIDE_RECTANGLE(
+			segmPoint0,
+			segmPoint1,
+			res))
+	{
+		return true;
+	}
+
+	return false;
+}
+
 Vector2 Vector2::LinesIntersection(const Vector2& line0p0, const Vector2& line0p1, const Vector2& line1p0, const Vector2& line1p1)
 {
 	double A1 = line0p0._coors[1] - line0p1._coors[1];
@@ -179,7 +200,7 @@ Vector2& Vector2::Rotate(const double& angle, const AngleUnit& unit)
 
 Vector2& Vector2::Mirror(const Vector2& vec)
 {
-	double angle = acos(Cos(*this, vec)); //acos(DotProduct(*this, vec) / sqrt(this->SqrMagnitude() * vec.SqrMagnitude()));
+	double angle = acos(Cos(*this, vec));
 
 	return CrossProductMagnitude(vec, *this) > 0 ? 
 		Rotate(-2.0 * angle, Radian) :
@@ -191,6 +212,13 @@ Vector2& Vector2::Project(const Vector2& vec)
 	Vector2 res = (DotProduct(*this, vec) / vec.SqrMagnitude()) * vec;
 	_coors[0] = res._coors[0];
 	_coors[1] = res._coors[1];
+
+	return *this;
+}
+
+Vector2& Vector2::Project(const Vector2& linePoint0, const Vector2& linePoint1)
+{
+	*this = linePoint0 + Vector2(*this - linePoint0).Project(linePoint1 - linePoint0);
 
 	return *this;
 }

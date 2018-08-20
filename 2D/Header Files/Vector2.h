@@ -16,8 +16,8 @@ public:
 	static const double DotProduct(const Vector2& vec0, const Vector2& vec1);
 	static const double CrossProductMagnitude(const Vector2& vec0, const Vector2& vec1);
 	static const double Cos(const Vector2& vec0, const Vector2& vec1);
-	//static Vector2 Project(Vector2& point, Vector2& linePoint0, Vector2& linePoint1);
-	//static const bool Project(Vector2& out, Vector2& point, Vector2& linePoint0, Vector2& linePoint1);
+	static Vector2 Project(const Vector2& point, const Vector2& linePoint0, const Vector2& linePoint1);
+	static const bool Project(Vector2& out, const Vector2& point, const Vector2& segmPoint0, const Vector2& segmPoint1);
 	static Vector2 LinesIntersection(const Vector2& line0p0, const Vector2& line0p1, const Vector2& line1p0, const Vector2& line1p1);
 	static const bool SegmentsIntersection(const Vector2& segm0p0, const Vector2& segm0p1, const Vector2& segm1p0, const Vector2& segm1p1);
 	static const bool SegmentsIntersection(Vector2& out, const Vector2& segm0p0, const Vector2& segm0p1, const Vector2& segm1p0, const Vector2& segm1p1);
@@ -29,7 +29,7 @@ public:
 	Vector2& Rotate(const double& angle, const AngleUnit& unit);
 	Vector2& Mirror(const Vector2& vec);
 	Vector2& Project(const Vector2& vec);
-	//Vector2& Project(const Vector2& linePoint0, const Vector2& linePoint1);
+	Vector2& Project(const Vector2& linePoint0, const Vector2& linePoint1);
 
 	Vector2& operator=(const Vector2& vec);
 	double& operator[](const int& axisIndex);
