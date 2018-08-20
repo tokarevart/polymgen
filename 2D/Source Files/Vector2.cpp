@@ -67,6 +67,7 @@ const bool Vector2::Project(Vector2& out, const Vector2& point, const Vector2& s
 			segmPoint1,
 			res))
 	{
+		out = res;
 		return true;
 	}
 

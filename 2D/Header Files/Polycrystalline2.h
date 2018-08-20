@@ -30,16 +30,20 @@ public:
 	list<Crystallite2*> crystallites;
 
 	void Debug();
-	void GenerateFreeNodesEvenly(double* const polycrysSizeAxis, size_t* const minNodesNumAxis);
-	unique_ptr<Edge2>* FindFreeEdge(Node2& node0, Node2& node1);
-	void GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis_0);
-	void GenerateFreeUniformMesh();
-	void FitFreeNodesToShellNodes();
-	void FitFreeNodesToShellEdges();
-	void FitFreeMeshToShells();
+	void GenerateNodesEvenly(double* const polycrysSizeAxis, size_t* const minNodesNumAxis);
+	unique_ptr<Edge2>* FindEdge(Node2& node0, Node2& node1);
+	void GenerateSimplexesFromNodes(size_t minNodesNumAxis_0);
+	void GenerateUniformMesh();
+	void FitNodesToShellNodes();
+	void FitNodesToShellEdges_OLD();
+	void FitNodesToShellEdges();
+	void FitMeshToShells();
 	void DeleteExternalNodes();
+	void DeleteFarNodes();
 	void DivideExtendedSimplexes();
+	void DivideCrossingEdges();
 	void MinMaxEdges(double& min, double& max);
+	Vector2 ShiftToFitMesh(const Node2& node);
 	Vector2 ShiftToLavEdges(const Node2& node);
 	Vector2 ShiftToEquilateralSimplexes(const Node2& node);
 	void DistributeNodesEvenly();

@@ -38,7 +38,7 @@ void Polycrystalline2::Debug()
 {
 }
 
-void Polycrystalline2::GenerateFreeNodesEvenly(double* const polycrysSizeAxis, size_t* const minNodesNumAxis)
+void Polycrystalline2::GenerateNodesEvenly(double* const polycrysSizeAxis, size_t* const minNodesNumAxis)
 {
 	double startGenCoor[2];
 	startGenCoor[0] = _minShellNodesCoor[0] + (polycrysSizeAxis[0] - minNodesNumAxis[0] * _l_av) * 0.5;
@@ -97,7 +97,7 @@ void Polycrystalline2::GenerateFreeNodesEvenly(double* const polycrysSizeAxis, s
 	}
 }
 
-unique_ptr<Edge2>* Polycrystalline2::FindFreeEdge(Node2& node0, Node2& node1)
+unique_ptr<Edge2>* Polycrystalline2::FindEdge(Node2& node0, Node2& node1)
 {
 	if (std::find(node0.neighbors.begin(), node0.neighbors.end(), node1.GetPtrToUniquePtr()) == node0.neighbors.end())
 	{
@@ -121,7 +121,7 @@ unique_ptr<Edge2>* Polycrystalline2::FindFreeEdge(Node2& node0, Node2& node1)
 	return nullptr;
 }
 
-void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis_0)
+void Polycrystalline2::GenerateSimplexesFromNodes(size_t minNodesNumAxis_0)
 {
 	unique_ptr<Simplex2>* simp_buf = nullptr;
 	
@@ -213,7 +213,7 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 		{
 			_freeSimplexes.push_back(simp_buf = (new Simplex2())->GetPtrToUniquePtr());
 			if (edge_buf = 
-					FindFreeEdge(
+					FindEdge(
 						**_freeNodes[i], 
 						**_freeNodes[i + 1 + minNodesNumAxis_0]))
 			{
@@ -230,7 +230,7 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 				_freeEdges.push_back((*simp_buf)->edges[0]);
 			}
 			if (edge_buf = 
-					FindFreeEdge(
+					FindEdge(
 						**_freeNodes[i + 1 + minNodesNumAxis_0], 
 						**_freeNodes[i + minNodesNumAxis_0]))
 			{
@@ -247,7 +247,7 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 				_freeEdges.push_back((*simp_buf)->edges[1]);
 			}
 			if (edge_buf = 
-					FindFreeEdge(
+					FindEdge(
 						**_freeNodes[i], 
 						**_freeNodes[i + minNodesNumAxis_0]))
 			{
@@ -296,7 +296,7 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 		{
 			_freeSimplexes.push_back(simp_buf = (new Simplex2())->GetPtrToUniquePtr());
 			if (edge_buf = 
-					FindFreeEdge(
+					FindEdge(
 						**_freeNodes[i], 
 						**_freeNodes[i + 1 + minNodesNumAxis_0]))
 			{
@@ -313,7 +313,7 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 				_freeEdges.push_back((*simp_buf)->edges[0]);
 			}
 			if (edge_buf = 
-					FindFreeEdge(
+					FindEdge(
 						**_freeNodes[i + 1 + minNodesNumAxis_0], 
 						**_freeNodes[i + minNodesNumAxis_0]))
 			{
@@ -329,7 +329,7 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 
 				_freeEdges.push_back((*simp_buf)->edges[1]);
 			}
-			if (edge_buf = FindFreeEdge(**_freeNodes[i], **_freeNodes[i + minNodesNumAxis_0]))
+			if (edge_buf = FindEdge(**_freeNodes[i], **_freeNodes[i + minNodesNumAxis_0]))
 			{
 				(*simp_buf)->edges[2] = edge_buf;
 			}
@@ -369,7 +369,7 @@ void Polycrystalline2::GenerateFreeSimplexesFromFreeNodes(size_t minNodesNumAxis
 	}
 }
 
-void Polycrystalline2::GenerateFreeUniformMesh()
+void Polycrystalline2::GenerateUniformMesh()
 {
 	double polycrysSizeAxis[2];
 	polycrysSizeAxis[0] = _maxShellNodesCoor[0] - _minShellNodesCoor[0];
@@ -379,11 +379,11 @@ void Polycrystalline2::GenerateFreeUniformMesh()
 	minNodesNumAxis[0] = (size_t)(polycrysSizeAxis[0] / _l_av) + 2;
 	minNodesNumAxis[1] = (size_t)(polycrysSizeAxis[1] / (0.5 * sqrt(3) * _l_av)) + 2;
 
-	GenerateFreeNodesEvenly(polycrysSizeAxis, minNodesNumAxis);
-	GenerateFreeSimplexesFromFreeNodes(minNodesNumAxis[0]);
+	GenerateNodesEvenly(polycrysSizeAxis, minNodesNumAxis);
+	GenerateSimplexesFromNodes(minNodesNumAxis[0]);
 }
 
-void Polycrystalline2::FitFreeNodesToShellNodes()
+void Polycrystalline2::FitNodesToShellNodes()
 {
 	size_t maxi = _shellNodes.size();
 	unique_ptr<Node2>* node_with_min_sqr_dist;
@@ -392,15 +392,18 @@ void Polycrystalline2::FitFreeNodesToShellNodes()
 	//#pragma omp parallel for private(node_with_min_sqr_dist, sqr_magn_buf, min_sqr_dist) firstprivate(maxi)
 	for (size_t i = 0; i < maxi; i++)
 	{
-		node_with_min_sqr_dist = _freeNodes[0];
-
-		min_sqr_dist = (**_freeNodes[0] - **_shellNodes[i]).SqrMagnitude();
+		node_with_min_sqr_dist = nullptr;
+		min_sqr_dist = DBL_MAX;
 		for (size_t j = 1, maxj = _freeNodes.size(); j < maxj; j++)
 		{
-			if ((sqr_magn_buf = (**_freeNodes[j] - **_shellNodes[i]).SqrMagnitude()) < min_sqr_dist)
+			if (*_freeNodes[j])
 			{
-				min_sqr_dist = sqr_magn_buf;
-				node_with_min_sqr_dist = _freeNodes[j];
+				sqr_magn_buf = (**_freeNodes[j] - **_shellNodes[i]).SqrMagnitude();
+				if (sqr_magn_buf < min_sqr_dist)
+				{
+					min_sqr_dist = sqr_magn_buf;
+					node_with_min_sqr_dist = _freeNodes[j];
+				}
 			}
 		}
 
@@ -423,7 +426,7 @@ void Polycrystalline2::FitFreeNodesToShellNodes()
 	}
 }
 
-void Polycrystalline2::FitFreeNodesToShellEdges()
+void Polycrystalline2::FitNodesToShellEdges_OLD()
 {
 	size_t maxi = _freeEdges.size();
 	//#pragma omp parallel for firstprivate(maxi)
@@ -539,9 +542,40 @@ void Polycrystalline2::FitFreeNodesToShellEdges()
 	}
 }
 
-void Polycrystalline2::FitFreeMeshToShells()
+void Polycrystalline2::FitNodesToShellEdges()
 {
-	FitFreeNodesToShellNodes(); return;
+	size_t nodes_num = _freeNodes.size();
+	Vector2* shifts = new Vector2[nodes_num];
+
+	int iters_num;
+	std::cout << "Enter the iterations number: ";
+	std::cin >> iters_num;
+	for (int i = 0; i < iters_num; i++)
+	{
+		//#pragma omp parallel for firstprivate(nodes_num)
+		for (size_t j = 0; j < nodes_num; j++)
+		{
+			if (*_freeNodes[j])
+			{
+				shifts[j] = ShiftToLavEdges(**_freeNodes[j]);
+				shifts[j] += ShiftToFitMesh(**_freeNodes[j]);
+			}
+		}
+
+		//#pragma omp parallel for firstprivate(nodes_num)
+		for (size_t j = 0; j < nodes_num; j++)
+		{
+			if (*_freeNodes[j])
+			{
+				**_freeNodes[j] += shifts[j];
+			}
+		}
+	}
+}
+
+void Polycrystalline2::FitMeshToShells()
+{
+	FitNodesToShellNodes(); //return;
 	//
 	//for (size_t i = 0, max = _freeEdges.size(); i < max; i++)
 	//{
@@ -551,7 +585,7 @@ void Polycrystalline2::FitFreeMeshToShells()
 	//	}
 	//}
 	//
-	FitFreeNodesToShellEdges();
+	FitNodesToShellEdges();
 }
 
 void Polycrystalline2::DeleteExternalNodes()
@@ -583,6 +617,100 @@ void Polycrystalline2::DeleteExternalNodes()
 			delete node->release();
 		}
 	}
+}
+
+void Polycrystalline2::DeleteFarNodes()
+{
+	size_t nodes_num = _freeNodes.size();
+	bool* is_far_nodes = new bool[nodes_num];
+	bool* is_inside_nodes = new bool[nodes_num];
+	
+	//#pragma omp parallel for firstprivate(nodes_num)
+	for (size_t i = 0; i < nodes_num; i++)
+	{
+		is_inside_nodes[i] = false;
+
+		if (!*_freeNodes[i] ||
+			(*_freeNodes[i])->belongsToShellNode)
+		{
+			is_inside_nodes[i] = true;
+			continue;
+		}
+
+		for (auto &crys : crystallites)
+		{
+			if (crys->Contains(**_freeNodes[i]))
+			{
+				is_inside_nodes[i] = true;
+				break;
+			}
+		}
+	}
+
+	//#pragma omp parallel for firstprivate(nodes_num)
+	for (size_t i = 0; i < nodes_num; i++)
+	{
+		is_far_nodes[i] = false;
+
+		if (*_freeNodes[i])
+		{
+			bool do_continue = false;
+
+			double min_sqr_dist_to_s_node = DBL_MAX;
+			double sqr_magn_buf;
+			for (auto &s_node : _shellNodes)
+			{
+				if ((**s_node - **_freeNodes[i]).SqrMagnitude() < 4.0 * _l_av * _l_av)
+				{
+					is_far_nodes[i] = false;
+					do_continue = true;
+					break;
+				}
+			}
+			if (do_continue)
+			{
+				continue;
+			}
+			
+
+			Vector2 proj;
+			for (auto &s_edge : _shellEdges)
+			{
+				if (*s_edge &&
+					Vector2::Project(
+						proj,
+						(*_freeNodes[i])->GetPosition(),
+						(*(*s_edge)->nodes[0])->GetPosition(),
+						(*(*s_edge)->nodes[1])->GetPosition()))
+				{
+					if ((proj - (*_freeNodes[i])->GetPosition()).SqrMagnitude() < 4.0 * _l_av * _l_av)
+					{
+						is_far_nodes[i] = false;
+						do_continue = true;
+						break;
+					}
+				}
+			}
+			if (do_continue)
+			{
+				continue;
+			}
+
+			is_far_nodes[i] = true;
+		}
+	}
+
+	for (size_t i = 0; i < nodes_num; i++)
+	{
+		if (!is_inside_nodes[i] &&
+			is_far_nodes[i])
+		{
+			delete _freeNodes[i]->release();
+		}
+	}
+
+	delete is_far_nodes;
+	delete is_inside_nodes;
 }
 
 void Polycrystalline2::DivideExtendedSimplexes()
@@ -617,6 +745,19 @@ void Polycrystalline2::DivideExtendedSimplexes()
 	}
 }
 
+void Polycrystalline2::DivideCrossingEdges()
+{
+	for (size_t i = 0, max = _freeEdges.size(); i < max; i++)
+	{
+		if (*_freeEdges[i] &&
+			(*_freeEdges[i])->SqrMagnitude() > 0.25 * _l_av * _l_av &&
+			(*_freeEdges[i])->IntersectsWith(_shellEdges))
+		{
+			(*_freeEdges[i])->MakeTwoInstead(_freeSimplexes, _freeEdges, _freeNodes);
+		}
+	}
+}
+
 void Polycrystalline2::MinMaxEdges(double& min, double& max)
 {
 	size_t edges_num = _freeEdges.size();
@@ -646,6 +787,47 @@ void Polycrystalline2::MinMaxEdges(double& min, double& max)
 	max = sqrt(max);
 }
 
+Vector2 Polycrystalline2::ShiftToFitMesh(const Node2& node)
+{
+	Vector2 shift;
+	Vector2 proj;
+	const double c = 0.1;
+	for (auto &s_edge : _shellEdges)
+	{
+		if (*s_edge &&
+			Vector2::Project(
+				proj,
+				node.GetPosition(),
+				(*(*s_edge)->nodes[0])->GetPosition(),
+				(*(*s_edge)->nodes[1])->GetPosition()))
+		{
+			Vector2 to_proj = proj - node.GetPosition();
+			Vector2 buf;
+			if (to_proj.SqrMagnitude() > _l_av * _l_av * 0.25)
+			{
+				buf = Vector2(0.0, 0.0);
+			}
+			else if (to_proj.SqrMagnitude() < _l_av * 0.2)
+			{
+				buf = to_proj;
+			}
+			else
+			{
+				double sqr_dist = to_proj.SqrMagnitude();
+				buf = c * to_proj * _l_av * _l_av * _l_av / (sqr_dist * sqr_dist);
+				if (buf.SqrMagnitude() > _l_av * _l_av * 0.0025)
+				{
+					buf = buf.Normalize() * _l_av * 0.05;
+				}
+			}
+
+			shift += buf;
+		}
+	}
+
+	return shift;
+}
+
 double Sign(double val)
 {
 	return val > 0.0 ? 1.0 : -1.0;
@@ -654,29 +836,29 @@ double Sign(double val)
 Vector2 Polycrystalline2::ShiftToLavEdges(const Node2& node)
 {
 	Vector2 shift;
-	const double b = 0.1;
+	const double b = 0.15;
 	for (auto &neighbor : node.neighbors)
 	{
 		if (*neighbor)
 		{
 			Vector2& vec = **neighbor - node;
-			double buf = 1.0 - _l_av / vec.Magnitude();
+			double buf = b * (1.0 - _l_av / vec.Magnitude());
 			if ((*neighbor)->belongsToShellNode)
 			{
-				shift += vec * 2 * b * buf;
+				shift += vec * 2 * (buf + buf * buf + buf * buf * buf);
 			}
 			else if ((*neighbor)->belongsToShellEdge)
 			{
 				double k = 2.0 - Vector2::Cos(vec, **(*(*neighbor)->belongsToShellEdge)->nodes[0] - **(*(*neighbor)->belongsToShellEdge)->nodes[1]);
-				shift += vec * k * b * buf;
+				shift += vec * k * (buf + buf * buf + buf * buf * buf);
 			}
 			else
 			{
-				shift += vec * b * buf;
+				shift += vec * (buf + buf * buf + buf * buf * buf);
 			}
 		}
 	}
-	
+
 	return shift;
 }
 
@@ -743,19 +925,19 @@ void Polycrystalline2::DistributeNodesEvenly()
 		}
 
 		//#pragma omp parallel for firstprivate(nodes_num)
-		for (size_t i = 0; i < nodes_num; i++)
+		for (size_t j = 0; j < nodes_num; j++)
 		{
-			if (*_freeNodes[i])
+			if (*_freeNodes[j])
 			{
-				shifts[i] = ShiftToLavEdges(**_freeNodes[i]);
+				shifts[j] = ShiftToLavEdges(**_freeNodes[j]);
 			}
 		}
 		//#pragma omp parallel for firstprivate(nodes_num)
-		for (size_t i = 0; i < nodes_num; i++)
+		for (size_t j = 0; j < nodes_num; j++)
 		{
-			if (*_freeNodes[i])
+			if (*_freeNodes[j])
 			{
-				**_freeNodes[i] += shifts[i];
+				**_freeNodes[j] += shifts[j];
 			}
 		}
 
