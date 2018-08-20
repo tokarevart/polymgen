@@ -1,10 +1,41 @@
 #include "Vector2.h"
+#include <algorithm>
 
 
 #define DET(a, b, c, d) \
 		(a * d - b * c)
 
+#define EPS 1e-10
+#define BETWEEN(p0_coor, p1_coor, p) \
+		(std::min(p0_coor, p1_coor) - EPS < p && p < std::max(p0_coor, p1_coor) + EPS)
+
+#define INSIDE_RECTANGLE(corner0, corner1, point) \
+		(BETWEEN(corner0._coors[0], corner1._coors[0], point._coors[0]) && \
+		 BETWEEN(corner0._coors[1], corner1._coors[1], point._coors[1]))
+
+#define NOT_NEAR_SEGMS(segm0p0, segm0p1, segm1p0, segm1p1) \
+		(segm0p0._coors[0] < segm1p0._coors[0]  && \
+		 segm0p1._coors[0] < segm1p0._coors[0] && \
+		 segm0p0._coors[0] < segm1p1._coors[0] && \
+		 segm0p1._coors[0] < segm1p1._coors[0]) || \
+		\
+		(segm0p0._coors[1] < segm1p0._coors[1] && \
+		 segm0p1._coors[1] < segm1p0._coors[1] && \
+		 segm0p0._coors[1] < segm1p1._coors[1] && \
+		 segm0p1._coors[1] < segm1p1._coors[1]) || \
+		\
+		(segm0p0._coors[0] > segm1p0._coors[0]  && \
+		 segm0p1._coors[0] > segm1p0._coors[0] && \
+		 segm0p0._coors[0] > segm1p1._coors[0] && \
+		 segm0p1._coors[0] > segm1p1._coors[0]) || \
+		\
+		(segm0p0._coors[1] > segm1p0._coors[1] && \
+		 segm0p1._coors[1] > segm1p0._coors[1] && \
+		 segm0p0._coors[1] > segm1p1._coors[1] && \
+		 segm0p1._coors[1] > segm1p1._coors[1])
+
 const double PI_DIV_180 = 3.141592653589793 / 180.0;
+
 
 const double Vector2::DotProduct(const Vector2& vec0, const Vector2& vec1)
 {
@@ -21,20 +52,87 @@ const double Vector2::Cos(const Vector2& vec0, const Vector2& vec1)
 	return Vector2::DotProduct(vec0, vec1) / sqrt(vec0.SqrMagnitude() * vec1.SqrMagnitude());
 }
 
-Vector2 Vector2::LinesIntersection(Vector2& line0p0, Vector2& line0p1, Vector2& line1p0, Vector2& line1p1)
+Vector2 Vector2::LinesIntersection(const Vector2& line0p0, const Vector2& line0p1, const Vector2& line1p0, const Vector2& line1p1)
 {
-	double A1 = line0p0[1] - line0p1[1];
-	double B1 = line0p1[0] - line0p0[0];
-	double C1 = -A1 * line0p0[0] - B1 * line0p0[1];
-	double A2 = line1p0[1] - line1p1[1];
-	double B2 = line1p1[0] - line1p0[0];
-	double C2 = -A2 * line1p0[0] - B2 * line1p0[1];
+	double A1 = line0p0._coors[1] - line0p1._coors[1];
+	double B1 = line0p1._coors[0] - line0p0._coors[0];
+	double C1 = -A1 * line0p0._coors[0] - B1 * line0p0._coors[1];
+	double A2 = line1p0._coors[1] - line1p1._coors[1];
+	double B2 = line1p1._coors[0] - line1p0._coors[0];
+	double C2 = -A2 * line1p0._coors[0] - B2 * line1p0._coors[1];
 
 	double minus_inv_zn = -1.0 / DET(A1, B1, A2, B2);
 
 	double x = DET(C1, B1, C2, B2) * minus_inv_zn;
 	double y = DET(A1, C1, A2, C2) * minus_inv_zn;
 	return Vector2(x, y);
+}
+
+const bool Vector2::SegmentsIntersection(const Vector2& segm0p0, const Vector2& segm0p1, const Vector2& segm1p0, const Vector2& segm1p1)
+{
+	if (NOT_NEAR_SEGMS(
+			segm0p0,
+			segm0p1,
+			segm1p0,
+			segm1p1))
+	{
+		return false;
+	}
+
+	Vector2 intersect_point =
+		LinesIntersection(
+			segm0p0,
+			segm0p1,
+			segm1p0,
+			segm1p1);
+
+	if (INSIDE_RECTANGLE(
+			segm0p0,
+			segm0p1,
+			intersect_point) &&
+		INSIDE_RECTANGLE(
+			segm1p0,
+			segm1p1,
+			intersect_point))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+const bool Vector2::SegmentsIntersection(Vector2& out, const Vector2& segm0p0, const Vector2& segm0p1, const Vector2& segm1p0, const Vector2& segm1p1)
+{
+	if (NOT_NEAR_SEGMS(
+			segm0p0,
+			segm0p1,
+			segm1p0,
+			segm1p1))
+	{
+		return false;
+	}
+
+	Vector2 intersect_point =
+		LinesIntersection(
+			segm0p0,
+			segm0p1,
+			segm1p0,
+			segm1p1);
+
+	if (INSIDE_RECTANGLE(
+			segm0p0,
+			segm0p1,
+			intersect_point) &&
+		INSIDE_RECTANGLE(
+			segm1p0,
+			segm1p1,
+			intersect_point))
+	{
+		out = intersect_point;
+		return true;
+	}
+
+	return false;
 }
 
 const double Vector2::Magnitude() const

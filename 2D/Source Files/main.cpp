@@ -1,8 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "Polycrystalline2.h"
-//#include "Timer.h"
-
+using namespace std;
 
 int main(int argc, char* argv[])
 {
@@ -18,10 +17,32 @@ int main(int argc, char* argv[])
 
 	polycr.GenerateFreeUniformMesh();
 	polycr.FitFreeMeshToShells();
-	polycr.DeleteExternalNodes();
-	polycr.DivideExtendedSimplexes();
-	polycr.DistributeNodesEvenly();
-	polycr.Debug();
+	//polycr.DeleteExternalNodes();
+	int input;
+	while (true)
+	{
+		cout << "\n1. Distribute nodes evenly.\n"
+				"2. Make simplexes equilateral.\n"
+				"3. Divide extended simplexes.\n"
+				"4. Close.\n";
+		cin >> input;
+		if (input == 1)
+		{
+			polycr.DistributeNodesEvenly();
+		}
+		else if (input == 2)
+		{
+			polycr.MakeSimplexesEquilateral();
+		}
+		else if (input == 3)
+		{
+			polycr.DivideExtendedSimplexes();
+		}
+		else
+		{
+			break;
+		}
+	}
 
 	std::ofstream nodes_pos("Output/nodes_pos.txt");
 	std::ofstream fe_nodes("Output/fe_nodes.txt");
@@ -30,6 +51,7 @@ int main(int argc, char* argv[])
 
 	nodes_pos.close();
 	fe_nodes.close();
+
 
 	return 0;
 }

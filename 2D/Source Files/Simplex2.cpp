@@ -24,6 +24,62 @@ unique_ptr<Edge2>* Simplex2::FindEdge(Node2& node0, Node2& node1)
 	return nullptr;
 }
 
+unique_ptr<Edge2>* Simplex2::MinEdge()
+{
+	if ((*edges[0])->SqrMagnitude() < (*edges[1])->SqrMagnitude())
+	{
+		if ((*edges[0])->SqrMagnitude() < (*edges[2])->SqrMagnitude())
+		{
+			return edges[0];
+		}
+		else
+		{
+			return edges[2];
+		}
+	}
+	else
+	{
+		if ((*edges[1])->SqrMagnitude() < (*edges[2])->SqrMagnitude())
+		{
+			return edges[1];
+		}
+		else
+		{
+			return edges[2];
+		}
+	}
+
+	return nullptr;
+}
+
+unique_ptr<Edge2>* Simplex2::MaxEdge()
+{
+	if ((*edges[0])->SqrMagnitude() > (*edges[1])->SqrMagnitude())
+	{
+		if ((*edges[0])->SqrMagnitude() > (*edges[2])->SqrMagnitude())
+		{
+			return edges[0];
+		}
+		else
+		{
+			return edges[2];
+		}
+	}
+	else
+	{
+		if ((*edges[1])->SqrMagnitude() > (*edges[2])->SqrMagnitude())
+		{
+			return edges[1];
+		}
+		else
+		{
+			return edges[2];
+		}
+	}
+
+	return nullptr;
+}
+
 const bool Simplex2::IsContaining(const Edge2& edge) const
 {
 	for (int i = 0; i < 3; i++)
@@ -69,6 +125,21 @@ Simplex2::Simplex2(Edge2& edge0, Edge2& edge1, Edge2& edge2) : unique_ptr_helper
 	(*edges[0])->inclInSimplexes.push_back(GetPtrToUniquePtr());
 	(*edges[1])->inclInSimplexes.push_back(GetPtrToUniquePtr());
 	(*edges[2])->inclInSimplexes.push_back(GetPtrToUniquePtr());
+
+	for (auto &edge : edges)
+	{
+		for (auto &node : (*edge)->nodes)
+		{
+			if (std::find(
+					(*node)->inclInSimplexes.begin(),
+					(*node)->inclInSimplexes.end(), 
+					GetPtrToUniquePtr())
+				== (*node)->inclInSimplexes.end())
+			{
+				(*node)->inclInSimplexes.push_back(GetPtrToUniquePtr());
+			}
+		}
+	}
 }
 
 Simplex2::Simplex2(Node2& node0, Node2& node1, Node2& node2) : unique_ptr_helper<Simplex2>(this)
@@ -82,6 +153,21 @@ Simplex2::Simplex2(Node2& node0, Node2& node1, Node2& node2) : unique_ptr_helper
 	(*edges[0])->inclInSimplexes.push_back(GetPtrToUniquePtr());
 	(*edges[1])->inclInSimplexes.push_back(GetPtrToUniquePtr());
 	(*edges[2])->inclInSimplexes.push_back(GetPtrToUniquePtr());
+
+	for (auto &edge : edges)
+	{
+		for (auto &node : (*edge)->nodes)
+		{
+			if (std::find(
+					(*node)->inclInSimplexes.begin(),
+					(*node)->inclInSimplexes.end(),
+					GetPtrToUniquePtr())
+				== (*node)->inclInSimplexes.end())
+			{
+				(*node)->inclInSimplexes.push_back(GetPtrToUniquePtr());
+			}
+		}
+	}
 }
 
 Simplex2::~Simplex2()

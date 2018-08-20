@@ -40,8 +40,10 @@ public:
 	void DeleteExternalNodes();
 	void DivideExtendedSimplexes();
 	void MinMaxEdges(double& min, double& max);
-	Vector2 Shift(const Node2& node);
+	Vector2 ShiftToLavEdges(const Node2& node);
+	Vector2 ShiftToEquilateralSimplexes(const Node2& node);
 	void DistributeNodesEvenly();
+	void MakeSimplexesEquilateral();
 	//void GenerateFiniteElementMesh(); // Executes other functions.
 	
 	// Calculate based on position in space.

@@ -1,4 +1,15 @@
 #include "Edge2.h"
+#include <algorithm>
+
+
+#define EPS 1e-10
+#define BETWEEN(p0_coor, p1_coor, p) \
+		(std::min(p0_coor, p1_coor) - EPS < p && p < std::max(p0_coor, p1_coor) + EPS)
+
+#define INSIDE_RECTANGLE(corner0, corner1, point) \
+		(BETWEEN(corner0[0], corner1[0], point[0]) && \
+		 BETWEEN(corner0[1], corner1[1], point[1]))
+
 
 const double Edge2::Magnitude() const
 {
@@ -120,6 +131,47 @@ const bool Edge2::BelongsToShell()
 		((*nodes[0])->belongsToShellEdge == (*nodes[1])->belongsToShellEdge && (*nodes[1])->belongsToShellEdge))
 	{
 		return true;
+	}
+
+	return false;
+}
+
+const bool Edge2::IntersectsWith(const Edge2& edge)
+{
+	if (Vector2::SegmentsIntersection(
+			(*nodes[0])->GetPosition(), 
+			(*nodes[1])->GetPosition(), 
+			(*edge.nodes[0])->GetPosition(), 
+			(*edge.nodes[1])->GetPosition()))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+const bool Edge2::IntersectsWith(const ShellEdge2& edge)
+{
+	if (Vector2::SegmentsIntersection(
+			(*nodes[0])->GetPosition(),
+			(*nodes[1])->GetPosition(),
+			(*edge.nodes[0])->GetPosition(),
+			(*edge.nodes[1])->GetPosition()))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+const bool Edge2::IntersectsWith(const vector<unique_ptr<ShellEdge2>*>& shellEdges)
+{
+	for (auto &s_edge : shellEdges)
+	{
+		if (*s_edge && IntersectsWith(**s_edge))
+		{
+			return true;
+		}
 	}
 
 	return false;

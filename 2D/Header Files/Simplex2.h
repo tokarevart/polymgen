@@ -17,6 +17,8 @@ public:
 	Simplex2& UpdateAverageEdgesLength();
 
 	unique_ptr<Edge2>* FindEdge(Node2& node0, Node2& node1);
+	unique_ptr<Edge2>* MinEdge();
+	unique_ptr<Edge2>* MaxEdge();
 
 	const bool IsContaining(const Edge2& edge) const;
 	const bool IsContaining(const Node2& node) const;

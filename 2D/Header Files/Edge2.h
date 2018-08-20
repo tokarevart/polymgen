@@ -24,6 +24,9 @@ public:
 
 	const bool IsContaining(const Node2& node);
 	const bool BelongsToShell();
+	const bool IntersectsWith(const Edge2& edge);
+	const bool IntersectsWith(const ShellEdge2& edge);
+	const bool IntersectsWith(const vector<unique_ptr<ShellEdge2>*>& shellEdges);
 
 	void DestroyIfNoLinks();
 
