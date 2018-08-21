@@ -17,6 +17,7 @@ int main(int argc, char* argv[])
 	
 	polycr.GenerateUniformMesh();
 	polycr.DeleteFarNodes();
+	polycr.ErasePtrsToNullptrFromVectors();
 	polycr.FitNodesToShellNodes();
 
 	std::ofstream nodes_pos("Output/nodes_pos.txt");

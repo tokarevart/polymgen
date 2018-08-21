@@ -38,6 +38,7 @@ public:
 	void FitNodesToShellEdges_OLD();
 	void FitNodesToShellEdges();
 	void FitMeshToShells();
+	void ErasePtrsToNullptrFromVectors();
 	void DeleteExternalNodes();
 	void DeleteFarNodes();
 	void DivideExtendedSimplexes();
