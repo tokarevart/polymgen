@@ -376,8 +376,8 @@ void Polycrystalline2::GenerateUniformMesh()
 	polycrysSizeAxis[1] = _maxShellNodesCoor[1] - _minShellNodesCoor[1];
 
 	size_t minNodesNumAxis[2];
-	minNodesNumAxis[0] = (size_t)(polycrysSizeAxis[0] / _l_av) + 2;
-	minNodesNumAxis[1] = (size_t)(polycrysSizeAxis[1] / (0.5 * sqrt(3) * _l_av)) + 2;
+	minNodesNumAxis[0] = (size_t)(polycrysSizeAxis[0] / _l_av) + 3;
+	minNodesNumAxis[1] = (size_t)(polycrysSizeAxis[1] / (0.5 * sqrt(3) * _l_av)) + 3;
 
 	GenerateNodesEvenly(polycrysSizeAxis, minNodesNumAxis);
 	GenerateSimplexesFromNodes(minNodesNumAxis[0]);
@@ -575,16 +575,7 @@ void Polycrystalline2::FitNodesToShellEdges()
 
 void Polycrystalline2::FitMeshToShells()
 {
-	FitNodesToShellNodes(); //return;
-	//
-	//for (size_t i = 0, max = _freeEdges.size(); i < max; i++)
-	//{
-	//	if (*_freeEdges[i] && (*_freeEdges[i])->IntersectsWith(_shellEdges))
-	//	{
-	//		(*_freeEdges[i])->MakeTwoInstead(_freeSimplexes, _freeEdges, _freeNodes);
-	//	}
-	//}
-	//
+	FitNodesToShellNodes();
 	FitNodesToShellEdges();
 }
 
@@ -791,7 +782,7 @@ Vector2 Polycrystalline2::ShiftToFitMesh(const Node2& node)
 {
 	Vector2 shift;
 	Vector2 proj;
-	const double c = 0.1;
+	const double c = 0.2;
 	for (auto &s_edge : _shellEdges)
 	{
 		if (*s_edge &&
@@ -814,7 +805,7 @@ Vector2 Polycrystalline2::ShiftToFitMesh(const Node2& node)
 			else
 			{
 				double sqr_dist = to_proj.SqrMagnitude();
-				buf = c * to_proj * _l_av * _l_av * _l_av / (sqr_dist * sqr_dist);
+				buf = c * to_proj * _l_av / (sqr_dist);
 				if (buf.SqrMagnitude() > _l_av * _l_av * 0.0025)
 				{
 					buf = buf.Normalize() * _l_av * 0.05;
@@ -845,16 +836,16 @@ Vector2 Polycrystalline2::ShiftToLavEdges(const Node2& node)
 			double buf = b * (1.0 - _l_av / vec.Magnitude());
 			if ((*neighbor)->belongsToShellNode)
 			{
-				shift += vec * 2 * (buf + buf * buf + buf * buf * buf);
+				shift += vec * 2 * (buf);
 			}
 			else if ((*neighbor)->belongsToShellEdge)
 			{
 				double k = 2.0 - Vector2::Cos(vec, **(*(*neighbor)->belongsToShellEdge)->nodes[0] - **(*(*neighbor)->belongsToShellEdge)->nodes[1]);
-				shift += vec * k * (buf + buf * buf + buf * buf * buf);
+				shift += vec * k * (buf);
 			}
 			else
 			{
-				shift += vec * (buf + buf * buf + buf * buf * buf);
+				shift += vec * (buf);
 			}
 		}
 	}
