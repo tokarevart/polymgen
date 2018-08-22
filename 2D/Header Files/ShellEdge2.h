@@ -11,13 +11,14 @@ using std::list;
 class ShellEdge2 : public unique_ptr_helper<ShellEdge2>
 {
 private:
-	unique_ptr<Vector2> _normal;
+	//unique_ptr<Vector2> _normal;
 
-	void SetNormal();
+	//void SetNormal();
 
 public:
 	unique_ptr<ShellNode2>* nodes[2];
-	list<Crystallite2*> inclInCryses;
+	//list<Crystallite2*> inclInCryses;
+	size_t inclInCrysesNum = 0;
 
 	const double Magnitude() const;
 	const double SqrMagnitude() const;

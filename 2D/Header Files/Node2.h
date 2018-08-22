@@ -16,9 +16,10 @@ private:
 public:
 	size_t globalNum;
 
+	bool belongsToCrys = false;
 	unique_ptr<ShellEdge2>* belongsToShellEdge = nullptr;
 	unique_ptr<ShellNode2>* belongsToShellNode = nullptr;
-	list<Crystallite2*> belongsToCryses;
+	//list<Crystallite2*> belongsToCryses;
 
 	list<unique_ptr<Node2>*> neighbors;
 	list<unique_ptr<Edge2>*> inclInEdges;

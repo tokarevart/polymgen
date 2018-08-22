@@ -5,7 +5,7 @@
 #define DET(a, b, c, d) \
 		(a * d - b * c)
 
-#define EPS 1e-10
+#define EPS 1e-10 // Must depend on shell edges lengths
 #define BETWEEN(p0_coor, p1_coor, p) \
 		(std::min(p0_coor, p1_coor) - EPS < p && p < std::max(p0_coor, p1_coor) + EPS)
 

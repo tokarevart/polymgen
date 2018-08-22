@@ -19,6 +19,7 @@ private:
 	double _maxShellNodesCoor[2];
 	double _l_min, _l_av, _l_max;
 
+	// Add external polycrystalline shell and some method for its parsing from inclInCrysesNum
 	vector<unique_ptr<ShellEdge2>*> _shellEdges;
 	vector<unique_ptr<ShellNode2>*> _shellNodes;
 
@@ -29,26 +30,25 @@ private:
 public:
 	list<Crystallite2*> crystallites;
 
-	void Debug();
 	void GenerateNodesEvenly(double* const polycrysSizeAxis, size_t* const minNodesNumAxis);
 	unique_ptr<Edge2>* FindEdge(Node2& node0, Node2& node1);
 	void GenerateSimplexesFromNodes(size_t minNodesNumAxis_0);
 	void GenerateUniformMesh();
 	void FitNodesToShellNodes();
-	void FitNodesToShellEdges_OLD();
+	//void FitNodesToShellEdges(); // DEPRECATED
 	void FitNodesToShellEdges();
 	void FitMeshToShells();
 	void ErasePtrsToNullptrFromVectors();
 	void DeleteExternalNodes();
 	void DeleteFarNodes();
-	void DivideExtendedSimplexes();
-	void DivideCrossingEdges();
-	void MinMaxEdges(double& min, double& max);
+	//void DivideExtendedSimplexes();
+	//void DivideCrossingEdges();
+	//void MinMaxEdges(double& min, double& max);
 	Vector2 ShiftToFitMesh(const Node2& node);
 	Vector2 ShiftToLavEdges(const Node2& node);
-	Vector2 ShiftToEquilateralSimplexes(const Node2& node);
+	//Vector2 ShiftToEquilateralSimplexes(const Node2& node);
 	void DistributeNodesEvenly();
-	void MakeSimplexesEquilateral();
+	//void MakeSimplexesEquilateral();
 	//void GenerateFiniteElementMesh(); // Executes other functions.
 	
 	// Calculate based on position in space.

@@ -45,19 +45,29 @@ void Edge2::MakeTwoInstead(list<unique_ptr<Simplex2>*>& freeSimplexes, vector<un
 	unique_ptr<Node2>* inner_node = (new Node2((*nodes[0])->GetPosition() + 0.5 * (**nodes[1] - **nodes[0])))->GetPtrToUniquePtr();
 	if ((*nodes[0]))
 	{
-		list<Crystallite2*> inner_node_cryses;
-		for (auto &crys : (*nodes[0])->belongsToCryses)
+		if ((*nodes[0])->belongsToCrys &&
+			(*nodes[1])->belongsToCrys)
 		{
-			if (std::find(
-					(*nodes[1])->belongsToCryses.begin(),
-					(*nodes[1])->belongsToCryses.end(),
-					crys)
-				!= (*nodes[1])->belongsToCryses.end())
-			{
-				inner_node_cryses.push_back(crys);
-			}
+			(*inner_node)->belongsToCrys = true;
 		}
-		(*inner_node)->belongsToCryses = inner_node_cryses;
+		else
+		{
+			// Very rare situation
+		}
+
+		//list<Crystallite2*> inner_node_cryses;
+		//for (auto &crys : (*nodes[0])->belongsToCryses)
+		//{
+		//	if (std::find(
+		//			(*nodes[1])->belongsToCryses.begin(),
+		//			(*nodes[1])->belongsToCryses.end(),
+		//			crys)
+		//		!= (*nodes[1])->belongsToCryses.end())
+		//	{
+		//		inner_node_cryses.push_back(crys);
+		//	}
+		//}
+		//(*inner_node)->belongsToCryses = inner_node_cryses;
 	}
 	if (BelongsToShell())
 	{

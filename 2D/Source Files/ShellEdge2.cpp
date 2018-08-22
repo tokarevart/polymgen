@@ -2,13 +2,13 @@
 
 const double MINUS_PI_DIV_2 = -3.141592653589793 * 0.5;
 
-void ShellEdge2::SetNormal()
-{
-	(*_normal)[0] = (*nodes[1]->get())[0] - (*nodes[0]->get())[0];
-	(*_normal)[1] = (*nodes[1]->get())[1] - (*nodes[0]->get())[1];
-
-	_normal->Rotate(MINUS_PI_DIV_2, Radian).Normalize();
-}
+//void ShellEdge2::SetNormal()
+//{
+//	(*_normal)[0] = (*nodes[1]->get())[0] - (*nodes[0]->get())[0];
+//	(*_normal)[1] = (*nodes[1]->get())[1] - (*nodes[0]->get())[1];
+//
+//	_normal->Rotate(MINUS_PI_DIV_2, Radian).Normalize();
+//}
 
 const double ShellEdge2::Magnitude() const
 {
@@ -36,12 +36,12 @@ ShellEdge2::ShellEdge2() : unique_ptr_helper<ShellEdge2>(this)
 {
 	nodes[0] = nullptr;
 	nodes[1] = nullptr;
-	_normal.reset(new Vector2());
+	//_normal.reset(new Vector2());
 }
 
 ShellEdge2::ShellEdge2(ShellNode2& node0, ShellNode2& node1) : unique_ptr_helper<ShellEdge2>(this)
 {
-	_normal.reset(new Vector2());
+	//_normal.reset(new Vector2());
 
 	nodes[0] = node0.GetPtrToUniquePtr();
 	nodes[1] = node1.GetPtrToUniquePtr();
@@ -49,7 +49,7 @@ ShellEdge2::ShellEdge2(ShellNode2& node0, ShellNode2& node1) : unique_ptr_helper
 	(*nodes[0])->inclInEdges.push_back(GetPtrToUniquePtr());
 	(*nodes[1])->inclInEdges.push_back(GetPtrToUniquePtr());
 
-	SetNormal();
+	//SetNormal();
 }
 
 ShellEdge2::~ShellEdge2()
