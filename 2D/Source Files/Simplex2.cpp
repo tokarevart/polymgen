@@ -1,12 +1,12 @@
 #include "Simplex2.h"
 
 
-Simplex2& Simplex2::UpdateAverageEdgesLength()
-{
-	averageEdgesLength = ((*edges[0])->Magnitude() + (*edges[1])->Magnitude() + (*edges[2])->Magnitude()) * 0.3333333333333333;
-
-	return *this;
-}
+//Simplex2& Simplex2::UpdateAverageEdgesLength()
+//{
+//	averageEdgesLength = ((*edges[0])->Magnitude() + (*edges[1])->Magnitude() + (*edges[2])->Magnitude()) * 0.3333333333333333;
+//
+//	return *this;
+//}
 
 unique_ptr<Edge2>* Simplex2::FindEdge(Node2& node0, Node2& node1)
 {

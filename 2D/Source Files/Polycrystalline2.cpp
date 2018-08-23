@@ -2,37 +2,37 @@
 #include <algorithm>
 #include <iostream>
 
-#define DET(a, b, c, d) \
-		(a * d - b * c)
+//#define DET(a, b, c, d) \
+//		(a * d - b * c)
 
-#define EPS 1e-10 // Must depend on shell edges lengths
-#define BETWEEN(p0_coor, p1_coor, p) \
-		(std::min(p0_coor, p1_coor) - EPS < p && p < std::max(p0_coor, p1_coor) + EPS)
+//#define EPS 1e-10 // Must depend on shell edges lengths
+//#define BETWEEN(p0_coor, p1_coor, p) \
+//		(std::min(p0_coor, p1_coor) - EPS < p && p < std::max(p0_coor, p1_coor) + EPS)
 
-#define INSIDE_RECTANGLE(corner0, corner1, point) \
-		(BETWEEN(corner0[0], corner1[0], point[0]) && \
-		 BETWEEN(corner0[1], corner1[1], point[1]))
+//#define INSIDE_RECTANGLE(corner0, corner1, point) \
+//		(BETWEEN(corner0[0], corner1[0], point[0]) && \
+//		 BETWEEN(corner0[1], corner1[1], point[1]))
 
-#define NOT_INTERSECT_2ND_CHECK(edge0node0, edge0node1, edge1node0, edge1node1) \
-		(edge0node0[0] < edge1node0[0]  && \
-		 edge0node1[0] < edge1node0[0] && \
-		 edge0node0[0] < edge1node1[0] && \
-		 edge0node1[0] < edge1node1[0]) || \
-		\
-		(edge0node0[1] < edge1node0[1] && \
-		 edge0node1[1] < edge1node0[1] && \
-		 edge0node0[1] < edge1node1[1] && \
-		 edge0node1[1] < edge1node1[1]) || \
-		\
-		(edge0node0[0] > edge1node0[0]  && \
-		 edge0node1[0] > edge1node0[0] && \
-		 edge0node0[0] > edge1node1[0] && \
-		 edge0node1[0] > edge1node1[0]) || \
-		\
-		(edge0node0[1] > edge1node0[1] && \
-		 edge0node1[1] > edge1node0[1] && \
-		 edge0node0[1] > edge1node1[1] && \
-		 edge0node1[1] > edge1node1[1])
+//#define NOT_INTERSECT_2ND_CHECK(edge0node0, edge0node1, edge1node0, edge1node1) \
+//		(edge0node0[0] < edge1node0[0]  && \
+//		 edge0node1[0] < edge1node0[0] && \
+//		 edge0node0[0] < edge1node1[0] && \
+//		 edge0node1[0] < edge1node1[0]) || \
+//		\
+//		(edge0node0[1] < edge1node0[1] && \
+//		 edge0node1[1] < edge1node0[1] && \
+//		 edge0node0[1] < edge1node1[1] && \
+//		 edge0node1[1] < edge1node1[1]) || \
+//		\
+//		(edge0node0[0] > edge1node0[0]  && \
+//		 edge0node1[0] > edge1node0[0] && \
+//		 edge0node0[0] > edge1node1[0] && \
+//		 edge0node1[0] > edge1node1[0]) || \
+//		\
+//		(edge0node0[1] > edge1node0[1] && \
+//		 edge0node1[1] > edge1node0[1] && \
+//		 edge0node0[1] > edge1node1[1] && \
+//		 edge0node1[1] > edge1node1[1])
 
 
 void Polycrystalline2::GenerateNodesEvenly(double* const polycrysSizeAxis, size_t* const minNodesNumAxis)
@@ -114,7 +114,7 @@ unique_ptr<Edge2>* Polycrystalline2::FindEdge(Node2& node0, Node2& node1)
 		}
 	}
 
-	throw std::exception("Error in function Polycrystalline2::FindFreeEdge");
+	throw std::exception("Error in function Polycrystalline2::FindEdge");
 	return nullptr;
 }
 
@@ -552,7 +552,9 @@ void Polycrystalline2::FitNodesToShellEdges()
 	std::cin >> iters_num;
 	for (int i = 0; i < iters_num; i++)
 	{
-		//#pragma omp parallel for firstprivate(nodes_num)
+		//#pragma omp parallel firstprivate(nodes_num)
+		//{
+		//#pragma omp for
 		for (size_t j = 0; j < nodes_num; j++)
 		{
 			if (*_freeNodes[j])
@@ -561,8 +563,7 @@ void Polycrystalline2::FitNodesToShellEdges()
 				shifts[j] += ShiftToFitMesh(**_freeNodes[j]);
 			}
 		}
-
-		//#pragma omp parallel for firstprivate(nodes_num)
+		//#pragma omp for
 		for (size_t j = 0; j < nodes_num; j++)
 		{
 			if (*_freeNodes[j])
@@ -570,6 +571,7 @@ void Polycrystalline2::FitNodesToShellEdges()
 				**_freeNodes[j] += shifts[j];
 			}
 		}
+		//}
 	}
 }
 
@@ -635,10 +637,10 @@ void Polycrystalline2::ErasePtrsToNullptrFromVectors()
 
 void Polycrystalline2::DeleteExternalNodes()
 {
-	size_t maxi = _freeNodes.size();
+	size_t nodes_num = _freeNodes.size();
 
-	//#pragma omp parallel for firstprivate(maxi)
-	for (size_t i = 0; i < maxi; i++)
+	//#pragma omp parallel for firstprivate(nodes_num)
+	for (size_t i = 0; i < nodes_num; i++)
 	{
 		if ((*_freeNodes[i])->belongsToShellEdge ||
 			(*_freeNodes[i])->belongsToShellNode)
@@ -672,7 +674,9 @@ void Polycrystalline2::DeleteFarNodes()
 	bool* is_far_nodes = new bool[nodes_num];
 	bool* is_inside_nodes = new bool[nodes_num];
 	
-	//#pragma omp parallel for firstprivate(nodes_num)
+	//#pragma omp parallel firstprivate(nodes_num)
+	//{
+	//#pragma omp for
 	for (size_t i = 0; i < nodes_num; i++)
 	{
 		is_inside_nodes[i] = false;
@@ -694,7 +698,7 @@ void Polycrystalline2::DeleteFarNodes()
 		}
 	}
 
-	//#pragma omp parallel for firstprivate(nodes_num)
+	//#pragma omp for
 	for (size_t i = 0; i < nodes_num; i++)
 	{
 		is_far_nodes[i] = false;
@@ -746,6 +750,7 @@ void Polycrystalline2::DeleteFarNodes()
 			is_far_nodes[i] = true;
 		}
 	}
+	//}
 
 	for (size_t i = 0; i < nodes_num; i++)
 	{
@@ -957,15 +962,17 @@ void Polycrystalline2::DistributeNodesEvenly()
 	std::cin >> iters_num;
 	for (int i = 0; i < iters_num; i++)
 	{
-		for (auto &simp : _freeSimplexes)
-		{
-			if (*simp)
-			{
-				(*simp)->UpdateAverageEdgesLength();
-			}
-		}
+		//for (auto &simp : _freeSimplexes)
+		//{
+		//	if (*simp)
+		//	{
+		//		(*simp)->UpdateAverageEdgesLength();
+		//	}
+		//}
 
-		//#pragma omp parallel for firstprivate(nodes_num)
+		//#pragma omp parallel firstprivate(nodes_num)
+		//{
+		//#pragma omp for
 		for (size_t j = 0; j < nodes_num; j++)
 		{
 			if (*_freeNodes[j])
@@ -973,7 +980,7 @@ void Polycrystalline2::DistributeNodesEvenly()
 				shifts[j] = ShiftToLavEdges(**_freeNodes[j]);
 			}
 		}
-		//#pragma omp parallel for firstprivate(nodes_num)
+		//#pragma omp for
 		for (size_t j = 0; j < nodes_num; j++)
 		{
 			if (*_freeNodes[j])
@@ -981,6 +988,7 @@ void Polycrystalline2::DistributeNodesEvenly()
 				**_freeNodes[j] += shifts[j];
 			}
 		}
+		//}
 	}
 
 	delete[] shifts;

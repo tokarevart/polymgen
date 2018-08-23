@@ -14,7 +14,7 @@ public:
 
 	double averageEdgesLength = 0.0;
 
-	Simplex2& UpdateAverageEdgesLength();
+	//Simplex2& UpdateAverageEdgesLength();
 
 	unique_ptr<Edge2>* FindEdge(Node2& node0, Node2& node1);
 	unique_ptr<Edge2>* MinEdge();
