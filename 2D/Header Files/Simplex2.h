@@ -12,7 +12,7 @@ class Simplex2 : public unique_ptr_helper<Simplex2>
 public:
 	unique_ptr<Edge2>* edges[3];
 
-	double averageEdgesLength = 0.0;
+	//double averageEdgesLength = 0.0;
 
 	//Simplex2& UpdateAverageEdgesLength();
 

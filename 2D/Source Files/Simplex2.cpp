@@ -120,7 +120,7 @@ Simplex2::Simplex2(Edge2& edge0, Edge2& edge1, Edge2& edge2) : unique_ptr_helper
 	edges[1] = edge1.GetPtrToUniquePtr();
 	edges[2] = edge2.GetPtrToUniquePtr();
 
-	averageEdgesLength = (edge0.Magnitude() + edge1.Magnitude() + edge2.Magnitude()) * 0.3333333333333333;
+	//averageEdgesLength = (edge0.Magnitude() + edge1.Magnitude() + edge2.Magnitude()) * 0.3333333333333333;
 
 	(*edges[0])->inclInSimplexes.push_back(GetPtrToUniquePtr());
 	(*edges[1])->inclInSimplexes.push_back(GetPtrToUniquePtr());
@@ -148,7 +148,7 @@ Simplex2::Simplex2(Node2& node0, Node2& node1, Node2& node2) : unique_ptr_helper
 	edges[1] = (new Edge2(node1, node2))->GetPtrToUniquePtr();
 	edges[2] = (new Edge2(node2, node0))->GetPtrToUniquePtr();
 
-	averageEdgesLength = ((*edges[0])->Magnitude() + (*edges[1])->Magnitude() + (*edges[2])->Magnitude()) * 0.3333333333333333;
+	//averageEdgesLength = ((*edges[0])->Magnitude() + (*edges[1])->Magnitude() + (*edges[2])->Magnitude()) * 0.3333333333333333;
 
 	(*edges[0])->inclInSimplexes.push_back(GetPtrToUniquePtr());
 	(*edges[1])->inclInSimplexes.push_back(GetPtrToUniquePtr());
