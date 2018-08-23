@@ -891,7 +891,7 @@ Vector2 Polycrystalline2::ShiftToLavEdges(const Node2& node)
 	{
 		if (*neighbor)
 		{
-			Vector2& vec = **neighbor - node;
+			Vector2 vec = **neighbor - node;
 			double buf = b * (1.0 - _l_av / vec.Magnitude());
 			if ((*neighbor)->belongsToShellNode)
 			{

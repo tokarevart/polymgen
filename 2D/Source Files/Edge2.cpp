@@ -209,24 +209,24 @@ Edge2::Edge2(Node2& node0, Node2& node1) : unique_ptr_helper<Edge2>(this)
 	nodes[1] = node1.GetPtrToUniquePtr();
 
 	(*nodes[0])->inclInEdges.push_back(GetPtrToUniquePtr());
-	if (std::find(
-			(*nodes[0])->neighbors.begin(), 
-			(*nodes[0])->neighbors.end(), 
-			nodes[1]) 
-		== (*nodes[0])->neighbors.end())
-	{
+	//if (std::find(
+	//		(*nodes[0])->neighbors.begin(), 
+	//		(*nodes[0])->neighbors.end(), 
+	//		nodes[1]) 
+	//	== (*nodes[0])->neighbors.end())
+	//{
 		(*nodes[0])->neighbors.push_back(nodes[1]);
-	}
+	//}
 
 	(*nodes[1])->inclInEdges.push_back(GetPtrToUniquePtr());
-	if (std::find(
-			(*nodes[1])->neighbors.begin(), 
-			(*nodes[1])->neighbors.end(), 
-			nodes[0]) 
-		== (*nodes[1])->neighbors.end())
-	{
+	//if (std::find(
+	//		(*nodes[1])->neighbors.begin(), 
+	//		(*nodes[1])->neighbors.end(), 
+	//		nodes[0]) 
+	//	== (*nodes[1])->neighbors.end())
+	//{
 		(*nodes[1])->neighbors.push_back(nodes[0]);
-	}
+	//}
 }
 
 Edge2::~Edge2()

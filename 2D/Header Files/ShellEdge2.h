@@ -18,10 +18,17 @@ private:
 public:
 	unique_ptr<ShellNode2>* nodes[2];
 	//list<Crystallite2*> inclInCryses;
+	vector<unique_ptr<Node2>*> attachedNodes;
+	vector<Vector2> attachedNodesStartVectorsToEdge;
 	size_t inclInCrysesNum = 0;
 
 	const double Magnitude() const;
 	const double SqrMagnitude() const;
+
+	void AttachNodes(const vector<unique_ptr<Node2>*>& nodes);
+	void ChangeAttachedNode(size_t index);
+	void SetAttachedNodesStartVectorsToEdge();
+	void SetAttachedNodesDistanceFromStartPositionToEdge(const double& units, const double& outOf);
 
 	const bool IsContaining(const ShellNode2& node) const;
 

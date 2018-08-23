@@ -6,6 +6,19 @@ Vector2& ShellNode2::GetPosition() const
 	return *_position;
 }
 
+unique_ptr<Node2>* ShellNode2::FindAttachedNode(const vector<unique_ptr<Node2>*>& free_nodes)
+{
+	for (auto &node : free_nodes)
+	{
+		if ((*node)->belongsToShellNode == GetPtrToUniquePtr())
+		{
+			return node;
+		}
+	}
+
+	return nullptr;
+}
+
 void ShellNode2::DestroyIfNoLinks()
 {
 	if (inclInEdges.empty())

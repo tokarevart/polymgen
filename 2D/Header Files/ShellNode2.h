@@ -19,6 +19,8 @@ public:
 
 	Vector2& GetPosition() const;
 
+	unique_ptr<Node2>* FindAttachedNode(const vector<unique_ptr<Node2>*>& free_nodes);
+
 	void DestroyIfNoLinks();
 
 	double& operator[](const int& axisIndex);
