@@ -20,13 +20,20 @@ public:
 	const double Magnitude() const;
 	const double SqrMagnitude() const;
 
+	void Flip(vector<unique_ptr<Edge2>*>& free_edges, list<unique_ptr<Simplex2>*>& free_simplexes);
+	const bool FlipIfNeeded(vector<unique_ptr<Edge2>*>& free_edges, list<unique_ptr<Simplex2>*>& free_simplexes);
 	void MakeTwoInstead(list<unique_ptr<Simplex2>*>& freeSimplexes, vector<unique_ptr<Edge2>*>& freeEdges, vector<unique_ptr<Node2>*>& freeNodes);
 
-	const bool IsContaining(const Node2& node);
+	const bool IsContaining(const Node2& node) const;
+
 	const bool BelongsToShell();
+
 	const bool IntersectsWith(const Edge2& edge);
 	const bool IntersectsWith(const ShellEdge2& edge);
 	const bool IntersectsWith(const vector<unique_ptr<ShellEdge2>*>& shellEdges);
+
+	const bool NeedToFlip();
+
 
 	void DestroyIfNoLinks();
 

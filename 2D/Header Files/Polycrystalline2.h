@@ -35,20 +35,16 @@ public:
 	void GenerateSimplexesFromNodes(size_t minNodesNumAxis_0);
 	void GenerateUniformMesh();
 	void FitNodesToShellNodes();
-	//void FitNodesToShellEdges(); // DEPRECATED
+	void AttachNodesToShellEdges(size_t iterations_num);
 	void FitNodesToShellEdges();
 	void FitMeshToShells();
 	void ErasePtrsToNullptrFromVectors();
 	void DeleteExternalNodes();
 	void DeleteFarNodes();
-	//void DivideExtendedSimplexes();
-	//void DivideCrossingEdges();
-	//void MinMaxEdges(double& min, double& max);
 	Vector2 ShiftToFitMesh(const Node2& node);
 	Vector2 ShiftToLavEdges(const Node2& node);
-	//Vector2 ShiftToEquilateralSimplexes(const Node2& node);
-	void DistributeNodesEvenly();
-	//void MakeSimplexesEquilateral();
+	void DistributeNodesEvenly(size_t iterations_num = 0);
+	void DelaunayPostprocessing();
 	//void GenerateFiniteElementMesh(); // Executes other functions.
 	
 	// Calculate based on position in space.

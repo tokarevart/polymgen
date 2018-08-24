@@ -12,11 +12,8 @@ class Simplex2 : public unique_ptr_helper<Simplex2>
 public:
 	unique_ptr<Edge2>* edges[3];
 
-	//double averageEdgesLength = 0.0;
-
-	//Simplex2& UpdateAverageEdgesLength();
-
-	unique_ptr<Edge2>* FindEdge(Node2& node0, Node2& node1);
+	unique_ptr<Node2>* FindNodeNotIncludedInEdge(const Edge2& edge) const;
+	unique_ptr<Edge2>* FindEdge(const Node2& node0, const Node2& node1);
 	unique_ptr<Edge2>* MinEdge();
 	unique_ptr<Edge2>* MaxEdge();
 

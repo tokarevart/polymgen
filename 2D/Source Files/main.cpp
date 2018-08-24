@@ -27,13 +27,14 @@ int main(int argc, char* argv[])
 
 	nodes_pos.close();
 	fe_nodes.close();
-
+	
 	int input;
 	while (true)
 	{
 		cout << "\n1. Distribute nodes evenly.\n"
-				"2. Fit nodes to shell edges.\n"
-				"3. Close.\n";
+				"2. Fit nodes to shell edges and then delete external nodes.\n"
+				"3. Delaunay postprocessing.\n"
+				"4. Close.\n";
 		cin >> input;
 		if (input == 1)
 		{
@@ -50,6 +51,18 @@ int main(int argc, char* argv[])
 		else if (input == 2)
 		{
 			polycr.FitNodesToShellEdges();
+
+			std::ofstream nodes_pos("Output/nodes_pos.txt");
+			std::ofstream fe_nodes("Output/fe_nodes.txt");
+
+			polycr.OutputData(nodes_pos, fe_nodes);
+
+			nodes_pos.close();
+			fe_nodes.close();
+		}
+		else if (input == 3)
+		{
+			polycr.DelaunayPostprocessing();
 
 			std::ofstream nodes_pos("Output/nodes_pos.txt");
 			std::ofstream fe_nodes("Output/fe_nodes.txt");

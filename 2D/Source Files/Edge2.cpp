@@ -1,6 +1,7 @@
 #include "Edge2.h"
 #include <algorithm>
 
+#define PI 3.141592653589793
 
 #define EPS 1e-10
 #define BETWEEN(p0_coor, p1_coor, p) \
@@ -19,6 +20,40 @@ const double Edge2::Magnitude() const
 const double Edge2::SqrMagnitude() const
 {
 	return (**nodes[1] - **nodes[0]).SqrMagnitude();
+}
+
+void Edge2::Flip(vector<unique_ptr<Edge2>*>& free_edges, list<unique_ptr<Simplex2>*>& free_simplexes)
+{
+	unique_ptr<Node2>* around_nodes[2];
+	around_nodes[0] = (*inclInSimplexes.front())->FindNodeNotIncludedInEdge(*this);
+	around_nodes[1] = (*inclInSimplexes.back())->FindNodeNotIncludedInEdge(*this);
+	unique_ptr<Edge2>* new_edge = (new Edge2(**around_nodes[0], **around_nodes[1]))->GetPtrToUniquePtr();
+	free_edges.push_back(new_edge);
+
+	free_simplexes.push_back(
+		(new Simplex2(
+			**(*inclInSimplexes.front())->FindEdge(**around_nodes[0], **nodes[0]),
+			**(*inclInSimplexes.back())->FindEdge(**around_nodes[1], **nodes[0]),
+			**new_edge))
+		->GetPtrToUniquePtr());
+	free_simplexes.push_back(
+		(new Simplex2(
+			**(*inclInSimplexes.front())->FindEdge(**around_nodes[0], **nodes[1]),
+			**(*inclInSimplexes.back())->FindEdge(**around_nodes[1], **nodes[1]),
+			**new_edge))
+		->GetPtrToUniquePtr());
+
+	delete GetPtrToUniquePtr()->release();
+}
+
+const bool Edge2::FlipIfNeeded(vector<unique_ptr<Edge2>*>& free_edges, list<unique_ptr<Simplex2>*>& free_simplexes)
+{
+	if (NeedToFlip())
+	{
+		Flip(free_edges, free_simplexes);
+	}
+
+	return false;
 }
 
 unique_ptr<Node2>* FindSimplexNodeNotBelongsToEdge(Simplex2& simp, Edge2& edge)
@@ -54,20 +89,6 @@ void Edge2::MakeTwoInstead(list<unique_ptr<Simplex2>*>& freeSimplexes, vector<un
 		{
 			// Very rare situation
 		}
-
-		//list<Crystallite2*> inner_node_cryses;
-		//for (auto &crys : (*nodes[0])->belongsToCryses)
-		//{
-		//	if (std::find(
-		//			(*nodes[1])->belongsToCryses.begin(),
-		//			(*nodes[1])->belongsToCryses.end(),
-		//			crys)
-		//		!= (*nodes[1])->belongsToCryses.end())
-		//	{
-		//		inner_node_cryses.push_back(crys);
-		//	}
-		//}
-		//(*inner_node)->belongsToCryses = inner_node_cryses;
 	}
 	if (BelongsToShell())
 	{
@@ -123,7 +144,7 @@ void Edge2::MakeTwoInstead(list<unique_ptr<Simplex2>*>& freeSimplexes, vector<un
 	}
 }
 
-const bool Edge2::IsContaining(const Node2& node)
+const bool Edge2::IsContaining(const Node2& node) const
 {
 	if (nodes[0]->get() == &node ||
 		nodes[1]->get() == &node)
@@ -187,6 +208,28 @@ const bool Edge2::IntersectsWith(const vector<unique_ptr<ShellEdge2>*>& shellEdg
 	return false;
 }
 
+const bool Edge2::NeedToFlip()
+{
+	if (inclInSimplexes.size() < 2)
+	{
+		throw std::exception("Edge included only in 1 simplex");
+	}
+
+	unique_ptr<Node2>* around_nodes[2];
+	around_nodes[0] = (*inclInSimplexes.front())->FindNodeNotIncludedInEdge(*this);
+	around_nodes[1] = (*inclInSimplexes.back())->FindNodeNotIncludedInEdge(*this);
+
+	double alpha = acos(Vector2::Cos(**nodes[0] - **around_nodes[0], **nodes[1] - **around_nodes[0]));
+	double beta = acos(Vector2::Cos(**nodes[0] - **around_nodes[1], **nodes[1] - **around_nodes[1]));
+
+	if (alpha + beta > PI)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void Edge2::DestroyIfNoLinks()
 {
 	if (inclInSimplexes.empty())
@@ -209,24 +252,10 @@ Edge2::Edge2(Node2& node0, Node2& node1) : unique_ptr_helper<Edge2>(this)
 	nodes[1] = node1.GetPtrToUniquePtr();
 
 	(*nodes[0])->inclInEdges.push_back(GetPtrToUniquePtr());
-	//if (std::find(
-	//		(*nodes[0])->neighbors.begin(), 
-	//		(*nodes[0])->neighbors.end(), 
-	//		nodes[1]) 
-	//	== (*nodes[0])->neighbors.end())
-	//{
-		(*nodes[0])->neighbors.push_back(nodes[1]);
-	//}
+	(*nodes[0])->neighbors.push_back(nodes[1]);
 
 	(*nodes[1])->inclInEdges.push_back(GetPtrToUniquePtr());
-	//if (std::find(
-	//		(*nodes[1])->neighbors.begin(), 
-	//		(*nodes[1])->neighbors.end(), 
-	//		nodes[0]) 
-	//	== (*nodes[1])->neighbors.end())
-	//{
-		(*nodes[1])->neighbors.push_back(nodes[0]);
-	//}
+	(*nodes[1])->neighbors.push_back(nodes[0]);
 }
 
 Edge2::~Edge2()
