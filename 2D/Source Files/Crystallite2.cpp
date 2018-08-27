@@ -30,7 +30,7 @@ const bool Crystallite2::Contains(const Node2& node) const
 			(*(*s_edge)->nodes[0])->GetPosition(),
 			(*(*s_edge)->nodes[1])->GetPosition(),
 			intersect_point) &&
-			Vector2::Cos(intersect_point - node.GetPosition(), ray0) > 0.0)
+			Vector2::DotProduct(intersect_point - node.GetPosition(), ray0) > 0.0)
 		{
 			hits_num[0]++;
 		}
@@ -47,7 +47,7 @@ const bool Crystallite2::Contains(const Node2& node) const
 			(*(*s_edge)->nodes[0])->GetPosition(),
 			(*(*s_edge)->nodes[1])->GetPosition(),
 			intersect_point) &&
-			Vector2::Cos(intersect_point - node.GetPosition(), ray1) > 0.0)
+			Vector2::DotProduct(intersect_point - node.GetPosition(), ray1) > 0.0)
 		{
 			hits_num[1]++;
 		}
@@ -64,7 +64,7 @@ const bool Crystallite2::Contains(const Node2& node) const
 			(*(*s_edge)->nodes[0])->GetPosition(),
 			(*(*s_edge)->nodes[1])->GetPosition(),
 			intersect_point) &&
-			Vector2::Cos(intersect_point - node.GetPosition(), ray2) > 0.0)
+			Vector2::DotProduct(intersect_point - node.GetPosition(), ray2) > 0.0)
 		{
 			hits_num[2]++;
 		}
