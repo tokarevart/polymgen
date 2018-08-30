@@ -1,0 +1,10 @@
+#pragma once
+#include "Polycrystalline3.h"
+#include "Crystallite3.h"
+#include "Facet3.h"
+#include "ShellFacet3.h"
+#include "Edge3.h"
+#include "ShellEdge3.h"
+#include "Vertex3.h"
+#include "ShellVertex3.h"
+#include "Vector3.h"
