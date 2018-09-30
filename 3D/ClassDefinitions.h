@@ -1,8 +1,10 @@
 #pragma once
 class Polycrystalline3;
 class Crystallite3;
+class FrontFacet3;
 class Facet3;
 class ShellFacet3;
+class FrontEdge3;
 class Edge3;
 class ShellEdge3;
 class Vertex3;

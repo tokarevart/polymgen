@@ -95,9 +95,9 @@ unique_ptr<Edge3>* Facet3::MaxEdge()
 
 const bool Facet3::IsContaining(const Edge3& edge) const
 {
-	for (int i = 0; i < 3; i++)
+	for (auto &edge_ : edges)
 	{
-		if (edges[i]->get() == &edge)
+		if (edge_->get() == &edge)
 		{
 			return true;
 		}
@@ -198,3 +198,7 @@ Facet3::~Facet3()
 		}
 	}
 }
+
+FrontFacet3::FrontFacet3(Facet3 &facet) : facet(&facet), unique_ptr_helper<FrontFacet3>(this) {}
+
+FrontFacet3::~FrontFacet3() {}

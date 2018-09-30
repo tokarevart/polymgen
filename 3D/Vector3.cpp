@@ -42,8 +42,7 @@ Vector3 Vector3::Project(const Vector3& point, const Vector3& linePoint0, const 
 
 const bool Vector3::Project(Vector3& out, const Vector3& point, const Vector3& segmPoint0, const Vector3& segmPoint1)
 {
-	Vector3 res(point);
-	res.Project(segmPoint0, segmPoint1);
+	Vector3 res = segmPoint0 + (point - segmPoint0).Project(segmPoint1 - segmPoint0);
 
 	const double EPS = (segmPoint1 - segmPoint0).Magnitude() * 1e-6;
 	if (INSIDE_RECTANGLE(
@@ -85,6 +84,7 @@ Vector3& Vector3::Project(const Vector3& vec)
 	Vector3 res = (DotProduct(*this, vec) / vec.SqrMagnitude()) * vec;
 	_coors[0] = res._coors[0];
 	_coors[1] = res._coors[1];
+	_coors[2] = res._coors[2];
 
 	return *this;
 }

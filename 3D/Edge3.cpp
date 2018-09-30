@@ -75,23 +75,36 @@ unique_ptr<Vertex3>* FindFacetVertexNotBelongsToEdge(Facet3& facet, Edge3& edge)
 	return nullptr;
 }
 
-ShellEdge3* FindShellEdge(ShellVertex3& s_vert0, ShellVertex3& s_vert1, vector<ShellEdge3*>& shellEdges)
-{
-	for (auto &edge : shellEdges)
-	{
-		if (edge->vertexes[0] == &s_vert0 &&
-			edge->vertexes[1] == &s_vert1 ||
-			edge->vertexes[0] == &s_vert1 &&
-			edge->vertexes[1] == &s_vert0)
-		{
-			return edge;
-		}
-	}
+//ShellFacet3* FindShellFacet(ShellVertex3& s_vert, ShellEdge3& s_edge, vector<ShellFacet3*>& shellFacets)
+//{
+//	for (auto &facet : shellFacets)
+//	{
+//		if (facet->IsContaining(s_vert))
+//		{
+//			return facet;
+//		}
+//	}
+//
+//	return nullptr;
+//}
+//
+//ShellEdge3* FindShellEdge(ShellVertex3& s_vert0, ShellVertex3& s_vert1, vector<ShellEdge3*>& shellEdges)
+//{
+//	for (auto &edge : shellEdges)
+//	{
+//		if (edge->vertexes[0] == &s_vert0 &&
+//			edge->vertexes[1] == &s_vert1 ||
+//			edge->vertexes[0] == &s_vert1 &&
+//			edge->vertexes[1] == &s_vert0)
+//		{
+//			return edge;
+//		}
+//	}
+//
+//	return nullptr;
+//}
 
-	return nullptr;
-}
-
-void Edge3::MakeTwoInstead(vector<unique_ptr<Facet3>*>& freeFacets, vector<unique_ptr<Edge3>*>& freeEdges, vector<unique_ptr<Vertex3>*>& freeVertexes, vector<ShellEdge3*>& shellEdges)
+void Edge3::MakeTwoInstead(vector<unique_ptr<Facet3>*>& freeFacets, vector<unique_ptr<Edge3>*>& freeEdges, vector<unique_ptr<Vertex3>*>& freeVertexes)//, vector<ShellEdge3*>& shellEdges, vector<ShellFacet3*>& shellFacets)
 {
 	if (!*vertexes[0] || !*vertexes[1])
 	{
@@ -99,37 +112,89 @@ void Edge3::MakeTwoInstead(vector<unique_ptr<Facet3>*>& freeFacets, vector<uniqu
 	}
 
 	unique_ptr<Vertex3>* inner_vert = (new Vertex3((*vertexes[0])->GetPosition() + 0.5 * (**vertexes[1] - **vertexes[0])))->GetPtrToUniquePtr();
-	if (BelongsToShell())
-	{
-		ShellEdge3* s_edge_buf = FindShellEdge(*(*vertexes[0])->belongsToShellVertex, *(*vertexes[1])->belongsToShellVertex, shellEdges);
-		if ((*vertexes[0])->belongsToShellVertex &&
-			(*vertexes[1])->belongsToShellVertex &&
-			s_edge_buf)
-		{
-			(*inner_vert)->belongsToShellEdge = s_edge_buf;
-		}
-		else if ((*vertexes[0])->belongsToShellEdge &&
-			(*vertexes[1])->belongsToShellVertex &&
-			(*vertexes[0])->belongsToShellEdge->IsContaining(*(*vertexes[1])->belongsToShellVertex))
-		{
-			(*inner_vert)->belongsToShellEdge = (*vertexes[0])->belongsToShellEdge;
-		}
-		else if ((*vertexes[1])->belongsToShellEdge &&
-			(*vertexes[0])->belongsToShellVertex &&
-			(*vertexes[1])->belongsToShellEdge->IsContaining(*(*vertexes[0])->belongsToShellVertex))
-		{
-			(*inner_vert)->belongsToShellEdge = (*vertexes[1])->belongsToShellEdge;
-		}
-		else if ((*vertexes[0])->belongsToShellEdge == (*vertexes[1])->belongsToShellEdge &&
-			(*vertexes[0])->belongsToShellEdge)
-		{
-			(*inner_vert)->belongsToShellEdge = (*vertexes[0])->belongsToShellEdge;
-		}
-		else
-		{
-			(*inner_vert)->belongsToShellFacet = (*vertexes[0])->belongsToShellFacet;
-		}
-	}
+	//if (BelongsToShell())
+	//{
+	//	ShellFacet3* s_facet_buf;
+	//	ShellEdge3* s_edge_buf = FindShellEdge(*(*vertexes[0])->belongsToShellVertex, *(*vertexes[1])->belongsToShellVertex, shellEdges);
+	//	if ((*vertexes[0])->belongsToShellVertex &&
+	//		(*vertexes[1])->belongsToShellVertex &&
+	//		s_edge_buf)
+	//	{
+	//		(*inner_vert)->belongsToShellEdge = s_edge_buf;
+	//	}
+	//	else if ((*vertexes[0])->belongsToShellEdge &&
+	//		(*vertexes[1])->belongsToShellVertex &&
+	//		(*vertexes[0])->belongsToShellEdge->IsContaining(*(*vertexes[1])->belongsToShellVertex))
+	//	{
+	//		(*inner_vert)->belongsToShellEdge = (*vertexes[0])->belongsToShellEdge;
+	//	}
+	//	else if ((*vertexes[1])->belongsToShellEdge &&
+	//		(*vertexes[0])->belongsToShellVertex &&
+	//		(*vertexes[1])->belongsToShellEdge->IsContaining(*(*vertexes[0])->belongsToShellVertex))
+	//	{
+	//		(*inner_vert)->belongsToShellEdge = (*vertexes[1])->belongsToShellEdge;
+	//	}
+	//	else if ((*vertexes[0])->belongsToShellEdge == (*vertexes[1])->belongsToShellEdge &&
+	//		(*vertexes[0])->belongsToShellEdge)
+	//	{
+	//		(*inner_vert)->belongsToShellEdge = (*vertexes[0])->belongsToShellEdge;
+	//	}
+	//	else if ((*vertexes[0])->belongsToShellEdge != (*vertexes[1])->belongsToShellEdge &&
+	//		(*vertexes[0])->belongsToShellEdge && (*vertexes[1])->belongsToShellEdge)
+	//	{
+	//		if ((*vertexes[0])->belongsToShellEdge->vertexes[0] == (*vertexes[1])->belongsToShellEdge->vertexes[0] ||
+	//			(*vertexes[0])->belongsToShellEdge->vertexes[0] == (*vertexes[1])->belongsToShellEdge->vertexes[1])
+	//		{
+	//			s_facet_buf = FindShellFacet(*(*vertexes[0])->belongsToShellEdge->vertexes[1], *(*vertexes[1])->belongsToShellEdge, shellFacets);
+	//		}
+	//		else
+	//		{
+	//			s_facet_buf = FindShellFacet(*(*vertexes[0])->belongsToShellEdge->vertexes[0], *(*vertexes[1])->belongsToShellEdge, shellFacets);
+	//		}
+	//		(*inner_vert)->belongsToShellFacet = s_facet_buf;
+	//	}
+	//	else if ((*vertexes[0])->belongsToShellEdge &&
+	//		(*vertexes[1])->belongsToShellVertex &&
+	//		(s_facet_buf = FindShellFacet(*(*vertexes[1])->belongsToShellVertex, *(*vertexes[0])->belongsToShellEdge, shellFacets)))
+	//	{
+	//		(*inner_vert)->belongsToShellFacet = s_facet_buf;
+	//	}
+	//	else if ((*vertexes[1])->belongsToShellEdge &&
+	//		(*vertexes[0])->belongsToShellVertex &&
+	//		(s_facet_buf = FindShellFacet(*(*vertexes[0])->belongsToShellVertex, *(*vertexes[1])->belongsToShellEdge, shellFacets)))
+	//	{
+	//		(*inner_vert)->belongsToShellFacet = s_facet_buf;
+	//	}
+	//	else if ((*vertexes[0])->belongsToShellVertex &&
+	//		(*vertexes[1])->belongsToShellFacet)
+	//	{
+	//		(*inner_vert)->belongsToShellFacet = (*vertexes[1])->belongsToShellFacet;
+	//	}
+	//	else if ((*vertexes[1])->belongsToShellVertex &&
+	//		(*vertexes[0])->belongsToShellFacet)
+	//	{
+	//		(*inner_vert)->belongsToShellFacet = (*vertexes[0])->belongsToShellFacet;
+	//	}
+	//	else if ((*vertexes[0])->belongsToShellEdge &&
+	//		(*vertexes[1])->belongsToShellFacet)
+	//	{
+	//		(*inner_vert)->belongsToShellFacet = (*vertexes[1])->belongsToShellFacet;
+	//	}
+	//	else if ((*vertexes[1])->belongsToShellEdge &&
+	//		(*vertexes[0])->belongsToShellFacet)
+	//	{
+	//		(*inner_vert)->belongsToShellFacet = (*vertexes[0])->belongsToShellFacet;
+	//	}
+	//	else if ((*vertexes[0])->belongsToShellFacet == (*vertexes[1])->belongsToShellFacet &&
+	//		(*vertexes[0])->belongsToShellFacet)
+	//	{
+	//		(*inner_vert)->belongsToShellFacet = (*vertexes[0])->belongsToShellFacet;
+	//	}
+	//	else
+	//	{
+	//		throw std::exception("Something went wrong in Edge3::MakeTwoInstead");
+	//	}
+	//}
 	freeVertexes.push_back(inner_vert);
 
 	vector<unique_ptr<Facet3>*> oldFacets;
@@ -187,11 +252,23 @@ const bool Edge3::IsContaining(const Vertex3& vertex) const
 
 const bool Edge3::BelongsToShell()
 {
-	if (((*vertexes[0])->belongsToShellVertex && (*vertexes[1])->belongsToShellVertex) ||
-		((*vertexes[0])->belongsToShellEdge && (*vertexes[1])->belongsToShellVertex) ||
-		((*vertexes[1])->belongsToShellEdge && (*vertexes[0])->belongsToShellVertex) ||
-		((*vertexes[0])->belongsToShellEdge == (*vertexes[1])->belongsToShellEdge && (*vertexes[1])->belongsToShellEdge) ||
-		((*vertexes[0])->belongsToShellFacet == (*vertexes[1])->belongsToShellFacet && (*vertexes[1])->belongsToShellFacet))
+	//if (((*vertexes[0])->belongsToShellVertex && (*vertexes[1])->belongsToShellVertex) ||
+	//	((*vertexes[0])->belongsToShellEdge && (*vertexes[1])->belongsToShellVertex) ||
+	//	((*vertexes[1])->belongsToShellEdge && (*vertexes[0])->belongsToShellVertex) ||
+	//	((*vertexes[0])->belongsToShellEdge && (*vertexes[1])->belongsToShellEdge) ||
+	//	((*vertexes[0])->belongsToShellVertex && (*vertexes[1])->belongsToShellFacet) ||
+	//	((*vertexes[1])->belongsToShellVertex && (*vertexes[0])->belongsToShellFacet) ||
+	//	((*vertexes[0])->belongsToShellEdge && (*vertexes[1])->belongsToShellFacet) ||
+	//	((*vertexes[1])->belongsToShellEdge && (*vertexes[0])->belongsToShellFacet) ||
+	//	((*vertexes[0])->belongsToShellFacet  && (*vertexes[1])->belongsToShellFacet))
+	if (
+		((*vertexes[0])->belongsToShellVertex ||
+		 (*vertexes[0])->belongsToShellEdge ||
+		 (*vertexes[0])->belongsToShellFacet) &&
+		((*vertexes[1])->belongsToShellVertex ||
+		 (*vertexes[1])->belongsToShellEdge ||
+		 (*vertexes[1])->belongsToShellFacet)
+		)
 	{
 		return true;
 	}
@@ -275,3 +352,7 @@ Edge3::~Edge3()
 		}
 	}
 }
+
+FrontEdge3::FrontEdge3(Edge3 &edge) : edge(&edge), unique_ptr_helper<FrontEdge3>(this) {}
+
+FrontEdge3::~FrontEdge3() {}

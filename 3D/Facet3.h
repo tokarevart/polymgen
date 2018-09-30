@@ -25,3 +25,14 @@ public:
 	Facet3(Vertex3& vertex0, Vertex3& vertex1, Vertex3& vertex2);
 	~Facet3();
 };
+
+class FrontFacet3 : public unique_ptr_helper<FrontFacet3>
+{
+public:
+	Facet3* facet;
+
+	const Vector3 Normal(vector<unique_ptr<FrontFacet3>*> &front_facets);
+
+	FrontFacet3(Facet3 &facet);
+	~FrontFacet3();
+};

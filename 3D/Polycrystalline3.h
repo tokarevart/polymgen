@@ -12,7 +12,6 @@ using std::unique_ptr;
 using std::vector;
 using std::string;
 
-
 class Polycrystalline3
 {
 private:
@@ -31,7 +30,7 @@ public:
 	vector<Crystallite3*> crystallites;
 
 	//void SetShellFacetsInnerEdges();
-	//ShellEdge3* FindShellEdge(ShellVertex3& vertex0, ShellVertex3& vertex1);
+	void SetLinksWithShell();
 	unique_ptr<Edge3>* FindEdge(Vertex3& vertex0, Vertex3& vertex1);
 	void ErasePtrsToNullptrFromVectors();
 	void TriangulateShell();

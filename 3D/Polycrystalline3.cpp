@@ -3,10 +3,65 @@
 #include <iostream>
 
 
-//ShellEdge3* Polycrystalline3::FindShellEdge(ShellVertex3& vertex0, ShellVertex3& vertex1)
-//{
-//	return nullptr;
-//}
+void Polycrystalline3::SetLinksWithShell()
+{
+	double sqr_sufficient_dist = preferredLength * preferredLength * 1e-6;
+	size_t shell_verts_num = _shellVertexes.size();
+	size_t shell_edges_num = _shellEdges.size();
+	size_t shell_facets_num = _shellFacets.size();
+	//#pragma omp parallel firstprivate(sqr_sufficient_dist, shell_verts_num, shell_edges_num, shell_facets_num)
+	//{
+	//#pragma omp for
+	for (size_t i = 0; i < shell_verts_num; i++)
+	{
+		for (auto &vert : _freeVertexes)
+		{
+			if ((*_shellVertexes[i] - **vert).SqrMagnitude() < sqr_sufficient_dist)
+			{
+				(*vert)->belongsToShellVertex = _shellVertexes[i];
+				break;
+			}
+		}
+	}
+	//#pragma omp for
+	for (size_t i = 0; i < shell_edges_num; i++)
+	{
+		Vector3 proj_buf;
+		for (auto &vert : _freeVertexes)
+		{
+			if ((*vert)->belongsToShellVertex)
+			{
+				continue;
+			}
+
+			if (Vector3::Project(proj_buf, (*vert)->GetPosition(), _shellEdges[i]->vertexes[0]->GetPosition(), _shellEdges[i]->vertexes[1]->GetPosition()) &&
+				(proj_buf - (*vert)->GetPosition()).SqrMagnitude() < sqr_sufficient_dist)
+			{
+				(*vert)->belongsToShellEdge = _shellEdges[i];
+			}
+		}
+	}
+	//#pragma omp for
+	for (size_t i = 0; i < shell_facets_num; i++)
+	{
+		Vector3 proj_buf;
+		for (auto &vert : _freeVertexes)
+		{
+			if ((*vert)->belongsToShellVertex ||
+				(*vert)->belongsToShellEdge)
+			{
+				continue;
+			}
+
+			proj_buf = _shellFacets[i]->edges[0]->vertexes[0]->GetPosition() + (**vert - *_shellFacets[i]->edges[0]->vertexes[0]).Project(*_shellFacets[i]->edges[0]->vertexes[1] - *_shellFacets[i]->edges[0]->vertexes[0], *_shellFacets[i]->edges[1]->vertexes[1] - *_shellFacets[i]->edges[1]->vertexes[0]);
+			if ((proj_buf - (*vert)->GetPosition()).SqrMagnitude() < sqr_sufficient_dist)
+			{
+				(*vert)->belongsToShellFacet = _shellFacets[i];
+			}
+		}
+	}
+	//}
+}
 
 unique_ptr<Edge3>* Polycrystalline3::FindEdge(Vertex3& vertex0, Vertex3& vertex1)
 {
@@ -92,7 +147,7 @@ void Polycrystalline3::TriangulateShell()
 		if (*_freeEdges[i] &&
 			(*_freeEdges[i])->SqrMagnitude() > 2.25 * preferredLength * preferredLength)
 		{
-			(*_freeEdges[i])->MakeTwoInstead(_freeFacets, _freeEdges, _freeVertexes, _shellEdges);
+			(*_freeEdges[i])->MakeTwoInstead(_freeFacets, _freeEdges, _freeVertexes);//, _shellEdges, _shellFacets);
 			edges_num += 2;
 		}
 	}
@@ -182,7 +237,7 @@ void Polycrystalline3::DistributeVertexesOnShellEvenly(size_t iterations_num)
 				//	{
 				//		b = (*_freeVertexes[j])->belongsToShellFacet->edges[1]->vertexes[0]->GetPosition() - plane_point;
 				//	}
-
+				//
 				//	(*_freeVertexes[j])->SetPosition(
 				//		plane_point + ((*_freeVertexes[j])->GetPosition() - plane_point).Project(a, b));
 				//}
@@ -198,7 +253,7 @@ void Polycrystalline3::DelaunayPostprocessing()
 {
 	unique_ptr<Vertex3>* around_nodes[2];
 	size_t edges_num = _freeEdges.size();
-	for (size_t i = 0; i < edges_num; i++) // Can be partialy parallelized
+	for (size_t i = 0; i < edges_num; i++)
 	{
 		if (!*_freeEdges[i] ||
 			((*(*_freeEdges[i])->vertexes[0])->belongsToShellEdge == (*(*_freeEdges[i])->vertexes[1])->belongsToShellEdge && 
@@ -265,10 +320,10 @@ void Polycrystalline3::InputData()
 		(new Vertex3(0.0, 0.0, 0.0))->GetPtrToUniquePtr(),
 		(new Vertex3(0.5, 1.0, 0.0))->GetPtrToUniquePtr()
 	});
-	for (size_t i = 0, shell_vertexes_num = _shellVertexes.size(); i < shell_vertexes_num; i++)
-	{
-		(*_freeVertexes[i])->belongsToShellVertex = _shellVertexes[i];
-	}
+	//for (size_t i = 0, shell_vertexes_num = _shellVertexes.size(); i < shell_vertexes_num; i++)
+	//{
+	//	(*_freeVertexes[i])->belongsToShellVertex = _shellVertexes[i];
+	//}
 	_freeEdges.insert(_freeEdges.end(),
 	{
 		(new Edge3(**_freeVertexes[0], **_freeVertexes[1]))->GetPtrToUniquePtr(),

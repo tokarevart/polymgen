@@ -50,7 +50,7 @@ Vertex3& Vertex3::operator+=(const Vector3& right)
 	else if (belongsToShellEdge)
 	{
 		(*_position) += Vector3(right).Project(*belongsToShellEdge->vertexes[0] - *belongsToShellEdge->vertexes[1]);
-		(*_position) += right;
+		//(*_position) += right;
 		return *this;
 	}
 	else if (belongsToShellFacet)
@@ -63,7 +63,7 @@ Vertex3& Vertex3::operator+=(const Vector3& right)
 	}
 	else
 	{
-		(*_position) += right;
+		//(*_position) += right;
 
 		return *this;
 	}
