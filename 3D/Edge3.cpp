@@ -22,41 +22,66 @@ const double Edge3::SqrMagnitude() const
 	return (**vertexes[1] - **vertexes[0]).SqrMagnitude();
 }
 
-void Edge3::Flip(vector<unique_ptr<Edge3>*>& free_edges, vector<unique_ptr<Facet3>*>& free_facets)
+void Edge3::Flip(vector<unique_ptr<Edge3>*>& freeEdges, vector<unique_ptr<Facet3>*>& freeFacets)
 {
 	unique_ptr<Vertex3>* around_nodes[2];
-	around_nodes[0] = (*inclInFacets.front())->FindVertexNotIncludedInEdge(*this);
-	around_nodes[1] = (*inclInFacets.back())->FindVertexNotIncludedInEdge(*this);
+	unique_ptr<Facet3>* around_facets[2];
+	Find2FacetsAround(freeFacets, around_facets[0], around_facets[1]);
+	around_nodes[0] = (*around_facets[0])->FindVertexNotIncludedInEdge(*this);
+	around_nodes[1] = (*around_facets[1])->FindVertexNotIncludedInEdge(*this);
 	unique_ptr<Edge3>* new_edge = (new Edge3(**around_nodes[0], **around_nodes[1]))->GetPtrToUniquePtr();
-	free_edges.push_back(new_edge);
+	freeEdges.push_back(new_edge);
 
-	free_facets.push_back(
+	freeFacets.push_back(
 		(new Facet3(
-			**(*inclInFacets.front())->FindEdge(**around_nodes[0], **vertexes[0]),
-			**(*inclInFacets.back())->FindEdge(**around_nodes[1], **vertexes[0]),
+			**(*around_facets[0])->FindEdge(**around_nodes[0], **vertexes[0]),
+			**(*around_facets[1])->FindEdge(**around_nodes[1], **vertexes[0]),
 			**new_edge))
 		->GetPtrToUniquePtr());
-	free_facets.push_back(
+	freeFacets.push_back(
 		(new Facet3(
-			**(*inclInFacets.front())->FindEdge(**around_nodes[0], **vertexes[1]),
-			**(*inclInFacets.back())->FindEdge(**around_nodes[1], **vertexes[1]),
+			**(*around_facets[0])->FindEdge(**around_nodes[0], **vertexes[1]),
+			**(*around_facets[1])->FindEdge(**around_nodes[1], **vertexes[1]),
 			**new_edge))
 		->GetPtrToUniquePtr());
+
+	delete around_facets[0]->release();
+	delete around_facets[1]->release();
 
 	delete GetPtrToUniquePtr()->release();
 }
 
-const bool Edge3::FlipIfNeeded(vector<unique_ptr<Edge3>*>& free_edges, vector<unique_ptr<Facet3>*>& free_facets)
+const bool Edge3::FlipIfNeeded(vector<unique_ptr<Edge3>*>& freeEdges, vector<unique_ptr<Facet3>*>& freeFacets)
 {
-	if (NeedToFlip())
-	{
-		Flip(free_edges, free_facets);
-	}
+	if (NeedToFlip(freeFacets))
+		Flip(freeEdges, freeFacets);
 
 	return false;
 }
 
-unique_ptr<Vertex3>* FindFacetVertexNotBelongsToEdge(Facet3& facet, Edge3& edge)
+void Edge3::Find2FacetsAround(vector<unique_ptr<Facet3>*> &freeFacets, unique_ptr<Facet3>* &facet0, unique_ptr<Facet3>* &facet1)
+{
+	bool not_found_yet = true;
+	for (auto facet : freeFacets)
+	{
+		if (*facet && 
+			(*facet)->IsContaining(*this))
+		{
+			if (not_found_yet)
+			{
+				facet0 = facet;
+				not_found_yet = false;
+			}
+			else
+			{
+				facet1 = facet;
+				return;
+			}
+		}
+	}
+}
+
+unique_ptr<Vertex3>* Edge3::FindFacetVertexNotBelongsToEdge(Facet3& facet, Edge3& edge)
 {
 	for (auto &facet_edge : facet.edges)
 	{
@@ -107,9 +132,7 @@ unique_ptr<Vertex3>* FindFacetVertexNotBelongsToEdge(Facet3& facet, Edge3& edge)
 void Edge3::MakeTwoInstead(vector<unique_ptr<Facet3>*>& freeFacets, vector<unique_ptr<Edge3>*>& freeEdges, vector<unique_ptr<Vertex3>*>& freeVertexes)//, vector<ShellEdge3*>& shellEdges, vector<ShellFacet3*>& shellFacets)
 {
 	if (!*vertexes[0] || !*vertexes[1])
-	{
 		throw std::exception("Something went wrong in Edge3::MakeTwoInstead");
-	}
 
 	unique_ptr<Vertex3>* inner_vert = (new Vertex3((*vertexes[0])->GetPosition() + 0.5 * (**vertexes[1] - **vertexes[0])))->GetPtrToUniquePtr();
 	//if (BelongsToShell())
@@ -197,14 +220,16 @@ void Edge3::MakeTwoInstead(vector<unique_ptr<Facet3>*>& freeFacets, vector<uniqu
 	//}
 	freeVertexes.push_back(inner_vert);
 
-	vector<unique_ptr<Facet3>*> oldFacets;
-	for (auto &facet : inclInFacets)
-	{
-		if (*facet)
-		{
-			oldFacets.push_back(facet);
-		}
-	}
+	//vector<unique_ptr<Facet3>*> oldFacets;
+	//for (auto &facet : inclInFacets)			Delete old facets!
+	//{
+	//	if (*facet)
+	//	{
+	//		oldFacets.push_back(facet);
+	//	}
+	//}
+	unique_ptr<Facet3>* old_facets[2];
+	Find2FacetsAround(freeFacets, old_facets[0], old_facets[1]);
 
 	unique_ptr<Edge3>* edge_halfs[2];
 	edge_halfs[0] = (new Edge3(**vertexes[0], **inner_vert))->GetPtrToUniquePtr();
@@ -212,7 +237,7 @@ void Edge3::MakeTwoInstead(vector<unique_ptr<Facet3>*>& freeFacets, vector<uniqu
 
 	unique_ptr<Vertex3>* not_belongs_to_edge_vert;
 	unique_ptr<Edge3>* dividing_edge;
-	for (auto &facet : oldFacets)
+	for (auto &facet : old_facets)
 	{
 		not_belongs_to_edge_vert = FindFacetVertexNotBelongsToEdge(**facet, *this);
 		dividing_edge = (new Edge3(**inner_vert, **not_belongs_to_edge_vert))->GetPtrToUniquePtr();
@@ -237,6 +262,8 @@ void Edge3::MakeTwoInstead(vector<unique_ptr<Facet3>*>& freeFacets, vector<uniqu
 
 	freeEdges.push_back(edge_halfs[0]);
 	freeEdges.push_back(edge_halfs[1]);
+
+	delete GetPtrToUniquePtr()->release();
 }
 
 const bool Edge3::IsContaining(const Vertex3& vertex) const
@@ -276,35 +303,33 @@ const bool Edge3::BelongsToShell()
 	return false;
 }
 
-const bool Edge3::NeedToFlip()
+const bool Edge3::NeedToFlip(vector<unique_ptr<Facet3>*> &freeFacets)
 {
-	if (inclInFacets.size() < 2)
-	{
-		throw std::exception("Edge included only in 1 simplex");
-	}
+	//if (inclInFacets.size() < 2)
+	//	throw std::exception("Edge included only in 1 simplex");
 
 	unique_ptr<Vertex3>* around_nodes[2];
-	around_nodes[0] = (*inclInFacets.front())->FindVertexNotIncludedInEdge(*this);
-	around_nodes[1] = (*inclInFacets.back())->FindVertexNotIncludedInEdge(*this);
+	unique_ptr<Facet3>* around_facets[2];
+	Find2FacetsAround(freeFacets, around_facets[0], around_facets[1]);
+	around_nodes[0] = (*around_facets[0])->FindVertexNotIncludedInEdge(*this);
+	around_nodes[1] = (*around_facets[1])->FindVertexNotIncludedInEdge(*this);
 
 	double alpha = acos(Vector3::Cos(**vertexes[0] - **around_nodes[0], **vertexes[1] - **around_nodes[0]));
 	double beta = acos(Vector3::Cos(**vertexes[0] - **around_nodes[1], **vertexes[1] - **around_nodes[1]));
 
 	if (alpha + beta > PI)
-	{
 		return true;
-	}
 
 	return false;
 }
 
-void Edge3::DestroyIfNoLinks()
-{
-	if (inclInFacets.empty())
-	{
-		delete _uniquePtr->release();
-	}
-}
+//void Edge3::DestroyIfNoLinks()
+//{
+//	if (inclInFacets.empty())
+//	{
+//		delete _uniquePtr->release();
+//	}
+//}
 
 Edge3::Edge3() : unique_ptr_helper<Edge3>(this) 
 {
@@ -319,38 +344,38 @@ Edge3::Edge3(Vertex3& vertex0, Vertex3& vertex1) : unique_ptr_helper<Edge3>(this
 	vertexes[0] = vertex0.GetPtrToUniquePtr();
 	vertexes[1] = vertex1.GetPtrToUniquePtr();
 
-	(*vertexes[0])->inclInEdges.push_back(GetPtrToUniquePtr());
-	(*vertexes[0])->neighbors.push_back(vertexes[1]);
+	//(*vertexes[0])->inclInEdges.push_back(GetPtrToUniquePtr());
+	//(*vertexes[0])->neighbors.push_back(vertexes[1]);
 
-	(*vertexes[1])->inclInEdges.push_back(GetPtrToUniquePtr());
-	(*vertexes[1])->neighbors.push_back(vertexes[0]);
+	//(*vertexes[1])->inclInEdges.push_back(GetPtrToUniquePtr());
+	//(*vertexes[1])->neighbors.push_back(vertexes[0]);
 }
 
 Edge3::~Edge3()
 {
-	for (auto &nodei : vertexes)
-	{
-		if (*nodei)
-		{
-			(*nodei)->inclInEdges.remove(GetPtrToUniquePtr());
-			for (auto &nodej : vertexes)
-			{
-				if (*nodej && (nodej != nodei))
-				{
-					(*nodei)->neighbors.remove(nodej);
-				}
-			}
-			(*nodei)->DestroyIfNoLinks();
-		}
-	}
+	//for (auto &nodei : vertexes)
+	//{
+	//	if (*nodei)
+	//	{
+	//		(*nodei)->inclInEdges.remove(GetPtrToUniquePtr());
+	//		for (auto &nodej : vertexes)
+	//		{
+	//			if (*nodej && (nodej != nodei))
+	//			{
+	//				(*nodei)->neighbors.remove(nodej);
+	//			}
+	//		}
+	//		(*nodei)->DestroyIfNoLinks();
+	//	}
+	//}
 
-	for (auto &facet : inclInFacets)
-	{
-		if (*facet)
-		{
-			delete facet->release();
-		}
-	}
+	//for (auto &facet : inclInFacets)
+	//{
+	//	if (*facet)
+	//	{
+	//		delete facet->release();
+	//	}
+	//}
 }
 
 FrontEdge3::FrontEdge3(Edge3 &edge) : edge(&edge), unique_ptr_helper<FrontEdge3>(this) {}

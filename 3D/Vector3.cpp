@@ -11,18 +11,21 @@
 
 const double PI_DIV_180 = 3.141592653589793 / 180.0;
 
-
 double Sign(double val)
 {
 	return val > 0.0 ? 1.0 : -1.0;
 }
 
-const double Vector3::DotProduct(const Vector3& vec0, const Vector3& vec1)
+const double Vector3::DotProduct(
+	const Vector3& vec0, 
+	const Vector3& vec1)
 {
 	return vec0._coors[0] * vec1._coors[0] + vec0._coors[1] * vec1._coors[1] + vec0._coors[2] * vec1._coors[2];
 }
 
-Vector3 Vector3::CrossProduct(const Vector3& vec0, const Vector3& vec1)
+Vector3 Vector3::CrossProduct(
+	const Vector3& vec0, 
+	const Vector3& vec1)
 {
 	return Vector3(
 		vec0._coors[1] * vec1._coors[2] - vec0._coors[2] * vec1._coors[1],
@@ -30,17 +33,26 @@ Vector3 Vector3::CrossProduct(const Vector3& vec0, const Vector3& vec1)
 		vec0._coors[0] * vec1._coors[1] - vec0._coors[1] * vec1._coors[0]);
 }
 
-const double Vector3::Cos(const Vector3& vec0, const Vector3& vec1)
+const double Vector3::Cos(
+	const Vector3& vec0, 
+	const Vector3& vec1)
 {
 	return Vector3::DotProduct(vec0, vec1) / sqrt(vec0.SqrMagnitude() * vec1.SqrMagnitude());
 }
 
-Vector3 Vector3::Project(const Vector3& point, const Vector3& linePoint0, const Vector3& linePoint1)
+Vector3 Vector3::Project(
+	const Vector3& point, 
+	const Vector3& linePoint0, 
+	const Vector3& linePoint1)
 {
 	return linePoint0 + Vector3(point - linePoint0).Project(linePoint1 - linePoint0);
 }
 
-const bool Vector3::Project(Vector3& out, const Vector3& point, const Vector3& segmPoint0, const Vector3& segmPoint1)
+const bool Vector3::Project(
+	Vector3& out, 
+	const Vector3& point, 
+	const Vector3& segmPoint0, 
+	const Vector3& segmPoint1)
 {
 	Vector3 res = segmPoint0 + (point - segmPoint0).Project(segmPoint1 - segmPoint0);
 
@@ -57,7 +69,42 @@ const bool Vector3::Project(Vector3& out, const Vector3& point, const Vector3& s
 	return false;
 }
 
+const bool Vector3::IntersectTriangle(
+	const Vector3 &origin, 
+	const Vector3 &dir, 
+	const Vector3 &tr_v0, 
+	const Vector3 &tr_v1, 
+	const Vector3 &tr_v2)
+{
+	Vector3 edges[2] 
+		{ tr_v1 - tr_v0, 
+		  tr_v2 - tr_v0 };
 
+	Vector3 pvec = CrossProduct(dir, edges[1]);
+	double det = DotProduct(edges[0], pvec);
+	if (det < 0.0)
+		return false;
+
+	Vector3 tvec = origin - tr_v0;
+	double u = DotProduct(tvec, pvec);
+	if (u < 0.0 || u > det)
+		return false;
+
+	Vector3 qvec = CrossProduct(tvec, edges[0]);
+	double v = DotProduct(dir, qvec);
+	if (v < 0.0 || u + v > det)
+		return false;
+
+	// This is only if I need to know intersection point.
+	//double t = DotProduct(edges[1], qvec);
+	//double inv_det = 1.0 / det;
+
+	//t *= inv_det;
+	//u *= inv_det;
+	//v *= inv_det;
+
+	return true;
+}
 
 const double Vector3::Magnitude() const
 {
@@ -89,7 +136,9 @@ Vector3& Vector3::Project(const Vector3& vec)
 	return *this;
 }
 
-Vector3& Vector3::Project(const Vector3& planeVec0, const Vector3& planeVec1)
+Vector3& Vector3::Project(
+	const Vector3& planeVec0, 
+	const Vector3& planeVec1)
 {
 	Vector3 cross_buf = CrossProduct(planeVec0, planeVec1);
 	*this = *this - Vector3(*this).Project(cross_buf);
@@ -163,17 +212,23 @@ Vector3& Vector3::operator*=(const double& scalar)
 	return *this;
 }
 
-const Vector3 operator*(const Vector3& vec, const double& scalar)
+const Vector3 operator*(
+	const Vector3& vec, 
+	const double& scalar)
 {
 	return Vector3(vec._coors[0] * scalar, vec._coors[1] * scalar, vec._coors[2] * scalar);
 }
 
-const Vector3 operator*(const double& scalar, const Vector3& vec)
+const Vector3 operator*(
+	const double& scalar, 
+	const Vector3& vec)
 {
 	return Vector3(scalar * vec._coors[0], scalar * vec._coors[1], scalar * vec._coors[2]);
 }
 
-const Vector3 operator/(const Vector3& vec, const double& scalar)
+const Vector3 operator/(
+	const Vector3& vec, 
+	const double& scalar)
 {
 	double inv_scalar = 1.0 / scalar;
 	return Vector3(vec._coors[0] * inv_scalar, vec._coors[1] * inv_scalar, vec._coors[2] * inv_scalar);
@@ -191,7 +246,10 @@ Vector3::Vector3(const Vector3& vec)
 	*this = vec;
 }
 
-Vector3::Vector3(const double& coor0, const double& coor1, const double& coor2)
+Vector3::Vector3(
+	const double& coor0, 
+	const double& coor1, 
+	const double& coor2)
 {
 	_coors[0] = coor0;
 	_coors[1] = coor1;

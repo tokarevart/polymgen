@@ -12,12 +12,28 @@
 		 BETWEEN(corner0[1], corner1[1], point[1]))
 
 
-const bool Crystallite3::Contains(const Vertex3& vertex) const
-{
-}
-
 Crystallite3::Crystallite3() {}
 
 Crystallite3::~Crystallite3()
 {
+	//for (auto &simp : innerSimps)
+	//{
+	//	delete simp->release();
+	//	delete simp;
+	//}
+	for (auto &facet : innerFacets)
+	{
+		delete facet->release();
+		delete facet;
+	}
+	for (auto &edge : innerEdges)
+	{
+		delete edge->release();
+		delete edge;
+	}
+	for (auto &vert : innerVerts)
+	{
+		delete vert->release();
+		delete vert;
+	}
 }

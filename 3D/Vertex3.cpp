@@ -18,13 +18,13 @@ Vector3& Vertex3::GetPosition() const
 	return *_position;
 }
 
-void Vertex3::DestroyIfNoLinks()
-{
-	if (inclInEdges.empty())
-	{
-		delete _uniquePtr->release();
-	}
-}
+//void Vertex3::DestroyIfNoLinks()
+//{
+//	if (inclInEdges.empty())
+//	{
+//		delete _uniquePtr->release();
+//	}
+//}
 
 double& Vertex3::operator[](const int& axisIndex)
 {
@@ -104,11 +104,11 @@ Vertex3::Vertex3(const Vector3& position) : unique_ptr_helper<Vertex3>(this)
 
 Vertex3::~Vertex3()
 {
-	for (auto &edge : inclInEdges)
-	{
-		if (*edge)
-		{
-			delete edge->release();
-		}
-	}
+	//for (auto &edge : inclInEdges)
+	//{
+	//	if (*edge)
+	//	{
+	//		delete edge->release();
+	//	}
+	//}
 }
