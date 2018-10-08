@@ -69,7 +69,7 @@ const bool Vector3::Project(
 	return false;
 }
 
-const bool Vector3::IntersectTriangle(
+const bool Vector3::RayIntersectTriangle(
 	const Vector3 &origin, 
 	const Vector3 &dir, 
 	const Vector3 &tr_v0, 
@@ -104,6 +104,36 @@ const bool Vector3::IntersectTriangle(
 	//v *= inv_det;
 
 	return true;
+}
+
+const bool Vector3::LineSegmentIntersectTriangle(
+	const Vector3 &segm_v0, 
+	const Vector3 &segm_v1,
+	const Vector3 &tr_v0, 
+	const Vector3 &tr_v1, 
+	const Vector3 &tr_v2)
+{
+	Vector3 edges[2]
+	{ tr_v1 - tr_v0,
+		tr_v2 - tr_v0 };
+
+	Vector3 pvec = CrossProduct(segm_v1, edges[1]);
+	double det = DotProduct(edges[0], pvec);
+	if (det < 0.0)
+		return false;
+
+	Vector3 tvec = segm_v0 - tr_v0;
+	double u = DotProduct(tvec, pvec);
+	if (u < 0.0 || u > det)
+		return false;
+
+	Vector3 qvec = CrossProduct(tvec, edges[0]);
+	double v = DotProduct(segm_v1, qvec);
+	if (v < 0.0 || u + v > det)
+		return false;
+
+	double t = DotProduct(edges[1], qvec) / det;
+	return t < 1.0;
 }
 
 const double Vector3::Magnitude() const

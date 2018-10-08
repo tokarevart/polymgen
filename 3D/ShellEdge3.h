@@ -11,7 +11,6 @@ class ShellEdge3
 {
 public:
 	ShellVertex3* vertexes[2];
-	vector<ShellFacet3*> inclInFacets;
 
 	const double Magnitude() const;
 	const double SqrMagnitude() const;

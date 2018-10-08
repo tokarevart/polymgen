@@ -1,19 +1,19 @@
 #include "Vertex3.h"
 
 
-void Vertex3::SetPosition(const Vector3& newPos)
+void Vertex3::SetPosition(const Vector3 &newPos)
 {
 	*_position = newPos;
 }
 
-void Vertex3::SetPosition(const double& coor0, const double& coor1, const double& coor2)
+void Vertex3::SetPosition(const double &coor0, const double &coor1, const double &coor2)
 {
 	(*_position)[0] = coor0;
 	(*_position)[1] = coor1;
 	(*_position)[2] = coor2;
 }
 
-Vector3& Vertex3::GetPosition() const
+const Vector3& Vertex3::GetPosition() const
 {
 	return *_position;
 }
@@ -26,22 +26,22 @@ Vector3& Vertex3::GetPosition() const
 //	}
 //}
 
-double& Vertex3::operator[](const int& axisIndex)
+double& Vertex3::operator[](const int &axisIndex)
 {
 	return (*_position)[axisIndex];
 }
 
-Vector3 Vertex3::operator-(const Vertex3& right) const
+Vector3 Vertex3::operator-(const Vertex3 &right) const
 {
 	return *_position - *right._position;
 }
 
-Vector3 Vertex3::operator-(const ShellVertex3& right) const
+Vector3 Vertex3::operator-(const ShellVertex3 &right) const
 {
 	return *_position - right.GetPosition();
 }
 
-Vertex3& Vertex3::operator+=(const Vector3& right)
+Vertex3& Vertex3::operator+=(const Vector3 &right)
 {
 	if (belongsToShellVertex)
 	{

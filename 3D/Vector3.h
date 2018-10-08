@@ -26,18 +26,25 @@ public:
 		const Vector3& point, 
 		const Vector3& segmPoint0, 
 		const Vector3& segmPoint1);
-	static const bool IntersectTriangle(
+	static const bool RayIntersectTriangle(
 		const Vector3& origin, 
 		const Vector3& dir, 
 		const Vector3& tr_v0, 
 		const Vector3& tr_v1, 
+		const Vector3& tr_v2);
+	static const bool LineSegmentIntersectTriangle(
+		const Vector3& segm_v0,
+		const Vector3& segm_v1,
+		const Vector3& tr_v0,
+		const Vector3& tr_v1,
 		const Vector3& tr_v2);
 
 	const double Magnitude() const;
 	const double SqrMagnitude() const;
 
 	Vector3& Normalize();
-	Vector3& Project(const Vector3& vec);
+	Vector3& Project(
+		const Vector3& vec);
 	Vector3& Project(
 		const Vector3& planeVec0, 
 		const Vector3& planeVec1);
@@ -62,7 +69,8 @@ public:
 		const double& scalar);
 
 	Vector3();
-	Vector3(const Vector3& vec);
+	Vector3(
+		const Vector3& vec);
 	Vector3(
 		const double& coor0, 
 		const double& coor1, 

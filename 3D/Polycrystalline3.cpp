@@ -30,15 +30,11 @@ void Polycrystalline3::SetLinksWithShell()
 		for (auto &vert : _startFrontVertexes)
 		{
 			if ((*vert)->belongsToShellVertex)
-			{
 				continue;
-			}
 
 			if (Vector3::Project(proj_buf, (*vert)->GetPosition(), _shellEdges[i]->vertexes[0]->GetPosition(), _shellEdges[i]->vertexes[1]->GetPosition()) &&
 				(proj_buf - (*vert)->GetPosition()).SqrMagnitude() < sqr_sufficient_dist)
-			{
 				(*vert)->belongsToShellEdge = _shellEdges[i];
-			}
 		}
 	}
 	//#pragma omp for
@@ -49,15 +45,11 @@ void Polycrystalline3::SetLinksWithShell()
 		{
 			if ((*vert)->belongsToShellVertex ||
 				(*vert)->belongsToShellEdge)
-			{
 				continue;
-			}
 
 			proj_buf = _shellFacets[i]->edges[0]->vertexes[0]->GetPosition() + (**vert - *_shellFacets[i]->edges[0]->vertexes[0]).Project(*_shellFacets[i]->edges[0]->vertexes[1] - *_shellFacets[i]->edges[0]->vertexes[0], *_shellFacets[i]->edges[1]->vertexes[1] - *_shellFacets[i]->edges[1]->vertexes[0]);
 			if ((proj_buf - (*vert)->GetPosition()).SqrMagnitude() < sqr_sufficient_dist)
-			{
 				(*vert)->belongsToShellFacet = _shellFacets[i];
-			}
 		}
 	}
 	//}
@@ -265,23 +257,27 @@ void Polycrystalline3::DelaunayPostprocessing()
 			((*(*_startFrontEdges[i])->vertexes[1])->belongsToShellEdge &&
 			 (*(*_startFrontEdges[i])->vertexes[0])->belongsToShellVertex &&
 			 ((*(*_startFrontEdges[i])->vertexes[1])->belongsToShellEdge)->IsContaining(*(*(*_startFrontEdges[i])->vertexes[0])->belongsToShellVertex)))
-		{
 			continue;
-		}
 		
 
-		//around_nodes[0] = (*(*_startFrontEdges[i])->inclInFacets.front())->FindVertexNotIncludedInEdge(**_startFrontEdges[i]);
-		//around_nodes[1] = (*(*_startFrontEdges[i])->inclInFacets.back())->FindVertexNotIncludedInEdge(**_startFrontEdges[i]);
 		(*_startFrontEdges[i])->Find2FacetsAround(_startFrontFacets, around_facets[0], around_facets[1]);
 		around_nodes[0] = (*around_facets[0])->FindVertexNotIncludedInEdge(**_startFrontEdges[i]);
 		around_nodes[1] = (*around_facets[1])->FindVertexNotIncludedInEdge(**_startFrontEdges[i]);
 		if ((*around_nodes[0])->belongsToShellEdge && (*around_nodes[1])->belongsToShellVertex ||
 			(*around_nodes[1])->belongsToShellEdge && (*around_nodes[0])->belongsToShellVertex)
-		{
 			continue;
-		}
 
 		(*_startFrontEdges[i])->FlipIfNeeded(_startFrontEdges, _startFrontFacets);
+	}
+}
+
+void Polycrystalline3::TriangulateCrystallitesVolumes()
+{
+	//#pragma omp parallel for
+	for (size_t i = 0, max = crystallites.size(); i < max; i++)
+	{
+		crystallites[i]->SetStartFront(_startFrontEdges, _startFrontFacets);
+		//crystallites[i]->TriangulateVolume(_preferredLength);
 	}
 }
 
@@ -359,21 +355,14 @@ void Polycrystalline3::OutputData(string filename) const
 	for (auto &facet : _startFrontFacets)
 	{
 		if (!*facet)
-		{
 			continue;
-		}
 
 		vector<size_t> gl_nums;
 		for (auto &edge : (*facet)->edges)
-		{
 			for (auto &vert : (*edge)->vertexes)
-			{
 				if (std::find(gl_nums.begin(), gl_nums.end(), (*vert)->globalNum) == gl_nums.end())
-				{
 					gl_nums.push_back((*vert)->globalNum);
-				}
-			}
-		}
+
 		file << "f " << gl_nums[0] << ' ' << gl_nums[1] << ' ' << gl_nums[2] << '\n';
 	}
 
@@ -384,8 +373,8 @@ Polycrystalline3::Polycrystalline3() {}
 
 Polycrystalline3::~Polycrystalline3()
 {
-	// Delete simplexes
-	// Delete crystallites
+	for (auto &crys : crystallites)
+		delete crys;
 
 	for (auto &facet : _shellFacets)
 		delete facet;

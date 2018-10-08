@@ -36,6 +36,7 @@ public:
 	//Vector3 ShiftToLavEdges(const Vertex3& vertex);
 	//void DistributeVertexesOnShellEvenly(size_t iterations_num = 0);
 	void DelaunayPostprocessing();
+	void TriangulateCrystallitesVolumes();
 	//void GenerateFiniteElementMesh(); // Executes other functions.
 
 	void InputData();
