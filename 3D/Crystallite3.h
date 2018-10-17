@@ -29,16 +29,28 @@ public:
 		const vector<unique_ptr<Edge3>*> &edges,
 		const vector<unique_ptr<Facet3>*> &facets);
 
-	const bool EdgeIntersectionCheck(const Vector3& v0, const Vector3& v1);
+	unique_ptr<FrontFacet3>* FindFrontFacet(unique_ptr<Facet3>* &facet);
+	unique_ptr<FrontEdge3>* FindFrontEdge(const unique_ptr<Vertex3>* &v0, const unique_ptr<Vertex3>* &v1);
+	unique_ptr<FrontEdge3>* FindFrontEdge(unique_ptr<Edge3>* &edge);
+
+	// Adds new front facet and corresponding facet.
+	void AddFrontFacet(
+		unique_ptr<Edge3>* &edge0, 
+		unique_ptr<Edge3>* &edge1, 
+		unique_ptr<Edge3>* &edge2);
+
+	const bool LineSegmentIntersectionCheck(const Vector3& v0, const Vector3& v1);
+	const bool EdgeIntersectionCheck(const unique_ptr<FrontEdge3>* frontEdge);
 	const bool FrontSplitCheck(const unique_ptr<FrontEdge3>* frontEdge);
+	const bool FrontContainsOfOnly1Simplex3();
+
+	void CreateSimplex3WithoutNewVertex(unique_ptr<FrontEdge3>* frontEdge);
+	void CreateSimplex3WithNewVertex(unique_ptr<FrontEdge3>* frontEdge);
 
 	void ProcessSmallAngles();
 	void ProcessMediumAngles();
 	void ProcessLargeAngles();
 	void TriangulateVolume(const double preferredLength);
-
-	// Calculate based on position in space.
-	//const bool Contains(const Vertex3& vertex) const;
 
 	Crystallite3();
 	~Crystallite3();

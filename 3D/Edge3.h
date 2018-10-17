@@ -30,9 +30,6 @@ public:
 		const vector<unique_ptr<Facet3>*> &facets, 
 		unique_ptr<Facet3>* &facet0, 
 		unique_ptr<Facet3>* &facet1);
-	unique_ptr<Vertex3>* FindFacetVertexNotBelongsToEdge(
-		Facet3& facet, 
-		Edge3& edge);
 	// Doesn't change vertexes relations.
 	void MakeTwoInstead(
 		vector<unique_ptr<Facet3>*> &facets, 
@@ -61,9 +58,17 @@ public:
 		const vector<unique_ptr<FrontFacet3>*> &frontFacets);
 	void FindFrontFacetsAround(
 		const vector<unique_ptr<FrontFacet3>*> &frontFacets, 
-		unique_ptr<FrontFacet3>* &facet0, 
-		unique_ptr<FrontFacet3>* &facet1);
+		unique_ptr<FrontFacet3>* &out_frontFacet0,
+		unique_ptr<FrontFacet3>* &out_frontFacet1);
+	void FindOppositeVertexes(
+		const vector<unique_ptr<FrontFacet3>*> &frontFacets, 
+		const vector<unique_ptr<FrontEdge3>*> &frontEdges, 
+		unique_ptr<Vertex3>* &out_vert0, 
+		unique_ptr<Vertex3>* &out_vert1);
+	unique_ptr<FrontEdge3>* FindOppositeFrontEdge(
+		const vector<unique_ptr<FrontFacet3>*> &frontFacets,
+		const vector<unique_ptr<FrontEdge3>*> &frontEdges);
 
-	FrontEdge3(Edge3 &edge);
+	FrontEdge3(Edge3* edge);
 	~FrontEdge3();
 };

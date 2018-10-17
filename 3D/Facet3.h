@@ -14,6 +14,7 @@ public:
 
 	const bool IntersectsBy(const Vector3 &origin, const Vector3 &dir);
 	unique_ptr<Vertex3>* FindVertexNotIncludedInEdge(const Edge3& edge) const;
+	unique_ptr<Edge3>* FindEdgeNotContainingVertex(const Vertex3& vert) const;
 	unique_ptr<Edge3>* FindEdge(const Vertex3& vert0, const Vertex3& vert1);
 	unique_ptr<Edge3>* MinEdge();
 	unique_ptr<Edge3>* MaxEdge();
@@ -40,6 +41,6 @@ public:
 
 	// const Vector3 Normal(const vector<unique_ptr<FrontFacet3>*> &front_facets);
 
-	FrontFacet3(Facet3 &facet);
+	FrontFacet3(Facet3* facet);
 	~FrontFacet3();
 };

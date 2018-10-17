@@ -13,7 +13,7 @@ const bool Facet3::IntersectsBy(
 		(*FindVertexNotIncludedInEdge(**edges[0]))->GetPosition());
 }
 
-unique_ptr<Vertex3>* Facet3::FindVertexNotIncludedInEdge(const Edge3& edge) const
+unique_ptr<Vertex3>* Facet3::FindVertexNotIncludedInEdge(const Edge3 &edge) const
 {
 	for (auto &facet_edge : edges)
 	{
@@ -29,7 +29,16 @@ unique_ptr<Vertex3>* Facet3::FindVertexNotIncludedInEdge(const Edge3& edge) cons
 	return nullptr;
 }
 
-unique_ptr<Edge3>* Facet3::FindEdge(const Vertex3& vert0, const Vertex3& vert1)
+unique_ptr<Edge3>* Facet3::FindEdgeNotContainingVertex(const Vertex3 &vert) const
+{
+	for (auto &edge : edges)
+		if (!(*edge)->IsContaining(vert))
+			return edge;
+
+	return nullptr;
+}
+
+unique_ptr<Edge3>* Facet3::FindEdge(const Vertex3 &vert0, const Vertex3 &vert1)
 {
 	for (auto &edge : edges)
 		if (((*edge)->vertexes[0]->get() == &vert0 &&
@@ -81,7 +90,7 @@ unique_ptr<Edge3>* Facet3::MaxEdge()
 	return nullptr;
 }
 
-const bool Facet3::IsContaining(const Edge3& edge) const
+const bool Facet3::IsContaining(const Edge3 &edge) const
 {
 	for (auto &edge_ : edges)
 		if (edge_->get() == &edge)
@@ -90,7 +99,7 @@ const bool Facet3::IsContaining(const Edge3& edge) const
 	return false;
 }
 
-const bool Facet3::IsContaining(const Vertex3& vert) const
+const bool Facet3::IsContaining(const Vertex3 &vert) const
 {
 	for (auto &edge : edges)
 		if ((*edge)->IsContaining(vert))
@@ -105,14 +114,14 @@ Facet3::Facet3() : unique_ptr_helper<Facet3>(this)
 		edge = nullptr;
 }
 
-Facet3::Facet3(Edge3& edge0, Edge3& edge1, Edge3& edge2) : unique_ptr_helper<Facet3>(this)
+Facet3::Facet3(Edge3 &edge0, Edge3 &edge1, Edge3 &edge2) : unique_ptr_helper<Facet3>(this)
 {
 	edges[0] = edge0.GetPtrToUniquePtr();
 	edges[1] = edge1.GetPtrToUniquePtr();
 	edges[2] = edge2.GetPtrToUniquePtr();
 }
 
-Facet3::Facet3(Vertex3& vert0, Vertex3& vert1, Vertex3& vert2) : unique_ptr_helper<Facet3>(this)
+Facet3::Facet3(Vertex3 &vert0, Vertex3 &vert1, Vertex3 &vert2) : unique_ptr_helper<Facet3>(this)
 {
 	edges[0] = (new Edge3(vert0, vert1))->GetPtrToUniquePtr();
 	edges[1] = (new Edge3(vert1, vert2))->GetPtrToUniquePtr();
@@ -121,6 +130,6 @@ Facet3::Facet3(Vertex3& vert0, Vertex3& vert1, Vertex3& vert2) : unique_ptr_help
 
 Facet3::~Facet3() {}
 
-FrontFacet3::FrontFacet3(Facet3 &facet) : facet(&facet), unique_ptr_helper<FrontFacet3>(this) {}
+FrontFacet3::FrontFacet3(Facet3* facet) : facet(facet), unique_ptr_helper<FrontFacet3>(this) {}
 
 FrontFacet3::~FrontFacet3() {}

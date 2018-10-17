@@ -82,17 +82,19 @@ const bool Vector3::RayIntersectTriangle(
 
 	Vector3 pvec = CrossProduct(dir, edges[1]);
 	double det = DotProduct(edges[0], pvec);
-	if (det < 0.0)
+	if (det < 1e-5 && det > -1e-5)
 		return false;
 
+	double inv_det = 1.0 / det;
+
 	Vector3 tvec = origin - tr_v0;
-	double u = DotProduct(tvec, pvec);
-	if (u < 0.0 || u > det)
+	double u = DotProduct(tvec, pvec) * inv_det;
+	if (u < 0.0 || u > 1.0)
 		return false;
 
 	Vector3 qvec = CrossProduct(tvec, edges[0]);
-	double v = DotProduct(dir, qvec);
-	if (v < 0.0 || u + v > det)
+	double v = DotProduct(dir, qvec) * inv_det;
+	if (v < 0.0 || u + v > 1.0)
 		return false;
 
 	// This is only if I need to know intersection point.
@@ -113,27 +115,31 @@ const bool Vector3::LineSegmentIntersectTriangle(
 	const Vector3 &tr_v1, 
 	const Vector3 &tr_v2)
 {
+	const Vector3 dir = segm_v1 - segm_v0;
+
 	Vector3 edges[2]
 	{ tr_v1 - tr_v0,
 		tr_v2 - tr_v0 };
 
-	Vector3 pvec = CrossProduct(segm_v1, edges[1]);
+	Vector3 pvec = CrossProduct(dir, edges[1]);
 	double det = DotProduct(edges[0], pvec);
-	if (det < 0.0)
+	if (det < 1e-5 && det > -1e-5)
 		return false;
 
+	double inv_det = 1.0 / det;
+
 	Vector3 tvec = segm_v0 - tr_v0;
-	double u = DotProduct(tvec, pvec);
-	if (u < 0.0 || u > det)
+	double u = DotProduct(tvec, pvec) * inv_det;
+	if (u < 0.0 || u > 1.0)
 		return false;
 
 	Vector3 qvec = CrossProduct(tvec, edges[0]);
-	double v = DotProduct(segm_v1, qvec);
-	if (v < 0.0 || u + v > det)
+	double v = DotProduct(dir, qvec) * inv_det;
+	if (v < 0.0 || u + v > 1.0)
 		return false;
 
-	double t = DotProduct(edges[1], qvec) / det;
-	return t < 1.0;
+	double t = DotProduct(edges[1], qvec) * inv_det;
+	return t < 1.0 && t > 0.0;
 }
 
 const double Vector3::Magnitude() const

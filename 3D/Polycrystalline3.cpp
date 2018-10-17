@@ -55,30 +55,6 @@ void Polycrystalline3::SetLinksWithShell()
 	//}
 }
 
-//unique_ptr<Edge3>* Polycrystalline3::FindEdge(Vertex3& vertex0, Vertex3& vertex1)
-//{
-//	if (std::find(vertex0.neighbors.begin(), vertex0.neighbors.end(), vertex1.GetPtrToUniquePtr()) == vertex0.neighbors.end())
-//	{
-//		return nullptr;
-//	}
-//
-//	for (list<unique_ptr<Edge3>*>::const_iterator edges_iter = vertex0.inclInEdges.begin(), end = vertex0.inclInEdges.end();
-//		edges_iter != end; 
-//		edges_iter++)
-//	{
-//		if ((**edges_iter)->vertexes[0]->get() == &vertex0 && 
-//			(**edges_iter)->vertexes[1]->get() == &vertex1 ||
-//			(**edges_iter)->vertexes[0]->get() == &vertex1 && 
-//			(**edges_iter)->vertexes[1]->get() == &vertex0)
-//		{
-//			return *edges_iter;
-//		}
-//	}
-//
-//	throw std::exception("Error in function Polycrystalline3::FindEdge");
-//	return nullptr;
-//}
-
 template <class T>
 void ErasePtrsToNullptr(vector<unique_ptr<T>*>& vec)
 {
@@ -277,13 +253,13 @@ void Polycrystalline3::TriangulateCrystallitesVolumes()
 	for (size_t i = 0, max = crystallites.size(); i < max; i++)
 	{
 		crystallites[i]->SetStartFront(_startFrontEdges, _startFrontFacets);
-		//crystallites[i]->TriangulateVolume(_preferredLength);
+		crystallites[i]->TriangulateVolume(_preferredLength);
 	}
 }
 
 void Polycrystalline3::InputData()
 {
-	_preferredLength = 0.1;
+	_preferredLength = 0.6;
 
 	_shellVertexes.insert(_shellVertexes.end(), 
 	{
@@ -352,7 +328,34 @@ void Polycrystalline3::OutputData(string filename) const
 		file << "v " << (**_startFrontVertexes[i])[0] << ' ' << (**_startFrontVertexes[i])[1] << ' ' << (**_startFrontVertexes[i])[2] << '\n';
 		(*_startFrontVertexes[i])->globalNum = i + 1;
 	}
-	for (auto &facet : _startFrontFacets)
+	//for (auto &facet : _startFrontFacets)
+	//{
+	//	if (!*facet)
+	//		continue;
+
+	//	vector<size_t> gl_nums;
+	//	for (auto &edge : (*facet)->edges)
+	//		for (auto &vert : (*edge)->vertexes)
+	//			if (std::find(gl_nums.begin(), gl_nums.end(), (*vert)->globalNum) == gl_nums.end())
+	//				gl_nums.push_back((*vert)->globalNum);
+
+	//	file << "f " << gl_nums[0] << ' ' << gl_nums[1] << ' ' << gl_nums[2] << '\n';
+	//}
+	for (auto &f_facet : crystallites[0]->frontFacets)
+	{
+		if (!*f_facet)
+			continue;
+		auto facet = (*f_facet)->facet->GetPtrToUniquePtr();
+
+		vector<size_t> gl_nums;
+		for (auto &edge : (*facet)->edges)
+			for (auto &vert : (*edge)->vertexes)
+				if (std::find(gl_nums.begin(), gl_nums.end(), (*vert)->globalNum) == gl_nums.end())
+					gl_nums.push_back((*vert)->globalNum);
+
+		file << "f " << gl_nums[0] << ' ' << gl_nums[1] << ' ' << gl_nums[2] << '\n';
+	}
+	for (auto &facet : crystallites[0]->innerFacets)
 	{
 		if (!*facet)
 			continue;
