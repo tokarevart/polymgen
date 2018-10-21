@@ -6,15 +6,11 @@ Vector3& ShellVertex3::GetPosition() const
 	return *_position;
 }
 
-unique_ptr<Vertex3>* ShellVertex3::FindAttachedVertex(const vector<unique_ptr<Vertex3>*>& free_nodes)
+unique_ptr<Vertex3>* ShellVertex3::FindAttachedVertex(const vector<unique_ptr<Vertex3>*>& freeNodes)
 {
-	for (auto &vertex : free_nodes)
-	{
+	for (auto &vertex : freeNodes)
 		if ((*vertex)->belongsToShellVertex == this)
-		{
 			return vertex;
-		}
-	}
 
 	return nullptr;
 }
@@ -49,6 +45,4 @@ ShellVertex3::ShellVertex3(const Vector3& position)
 	_position.reset(new Vector3(position));
 }
 
-ShellVertex3::~ShellVertex3()
-{
-}
+ShellVertex3::~ShellVertex3() {}
