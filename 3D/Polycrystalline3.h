@@ -25,6 +25,9 @@ private:
 	vector<unique_ptr<Edge3>*> _startFrontEdges;
 	vector<unique_ptr<Vertex3>*> _startFrontVertexes;
 
+	template <class T>
+	void ErasePtrsToNullptr(vector<unique_ptr<T>*> &vec);
+
 public:
 	vector<Crystallite3*> crystallites;
 

@@ -12,6 +12,8 @@ class Facet3 : public unique_ptr_helper<Facet3>
 public:
 	unique_ptr<Edge3>* edges[3];
 
+	static unique_ptr<Edge3>* IntersectAlongAnEdge(const Facet3 &facet0, const Facet3 &facet1);
+
 	const bool IntersectsBy(const Vector3 &origin, const Vector3 &dir);
 	unique_ptr<Vertex3>* FindVertexNotIncludedInEdge(const Edge3& edge) const;
 	unique_ptr<Edge3>* FindEdgeNotContainingVertex(const Vertex3& vert) const;

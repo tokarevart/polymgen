@@ -1,5 +1,6 @@
 #include "Edge3.h"
 #include <algorithm>
+#include <iostream>
 
 #define PI 3.141592653589793
 
@@ -10,7 +11,6 @@
 #define INSIDE_RECTANGLE(corner0, corner1, point) \
 		(BETWEEN(corner0[0], corner1[0], point[0]) && \
 		 BETWEEN(corner0[1], corner1[1], point[1]))
-
 
 const double Edge3::Magnitude() const
 {
@@ -213,12 +213,6 @@ const bool Edge3::NeedToFlip(const vector<unique_ptr<Facet3>*> &facets)
 	return false;
 }
 
-//void Edge3::DestroyIfNoLinks()
-//{
-//	if (inclInFacets.empty())
-//		delete _uniquePtr->release();
-//}
-
 Edge3::Edge3() : unique_ptr_helper<Edge3>(this) 
 {
 	vertexes[0] = nullptr;
@@ -239,15 +233,20 @@ double FrontEdge3::Angle(const vector<unique_ptr<FrontFacet3>*> &frontFacets)
 	FindFrontFacetsAround(frontFacets, f_facets[0], f_facets[1]);
 
 	Vector3 edge_inner_vec = 0.5 * ((*edge->vertexes[0])->GetPosition() + (*edge->vertexes[1])->GetPosition());
+	Vector3 opp_verts_poses[2];
+	opp_verts_poses[0] = (*(*f_facets[0])->facet->FindVertexNotIncludedInEdge(*edge))->GetPosition();
+	opp_verts_poses[1] = (*(*f_facets[1])->facet->FindVertexNotIncludedInEdge(*edge))->GetPosition();
 	Vector3 facets_inner_vecs[2];
-	facets_inner_vecs[0] = (*(*f_facets[0])->facet->FindVertexNotIncludedInEdge(*edge))->GetPosition() - edge_inner_vec;
-	facets_inner_vecs[1] = (*(*f_facets[1])->facet->FindVertexNotIncludedInEdge(*edge))->GetPosition() - edge_inner_vec;
+	facets_inner_vecs[0] = opp_verts_poses[0] - Vector3::Project(opp_verts_poses[0], (*edge->vertexes[0])->GetPosition(), (*edge->vertexes[1])->GetPosition());
+	facets_inner_vecs[1] = opp_verts_poses[1] - Vector3::Project(opp_verts_poses[1], (*edge->vertexes[0])->GetPosition(), (*edge->vertexes[1])->GetPosition());
+	//facets_inner_vecs[0] = (*(*f_facets[0])->facet->FindVertexNotIncludedInEdge(*edge))->GetPosition() - edge_inner_vec;
+	//facets_inner_vecs[1] = (*(*f_facets[1])->facet->FindVertexNotIncludedInEdge(*edge))->GetPosition() - edge_inner_vec;
 	double in_the_same_plane_dot = Vector3::DotProduct(Vector3::CrossProduct(facets_inner_vecs[0], facets_inner_vecs[1]), **edge->vertexes[1] - **edge->vertexes[0]);
-	if (in_the_same_plane_dot < 1e-2 && in_the_same_plane_dot > -1e-2)
+	if (in_the_same_plane_dot < 1e-6 && in_the_same_plane_dot > -1e-6)
 		return PI;
 	Vector3 shell_inside_test = facets_inner_vecs[0] + facets_inner_vecs[1];
 
-	Vector3 add_for_correct_intersect = Vector3::CrossProduct(facets_inner_vecs[0], facets_inner_vecs[1]).Normalize() * shell_inside_test.Magnitude() * 1e-2;
+	Vector3 add_for_correct_intersect = Vector3::CrossProduct(opp_verts_poses[0] - edge_inner_vec, opp_verts_poses[1] - edge_inner_vec).Normalize() * shell_inside_test.Magnitude() * 1e-3;
 	shell_inside_test += add_for_correct_intersect;
 
 	int intersects_num = 0;
@@ -267,10 +266,7 @@ double FrontEdge3::Angle(const vector<unique_ptr<FrontFacet3>*> &frontFacets)
 			intersects_num++;
 	}
 
-	double debug_cos = Vector3::Cos(facets_inner_vecs[1], facets_inner_vecs[0]);
 	double min_angle = acos(Vector3::Cos(facets_inner_vecs[0], facets_inner_vecs[1]));
-	
-	//return acos(abs(Vector3::Cos(facets_inner_vecs[0], facets_inner_vecs[1])));
 	return intersects_num % 2 == 1 ?
 		min_angle :
 		PI + PI - min_angle;

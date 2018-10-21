@@ -1,6 +1,22 @@
 #include "Facet3.h"
 
 
+unique_ptr<Edge3>* Facet3::IntersectAlongAnEdge(const Facet3 &facet0, const Facet3 &facet1)
+{
+	int inters = 0;
+	unique_ptr<Edge3>* res = nullptr;
+	for (auto &edge0 : facet0.edges)
+		for (auto &edge1 : facet1.edges)
+			if (edge0 == edge1)
+			{
+				inters++;
+				res = edge0;
+				break;
+			}
+
+	return inters == 1 ? res : nullptr;
+}
+
 const bool Facet3::IntersectsBy(
 	const Vector3 &origin, 
 	const Vector3 &dir)
