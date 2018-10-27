@@ -38,6 +38,11 @@ Vector3 Vector3::CrossProduct(
 		vec0._coors[0] * vec1._coors[1] - vec0._coors[1] * vec1._coors[0]);
 }
 
+const double Vector3::MixedProduct(const Vector3 &vec0, const Vector3 &vec1, const Vector3 &vec2)
+{
+	return DotProduct(CrossProduct(vec0, vec1), vec2);
+}
+
 const double Vector3::Cos(
 	const Vector3& vec0, 
 	const Vector3& vec1)
@@ -46,7 +51,7 @@ const double Vector3::Cos(
 }
 
 Vector3 Vector3::Project(
-	const Point3& point,
+	const Vector3& point,
 	const Vector3& line_p0, 
 	const Vector3& line_p1)
 {
@@ -141,7 +146,7 @@ const bool Vector3::SegmentIntersectTriangle(
 }
 
 // I didn't tested it.
-const double Vector3::LinesDistance(const Point3 &l0_p0, const Point3 &l0_p1, const Point3 &l1_p0, const Point3 &l1_p1)
+const double Vector3::LinesDistance(const Vector3 &l0_p0, const Vector3 &l0_p1, const Vector3 &l1_p0, const Vector3 &l1_p1)
 {
 	Vector3 u = l0_p1 - l0_p0;
 	Vector3 v = l1_p1 - l1_p0;
@@ -173,7 +178,7 @@ const double Vector3::LinesDistance(const Point3 &l0_p0, const Point3 &l0_p1, co
 }
 
 // I didn't tested it.
-const double Vector3::SegmentsDistance(const Point3 &s0_p0, const Point3 &s0_p1, const Point3 &s1_p0, const Point3 &s1_p1)
+const double Vector3::SegmentsDistance(const Vector3 &s0_p0, const Vector3 &s0_p1, const Vector3 &s1_p0, const Vector3 &s1_p1)
 {
 	Vector3 u = s0_p1 - s0_p0;
 	Vector3 v = s1_p1 - s1_p0;
@@ -288,14 +293,14 @@ Vector3& Vector3::Project(
 	return *this;
 }
 
-double Vector3::DistanceToLine(const Point3 &line_p0, const Point3 &line_p1) const
+double Vector3::DistanceToLine(const Vector3 &line_p0, const Vector3 &line_p1) const
 {
 	return (Project(*this, line_p0, line_p1) - *this).Magnitude();
 }
 
-double Vector3::DistanceToSegment(const Point3 &segm_p0, const Point3 &segm_p1) const
+double Vector3::DistanceToSegment(const Vector3 &segm_p0, const Vector3 &segm_p1) const
 {
-	Point3 proj = Project(*this, segm_p0, segm_p1);
+	Vector3 proj = Project(*this, segm_p0, segm_p1);
 	double sqr_magns[2];
 
 	const double EPS = (segm_p1 - segm_p0).Magnitude() * 1e-6;
@@ -369,18 +374,32 @@ Vector3& Vector3::operator*=(const double& scalar)
 	return *this;
 }
 
+Vector3& Vector3::operator/=(const double& scalar)
+{
+	_coors[0] /= scalar;
+	_coors[1] /= scalar;
+	_coors[2] /= scalar;
+	return *this;
+}
+
 const Vector3 operator*(
 	const Vector3& vec, 
 	const double& scalar)
 {
-	return Vector3(vec._coors[0] * scalar, vec._coors[1] * scalar, vec._coors[2] * scalar);
+	return Vector3(
+		vec._coors[0] * scalar, 
+		vec._coors[1] * scalar, 
+		vec._coors[2] * scalar);
 }
 
 const Vector3 operator*(
 	const double& scalar, 
 	const Vector3& vec)
 {
-	return Vector3(scalar * vec._coors[0], scalar * vec._coors[1], scalar * vec._coors[2]);
+	return Vector3(
+		scalar * vec._coors[0], 
+		scalar * vec._coors[1], 
+		scalar * vec._coors[2]);
 }
 
 const Vector3 operator/(
@@ -388,7 +407,10 @@ const Vector3 operator/(
 	const double& scalar)
 {
 	double inv_scalar = 1.0 / scalar;
-	return Vector3(vec._coors[0] * inv_scalar, vec._coors[1] * inv_scalar, vec._coors[2] * inv_scalar);
+	return Vector3(
+		vec._coors[0] * inv_scalar, 
+		vec._coors[1] * inv_scalar, 
+		vec._coors[2] * inv_scalar);
 }
 
 Vector3::Vector3() 

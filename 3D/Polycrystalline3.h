@@ -43,7 +43,6 @@ public:
 	//void GenerateFiniteElementMesh(); // Executes other functions.
 
 	void InputData();
-	
 	void OutputData(string filename = "polycr.obj") const;
 
 	Polycrystalline3();

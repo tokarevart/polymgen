@@ -53,7 +53,13 @@ class FrontEdge3 : public unique_ptr_helper<FrontEdge3>
 {
 public:
 	Edge3* edge;
+	bool needProcessing = true;
 
+	double AngleExCos(
+		const vector<unique_ptr<FrontFacet3>*> &frontFacets);
+	double AngleCos(
+		bool &out_isConcave,
+		const vector<unique_ptr<FrontFacet3>*> &frontFacets);
 	double Angle(
 		const vector<unique_ptr<FrontFacet3>*> &frontFacets);
 	void FindFrontFacetsAround(
