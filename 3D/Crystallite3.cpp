@@ -33,29 +33,37 @@ void Crystallite3::ErasePtrsToNullptr(vector<unique_ptr<T>*> &vec)
 	size_t real_objs_num = std::count_if(vec.begin(), vec.end(), [](unique_ptr<T>*& ptr) { return *ptr ? true : false; });
 	vector<unique_ptr<T>*> buf_vec(real_objs_num);
 
-	size_t firts_thr_nums = real_objs_num / 2ull;
-	size_t second_thr_nums = real_objs_num - firts_thr_nums;
+	//size_t firts_thr_nums = real_objs_num / 2ull;
+	//size_t second_thr_nums = real_objs_num - firts_thr_nums;
 	//#pragma omp parallel num_threads(2)
 	//{
 	//#pragma omp single
 	//{
-	size_t index1 = 0ull;
-	for (size_t i = 0ull; index1 < firts_thr_nums; i++)
+	size_t index = 0ull;
+	for (size_t i = 0ull; index < real_objs_num; i++)
+	{
 		if (*vec[i])
 		{
-			buf_vec[index1] = vec[i];
-			index1++;
+			buf_vec[index] = vec[i];
+			index++;
 		}
+		else
+		{
+			delete vec[i];
+		}
+	}
 	//}
 	//#pragma omp single
 	//{
-	size_t index2 = 0ull;
-	for (size_t i = vec.size() - 1ull; index2 < second_thr_nums; i--)
-		if (*vec[i])
-		{
-			buf_vec[real_objs_num - 1ull - index2] = vec[i];
-			index2++;
-		}
+	//size_t index2 = 0ull;
+	//for (size_t i = vec.size() - 1ull; index2 < second_thr_nums; i--)
+	//{
+	//	if (*vec[i])
+	//	{
+	//		buf_vec[real_objs_num - 1ull - index2] = vec[i];
+	//		index2++;
+	//	}
+	//}
 	//}
 	//}
 
