@@ -1,1 +1,1 @@
-# PolycrystallineTriangulation
+# PolycrystalTriangulation
