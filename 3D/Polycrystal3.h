@@ -42,6 +42,8 @@ private:
 	void TriangulateShell();
 	void StartFrontDelaunayPostprocessing();
 
+	void InputData();
+
 public:
 	void TriangulatePolycrystalNoStruct(const double preferredLength);
 	void TriangulatePolycrystalNoStruct(string filename, const double preferredLength);
@@ -52,7 +54,6 @@ public:
 	PolycrystalTriangulation* TriangulatePolycrystal(const CrystallitesShell& crysesShell, const double preferredLength);
 	PolycrystalTriangulation* GetLastTriangulation();
 
-	void InputData();
 	void InputData(string filename);
 	void InputData(const CrystallitesShell& crysesShell);
 	void OutputData(string filename = "polycr.obj") const;
