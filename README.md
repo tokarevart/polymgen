@@ -12,3 +12,4 @@ PolycrystalTriangulation* triangulation = polycr.TriangulatePolycrystal(preferre
 ...
 delete triangulation;
 ```
+![Cube triangulation](https://octodex.github.com/images/yaktocat.png)
