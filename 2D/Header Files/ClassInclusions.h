@@ -1,9 +1,0 @@
-#pragma once
-#include "Polycrystalline2.h"
-#include "Crystallite2.h"
-#include "Simplex2.h"
-#include "Edge2.h"
-#include "ShellEdge2.h"
-#include "Node2.h"
-#include "ShellNode2.h"
-#include "Vector2.h"

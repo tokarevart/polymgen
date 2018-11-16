@@ -1,5 +1,5 @@
 #pragma once
-#include "Polycrystalline3.h"
+#include "Polycrystal3.h"
 #include "Crystallite3.h"
 #include "Simplex3.h"
 #include "Facet3.h"

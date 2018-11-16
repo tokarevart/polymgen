@@ -1,9 +1,37 @@
-#include "Polycrystalline3.h"
+#include "Polycrystal3.h"
 #include <algorithm>
 #include <iostream>
 
 
-void Polycrystalline3::SetLinksWithShell()
+ShellEdge3* Polycrystal3::FindShellEdge(const ShellVertex3* v0, const ShellVertex3* v1) const
+{
+	for (auto &s_edge : _shellEdges)
+		if ((s_edge->vertexes[0] == v0  &&
+			 s_edge->vertexes[1] == v1) ||
+			(s_edge->vertexes[1] == v0  &&
+			 s_edge->vertexes[0] == v1))
+		{
+			return s_edge;
+		}
+	
+	return nullptr;
+}
+
+unique_ptr<Edge3>* Polycrystal3::FindStartFrontEdge(const unique_ptr<Vertex3>* v0, const unique_ptr<Vertex3>* v1) const
+{
+	for (auto &edge : _startFrontEdges)
+		if (((*edge)->vertexes[0] == v0  &&
+			 (*edge)->vertexes[1] == v1) ||
+			((*edge)->vertexes[1] == v0  &&
+			 (*edge)->vertexes[0] == v1))
+		{
+			return edge;
+		}
+
+	return nullptr;
+}
+
+void Polycrystal3::SetLinksWithShell()
 {
 	double sqr_sufficient_dist = _preferredLength * _preferredLength * 1e-6;
 	size_t shell_verts_num = _shellVertexes.size();
@@ -67,7 +95,7 @@ void Polycrystalline3::SetLinksWithShell()
 }
 
 template <class T>
-void Polycrystalline3::ErasePtrsToNullptr(vector<unique_ptr<T>*> &vec)
+void Polycrystal3::ErasePtrsToNullptr(vector<unique_ptr<T>*> &vec)
 {
 	size_t real_objs_num = std::count_if(vec.begin(), vec.end(), [](unique_ptr<T>*& ptr) { return *ptr ? true : false; });
 	vector<unique_ptr<T>*> buf_vec(real_objs_num);
@@ -105,7 +133,7 @@ void Polycrystalline3::ErasePtrsToNullptr(vector<unique_ptr<T>*> &vec)
 	vec = std::move(buf_vec);
 }
 
-void Polycrystalline3::ErasePtrsToNullptrFromVectors()
+void Polycrystal3::ErasePtrsToNullptrFromVectors()
 {
 	//#pragma omp parallel num_threads(3)
 	//{
@@ -118,7 +146,7 @@ void Polycrystalline3::ErasePtrsToNullptrFromVectors()
 	//}
 }
 
-void Polycrystalline3::TriangulateShell()
+void Polycrystal3::TriangulateShell()
 {
 	size_t edges_num = _startFrontEdges.size();
 	for (size_t i = 0ull; i < edges_num; i++)
@@ -134,103 +162,7 @@ void Polycrystalline3::TriangulateShell()
 	ErasePtrsToNullptrFromVectors();
 }
 
-//Vector3 Polycrystalline3::ShiftToLavEdges(const Vertex3& vertex)
-//{
-//	Vector3 shift;
-//	const double b = 0.15;
-//	for (auto &neighbor : vertex.neighbors)
-//	{
-//		if (*neighbor)
-//		{
-//			Vector3 vec = **neighbor - vertex;
-//			double buf = b * (1.0 - _preferredLength / vec.Magnitude());
-//			if ((*neighbor)->belongsToShellVertex)
-//			{
-//				shift += vec * 2.0 * buf;
-//			}
-//			else if ((*neighbor)->belongsToShellEdge)
-//			{
-//				double k = 2.0 - abs(Vector3::Cos(vec, *(*neighbor)->belongsToShellEdge->vertexes[0] - *(*neighbor)->belongsToShellEdge->vertexes[1]));
-//				shift += vec * k * buf;
-//			}
-//			else
-//			{
-//				shift += vec * buf;
-//			}
-//		}
-//	}
-//
-//	if (shift.SqrMagnitude() > _preferredLength * _preferredLength * 0.0025)
-//	{
-//		shift = shift.Normalize() * _preferredLength * 0.05;
-//	}
-//
-//	return shift;
-//}
-
-//void Polycrystalline3::DistributeVertexesOnShellEvenly(size_t iterations_num)
-//{
-//	size_t verts_num = _startFrontVertexes.size();
-//	Vector3* shifts = new Vector3[verts_num];
-//
-//	if (iterations_num == 0)
-//	{
-//		std::cout << "Enter the iterations number: ";
-//		std::cin >> iterations_num;
-//	}
-//	for (int i = 0; i < iterations_num; i++)
-//	{
-//		//#pragma omp parallel firstprivate(verts_num)
-//		//{
-//		//#pragma omp for
-//		for (size_t j = 0; j < verts_num; j++)
-//		{
-//			if (*_startFrontVertexes[j])
-//			{
-//				shifts[j] = ShiftToLavEdges(**_startFrontVertexes[j]);
-//			}
-//		}
-//		//#pragma omp for
-//		for (size_t j = 0; j < verts_num; j++)
-//		{
-//			if (*_startFrontVertexes[j])
-//			{
-//				**_startFrontVertexes[j] += shifts[j];
-//
-//				//if ((*_startFrontVertexes[j])->belongsToShellEdge)
-//				//{
-//				//	(*_startFrontVertexes[j])->SetPosition(
-//				//		Vector3::Project(
-//				//		(*_startFrontVertexes[j])->GetPosition(),
-//				//			(*_startFrontVertexes[j])->belongsToShellEdge->vertexes[0]->GetPosition(),
-//				//			(*_startFrontVertexes[j])->belongsToShellEdge->vertexes[1]->GetPosition()));
-//				//}
-//				//else if ((*_startFrontVertexes[j])->belongsToShellFacet)
-//				//{
-//				//	Vector3 plane_point, a, b;
-//				//	plane_point = (*_startFrontVertexes[j])->belongsToShellFacet->edges[0]->vertexes[0]->GetPosition();
-//				//	a = (*_startFrontVertexes[j])->belongsToShellFacet->edges[0]->vertexes[1]->GetPosition() - plane_point;
-//				//	if ((*_startFrontVertexes[j])->belongsToShellFacet->edges[0]->vertexes[0] == (*_startFrontVertexes[j])->belongsToShellFacet->edges[1]->vertexes[0])
-//				//	{
-//				//		b = (*_startFrontVertexes[j])->belongsToShellFacet->edges[1]->vertexes[1]->GetPosition() - plane_point;
-//				//	}
-//				//	else
-//				//	{
-//				//		b = (*_startFrontVertexes[j])->belongsToShellFacet->edges[1]->vertexes[0]->GetPosition() - plane_point;
-//				//	}
-//				//
-//				//	(*_startFrontVertexes[j])->SetPosition(
-//				//		plane_point + ((*_startFrontVertexes[j])->GetPosition() - plane_point).Project(a, b));
-//				//}
-//			}
-//		}
-//		//}
-//	}
-//
-//	delete[] shifts;
-//}
-
-void Polycrystalline3::DelaunayPostprocessing()
+void Polycrystal3::StartFrontDelaunayPostprocessing()
 {
 	unique_ptr<Vertex3>* around_nodes[2];
 	unique_ptr<Facet3>* around_facets[2];
@@ -260,25 +192,153 @@ void Polycrystalline3::DelaunayPostprocessing()
 	}
 }
 
-void Polycrystalline3::TriangulateCrystallitesVolumes()
+PolycrystalTriangulation* Polycrystal3::StructurizeTriangulation()
 {
+	PolycrystalTriangulation* pol_triang = new PolycrystalTriangulation;
+
+	pol_triang->crysesNum = crystallites.size();
+	pol_triang->crysesTetrsNum = new size_t[pol_triang->crysesNum];
+
+	size_t nodes_num = _startFrontVertexes.size();
+	for (auto &crys : crystallites)
+		nodes_num += std::count_if(
+			crys->innerVerts.begin(),
+			crys->innerVerts.end(),
+			[](auto vert)-> bool { return (bool)*vert; });
+
+	pol_triang->nodesNum = nodes_num;
+	pol_triang->nodesPositions = new double[3ull * pol_triang->nodesNum];
+	unique_ptr<Vertex3>** nodes_ptrs = new unique_ptr<Vertex3>*[pol_triang->nodesNum];
+	auto FindNodeIndex = [&pol_triang, nodes_ptrs](unique_ptr<Vertex3>* node_ptr)-> size_t
+	{
+		for (size_t i = 0ull; i < pol_triang->nodesNum; i++)
+		{
+			if (nodes_ptrs[i] == node_ptr)
+				return i;
+		}
+		return pol_triang->nodesNum;
+	};
+
+	size_t node_ind = 0ull;
+	for (auto &s_f_vert : _startFrontVertexes)
+	{
+		if (!*s_f_vert)
+			continue;
+
+		nodes_ptrs[node_ind] = s_f_vert;
+		pol_triang->nodesPositions[3ull * node_ind]        = (**s_f_vert)[0];
+		pol_triang->nodesPositions[3ull * node_ind + 1ull] = (**s_f_vert)[1];
+		pol_triang->nodesPositions[3ull * node_ind + 2ull] = (**s_f_vert)[2];
+		node_ind++;
+	}
+	for (auto &crys : crystallites)
+	{
+		for (auto &vert : crys->innerVerts)
+		{
+			if (!*vert)
+				continue;
+
+			nodes_ptrs[node_ind] = vert;
+			pol_triang->nodesPositions[3ull * node_ind]        = (**vert)[0];
+			pol_triang->nodesPositions[3ull * node_ind + 1ull] = (**vert)[1];
+			pol_triang->nodesPositions[3ull * node_ind + 2ull] = (**vert)[2];
+			node_ind++;
+		}
+	}
+
+	size_t tetrs_num = 0ull;
+	for (size_t i = 0ull; i < pol_triang->crysesNum; i++)
+	{
+		pol_triang->crysesTetrsNum[i] = std::count_if(
+			crystallites[i]->innerSimps.begin(),
+			crystallites[i]->innerSimps.end(),
+			[](auto simp)-> bool { return (bool)*simp; });
+
+		tetrs_num += pol_triang->crysesTetrsNum[i];
+	}
+
+	pol_triang->tetrsNum = tetrs_num;
+	pol_triang->tetrs = new size_t[4ull * pol_triang->tetrsNum];
+
+	size_t tetr_ind = 0ull;
+	for (size_t i = 0ull; i < pol_triang->crysesNum; i++)
+	{
+		for (auto &tetr : crystallites[i]->innerSimps)
+		{
+			if (!*tetr)
+				continue;
+
+			pol_triang->tetrs[4ull * tetr_ind]        = FindNodeIndex((*tetr)->vertexes[0]);
+			pol_triang->tetrs[4ull * tetr_ind + 1ull] = FindNodeIndex((*tetr)->vertexes[1]);
+			pol_triang->tetrs[4ull * tetr_ind + 2ull] = FindNodeIndex((*tetr)->vertexes[1]);
+			pol_triang->tetrs[4ull * tetr_ind + 3ull] = FindNodeIndex((*tetr)->vertexes[1]);
+			tetr_ind++;
+		}
+	}
+
+	return pol_triang;
+}
+
+void Polycrystal3::TriangulatePolycrystalNoStruct(const double preferredLength)
+{
+	_preferredLength = preferredLength;
+
+	TriangulateShell();
+	SetLinksWithShell();
+	StartFrontDelaunayPostprocessing();
+
 	//#pragma omp parallel for
 	for (size_t i = 0ull, max = crystallites.size(); i < max; i++)
 	{
 		crystallites[i]->SetStartFront(_startFrontEdges, _startFrontFacets);
 		crystallites[i]->TriangulateVolume(_preferredLength, this);
+
 		double min_q, av_q;
 		crystallites[i]->AnalyzeMeshQuality(min_q, av_q);
-		std::cout << "Minimum quality: " << min_q << "\n"
-			"Average quality: " << av_q << '\n';
+		std::cout <<
+			"Minimum quality: " << min_q << "\n"
+			"Average quality: " << av_q  << '\n';
 	}
 	system("pause");
 }
 
-void Polycrystalline3::InputData()
+void Polycrystal3::TriangulatePolycrystalNoStruct(string filename, const double preferredLength)
 {
-	_preferredLength = 0.18;
+	InputData(filename);
+	TriangulatePolycrystalNoStruct(preferredLength);
+}
 
+void Polycrystal3::TriangulatePolycrystalNoStruct(const CrystallitesShell& crysesShell, const double preferredLength)
+{
+	InputData(crysesShell);
+	TriangulatePolycrystalNoStruct(preferredLength);
+}
+
+PolycrystalTriangulation* Polycrystal3::TriangulatePolycrystal(const double preferredLength)
+{
+	TriangulatePolycrystalNoStruct(preferredLength);
+	return StructurizeTriangulation();
+}
+
+PolycrystalTriangulation* Polycrystal3::TriangulatePolycrystal(string filename, const double preferredLength)
+{
+	TriangulatePolycrystalNoStruct(filename, preferredLength);
+	return StructurizeTriangulation();
+}
+
+PolycrystalTriangulation* Polycrystal3::TriangulatePolycrystal(const CrystallitesShell& crysesShell, const double preferredLength)
+{
+	TriangulatePolycrystalNoStruct(crysesShell, preferredLength);
+	return StructurizeTriangulation();
+}
+
+PolycrystalTriangulation* Polycrystal3::GetLastTriangulation()
+{
+	return lastTriangulation;
+}
+
+void Polycrystal3::InputData()
+{
 	_shellVertexes.insert(_shellVertexes.end(),
 	{
 		new ShellVertex3(1.0, 0.0, 0.0),
@@ -458,7 +518,166 @@ void Polycrystalline3::InputData()
 	});*/
 }
 
-void Polycrystalline3::OutputData(string filename) const
+void Polycrystal3::InputData(string filename)
+{
+	ifstream input(filename);
+
+	size_t nodes_num;
+	input >> nodes_num;
+
+	for (size_t i = 0ull; i < nodes_num; i++)
+	{
+		double coors[3];
+		input >> coors[0];
+		input >> coors[1];
+		input >> coors[2];
+
+		_shellVertexes.push_back(new ShellVertex3(coors[0], coors[1], coors[2]));
+		_startFrontVertexes.push_back((new Vertex3(coors[0], coors[1], coors[2]))->GetPtrToUniquePtr());
+	}
+
+	size_t facets_num;
+	input >> facets_num;
+
+	for (size_t i = 0ull; i < facets_num; i++)
+	{
+		size_t facet_nodes_inds[3];
+		input >> facet_nodes_inds[0];
+		input >> facet_nodes_inds[1];
+		input >> facet_nodes_inds[2];
+
+		if (!FindShellEdge(_shellVertexes[facet_nodes_inds[0]], _shellVertexes[facet_nodes_inds[1]]))
+		{
+			_shellEdges.push_back(new ShellEdge3(*_shellVertexes[facet_nodes_inds[0]], *_shellVertexes[facet_nodes_inds[1]]));
+			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[0]], **_startFrontVertexes[facet_nodes_inds[1]]))->GetPtrToUniquePtr());
+		}
+
+		if (!FindShellEdge(_shellVertexes[facet_nodes_inds[1]], _shellVertexes[facet_nodes_inds[2]]))
+		{
+			_shellEdges.push_back(new ShellEdge3(*_shellVertexes[facet_nodes_inds[1]], *_shellVertexes[facet_nodes_inds[2]]));
+			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[1]], **_startFrontVertexes[facet_nodes_inds[2]]))->GetPtrToUniquePtr());
+		}
+
+		if (!FindShellEdge(_shellVertexes[facet_nodes_inds[2]], _shellVertexes[facet_nodes_inds[0]]))
+		{
+			_shellEdges.push_back(new ShellEdge3(*_shellVertexes[facet_nodes_inds[2]], *_shellVertexes[facet_nodes_inds[0]]));
+			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[2]], **_startFrontVertexes[facet_nodes_inds[0]]))->GetPtrToUniquePtr());
+		}
+
+		_shellFacets.push_back(new ShellFacet3(
+			*FindShellEdge(_shellVertexes[facet_nodes_inds[0]], _shellVertexes[facet_nodes_inds[1]]),
+			*FindShellEdge(_shellVertexes[facet_nodes_inds[1]], _shellVertexes[facet_nodes_inds[2]]),
+			*FindShellEdge(_shellVertexes[facet_nodes_inds[2]], _shellVertexes[facet_nodes_inds[0]])));
+		_startFrontFacets.push_back((new Facet3(
+			**FindStartFrontEdge(_startFrontVertexes[facet_nodes_inds[0]], _startFrontVertexes[facet_nodes_inds[1]]),
+			**FindStartFrontEdge(_startFrontVertexes[facet_nodes_inds[1]], _startFrontVertexes[facet_nodes_inds[2]]),
+			**FindStartFrontEdge(_startFrontVertexes[facet_nodes_inds[2]], _startFrontVertexes[facet_nodes_inds[0]])))->GetPtrToUniquePtr());
+	}
+
+	size_t cryses_num;
+	input >> cryses_num;
+	crystallites.insert(crystallites.end(), cryses_num, new Crystallite3);
+
+	size_t* cryses_facets_nums = new size_t[cryses_num];
+	for (size_t i = 0ull; i < cryses_num; i++)
+		input >> cryses_facets_nums[i];
+
+	for (size_t i = 0ull; i < cryses_num; i++)
+	{
+		for (size_t j = 0ull; j < cryses_facets_nums[i]; j++)
+		{
+			size_t facet_ind;
+			input >> facet_ind;
+
+			if (std::find(crystallites[i]->shellEdges.begin(), crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[0]) == crystallites[i]->shellEdges.end())
+				crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[0]);
+
+			if (std::find(crystallites[i]->shellEdges.begin(), crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[1]) == crystallites[i]->shellEdges.end())
+				crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[1]);
+
+			if (std::find(crystallites[i]->shellEdges.begin(), crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[2]) == crystallites[i]->shellEdges.end())
+				crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[2]);
+
+			crystallites[i]->shellFacets.push_back(_shellFacets[facet_ind]);
+		}
+	}
+
+	input.close();
+	delete[] cryses_facets_nums;
+}
+
+void Polycrystal3::InputData(const CrystallitesShell& crysesShell)
+{
+	for (size_t i = 0ull; i < crysesShell.nodesNum; i++)
+	{
+		double coors[3];
+		coors[0] = crysesShell.nodesPositions[3ull * i];
+		coors[1] = crysesShell.nodesPositions[3ull * i + 1ull];
+		coors[2] = crysesShell.nodesPositions[3ull * i + 2ull];
+
+		_shellVertexes.push_back(new ShellVertex3(coors[0], coors[1], coors[2]));
+		_startFrontVertexes.push_back((new Vertex3(coors[0], coors[1], coors[2]))->GetPtrToUniquePtr());
+	}
+
+	for (size_t i = 0ull; i < crysesShell.facetsNum; i++)
+	{
+		size_t facet_nodes_inds[3];
+		facet_nodes_inds[0] = crysesShell.facets[3ull * i];
+		facet_nodes_inds[1] = crysesShell.facets[3ull * i + 1ull];
+		facet_nodes_inds[2] = crysesShell.facets[3ull * i + 2ull];
+
+		if (!FindShellEdge(_shellVertexes[facet_nodes_inds[0]], _shellVertexes[facet_nodes_inds[1]]))
+		{
+			_shellEdges.push_back(new ShellEdge3(*_shellVertexes[facet_nodes_inds[0]], *_shellVertexes[facet_nodes_inds[1]]));
+			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[0]], **_startFrontVertexes[facet_nodes_inds[1]]))->GetPtrToUniquePtr());
+		}
+
+		if (!FindShellEdge(_shellVertexes[facet_nodes_inds[1]], _shellVertexes[facet_nodes_inds[2]]))
+		{
+			_shellEdges.push_back(new ShellEdge3(*_shellVertexes[facet_nodes_inds[1]], *_shellVertexes[facet_nodes_inds[2]]));
+			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[1]], **_startFrontVertexes[facet_nodes_inds[2]]))->GetPtrToUniquePtr());
+		}
+
+		if (!FindShellEdge(_shellVertexes[facet_nodes_inds[2]], _shellVertexes[facet_nodes_inds[0]]))
+		{
+			_shellEdges.push_back(new ShellEdge3(*_shellVertexes[facet_nodes_inds[2]], *_shellVertexes[facet_nodes_inds[0]]));
+			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[2]], **_startFrontVertexes[facet_nodes_inds[0]]))->GetPtrToUniquePtr());
+		}
+
+		_shellFacets.push_back(new ShellFacet3(
+			*FindShellEdge(_shellVertexes[facet_nodes_inds[0]], _shellVertexes[facet_nodes_inds[1]]),
+			*FindShellEdge(_shellVertexes[facet_nodes_inds[1]], _shellVertexes[facet_nodes_inds[2]]),
+			*FindShellEdge(_shellVertexes[facet_nodes_inds[2]], _shellVertexes[facet_nodes_inds[0]])));
+		_startFrontFacets.push_back((new Facet3(
+			**FindStartFrontEdge(_startFrontVertexes[facet_nodes_inds[0]], _startFrontVertexes[facet_nodes_inds[1]]),
+			**FindStartFrontEdge(_startFrontVertexes[facet_nodes_inds[1]], _startFrontVertexes[facet_nodes_inds[2]]),
+			**FindStartFrontEdge(_startFrontVertexes[facet_nodes_inds[2]], _startFrontVertexes[facet_nodes_inds[0]])))->GetPtrToUniquePtr());
+	}
+
+	crystallites.insert(crystallites.end(), crysesShell.crysesNum, new Crystallite3);
+	
+	size_t cryses_inner_ind = 0ull;
+	for (size_t i = 0ull; i < crysesShell.crysesNum; i++)
+	{
+		for (size_t j = 0ull; j < crysesShell.crysesFacetsNums[i]; j++)
+		{
+			size_t facet_ind = crysesShell.cryses[cryses_inner_ind++];
+
+			if (std::find(crystallites[i]->shellEdges.begin(), crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[0]) == crystallites[i]->shellEdges.end())
+				crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[0]);
+
+			if (std::find(crystallites[i]->shellEdges.begin(), crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[1]) == crystallites[i]->shellEdges.end())
+				crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[1]);
+
+			if (std::find(crystallites[i]->shellEdges.begin(), crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[2]) == crystallites[i]->shellEdges.end())
+				crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[2]);
+
+			crystallites[i]->shellFacets.push_back(_shellFacets[facet_ind]);
+		}
+	}
+}
+
+void Polycrystal3::OutputData(string filename) const
 {
 	ofstream file(filename);
 	size_t i = 0ull;
@@ -525,9 +744,19 @@ void Polycrystalline3::OutputData(string filename) const
 	file.close();
 }
 
-Polycrystalline3::Polycrystalline3() {}
+Polycrystal3::Polycrystal3() {}
 
-Polycrystalline3::~Polycrystalline3()
+Polycrystal3::Polycrystal3(string filename)
+{
+	InputData(filename);
+}
+
+Polycrystal3::Polycrystal3(const CrystallitesShell& crysesShell)
+{
+	InputData(crysesShell);
+}
+
+Polycrystal3::~Polycrystal3()
 {
 	for (auto &crys : crystallites)
 		delete crys;

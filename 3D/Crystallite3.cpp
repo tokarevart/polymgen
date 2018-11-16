@@ -117,6 +117,20 @@ void Crystallite3::SetStartFront(
 		}
 }
 
+ShellEdge3* Crystallite3::FindShellEdge(const ShellVertex3* v0, const ShellVertex3* v1) const
+{
+	for (auto &s_edge : shellEdges)
+		if ((s_edge->vertexes[0] == v0  &&
+			 s_edge->vertexes[1] == v1) ||
+			(s_edge->vertexes[1] == v0  &&
+			 s_edge->vertexes[0] == v1))
+		{
+			return s_edge;
+		}
+
+	return nullptr;
+}
+
 unique_ptr<FrontFacet3>* Crystallite3::FindFrontFacet(unique_ptr<Facet3>* &facet)
 {
 	for (auto &f_facet : frontFacets)
@@ -996,7 +1010,7 @@ size_t PtrsToNullptrNumber(vector<unique_ptr<T>*> &vec)
 	return std::count_if(vec.begin(), vec.end(), [](unique_ptr<T>* &ptr) { return !*ptr ? true : false; });
 }
 
-//const bool Crystallite3::ProcessAngles(double lessThan, double previousAngles, bool addNewVert, bool isFirst, bool isFinal, Polycrystalline3* polycr)
+//const bool Crystallite3::ProcessAngles(double lessThan, double previousAngles, bool addNewVert, bool isFirst, bool isFinal, Polycrystal3* polycr)
 //{
 //	if (FrontContainsOfOnly1Simplex3OrEmpty())
 //	{
@@ -1087,7 +1101,7 @@ size_t PtrsToNullptrNumber(vector<unique_ptr<T>*> &vec)
 //	return false;
 //}
 
-const bool Crystallite3::ProcessVerySmallAngles(Polycrystalline3* polycr)
+const bool Crystallite3::ProcessVerySmallAngles(Polycrystal3* polycr)
 {
 	if (FrontContainsOfOnly1Simplex3OrEmpty())
 	{
@@ -1179,7 +1193,7 @@ const bool Crystallite3::ProcessVerySmallAngles(Polycrystalline3* polycr)
 	return false;
 }
 
-const bool Crystallite3::ProcessSmallAngles(Polycrystalline3* polycr)
+const bool Crystallite3::ProcessSmallAngles(Polycrystal3* polycr)
 {
 	if (FrontContainsOfOnly1Simplex3OrEmpty())
 	{
@@ -1271,7 +1285,7 @@ const bool Crystallite3::ProcessSmallAngles(Polycrystalline3* polycr)
 	return false;
 }
 
-const bool Crystallite3::ProcessMediumAngles(Polycrystalline3* polycr)
+const bool Crystallite3::ProcessMediumAngles(Polycrystal3* polycr)
 {
 	if (FrontContainsOfOnly1Simplex3OrEmpty())
 	{
@@ -1363,7 +1377,7 @@ const bool Crystallite3::ProcessMediumAngles(Polycrystalline3* polycr)
 	return false;
 }
 
-void Crystallite3::ProcessLargeAngles(Polycrystalline3* polycr)
+void Crystallite3::ProcessLargeAngles(Polycrystal3* polycr)
 {
 	if (FrontContainsOfOnly1Simplex3OrEmpty())
 	{
@@ -1441,7 +1455,7 @@ void Crystallite3::ProcessLargeAngles(Polycrystalline3* polycr)
 		throw std::logic_error("Crystallite volume wasn't exhausted due to unexpected logical error.");
 }
 
-void Crystallite3::TriangulateVolume(const double preferredLength, Polycrystalline3* polycr)
+void Crystallite3::TriangulateVolume(const double preferredLength, Polycrystal3* polycr)
 {
 	_preferredLength = preferredLength;
 	//polycr->OutputData();
