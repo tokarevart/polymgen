@@ -287,7 +287,7 @@ void Polycrystal3::TriangulatePolycrystalNoStruct(const double preferredLength)
 	SetLinksWithShell();
 	StartFrontDelaunayPostprocessing();
 
-	//#pragma omp parallel for
+	#pragma omp parallel for
 	for (size_t i = 0ull, max = crystallites.size(); i < max; i++)
 	{
 		crystallites[i]->SetStartFront(_startFrontEdges, _startFrontFacets);
