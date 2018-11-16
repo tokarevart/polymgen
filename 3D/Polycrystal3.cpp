@@ -293,13 +293,13 @@ void Polycrystal3::TriangulatePolycrystalNoStruct(const double preferredLength)
 		crystallites[i]->SetStartFront(_startFrontEdges, _startFrontFacets);
 		crystallites[i]->TriangulateVolume(_preferredLength, this);
 
-		double min_q, av_q;
-		crystallites[i]->AnalyzeMeshQuality(min_q, av_q);
-		std::cout <<
-			"Minimum quality: " << min_q << "\n"
-			"Average quality: " << av_q  << '\n';
+		//double min_q, av_q;
+		//crystallites[i]->AnalyzeMeshQuality(min_q, av_q);
+		//std::cout <<
+		//	"Minimum quality: " << min_q << "\n"
+		//	"Average quality: " << av_q  << '\n';
 	}
-	system("pause");
+	//system("pause");
 }
 
 void Polycrystal3::TriangulatePolycrystalNoStruct(string filename, const double preferredLength)
