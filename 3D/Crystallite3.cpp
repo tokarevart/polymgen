@@ -1122,8 +1122,7 @@ const bool Crystallite3::ProcessVerySmallAngles(Polycrystal3* polycr)
 
 	for (size_t i = 0ull; i < frontEdges.size();)
 	{
-		if (!*frontEdges[i] ||
-			!(*frontEdges[i])->needProcessing)
+		if (!*frontEdges[i])
 		{
 			i++;
 			continue;
@@ -1136,7 +1135,6 @@ const bool Crystallite3::ProcessVerySmallAngles(Polycrystal3* polycr)
 			SomeVertexInsidePotentialSimplex3Check(frontEdges[i]) ||
 			FrontSplitCheck(frontEdges[i]))
 		{
-			(*frontEdges[i])->needProcessing = false;
 			i++;
 			continue;
 		}
@@ -1183,13 +1181,6 @@ const bool Crystallite3::ProcessVerySmallAngles(Polycrystal3* polycr)
 			ErasePtrsToNullptr(frontFacets);
 	}
 
-	for (auto &f_edge : frontEdges)
-	{
-		if (*f_edge &&
-			(*f_edge)->needProcessing == false)
-			(*f_edge)->needProcessing = true;
-	}
-
 	return false;
 }
 
@@ -1214,8 +1205,7 @@ const bool Crystallite3::ProcessSmallAngles(Polycrystal3* polycr)
 
 	for (size_t i = 0ull; i < frontEdges.size();)
 	{
-		if (!*frontEdges[i] ||
-			!(*frontEdges[i])->needProcessing)
+		if (!*frontEdges[i])
 		{
 			i++;
 			continue;
@@ -1228,7 +1218,6 @@ const bool Crystallite3::ProcessSmallAngles(Polycrystal3* polycr)
 			SomeVertexInsidePotentialSimplex3Check(frontEdges[i]) ||
 			FrontSplitCheck(frontEdges[i]))
 		{
-			(*frontEdges[i])->needProcessing = false;
 			i++;
 			continue;
 		}
@@ -1275,13 +1264,6 @@ const bool Crystallite3::ProcessSmallAngles(Polycrystal3* polycr)
 			ErasePtrsToNullptr(frontFacets);
 	}
 
-	for (auto &f_edge : frontEdges)
-	{
-		if (*f_edge &&
-			(*f_edge)->needProcessing == false)
-			(*f_edge)->needProcessing = true;
-	}
-
 	return false;
 }
 
@@ -1306,8 +1288,7 @@ const bool Crystallite3::ProcessMediumAngles(Polycrystal3* polycr)
 
 	for (size_t i = 0ull; i < frontEdges.size();)
 	{
-		if (!*frontEdges[i] ||
-			!(*frontEdges[i])->needProcessing)
+		if (!*frontEdges[i])
 		{
 			i++;
 			continue;
@@ -1319,7 +1300,6 @@ const bool Crystallite3::ProcessMediumAngles(Polycrystal3* polycr)
 			ParallelFacetsCheck(frontEdges[i]) ||
 			!NewVertexPositionForSimplexesCreation(frontEdges[i], new_vert_pos))
 		{
-			(*frontEdges[i])->needProcessing = false;
 			i++;
 			continue;
 		}
@@ -1367,13 +1347,6 @@ const bool Crystallite3::ProcessMediumAngles(Polycrystal3* polycr)
 			ErasePtrsToNullptr(frontFacets);
 	}
 
-	for (auto &f_edge : frontEdges)
-	{
-		if (*f_edge &&
-			(*f_edge)->needProcessing == false)
-			(*f_edge)->needProcessing = true;
-	}
-
 	return false;
 }
 
@@ -1398,8 +1371,7 @@ void Crystallite3::ProcessLargeAngles(Polycrystal3* polycr)
 	
 	for (size_t i = 0ull; i < frontEdges.size();)
 	{
-		if (!*frontEdges[i] ||
-			!(*frontEdges[i])->needProcessing)
+		if (!*frontEdges[i])
 		{
 			i++;
 			continue;
@@ -1411,7 +1383,6 @@ void Crystallite3::ProcessLargeAngles(Polycrystal3* polycr)
 			ParallelFacetsCheck(frontEdges[i]) ||
 			!NewVertexPositionForSimplexesCreation(frontEdges[i], new_vert_pos))
 		{
-			(*frontEdges[i])->needProcessing = false;
 			i++;
 			continue;
 		}
