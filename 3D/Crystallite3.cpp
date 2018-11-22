@@ -876,7 +876,7 @@ const bool Crystallite3::NewVertexPositionForSimplexesCreation(
 		dir = (facets_inner_vecs[0] + facets_inner_vecs[1]).Normalize();
 
 	dir *= _preferredLength * 0.866; // sind(60) == 0.8660...
-	Vector3 orig_plus_ex_dir = orig + dir * 2.0;
+	Vector3 orig_plus_ex_dir = orig + dir * 1.8;
 	while (
 		LineSegmentFrontIntersectionCheck(f_edge_verts_poses[0] + 1e-3 * (orig_plus_ex_dir - f_edge_verts_poses[0]), orig_plus_ex_dir) ||
 		LineSegmentFrontIntersectionCheck(f_edge_verts_poses[1] + 1e-3 * (orig_plus_ex_dir - f_edge_verts_poses[1]), orig_plus_ex_dir) ||
@@ -894,7 +894,7 @@ const bool Crystallite3::NewVertexPositionForSimplexesCreation(
 		LineSegmentFrontIntersectionCheck(f_facets_far_verts_poses[1] + 1e-3 * (orig + dir - f_facets_far_verts_poses[1]), orig + dir)*/)
 	{
 		dir *= 0.75;
-		orig_plus_ex_dir = orig + dir * 2.0;
+		orig_plus_ex_dir = orig + dir * 1.8;
 
 		if (dir.Magnitude() < _preferredLength * 0.01)
 			return false;
@@ -1320,7 +1320,7 @@ const bool Crystallite3::ProcessMediumAngles(Polycrystal3* polycr)
 			return true;
 		if (ProcessSmallAngles(polycr))
 			return true;
-		polycr->OutputData();
+		//polycr->OutputData();
 		i = 0ull;
 
 		if (FrontContainsOfOnly1Simplex3OrEmpty())
