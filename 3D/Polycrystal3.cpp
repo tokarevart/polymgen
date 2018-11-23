@@ -1,6 +1,7 @@
 #include "Polycrystal3.h"
 #include <algorithm>
 #include <iostream>
+#include "Timer.h"
 
 
 ShellEdge3* Polycrystal3::FindShellEdge(const ShellVertex3* v0, const ShellVertex3* v1) const
@@ -287,19 +288,28 @@ void Polycrystal3::TriangulatePolycrystalNoStruct(const double preferredLength)
 	SetLinksWithShell();
 	StartFrontDelaunayPostprocessing();
 
+	Timer tmr;
+	tmr.Start();
+	double min_q = 0.0, av_q = 0.0;
 	#pragma omp parallel for
 	for (size_t i = 0ull, max = crystallites.size(); i < max; i++)
 	{
 		crystallites[i]->SetStartFront(_startFrontEdges, _startFrontFacets);
 		crystallites[i]->TriangulateVolume(_preferredLength, this);
 
-		//double min_q, av_q;
-		//crystallites[i]->AnalyzeMeshQuality(min_q, av_q);
-		//std::cout <<
-		//	"Minimum quality: " << min_q << "\n"
-		//	"Average quality: " << av_q  << '\n';
+		double buf_min_q, buf_av_q;
+		crystallites[i]->AnalyzeMeshQuality(buf_min_q, buf_av_q);
+		min_q += buf_min_q;
+		av_q += buf_av_q;
 	}
-	//system("pause");
+	min_q /= crystallites.size();
+	av_q /= crystallites.size();
+	tmr.Stop();
+	std::ofstream out("log.txt");
+	out << ">>  Minimum quality    " << min_q
+		<< "\n>>  Average quality    " << av_q
+		<< "\n>>  Run time           " << tmr.GetLastDuration(microseconds) * 1e-6 << " s";
+	out.close();
 }
 
 void Polycrystal3::TriangulatePolycrystalNoStruct(string filename, const double preferredLength)
@@ -697,7 +707,23 @@ void Polycrystal3::OutputData(string filename) const
 			(*crys->innerVerts[j])->globalNum = i + 1ull;
 		}
 	}
-
+#define USER_DEBUG
+#ifdef USER_DEBUG
+	for (auto &f_facet : crystallites[0]->frontFacets)
+	{
+		if (!*f_facet)
+			continue;
+		auto facet = (*f_facet)->facet->GetPtrToUniquePtr();
+	
+		vector<size_t> gl_nums;
+		for (auto &edge : (*facet)->edges)
+			for (auto &vert : (*edge)->vertexes)
+				if (std::find(gl_nums.begin(), gl_nums.end(), (*vert)->globalNum) == gl_nums.end())
+					gl_nums.push_back((*vert)->globalNum);
+	
+		file << "f " << gl_nums[0] << ' ' << gl_nums[1] << ' ' << gl_nums[2] << '\n';
+	}
+#else
 	for (auto &facet : _startFrontFacets)
 	{
 		if (!*facet)
@@ -712,21 +738,6 @@ void Polycrystal3::OutputData(string filename) const
 		file << "f " << gl_nums[0] << ' ' << gl_nums[1] << ' ' << gl_nums[2] << '\n';
 	}
 
-	//for (auto &f_facet : crystallites[0]->frontFacets)
-	//{
-	//	if (!*f_facet)
-	//		continue;
-	//	auto facet = (*f_facet)->facet->GetPtrToUniquePtr();
-	//
-	//	vector<size_t> gl_nums;
-	//	for (auto &edge : (*facet)->edges)
-	//		for (auto &vert : (*edge)->vertexes)
-	//			if (std::find(gl_nums.begin(), gl_nums.end(), (*vert)->globalNum) == gl_nums.end())
-	//				gl_nums.push_back((*vert)->globalNum);
-	//
-	//	file << "f " << gl_nums[0] << ' ' << gl_nums[1] << ' ' << gl_nums[2] << '\n';
-	//}
-
 	for (auto &facet : crystallites[0]->innerFacets)
 	{
 		if (!*facet)
@@ -740,6 +751,7 @@ void Polycrystal3::OutputData(string filename) const
 
 		file << "f " << gl_nums[0] << ' ' << gl_nums[1] << ' ' << gl_nums[2] << '\n';
 	}
+#endif
 
 	file.close();
 }

@@ -51,9 +51,10 @@ public:
 
 class FrontEdge3 : public unique_ptr_helper<FrontEdge3>
 {
+	double exCos;
+
 public:
 	Edge3* edge;
-	double exCos;
 	bool needProcessing = true;
 
 	double AngleExCos(

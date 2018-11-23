@@ -200,6 +200,9 @@ Edge3::~Edge3() {}
 
 double FrontEdge3::AngleExCos(const vector<unique_ptr<FrontFacet3>*>& frontFacets)
 {
+	if (!needProcessing)
+		return exCos;
+	
 	unique_ptr<FrontFacet3>* f_facets[2];
 	FindFrontFacetsAround(frontFacets, f_facets[0], f_facets[1]);
 
@@ -237,9 +240,10 @@ double FrontEdge3::AngleExCos(const vector<unique_ptr<FrontFacet3>*>& frontFacet
 			intersects_num++;
 	}
 
-	return intersects_num % 2 == 1 ? 
+	needProcessing = false;
+	return exCos = (intersects_num % 2 == 1 ?
 		Vector3::Cos(facets_inner_vecs[0], facets_inner_vecs[1]) :
-		-2.0 - Vector3::Cos(facets_inner_vecs[0], facets_inner_vecs[1]);
+		-2.0 - Vector3::Cos(facets_inner_vecs[0], facets_inner_vecs[1]));
 }
 
 double FrontEdge3::AngleCos(bool &out_isConcave, const vector<unique_ptr<FrontFacet3>*> &frontFacets)

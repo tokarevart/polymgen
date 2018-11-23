@@ -1,0 +1,3 @@
+>>  Minimum quality    9.22839e-05
+>>  Average quality    0.487496
+>>  Run time           10.6826 s

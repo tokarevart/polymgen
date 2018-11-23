@@ -35,9 +35,9 @@ public:
 
 	ShellEdge3* FindShellEdge(const ShellVertex3* v0, const ShellVertex3* v1) const;
 
-	unique_ptr<FrontFacet3>* FindFrontFacet(unique_ptr<Facet3>*& facet);
-	unique_ptr<FrontEdge3>* FindFrontEdge(const unique_ptr<Vertex3>*& v0, const unique_ptr<Vertex3>*& v1);
-	unique_ptr<FrontEdge3>* FindFrontEdge(unique_ptr<Edge3>*& edge);
+	unique_ptr<FrontFacet3>* FindFrontFacet(unique_ptr<Facet3>* facet);
+	unique_ptr<FrontEdge3>* FindFrontEdge(const unique_ptr<Vertex3>* v0, const unique_ptr<Vertex3>* v1);
+	unique_ptr<FrontEdge3>* FindFrontEdge(unique_ptr<Edge3>* edge);
 
 	// Adds new front facet and corresponding facet.
 	unique_ptr<FrontFacet3>* AddFrontFacet3(
@@ -62,24 +62,29 @@ public:
 	const bool SomeVertexInsidePotentialSimplex3Check(const unique_ptr<FrontEdge3>* frontEdge);
 	const bool FrontSplitCheck(const unique_ptr<FrontEdge3>* frontEdge);
 	const bool ParallelFacetsCheck(const unique_ptr<FrontEdge3>* frontEdge);
-	const bool FrontContainsOfOnly1Simplex3OrEmpty();
+	const bool FrontContainsOfOnly1FacetOrEmpty();
 
-	void CreateSimplex3AroundEdge(
-		unique_ptr<FrontEdge3>* frontEdge);
-	const bool NewVertexPositionForSimplexesCreation(
-		unique_ptr<FrontEdge3>* frontEdge, 
-		Vector3& out_pos, 
-		const bool calcVertDirByAngle = false);
-	void Create2Simplexes3AroundEdge(
-		unique_ptr<FrontEdge3>* frontEdge, 
-		Vector3 vertPos);
+	unique_ptr<FrontEdge3>* CurrentFrontEdge(double maxExCos);
+	const bool ExhaustWithoutNewVertexPredicate(unique_ptr<FrontEdge3>* currentFrontEdge);
+	const bool ExhaustWithNewVertexPredicate(unique_ptr<FrontEdge3>* currentFrontEdge);
+	const int  ExhaustTypeCalculation(unique_ptr<FrontEdge3>* currentFrontEdge);
+
+	void ExhaustWithoutNewVertexOppositeEdgeExists(unique_ptr<FrontEdge3>* frontEdge, unique_ptr<FrontEdge3>* oppositeEdge);
+	void ExhaustWithoutNewVertexOppositeEdgeDontExists(unique_ptr<FrontEdge3>* frontEdge);
+	void ExhaustWithoutNewVertex(unique_ptr<FrontEdge3>* frontEdge, const bool oppositeEdgeExistence = true, unique_ptr<FrontEdge3>* oppositeEdge = nullptr);
+	const bool NewVertexPosition(unique_ptr<FrontEdge3>* frontEdge, Vector3& out_pos);
+	void ExhaustWithNewVertex(unique_ptr<FrontEdge3>* frontEdge, Vector3 vertPos);
 
 	const bool ProcessVerySmallAngles(Polycrystal3 *polycr);
 	const bool ProcessSmallAngles(Polycrystal3 *polycr);
 	const bool ProcessMediumAngles(Polycrystal3* polycr);
 	void ProcessLargeAngles(Polycrystal3* polycr);
+	void ProcessAngles(Polycrystal3* polycr);
 	const bool GlobalIntersectionCheck();
 	void SmoothMesh(int iterationsNum);
+	void SmoothNotFinisedMesh(int iterationsNum);
+	void SmoothFront(int iterationsNum);
+	void SmoothAroundFrontVertex(unique_ptr<Vertex3>* frontVert);
 	void AnalyzeMeshQuality(double& out_minQuality, double& out_avQuality);
 	void TriangulateVolume(const double preferredLength, Polycrystal3* polycr);
 
