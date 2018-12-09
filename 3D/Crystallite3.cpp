@@ -935,7 +935,7 @@ const bool Crystallite3::NewVertexPosition_OLD(unique_ptr<FrontEdge3>* frontEdge
 	facets_inner_vecs[1] = opp_verts_poses[1] - orig;
 
 	Vector3	dir = (facets_inner_vecs[0] + facets_inner_vecs[1]).Normalize() * _preferredLength * 0.866; // sind(60) == 0.8660...
-	Vector3 orig_plus_ex_dir = orig + dir * 2.0;
+	Vector3 orig_plus_ex_dir = orig + dir * 1.6;
 	while (
 		LineSegmentFrontIntersectionCheck(f_edge_verts_poses[0] + 1e-3 * (orig_plus_ex_dir - f_edge_verts_poses[0]), orig_plus_ex_dir) ||
 		LineSegmentFrontIntersectionCheck(f_edge_verts_poses[1] + 1e-3 * (orig_plus_ex_dir - f_edge_verts_poses[1]), orig_plus_ex_dir) ||
@@ -953,10 +953,9 @@ const bool Crystallite3::NewVertexPosition_OLD(unique_ptr<FrontEdge3>* frontEdge
 		LineSegmentFrontIntersectionCheck(f_facets_far_verts_poses[1] + 1e-3 * (orig + dir - f_facets_far_verts_poses[1]), orig + dir)*/)
 	{
 		dir *= 0.75;
-		orig_plus_ex_dir = orig + dir * 2.0;
+		orig_plus_ex_dir = orig + dir * 1.6;
 
-		if ((frontEdges.size() < 10ull && dir.Magnitude() < _preferredLength * 0.01) ||
-			dir.Magnitude() < _preferredLength * 0.05)
+		if (dir.Magnitude() < _preferredLength * 0.2)
 			return false;
 	}
 
@@ -1069,97 +1068,6 @@ size_t PtrsToNullptrNumber(vector<unique_ptr<T>*> &vec)
 {
 	return std::count_if(vec.begin(), vec.end(), [](unique_ptr<T>* &ptr) { return !*ptr ? true : false; });
 }
-
-//const bool Crystallite3::ProcessAngles(double lessThan, double previousAngles, bool addNewVert, bool isFirst, bool isFinal, Polycrystal3* polycr)
-//{
-//	if (FrontContainsOfOnly1Simplex3OrEmpty())
-//	{
-//		// Do something...
-//
-//		for (auto &f_facet : frontFacets)
-//		{
-//			if (*f_facet)
-//				delete f_facet->release();
-//		}
-//		for (auto &f_edge : frontEdges)
-//		{
-//			if (*f_edge)
-//				delete f_edge->release();
-//		}
-//		return true;
-//	}
-//
-//	for (size_t i = 0ull; i < frontEdges.size();)
-//	{
-//		Vector3 new_vert_pos;
-//		if (isFirst)
-//		{
-//			if (!*frontEdges[i] ||
-//				(*frontEdges[i])->Angle(frontFacets) >= lessThan ||
-//				ParallelFacetsCheck(frontEdges[i]) ||
-//				EdgeIntersectionCheck(frontEdges[i]) ||
-//				FacetsIntersectionCheck(frontEdges[i]) ||
-//				SomeVertexInsidePotentialSimplex3Check(frontEdges[i]) ||
-//				FrontSplitCheck(frontEdges[i]))
-//			{
-//				i++;
-//				continue;
-//			}
-//		}
-//		else
-//		{
-//			if (!*frontEdges[i] ||
-//				(*frontEdges[i])->Angle(frontFacets) >= lessThan ||
-//				EdgeIntersectionCheck(frontEdges[i]) ||
-//				ParallelFacetsCheck(frontEdges[i]) ||
-//				!NewVertexPosition_OLD(frontEdges[i], new_vert_pos))
-//			{
-//				i++;
-//				continue;
-//			}
-//		}
-//
-//		if (addNewVert)
-//			ExhaustWithNewVertex_OLD(frontEdges[i], new_vert_pos);
-//		else
-//			ExhaustWithoutNewVertex(frontEdges[i]);
-//		i = 0ull;
-//
-//		if (GlobalIntersectionCheck())
-//			std::cout << "Bad!";
-//		polycr->OutputData();
-//
-//		if (ProcessAngles(previousAngles  polycr))
-//			return true;
-//		if (GlobalIntersectionCheck())
-//			std::cout << "Bad!";
-//		polycr->OutputData();
-//
-//		if (FrontContainsOfOnly1Simplex3OrEmpty())
-//		{
-//			// Do something...
-//
-//			for (auto &f_facet : frontFacets)
-//			{
-//				if (*f_facet)
-//					delete f_facet->release();
-//			}
-//			for (auto &f_edge : frontEdges)
-//			{
-//				if (*f_edge)
-//					delete f_edge->release();
-//			}
-//			return true;
-//		}
-//
-//		if (PtrsToNullptrNumber(frontEdges) > frontEdges.size() / 3ull)
-//			ErasePtrsToNullptr(frontEdges);
-//		if (PtrsToNullptrNumber(frontFacets) > frontFacets.size() / 3ull)
-//			ErasePtrsToNullptr(frontFacets);
-//	}
-//
-//	return false;
-//}
 
 const bool Crystallite3::ProcessVerySmallAngles(Polycrystal3* polycr)
 {
@@ -1539,58 +1447,58 @@ void Crystallite3::ProcessAngles(Polycrystal3* polycr)
 		//	continue;
 		//}
 		//
-		//if ((*curr_f_edge)->AngleExCos(frontFacets) > COS_DEG_100)
-		//{
-		//	if (ParallelFacetsCheck(curr_f_edge) ||
-		//		EdgeIntersectionCheck(curr_f_edge) ||
-		//		FacetsIntersectionCheck(curr_f_edge) ||
-		//		SomeVertexInsidePotentialSimplex3Check(curr_f_edge) ||
-		//		FrontSplitCheck(curr_f_edge))
-		//	{
-		//		//if ((*curr_f_edge)->AngleExCos(frontFacets) < COS_DEG_60 &&
-		//		//	!FrontSplitCheck(curr_f_edge))
-		//		//{
-		//		//	Vector3 new_vert_pos;
-		//		//	if (EdgeIntersectionCheck(curr_f_edge) ||
-		//		//		ParallelFacetsCheck(curr_f_edge) ||
-		//		//		!NewVertexPosition_OLD(curr_f_edge, new_vert_pos)) // Experemental
-		//		//	{
-		//		//		max_excos = (*curr_f_edge)->AngleExCos(frontFacets);
-		//		//		continue;
-		//		//	}
-		//		//
-		//		//	ExhaustWithNewVertex_OLD(curr_f_edge, new_vert_pos);
-		//		//	max_excos = 2.0;
-		//		//}
-		//		//else 
-		//		//{
-		//		//	max_excos = (*curr_f_edge)->AngleExCos(frontFacets);
-		//		//}
-		//		//continue;
-		//
-		//		max_excos = (*curr_f_edge)->AngleExCos(frontFacets);
-		//		continue;
-		//	}
-		//
-		//	ExhaustWithoutNewVertex(curr_f_edge);
-		//	max_excos = 2.0;
-		//}
-		//else
-		//{
-		//	Vector3 new_vert_pos;
-		//	if (EdgeIntersectionCheck(curr_f_edge) ||
-		//		ParallelFacetsCheck(curr_f_edge) ||
-		//		!NewVertexPosition_OLD(curr_f_edge, new_vert_pos))
-		//	{
-		//		max_excos = (*curr_f_edge)->AngleExCos(frontFacets);
-		//		continue;
-		//	}
-		//
-		//	ExhaustWithNewVertex_OLD(curr_f_edge, new_vert_pos);
-		//	max_excos = 2.0;
-		//}
+		if ((*curr_f_edge)->AngleExCos(frontFacets) > COS_DEG_120)
+		{
+			if (ParallelFacetsCheck(curr_f_edge) ||
+				EdgeIntersectionCheck(curr_f_edge) ||
+				FacetsIntersectionCheck(curr_f_edge) ||
+				SomeVertexInsidePotentialSimplex3Check(curr_f_edge) ||
+				FrontSplitCheck(curr_f_edge))
+			{
+				//if ((*curr_f_edge)->AngleExCos(frontFacets) < COS_DEG_100 &&
+				//	!FrontSplitCheck(curr_f_edge))
+				//{
+				//	Vector3 new_vert_pos;
+				//	if (EdgeIntersectionCheck(curr_f_edge) ||
+				//		ParallelFacetsCheck(curr_f_edge) ||
+				//		!NewVertexPosition_OLD(curr_f_edge, new_vert_pos)) // Experemental
+				//	{
+				//		max_excos = (*curr_f_edge)->AngleExCos(frontFacets);
+				//		continue;
+				//	}
+				//
+				//	ExhaustWithNewVertex_OLD(curr_f_edge, new_vert_pos);
+				//	max_excos = 2.0;
+				//}
+				//else 
+				//{
+				//	max_excos = (*curr_f_edge)->AngleExCos(frontFacets);
+				//}
+				//continue;
 		
-		polycr->OutputData();
+				max_excos = (*curr_f_edge)->AngleExCos(frontFacets);
+				continue;
+			}
+		
+			ExhaustWithoutNewVertex(curr_f_edge);
+			max_excos = 2.0;
+		}
+		else
+		{
+			Vector3 new_vert_pos;
+			if (EdgeIntersectionCheck(curr_f_edge) ||
+				ParallelFacetsCheck(curr_f_edge) ||
+				!NewVertexPosition_OLD(curr_f_edge, new_vert_pos))
+			{
+				max_excos = (*curr_f_edge)->AngleExCos(frontFacets);
+				continue;
+			}
+		
+			ExhaustWithNewVertex_OLD(curr_f_edge, new_vert_pos);
+			max_excos = 2.0;
+		}
+		
+		//polycr->OutputData();
 
 		if (FrontContainsOfOnly1FacetOrEmpty())
 		{
