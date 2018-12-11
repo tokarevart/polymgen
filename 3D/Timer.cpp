@@ -14,7 +14,7 @@ size_t DurationCast(std::chrono::high_resolution_clock::duration duration, TimeS
 		return std::chrono::duration_cast<std::chrono::seconds>(duration).count();
 		
 	default:
-		throw std::exception("Wrong time scale");
+		throw std::invalid_argument("Wrong time scale.");
 	}
 }
 
