@@ -1,6 +1,6 @@
 #pragma once
 
-struct PolycrystalTriangulation
+struct PolycrMesh
 {
 	size_t  nodesNum;
 
@@ -18,6 +18,6 @@ struct PolycrystalTriangulation
 	// { ... c[i]_t[0]_n[0..3] ... c[i]_t[crysesTetrsNum[i]]_n[0..3] }
 	size_t* tetrs;
 
-	PolycrystalTriangulation();
-	~PolycrystalTriangulation();
+	PolycrMesh();
+	~PolycrMesh();
 };

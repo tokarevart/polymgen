@@ -1,6 +1,6 @@
 #pragma once
 
-struct CrystallitesShell
+struct CrysesShell
 {
 	size_t  nodesNum;
 	double* nodesPositions;   // { x0, y0, z0, x1, y1, z1 ... }
@@ -10,6 +10,6 @@ struct CrystallitesShell
 	size_t* crysesFacetsNums; // Number of facets in each crystallite shell.
 	size_t* cryses;           // { crys0_facet0, crys0_facet1, ... crys1_facet0, crys1_facet1 ... }
 
-	CrystallitesShell();
-	~CrystallitesShell();
+	CrysesShell();
+	~CrysesShell();
 };

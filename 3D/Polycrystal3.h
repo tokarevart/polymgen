@@ -5,8 +5,8 @@
 #include <memory>
 #include "ClassDefinitions.h"
 #include "ClassInclusions.h"
-#include "PolycrystalTriangulation.h"
-#include "CrystallitesShell.h"
+#include "PolycrMesh.h"
+#include "CrysesShell.h"
 
 using std::ifstream;
 using std::ofstream;
@@ -19,7 +19,7 @@ class Polycrystal3
 private:
 	double _preferredLength;
 
-	PolycrystalTriangulation* lastTriangulation = nullptr;
+	PolycrMesh* lastTriangulation = nullptr;
 
 	vector<Crystallite3*> crystallites;
 
@@ -47,19 +47,19 @@ private:
 public:
 	void TriangulatePolycrystalNoStruct(const double preferredLength);
 	void TriangulatePolycrystalNoStruct(string filename, const double preferredLength);
-	void TriangulatePolycrystalNoStruct(const CrystallitesShell& crysesShell, const double preferredLength);
-	PolycrystalTriangulation* StructurizeTriangulation();
-	PolycrystalTriangulation* TriangulatePolycrystal(const double preferredLength);
-	PolycrystalTriangulation* TriangulatePolycrystal(string filename, const double preferredLength);
-	PolycrystalTriangulation* TriangulatePolycrystal(const CrystallitesShell& crysesShell, const double preferredLength);
-	PolycrystalTriangulation* GetLastTriangulation();
+	void TriangulatePolycrystalNoStruct(const CrysesShell& crysesShell, const double preferredLength);
+	PolycrMesh* StructurizeTriangulation();
+	PolycrMesh* TriangulatePolycrystal(const double preferredLength);
+	PolycrMesh* TriangulatePolycrystal(string filename, const double preferredLength);
+	PolycrMesh* TriangulatePolycrystal(const CrysesShell& crysesShell, const double preferredLength);
+	PolycrMesh* GetLastTriangulation();
 
 	void InputData(string filename);
-	void InputData(const CrystallitesShell& crysesShell);
+	void InputData(const CrysesShell& crysesShell);
 	void OutputData(string filename = "polycr.obj") const;
 
 	Polycrystal3();
 	Polycrystal3(string filename);
-	Polycrystal3(const CrystallitesShell& crysesShell);
+	Polycrystal3(const CrysesShell& crysesShell);
 	~Polycrystal3();
 };

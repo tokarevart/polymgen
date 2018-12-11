@@ -193,9 +193,9 @@ void Polycrystal3::StartFrontDelaunayPostprocessing()
 	}
 }
 
-PolycrystalTriangulation* Polycrystal3::StructurizeTriangulation()
+PolycrMesh* Polycrystal3::StructurizeTriangulation()
 {
-	PolycrystalTriangulation* pol_triang = new PolycrystalTriangulation;
+	PolycrMesh* pol_triang = new PolycrMesh;
 
 	pol_triang->crysesNum = crystallites.size();
 	pol_triang->crysesTetrsNum = new size_t[pol_triang->crysesNum];
@@ -318,31 +318,31 @@ void Polycrystal3::TriangulatePolycrystalNoStruct(string filename, const double 
 	TriangulatePolycrystalNoStruct(preferredLength);
 }
 
-void Polycrystal3::TriangulatePolycrystalNoStruct(const CrystallitesShell& crysesShell, const double preferredLength)
+void Polycrystal3::TriangulatePolycrystalNoStruct(const CrysesShell& crysesShell, const double preferredLength)
 {
 	InputData(crysesShell);
 	TriangulatePolycrystalNoStruct(preferredLength);
 }
 
-PolycrystalTriangulation* Polycrystal3::TriangulatePolycrystal(const double preferredLength)
+PolycrMesh* Polycrystal3::TriangulatePolycrystal(const double preferredLength)
 {
 	TriangulatePolycrystalNoStruct(preferredLength);
 	return StructurizeTriangulation();
 }
 
-PolycrystalTriangulation* Polycrystal3::TriangulatePolycrystal(string filename, const double preferredLength)
+PolycrMesh* Polycrystal3::TriangulatePolycrystal(string filename, const double preferredLength)
 {
 	TriangulatePolycrystalNoStruct(filename, preferredLength);
 	return StructurizeTriangulation();
 }
 
-PolycrystalTriangulation* Polycrystal3::TriangulatePolycrystal(const CrystallitesShell& crysesShell, const double preferredLength)
+PolycrMesh* Polycrystal3::TriangulatePolycrystal(const CrysesShell& crysesShell, const double preferredLength)
 {
 	TriangulatePolycrystalNoStruct(crysesShell, preferredLength);
 	return StructurizeTriangulation();
 }
 
-PolycrystalTriangulation* Polycrystal3::GetLastTriangulation()
+PolycrMesh* Polycrystal3::GetLastTriangulation()
 {
 	return lastTriangulation;
 }
@@ -616,7 +616,7 @@ void Polycrystal3::InputData(string filename)
 	delete[] cryses_facets_nums;
 }
 
-void Polycrystal3::InputData(const CrystallitesShell& crysesShell)
+void Polycrystal3::InputData(const CrysesShell& crysesShell)
 {
 	for (size_t i = 0ull; i < crysesShell.nodesNum; i++)
 	{
@@ -763,7 +763,7 @@ Polycrystal3::Polycrystal3(string filename)
 	InputData(filename);
 }
 
-Polycrystal3::Polycrystal3(const CrystallitesShell& crysesShell)
+Polycrystal3::Polycrystal3(const CrysesShell& crysesShell)
 {
 	InputData(crysesShell);
 }
