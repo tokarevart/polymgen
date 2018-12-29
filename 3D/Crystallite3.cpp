@@ -1160,7 +1160,25 @@ const bool Crystallite3::ProcessVerySmallAngles(Polycrystal3* polycr)
 
 		if (FrontContainsOfOnly1Simplex3OrEmpty())
 		{
-			// Do something...
+			unique_ptr<FrontFacet3>* f_facets[4];
+			int n_facets = 0;
+			for (auto f_facet : frontFacets)
+			{
+				if (!*f_facet)
+					continue;
+
+				f_facets[n_facets] = f_facet;
+				n_facets++;
+				if (n_facets == 4)
+				{
+					innerSimps.push_back((new Simplex3(
+						**(*(*f_facet)->facet->edges[0])->vertexes[0],
+						**(*(*f_facet)->facet->edges[0])->vertexes[1],
+						**(*f_facet)->facet->FindVertexNotIncludedInEdge(**(*f_facet)->facet->edges[0]),
+						**(*f_facets[0])->facet->FindVertexNotIncludedInEdge(**Facet3::IntersectAlongAnEdge(*(*f_facets[0])->facet, *(*f_facet)->facet))))->GetPtrToUniquePtr());
+					break;
+				}
+			}
 
 			for (auto &f_facet : frontFacets)
 			{
