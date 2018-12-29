@@ -1,19 +1,19 @@
 #include "Vertex3.h"
 
 
-void Vertex3::SetPosition(const Vector3 &newPos)
+void Vertex3::setPosition(const Vec3 &newPos)
 {
 	*_position = newPos;
 }
 
-void Vertex3::SetPosition(const double &coor0, const double &coor1, const double &coor2)
+void Vertex3::setPosition(const double &coor0, const double &coor1, const double &coor2)
 {
 	(*_position)[0] = coor0;
 	(*_position)[1] = coor1;
 	(*_position)[2] = coor2;
 }
 
-const Vector3& Vertex3::GetPosition() const
+const Vec3& Vertex3::getPosition() const
 {
 	return *_position;
 }
@@ -31,17 +31,17 @@ double& Vertex3::operator[](const int &axisIndex)
 	return (*_position)[axisIndex];
 }
 
-Vector3 Vertex3::operator-(const Vertex3 &right) const
+Vec3 Vertex3::operator-(const Vertex3 &right) const
 {
 	return *_position - *right._position;
 }
 
-Vector3 Vertex3::operator-(const ShellVertex3 &right) const
+Vec3 Vertex3::operator-(const ShellVertex3 &right) const
 {
-	return *_position - right.GetPosition();
+	return *_position - right.getPosition();
 }
 
-Vertex3& Vertex3::operator+=(const Vector3 &right)
+Vertex3& Vertex3::operator+=(const Vec3 &right)
 {
 	if (belongsToShellVertex)
 	{
@@ -49,13 +49,13 @@ Vertex3& Vertex3::operator+=(const Vector3 &right)
 	}
 	else if (belongsToShellEdge)
 	{
-		(*_position) += Vector3(right).Project(*belongsToShellEdge->vertexes[0] - *belongsToShellEdge->vertexes[1]);
+		(*_position) += Vec3(right).project(*belongsToShellEdge->vertexes[0] - *belongsToShellEdge->vertexes[1]);
 		//(*_position) += right;
 		return *this;
 	}
 	else if (belongsToShellFacet)
 	{
-		(*_position) += Vector3(right).Project(
+		(*_position) += Vec3(right).project(
 			*belongsToShellFacet->edges[0]->vertexes[1] - *belongsToShellFacet->edges[0]->vertexes[0],
 			*belongsToShellFacet->edges[1]->vertexes[1] - *belongsToShellFacet->edges[1]->vertexes[0]);
 		//(*_position) += right;
@@ -69,7 +69,7 @@ Vertex3& Vertex3::operator+=(const Vector3 &right)
 	}
 }
 
-Vertex3& Vertex3::operator-=(const Vector3& right)
+Vertex3& Vertex3::operator-=(const Vec3& right)
 {
 	if (belongsToShellVertex)
 	{
@@ -77,7 +77,7 @@ Vertex3& Vertex3::operator-=(const Vector3& right)
 	}
 	else if (belongsToShellEdge)
 	{
-		(*_position) -= Vector3(right).Project(*belongsToShellEdge->vertexes[0] - *belongsToShellEdge->vertexes[1]);
+		(*_position) -= Vec3(right).project(*belongsToShellEdge->vertexes[0] - *belongsToShellEdge->vertexes[1]);
 		return *this;
 	}
 	else
@@ -89,17 +89,17 @@ Vertex3& Vertex3::operator-=(const Vector3& right)
 
 Vertex3::Vertex3() : unique_ptr_helper<Vertex3>(this)
 {
-	_position.reset(new Vector3());
+	_position.reset(new Vec3());
 }
 
 Vertex3::Vertex3(const double& coor0, const double& coor1, const double& coor2) : unique_ptr_helper<Vertex3>(this)
 {
-	_position.reset(new Vector3(coor0, coor1, coor2));
+	_position.reset(new Vec3(coor0, coor1, coor2));
 }
 
-Vertex3::Vertex3(const Vector3& position) : unique_ptr_helper<Vertex3>(this)
+Vertex3::Vertex3(const Vec3& position) : unique_ptr_helper<Vertex3>(this)
 {
-	_position.reset(new Vector3(position));
+	_position.reset(new Vec3(position));
 }
 
 Vertex3::~Vertex3()

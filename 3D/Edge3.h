@@ -17,8 +17,8 @@ public:
 
 	//list<unique_ptr<Facet3>*> inclInFacets;
 
-	const double Magnitude() const;
-	const double SqrMagnitude() const;
+	const double magnitude() const;
+	const double sqrMagnitude() const;
 
 	void Flip(
 		vector<unique_ptr<Edge3>*> &edges, 
@@ -36,7 +36,7 @@ public:
 		vector<unique_ptr<Edge3>*> &edges, 
 		vector<unique_ptr<Vertex3>*> &vertexes);//, vector<ShellEdge3*>& shellEdges, vector<ShellFacet3*>& shellFacets);
 
-	const bool IsContaining(const Vertex3& vertex) const;
+	const bool contains(const Vertex3& vertex) const;
 
 	const bool BelongsToShell();
 
@@ -51,31 +51,29 @@ public:
 
 class FrontEdge3 : public unique_ptr_helper<FrontEdge3>
 {
-	double exCos;
+	double _exCos;
 
 public:
 	Edge3* edge;
 	bool needProcessing = true;
 
-	double AngleExCos(
-		const vector<unique_ptr<FrontFacet3>*> &frontFacets);
-	double AngleCos(
-		bool &out_isConcave,
-		const vector<unique_ptr<FrontFacet3>*> &frontFacets);
-	double Angle(
-		const vector<unique_ptr<FrontFacet3>*> &frontFacets);
+	double getAngleExCos    (const vector<unique_ptr<FrontFacet3>*>& frontFacets);
+	double computeAngleExCos(const vector<unique_ptr<FrontFacet3>*>& frontFacets);
+	double computeAngleExCos_OLD(const vector<unique_ptr<FrontFacet3>*>& frontFacets);
+	double AngleCos  (bool &out_isConcave, const vector<unique_ptr<FrontFacet3>*>& frontFacets);
+	double Angle     (const vector<unique_ptr<FrontFacet3>*>& frontFacets);
 	void FindFrontFacetsAround(
-		const vector<unique_ptr<FrontFacet3>*> &frontFacets, 
-		unique_ptr<FrontFacet3>* &out_frontFacet0,
-		unique_ptr<FrontFacet3>* &out_frontFacet1);
+		const vector<unique_ptr<FrontFacet3>*>& frontFacets, 
+		unique_ptr<FrontFacet3>*& out_frontFacet0,
+		unique_ptr<FrontFacet3>*& out_frontFacet1);
 	void FindOppositeVertexes(
-		const vector<unique_ptr<FrontFacet3>*> &frontFacets, 
-		const vector<unique_ptr<FrontEdge3>*> &frontEdges, 
-		unique_ptr<Vertex3>* &out_vert0, 
-		unique_ptr<Vertex3>* &out_vert1);
+		const vector<unique_ptr<FrontFacet3>*>& frontFacets, 
+		const vector<unique_ptr<FrontEdge3>*>&  frontEdges, 
+		unique_ptr<Vertex3>*& out_vert0, 
+		unique_ptr<Vertex3>*& out_vert1);
 	unique_ptr<FrontEdge3>* FindOppositeFrontEdge(
-		const vector<unique_ptr<FrontFacet3>*> &frontFacets,
-		const vector<unique_ptr<FrontEdge3>*> &frontEdges);
+		const vector<unique_ptr<FrontFacet3>*>& frontFacets,
+		const vector<unique_ptr<FrontEdge3>*>& frontEdges);
 
 	FrontEdge3(Edge3* edge);
 	~FrontEdge3();

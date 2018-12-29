@@ -4,7 +4,7 @@
 #include "Timer.h"
 
 
-ShellEdge3* Polycrystal3::FindShellEdge(const ShellVertex3* v0, const ShellVertex3* v1) const
+ShellEdge3* Polycrystal3::findShellEdge(const ShellVertex3* v0, const ShellVertex3* v1) const
 {
 	for (auto &s_edge : _shellEdges)
 		if ((s_edge->vertexes[0] == v0  &&
@@ -18,7 +18,7 @@ ShellEdge3* Polycrystal3::FindShellEdge(const ShellVertex3* v0, const ShellVerte
 	return nullptr;
 }
 
-unique_ptr<Edge3>* Polycrystal3::FindStartFrontEdge(const unique_ptr<Vertex3>* v0, const unique_ptr<Vertex3>* v1) const
+unique_ptr<Edge3>* Polycrystal3::findStartFrontEdge(const unique_ptr<Vertex3>* v0, const unique_ptr<Vertex3>* v1) const
 {
 	for (auto &edge : _startFrontEdges)
 		if (((*edge)->vertexes[0] == v0  &&
@@ -32,71 +32,71 @@ unique_ptr<Edge3>* Polycrystal3::FindStartFrontEdge(const unique_ptr<Vertex3>* v
 	return nullptr;
 }
 
-void Polycrystal3::SetLinksWithShell()
+void Polycrystal3::setLinksWithShell()
 {
 	double sqr_sufficient_dist = _preferredLength * _preferredLength * 1e-6;
 	size_t shell_verts_num = _shellVertexes.size();
 	size_t shell_edges_num = _shellEdges.size();
 	size_t shell_facets_num = _shellFacets.size();
-	//#pragma omp parallel firstprivate(sqr_sufficient_dist, shell_verts_num, shell_edges_num, shell_facets_num)
-	//{
-	//#pragma omp for
-	for (size_t i = 0ull; i < shell_verts_num; i++)
+	#pragma omp parallel firstprivate(sqr_sufficient_dist, shell_verts_num, shell_edges_num, shell_facets_num)
 	{
-		for (auto &vert : _startFrontVertexes)
+		#pragma omp for
+		for (size_t i = 0ull; i < shell_verts_num; i++)
 		{
-			if ((*_shellVertexes[i] - **vert).SqrMagnitude() < sqr_sufficient_dist)
+			for (auto &vert : _startFrontVertexes)
 			{
-				(*vert)->belongsToShellVertex = _shellVertexes[i];
-				break;
+				if ((*_shellVertexes[i] - **vert).sqrMagnitude() < sqr_sufficient_dist)
+				{
+					(*vert)->belongsToShellVertex = _shellVertexes[i];
+					break;
+				}
 			}
 		}
-	}
-	//#pragma omp for
-	for (size_t i = 0ull; i < shell_edges_num; i++)
-	{
-		Vector3 proj_buf;
-		for (auto &vert : _startFrontVertexes)
+		#pragma omp for
+		for (size_t i = 0ull; i < shell_edges_num; i++)
 		{
-			if ((*vert)->belongsToShellVertex)
-				continue;
+			Vec3 proj_buf;
+			for (auto &vert : _startFrontVertexes)
+			{
+				if ((*vert)->belongsToShellVertex)
+					continue;
 
-			if (Vector3::Project(
+				if (Vec3::project(
 					proj_buf,
-					(*vert)->GetPosition(),
-					_shellEdges[i]->vertexes[0]->GetPosition(),
-					_shellEdges[i]->vertexes[1]->GetPosition()) &&
-				(proj_buf - (*vert)->GetPosition()).SqrMagnitude() < sqr_sufficient_dist)
+					(*vert)->getPosition(),
+					_shellEdges[i]->vertexes[0]->getPosition(),
+					_shellEdges[i]->vertexes[1]->getPosition()) &&
+					(proj_buf - (*vert)->getPosition()).sqrMagnitude() < sqr_sufficient_dist)
+				{
+					(*vert)->belongsToShellEdge = _shellEdges[i];
+				}
+			}
+		}
+		#pragma omp for
+		for (size_t i = 0ull; i < shell_facets_num; i++)
+		{
+			Vec3 proj_buf;
+			for (auto &vert : _startFrontVertexes)
 			{
-				(*vert)->belongsToShellEdge = _shellEdges[i];
+				if ((*vert)->belongsToShellVertex ||
+					(*vert)->belongsToShellEdge)
+					continue;
+
+				proj_buf =
+					_shellFacets[i]->edges[0]->vertexes[0]->getPosition()
+					+ (**vert
+						- *_shellFacets[i]->edges[0]->vertexes[0]).project(
+							*_shellFacets[i]->edges[0]->vertexes[1] - *_shellFacets[i]->edges[0]->vertexes[0],
+							*_shellFacets[i]->edges[1]->vertexes[1] - *_shellFacets[i]->edges[1]->vertexes[0]);
+				if ((proj_buf - (*vert)->getPosition()).sqrMagnitude() < sqr_sufficient_dist)
+					(*vert)->belongsToShellFacet = _shellFacets[i];
 			}
 		}
 	}
-	//#pragma omp for
-	for (size_t i = 0ull; i < shell_facets_num; i++)
-	{
-		Vector3 proj_buf;
-		for (auto &vert : _startFrontVertexes)
-		{
-			if ((*vert)->belongsToShellVertex ||
-				(*vert)->belongsToShellEdge)
-				continue;
-
-			proj_buf = 
-				_shellFacets[i]->edges[0]->vertexes[0]->GetPosition() 
-				+ (**vert 
-					- *_shellFacets[i]->edges[0]->vertexes[0]).Project(
-						*_shellFacets[i]->edges[0]->vertexes[1] - *_shellFacets[i]->edges[0]->vertexes[0], 
-						*_shellFacets[i]->edges[1]->vertexes[1] - *_shellFacets[i]->edges[1]->vertexes[0]);
-			if ((proj_buf - (*vert)->GetPosition()).SqrMagnitude() < sqr_sufficient_dist)
-				(*vert)->belongsToShellFacet = _shellFacets[i];
-		}
-	}
-	//}
 }
 
 template <class T>
-void Polycrystal3::ErasePtrsToNullptr(vector<unique_ptr<T>*> &vec)
+void Polycrystal3::removePtrsToNullptr(vector<unique_ptr<T>*> &vec)
 {
 	size_t real_objs_num = std::count_if(vec.begin(), vec.end(), [](unique_ptr<T>*& ptr) { return *ptr ? true : false; });
 	vector<unique_ptr<T>*> buf_vec(real_objs_num);
@@ -134,36 +134,36 @@ void Polycrystal3::ErasePtrsToNullptr(vector<unique_ptr<T>*> &vec)
 	vec = std::move(buf_vec);
 }
 
-void Polycrystal3::ErasePtrsToNullptrFromVectors()
+void Polycrystal3::removePtrsToNullptrFromVectors()
 {
 	//#pragma omp parallel num_threads(3)
 	//{
 	//#pragma omp single
-	ErasePtrsToNullptr(_startFrontVertexes);
+	removePtrsToNullptr(_startFrontVertexes);
 	//#pragma omp single
-	ErasePtrsToNullptr(_startFrontEdges);
+	removePtrsToNullptr(_startFrontEdges);
 	//#pragma omp single
-	ErasePtrsToNullptr(_startFrontFacets);
+	removePtrsToNullptr(_startFrontFacets);
 	//}
 }
 
-void Polycrystal3::TriangulateShell()
+void Polycrystal3::triangulateShell()
 {
 	size_t edges_num = _startFrontEdges.size();
 	for (size_t i = 0ull; i < edges_num; i++)
 	{
 		if (*_startFrontEdges[i] &&
-			(*_startFrontEdges[i])->SqrMagnitude() > 2.25 * _preferredLength * _preferredLength)
+			(*_startFrontEdges[i])->sqrMagnitude() > 2.25 * _preferredLength * _preferredLength)
 		{
 			(*_startFrontEdges[i])->MakeTwoInstead(_startFrontFacets, _startFrontEdges, _startFrontVertexes);
 			edges_num += 2ull;
 		}
 	}
 
-	ErasePtrsToNullptrFromVectors();
+	removePtrsToNullptrFromVectors();
 }
 
-void Polycrystal3::StartFrontDelaunayPostprocessing()
+void Polycrystal3::startFrontDelaunayPostprocessing()
 {
 	unique_ptr<Vertex3>* around_nodes[2];
 	unique_ptr<Facet3>* around_facets[2];
@@ -175,16 +175,16 @@ void Polycrystal3::StartFrontDelaunayPostprocessing()
 			 (*(*_startFrontEdges[i])->vertexes[1])->belongsToShellEdge) ||
 			((*(*_startFrontEdges[i])->vertexes[0])->belongsToShellEdge && 
 			 (*(*_startFrontEdges[i])->vertexes[1])->belongsToShellVertex && 
-			 (*(*_startFrontEdges[i])->vertexes[0])->belongsToShellEdge->IsContaining(*(*(*_startFrontEdges[i])->vertexes[1])->belongsToShellVertex)) ||
+			 (*(*_startFrontEdges[i])->vertexes[0])->belongsToShellEdge->contains(*(*(*_startFrontEdges[i])->vertexes[1])->belongsToShellVertex)) ||
 			((*(*_startFrontEdges[i])->vertexes[1])->belongsToShellEdge &&
 			 (*(*_startFrontEdges[i])->vertexes[0])->belongsToShellVertex &&
-			 ((*(*_startFrontEdges[i])->vertexes[1])->belongsToShellEdge)->IsContaining(*(*(*_startFrontEdges[i])->vertexes[0])->belongsToShellVertex)))
+			 ((*(*_startFrontEdges[i])->vertexes[1])->belongsToShellEdge)->contains(*(*(*_startFrontEdges[i])->vertexes[0])->belongsToShellVertex)))
 			continue;
 		
 
 		(*_startFrontEdges[i])->Find2FacetsAround(_startFrontFacets, around_facets[0], around_facets[1]);
-		around_nodes[0] = (*around_facets[0])->FindVertexNotIncludedInEdge(**_startFrontEdges[i]);
-		around_nodes[1] = (*around_facets[1])->FindVertexNotIncludedInEdge(**_startFrontEdges[i]);
+		around_nodes[0] = (*around_facets[0])->findVertexNotIncludedInEdge(**_startFrontEdges[i]);
+		around_nodes[1] = (*around_facets[1])->findVertexNotIncludedInEdge(**_startFrontEdges[i]);
 		if ((*around_nodes[0])->belongsToShellEdge && (*around_nodes[1])->belongsToShellVertex ||
 			(*around_nodes[1])->belongsToShellEdge && (*around_nodes[0])->belongsToShellVertex)
 			continue;
@@ -193,7 +193,7 @@ void Polycrystal3::StartFrontDelaunayPostprocessing()
 	}
 }
 
-PolycrMesh* Polycrystal3::StructurizeTriangulation()
+PolycrMesh* Polycrystal3::structurizeMesh()
 {
 	PolycrMesh* pol_triang = new PolycrMesh;
 
@@ -280,13 +280,13 @@ PolycrMesh* Polycrystal3::StructurizeTriangulation()
 	return pol_triang;
 }
 
-void Polycrystal3::TriangulatePolycrystalNoStruct(const double preferredLength)
+void Polycrystal3::generateMeshNoStruct(const double preferredLength)
 {
 	_preferredLength = preferredLength;
 
-	TriangulateShell();
-	SetLinksWithShell();
-	StartFrontDelaunayPostprocessing();
+	triangulateShell();
+	setLinksWithShell();
+	startFrontDelaunayPostprocessing();
 
 	Timer tmr;
 	tmr.Start();
@@ -294,11 +294,11 @@ void Polycrystal3::TriangulatePolycrystalNoStruct(const double preferredLength)
 	#pragma omp parallel for
 	for (size_t i = 0ull, max = crystallites.size(); i < max; i++)
 	{
-		crystallites[i]->SetStartFront(_startFrontEdges, _startFrontFacets);
-		crystallites[i]->TriangulateVolume(_preferredLength, this);
+		crystallites[i]->setStartFront(_startFrontEdges, _startFrontFacets);
+		crystallites[i]->generateMesh(_preferredLength, this);
 
 		double buf_min_q, buf_av_q;
-		crystallites[i]->AnalyzeMeshQuality(buf_min_q, buf_av_q);
+		crystallites[i]->analyzeMeshQuality(buf_min_q, buf_av_q);
 		min_q += buf_min_q;
 		av_q += buf_av_q;
 	}
@@ -312,42 +312,42 @@ void Polycrystal3::TriangulatePolycrystalNoStruct(const double preferredLength)
 	out.close();
 }
 
-void Polycrystal3::TriangulatePolycrystalNoStruct(string filename, const double preferredLength)
+void Polycrystal3::generateMeshNoStruct(string filename, const double preferredLength)
 {
-	InputData(filename);
-	TriangulatePolycrystalNoStruct(preferredLength);
+	inputData(filename);
+	generateMeshNoStruct(preferredLength);
 }
 
-void Polycrystal3::TriangulatePolycrystalNoStruct(const CrysesShell& crysesShell, const double preferredLength)
+void Polycrystal3::generateMeshNoStruct(const CrysesShell& crysesShell, const double preferredLength)
 {
-	InputData(crysesShell);
-	TriangulatePolycrystalNoStruct(preferredLength);
+	inputData(crysesShell);
+	generateMeshNoStruct(preferredLength);
 }
 
-PolycrMesh* Polycrystal3::TriangulatePolycrystal(const double preferredLength)
+PolycrMesh* Polycrystal3::generateMesh(const double preferredLength)
 {
-	TriangulatePolycrystalNoStruct(preferredLength);
-	return StructurizeTriangulation();
+	generateMeshNoStruct(preferredLength);
+	return structurizeMesh();
 }
 
-PolycrMesh* Polycrystal3::TriangulatePolycrystal(string filename, const double preferredLength)
+PolycrMesh* Polycrystal3::generateMesh(string filename, const double preferredLength)
 {
-	TriangulatePolycrystalNoStruct(filename, preferredLength);
-	return StructurizeTriangulation();
+	generateMeshNoStruct(filename, preferredLength);
+	return structurizeMesh();
 }
 
-PolycrMesh* Polycrystal3::TriangulatePolycrystal(const CrysesShell& crysesShell, const double preferredLength)
+PolycrMesh* Polycrystal3::generateMesh(const CrysesShell& crysesShell, const double preferredLength)
 {
-	TriangulatePolycrystalNoStruct(crysesShell, preferredLength);
-	return StructurizeTriangulation();
+	generateMeshNoStruct(crysesShell, preferredLength);
+	return structurizeMesh();
 }
 
-PolycrMesh* Polycrystal3::GetLastTriangulation()
+PolycrMesh* Polycrystal3::getLastMesh()
 {
 	return lastTriangulation;
 }
 
-void Polycrystal3::InputData()
+void Polycrystal3::inputData()
 {
 	_shellVertexes.insert(_shellVertexes.end(),
 	{
@@ -404,50 +404,50 @@ void Polycrystal3::InputData()
 
 	_startFrontVertexes.insert(_startFrontVertexes.end(),
 	{
-		(new Vertex3(1.0, 0.0, 0.0))->GetPtrToUniquePtr(),
-		(new Vertex3(1.0, 1.0, 0.0))->GetPtrToUniquePtr(),
-		(new Vertex3(0.0, 0.0, 0.0))->GetPtrToUniquePtr(),
-		(new Vertex3(1.0, 0.0, 1.0))->GetPtrToUniquePtr(),
-		(new Vertex3(0.0, 0.0, 1.0))->GetPtrToUniquePtr(),
-		(new Vertex3(1.0, 1.0, 1.0))->GetPtrToUniquePtr(),
-		(new Vertex3(0.0, 1.0, 0.0))->GetPtrToUniquePtr(),
-		(new Vertex3(0.0, 1.0, 1.0))->GetPtrToUniquePtr()
+		(new Vertex3(1.0, 0.0, 0.0))->getPtrToUPtr(),
+		(new Vertex3(1.0, 1.0, 0.0))->getPtrToUPtr(),
+		(new Vertex3(0.0, 0.0, 0.0))->getPtrToUPtr(),
+		(new Vertex3(1.0, 0.0, 1.0))->getPtrToUPtr(),
+		(new Vertex3(0.0, 0.0, 1.0))->getPtrToUPtr(),
+		(new Vertex3(1.0, 1.0, 1.0))->getPtrToUPtr(),
+		(new Vertex3(0.0, 1.0, 0.0))->getPtrToUPtr(),
+		(new Vertex3(0.0, 1.0, 1.0))->getPtrToUPtr()
 	});
 	_startFrontEdges.insert(_startFrontEdges.end(),
 	{
-		(new Edge3(**_startFrontVertexes[0], **_startFrontVertexes[1]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[1], **_startFrontVertexes[2]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[2], **_startFrontVertexes[3]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[1], **_startFrontVertexes[3]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[0], **_startFrontVertexes[3]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[0], **_startFrontVertexes[2]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[1], **_startFrontVertexes[5]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[1], **_startFrontVertexes[6]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[2], **_startFrontVertexes[4]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[3], **_startFrontVertexes[4]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[4], **_startFrontVertexes[5]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[3], **_startFrontVertexes[5]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[2], **_startFrontVertexes[6]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[1], **_startFrontVertexes[7]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[6], **_startFrontVertexes[7]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[5], **_startFrontVertexes[7]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[2], **_startFrontVertexes[7]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[4], **_startFrontVertexes[7]))->GetPtrToUniquePtr()
+		(new Edge3(**_startFrontVertexes[0], **_startFrontVertexes[1]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[1], **_startFrontVertexes[2]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[2], **_startFrontVertexes[3]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[1], **_startFrontVertexes[3]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[0], **_startFrontVertexes[3]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[0], **_startFrontVertexes[2]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[1], **_startFrontVertexes[5]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[1], **_startFrontVertexes[6]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[2], **_startFrontVertexes[4]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[3], **_startFrontVertexes[4]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[4], **_startFrontVertexes[5]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[3], **_startFrontVertexes[5]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[2], **_startFrontVertexes[6]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[1], **_startFrontVertexes[7]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[6], **_startFrontVertexes[7]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[5], **_startFrontVertexes[7]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[2], **_startFrontVertexes[7]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[4], **_startFrontVertexes[7]))->getPtrToUPtr()
 	});
 	_startFrontFacets.insert(_startFrontFacets.end(),
 	{
-		(new Facet3(**_startFrontEdges[0], **_startFrontEdges[1], **_startFrontEdges[5]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[0], **_startFrontEdges[3], **_startFrontEdges[4]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[2], **_startFrontEdges[4], **_startFrontEdges[5]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[3], **_startFrontEdges[6], **_startFrontEdges[11]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[2], **_startFrontEdges[8], **_startFrontEdges[9]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[6], **_startFrontEdges[13], **_startFrontEdges[15]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[10], **_startFrontEdges[15], **_startFrontEdges[17]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[9], **_startFrontEdges[10], **_startFrontEdges[11]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[7], **_startFrontEdges[13], **_startFrontEdges[14]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[1], **_startFrontEdges[7], **_startFrontEdges[12]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[12], **_startFrontEdges[14], **_startFrontEdges[16]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[8], **_startFrontEdges[16], **_startFrontEdges[17]))->GetPtrToUniquePtr()
+		(new Facet3(**_startFrontEdges[0], **_startFrontEdges[1], **_startFrontEdges[5]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[0], **_startFrontEdges[3], **_startFrontEdges[4]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[2], **_startFrontEdges[4], **_startFrontEdges[5]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[3], **_startFrontEdges[6], **_startFrontEdges[11]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[2], **_startFrontEdges[8], **_startFrontEdges[9]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[6], **_startFrontEdges[13], **_startFrontEdges[15]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[10], **_startFrontEdges[15], **_startFrontEdges[17]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[9], **_startFrontEdges[10], **_startFrontEdges[11]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[7], **_startFrontEdges[13], **_startFrontEdges[14]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[1], **_startFrontEdges[7], **_startFrontEdges[12]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[12], **_startFrontEdges[14], **_startFrontEdges[16]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[8], **_startFrontEdges[16], **_startFrontEdges[17]))->getPtrToUPtr()
 	});
 
 	/*_shellVertexes.insert(_shellVertexes.end(), 
@@ -493,42 +493,42 @@ void Polycrystal3::InputData()
 
 	_startFrontVertexes.insert(_startFrontVertexes.end(),
 	{
-		(new Vertex3(1.0, 0.0, 0.0))->GetPtrToUniquePtr(),
-		(new Vertex3(0.5, 1.0, 0.0))->GetPtrToUniquePtr(),
-		(new Vertex3(0.0, 0.0, 0.0))->GetPtrToUniquePtr(),
-		(new Vertex3(1.0, 0.0, 1.0))->GetPtrToUniquePtr(),
-		(new Vertex3(0.0, 0.0, 1.0))->GetPtrToUniquePtr(),
-		(new Vertex3(0.5, 1.0, 1.0))->GetPtrToUniquePtr()
+		(new Vertex3(1.0, 0.0, 0.0))->getPtrToUPtr(),
+		(new Vertex3(0.5, 1.0, 0.0))->getPtrToUPtr(),
+		(new Vertex3(0.0, 0.0, 0.0))->getPtrToUPtr(),
+		(new Vertex3(1.0, 0.0, 1.0))->getPtrToUPtr(),
+		(new Vertex3(0.0, 0.0, 1.0))->getPtrToUPtr(),
+		(new Vertex3(0.5, 1.0, 1.0))->getPtrToUPtr()
 	});
 	_startFrontEdges.insert(_startFrontEdges.end(),
 	{
-		(new Edge3(**_startFrontVertexes[0], **_startFrontVertexes[1]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[1], **_startFrontVertexes[2]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[2], **_startFrontVertexes[3]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[1], **_startFrontVertexes[3]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[0], **_startFrontVertexes[3]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[0], **_startFrontVertexes[2]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[1], **_startFrontVertexes[5]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[2], **_startFrontVertexes[5]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[2], **_startFrontVertexes[4]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[3], **_startFrontVertexes[4]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[4], **_startFrontVertexes[5]))->GetPtrToUniquePtr(),
-		(new Edge3(**_startFrontVertexes[3], **_startFrontVertexes[5]))->GetPtrToUniquePtr()
+		(new Edge3(**_startFrontVertexes[0], **_startFrontVertexes[1]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[1], **_startFrontVertexes[2]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[2], **_startFrontVertexes[3]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[1], **_startFrontVertexes[3]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[0], **_startFrontVertexes[3]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[0], **_startFrontVertexes[2]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[1], **_startFrontVertexes[5]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[2], **_startFrontVertexes[5]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[2], **_startFrontVertexes[4]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[3], **_startFrontVertexes[4]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[4], **_startFrontVertexes[5]))->getPtrToUPtr(),
+		(new Edge3(**_startFrontVertexes[3], **_startFrontVertexes[5]))->getPtrToUPtr()
 	});
 	_startFrontFacets.insert(_startFrontFacets.end(),
 	{
-		(new Facet3(**_startFrontEdges[0], **_startFrontEdges[1], **_startFrontEdges[5]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[0], **_startFrontEdges[3], **_startFrontEdges[4]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[2], **_startFrontEdges[4], **_startFrontEdges[5]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[3], **_startFrontEdges[6], **_startFrontEdges[11]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[2], **_startFrontEdges[8], **_startFrontEdges[9]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[1], **_startFrontEdges[6], **_startFrontEdges[7]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[7], **_startFrontEdges[8], **_startFrontEdges[10]))->GetPtrToUniquePtr(),
-		(new Facet3(**_startFrontEdges[9], **_startFrontEdges[10], **_startFrontEdges[11]))->GetPtrToUniquePtr()
+		(new Facet3(**_startFrontEdges[0], **_startFrontEdges[1], **_startFrontEdges[5]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[0], **_startFrontEdges[3], **_startFrontEdges[4]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[2], **_startFrontEdges[4], **_startFrontEdges[5]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[3], **_startFrontEdges[6], **_startFrontEdges[11]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[2], **_startFrontEdges[8], **_startFrontEdges[9]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[1], **_startFrontEdges[6], **_startFrontEdges[7]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[7], **_startFrontEdges[8], **_startFrontEdges[10]))->getPtrToUPtr(),
+		(new Facet3(**_startFrontEdges[9], **_startFrontEdges[10], **_startFrontEdges[11]))->getPtrToUPtr()
 	});*/
 }
 
-void Polycrystal3::InputData(string filename)
+void Polycrystal3::inputData(string filename)
 {
 	ifstream input(filename);
 
@@ -543,7 +543,7 @@ void Polycrystal3::InputData(string filename)
 		input >> coors[2];
 
 		_shellVertexes.push_back(new ShellVertex3(coors[0], coors[1], coors[2]));
-		_startFrontVertexes.push_back((new Vertex3(coors[0], coors[1], coors[2]))->GetPtrToUniquePtr());
+		_startFrontVertexes.push_back((new Vertex3(coors[0], coors[1], coors[2]))->getPtrToUPtr());
 	}
 
 	size_t facets_num;
@@ -556,32 +556,32 @@ void Polycrystal3::InputData(string filename)
 		input >> facet_nodes_inds[1];
 		input >> facet_nodes_inds[2];
 
-		if (!FindShellEdge(_shellVertexes[facet_nodes_inds[0]], _shellVertexes[facet_nodes_inds[1]]))
+		if (!findShellEdge(_shellVertexes[facet_nodes_inds[0]], _shellVertexes[facet_nodes_inds[1]]))
 		{
 			_shellEdges.push_back(new ShellEdge3(*_shellVertexes[facet_nodes_inds[0]], *_shellVertexes[facet_nodes_inds[1]]));
-			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[0]], **_startFrontVertexes[facet_nodes_inds[1]]))->GetPtrToUniquePtr());
+			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[0]], **_startFrontVertexes[facet_nodes_inds[1]]))->getPtrToUPtr());
 		}
 
-		if (!FindShellEdge(_shellVertexes[facet_nodes_inds[1]], _shellVertexes[facet_nodes_inds[2]]))
+		if (!findShellEdge(_shellVertexes[facet_nodes_inds[1]], _shellVertexes[facet_nodes_inds[2]]))
 		{
 			_shellEdges.push_back(new ShellEdge3(*_shellVertexes[facet_nodes_inds[1]], *_shellVertexes[facet_nodes_inds[2]]));
-			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[1]], **_startFrontVertexes[facet_nodes_inds[2]]))->GetPtrToUniquePtr());
+			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[1]], **_startFrontVertexes[facet_nodes_inds[2]]))->getPtrToUPtr());
 		}
 
-		if (!FindShellEdge(_shellVertexes[facet_nodes_inds[2]], _shellVertexes[facet_nodes_inds[0]]))
+		if (!findShellEdge(_shellVertexes[facet_nodes_inds[2]], _shellVertexes[facet_nodes_inds[0]]))
 		{
 			_shellEdges.push_back(new ShellEdge3(*_shellVertexes[facet_nodes_inds[2]], *_shellVertexes[facet_nodes_inds[0]]));
-			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[2]], **_startFrontVertexes[facet_nodes_inds[0]]))->GetPtrToUniquePtr());
+			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[2]], **_startFrontVertexes[facet_nodes_inds[0]]))->getPtrToUPtr());
 		}
 
 		_shellFacets.push_back(new ShellFacet3(
-			*FindShellEdge(_shellVertexes[facet_nodes_inds[0]], _shellVertexes[facet_nodes_inds[1]]),
-			*FindShellEdge(_shellVertexes[facet_nodes_inds[1]], _shellVertexes[facet_nodes_inds[2]]),
-			*FindShellEdge(_shellVertexes[facet_nodes_inds[2]], _shellVertexes[facet_nodes_inds[0]])));
+			*findShellEdge(_shellVertexes[facet_nodes_inds[0]], _shellVertexes[facet_nodes_inds[1]]),
+			*findShellEdge(_shellVertexes[facet_nodes_inds[1]], _shellVertexes[facet_nodes_inds[2]]),
+			*findShellEdge(_shellVertexes[facet_nodes_inds[2]], _shellVertexes[facet_nodes_inds[0]])));
 		_startFrontFacets.push_back((new Facet3(
-			**FindStartFrontEdge(_startFrontVertexes[facet_nodes_inds[0]], _startFrontVertexes[facet_nodes_inds[1]]),
-			**FindStartFrontEdge(_startFrontVertexes[facet_nodes_inds[1]], _startFrontVertexes[facet_nodes_inds[2]]),
-			**FindStartFrontEdge(_startFrontVertexes[facet_nodes_inds[2]], _startFrontVertexes[facet_nodes_inds[0]])))->GetPtrToUniquePtr());
+			**findStartFrontEdge(_startFrontVertexes[facet_nodes_inds[0]], _startFrontVertexes[facet_nodes_inds[1]]),
+			**findStartFrontEdge(_startFrontVertexes[facet_nodes_inds[1]], _startFrontVertexes[facet_nodes_inds[2]]),
+			**findStartFrontEdge(_startFrontVertexes[facet_nodes_inds[2]], _startFrontVertexes[facet_nodes_inds[0]])))->getPtrToUPtr());
 	}
 
 	size_t cryses_num;
@@ -616,7 +616,7 @@ void Polycrystal3::InputData(string filename)
 	delete[] cryses_facets_nums;
 }
 
-void Polycrystal3::InputData(const CrysesShell& crysesShell)
+void Polycrystal3::inputData(const CrysesShell& crysesShell)
 {
 	for (size_t i = 0ull; i < crysesShell.nodesNum; i++)
 	{
@@ -626,7 +626,7 @@ void Polycrystal3::InputData(const CrysesShell& crysesShell)
 		coors[2] = crysesShell.nodesPositions[3ull * i + 2ull];
 
 		_shellVertexes.push_back(new ShellVertex3(coors[0], coors[1], coors[2]));
-		_startFrontVertexes.push_back((new Vertex3(coors[0], coors[1], coors[2]))->GetPtrToUniquePtr());
+		_startFrontVertexes.push_back((new Vertex3(coors[0], coors[1], coors[2]))->getPtrToUPtr());
 	}
 
 	for (size_t i = 0ull; i < crysesShell.facetsNum; i++)
@@ -636,32 +636,32 @@ void Polycrystal3::InputData(const CrysesShell& crysesShell)
 		facet_nodes_inds[1] = crysesShell.facets[3ull * i + 1ull];
 		facet_nodes_inds[2] = crysesShell.facets[3ull * i + 2ull];
 
-		if (!FindShellEdge(_shellVertexes[facet_nodes_inds[0]], _shellVertexes[facet_nodes_inds[1]]))
+		if (!findShellEdge(_shellVertexes[facet_nodes_inds[0]], _shellVertexes[facet_nodes_inds[1]]))
 		{
 			_shellEdges.push_back(new ShellEdge3(*_shellVertexes[facet_nodes_inds[0]], *_shellVertexes[facet_nodes_inds[1]]));
-			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[0]], **_startFrontVertexes[facet_nodes_inds[1]]))->GetPtrToUniquePtr());
+			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[0]], **_startFrontVertexes[facet_nodes_inds[1]]))->getPtrToUPtr());
 		}
 
-		if (!FindShellEdge(_shellVertexes[facet_nodes_inds[1]], _shellVertexes[facet_nodes_inds[2]]))
+		if (!findShellEdge(_shellVertexes[facet_nodes_inds[1]], _shellVertexes[facet_nodes_inds[2]]))
 		{
 			_shellEdges.push_back(new ShellEdge3(*_shellVertexes[facet_nodes_inds[1]], *_shellVertexes[facet_nodes_inds[2]]));
-			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[1]], **_startFrontVertexes[facet_nodes_inds[2]]))->GetPtrToUniquePtr());
+			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[1]], **_startFrontVertexes[facet_nodes_inds[2]]))->getPtrToUPtr());
 		}
 
-		if (!FindShellEdge(_shellVertexes[facet_nodes_inds[2]], _shellVertexes[facet_nodes_inds[0]]))
+		if (!findShellEdge(_shellVertexes[facet_nodes_inds[2]], _shellVertexes[facet_nodes_inds[0]]))
 		{
 			_shellEdges.push_back(new ShellEdge3(*_shellVertexes[facet_nodes_inds[2]], *_shellVertexes[facet_nodes_inds[0]]));
-			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[2]], **_startFrontVertexes[facet_nodes_inds[0]]))->GetPtrToUniquePtr());
+			_startFrontEdges.push_back((new Edge3(**_startFrontVertexes[facet_nodes_inds[2]], **_startFrontVertexes[facet_nodes_inds[0]]))->getPtrToUPtr());
 		}
 
 		_shellFacets.push_back(new ShellFacet3(
-			*FindShellEdge(_shellVertexes[facet_nodes_inds[0]], _shellVertexes[facet_nodes_inds[1]]),
-			*FindShellEdge(_shellVertexes[facet_nodes_inds[1]], _shellVertexes[facet_nodes_inds[2]]),
-			*FindShellEdge(_shellVertexes[facet_nodes_inds[2]], _shellVertexes[facet_nodes_inds[0]])));
+			*findShellEdge(_shellVertexes[facet_nodes_inds[0]], _shellVertexes[facet_nodes_inds[1]]),
+			*findShellEdge(_shellVertexes[facet_nodes_inds[1]], _shellVertexes[facet_nodes_inds[2]]),
+			*findShellEdge(_shellVertexes[facet_nodes_inds[2]], _shellVertexes[facet_nodes_inds[0]])));
 		_startFrontFacets.push_back((new Facet3(
-			**FindStartFrontEdge(_startFrontVertexes[facet_nodes_inds[0]], _startFrontVertexes[facet_nodes_inds[1]]),
-			**FindStartFrontEdge(_startFrontVertexes[facet_nodes_inds[1]], _startFrontVertexes[facet_nodes_inds[2]]),
-			**FindStartFrontEdge(_startFrontVertexes[facet_nodes_inds[2]], _startFrontVertexes[facet_nodes_inds[0]])))->GetPtrToUniquePtr());
+			**findStartFrontEdge(_startFrontVertexes[facet_nodes_inds[0]], _startFrontVertexes[facet_nodes_inds[1]]),
+			**findStartFrontEdge(_startFrontVertexes[facet_nodes_inds[1]], _startFrontVertexes[facet_nodes_inds[2]]),
+			**findStartFrontEdge(_startFrontVertexes[facet_nodes_inds[2]], _startFrontVertexes[facet_nodes_inds[0]])))->getPtrToUPtr());
 	}
 
 	crystallites.insert(crystallites.end(), crysesShell.crysesNum, new Crystallite3);
@@ -687,7 +687,7 @@ void Polycrystal3::InputData(const CrysesShell& crysesShell)
 	}
 }
 
-void Polycrystal3::OutputData(string filename) const
+void Polycrystal3::outputData(string filename) const
 {
 	ofstream file(filename);
 	size_t i = 0ull;
@@ -707,13 +707,13 @@ void Polycrystal3::OutputData(string filename) const
 			(*crys->innerVerts[j])->globalNum = i + 1ull;
 		}
 	}
-#define USER_DEBUG
-#ifdef USER_DEBUG
+#define DEV_DEBUG
+#ifdef DEV_DEBUG
 	for (auto &f_facet : crystallites[0]->frontFacets)
 	{
 		if (!*f_facet)
 			continue;
-		auto facet = (*f_facet)->facet->GetPtrToUniquePtr();
+		auto facet = (*f_facet)->facet->getPtrToUPtr();
 	
 		vector<size_t> gl_nums;
 		for (auto &edge : (*facet)->edges)
@@ -760,12 +760,12 @@ Polycrystal3::Polycrystal3() {}
 
 Polycrystal3::Polycrystal3(string filename)
 {
-	InputData(filename);
+	inputData(filename);
 }
 
 Polycrystal3::Polycrystal3(const CrysesShell& crysesShell)
 {
-	InputData(crysesShell);
+	inputData(crysesShell);
 }
 
 Polycrystal3::~Polycrystal3()

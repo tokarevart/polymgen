@@ -1,7 +1,7 @@
 #include "ShellVertex3.h"
 
 
-Vector3& ShellVertex3::GetPosition() const
+Vec3& ShellVertex3::getPosition() const
 {
 	return *_position;
 }
@@ -20,29 +20,29 @@ double& ShellVertex3::operator[](const int& axisIndex)
 	return (*_position)[axisIndex];
 }
 
-Vector3 ShellVertex3::operator-(const ShellVertex3& right) const
+Vec3 ShellVertex3::operator-(const ShellVertex3& right) const
 {
 	return *_position - *right._position;
 }
 
-Vector3 ShellVertex3::operator-(const Vertex3& right) const
+Vec3 ShellVertex3::operator-(const Vertex3& right) const
 {
-	return *_position - right.GetPosition();
+	return *_position - right.getPosition();
 }
 
 ShellVertex3::ShellVertex3()
 {
-	_position.reset(new Vector3());
+	_position.reset(new Vec3());
 }
 
 ShellVertex3::ShellVertex3(const double& coor0, const double& coor1, const double& coor2)
 {
-	_position.reset(new Vector3(coor0, coor1, coor2));
+	_position.reset(new Vec3(coor0, coor1, coor2));
 }
 
-ShellVertex3::ShellVertex3(const Vector3& position)
+ShellVertex3::ShellVertex3(const Vec3& position)
 {
-	_position.reset(new Vector3(position));
+	_position.reset(new Vec3(position));
 }
 
 ShellVertex3::~ShellVertex3() {}

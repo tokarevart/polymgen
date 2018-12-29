@@ -31,32 +31,32 @@ private:
 	vector<unique_ptr<Edge3>*> _startFrontEdges;
 	vector<unique_ptr<Vertex3>*> _startFrontVertexes;
 
-	ShellEdge3* FindShellEdge(const ShellVertex3* v0, const ShellVertex3* v1) const;
-	unique_ptr<Edge3>* FindStartFrontEdge(const unique_ptr<Vertex3>* v0, const unique_ptr<Vertex3>* v1) const;
+	ShellEdge3* findShellEdge(const ShellVertex3* v0, const ShellVertex3* v1) const;
+	unique_ptr<Edge3>* findStartFrontEdge(const unique_ptr<Vertex3>* v0, const unique_ptr<Vertex3>* v1) const;
 
 	template <class T>
-	void ErasePtrsToNullptr(vector<unique_ptr<T>*>& vec);
+	void removePtrsToNullptr(vector<unique_ptr<T>*>& vec);
 
-	void SetLinksWithShell();
-	void ErasePtrsToNullptrFromVectors();
-	void TriangulateShell();
-	void StartFrontDelaunayPostprocessing();
+	void setLinksWithShell();
+	void removePtrsToNullptrFromVectors();
+	void triangulateShell();
+	void startFrontDelaunayPostprocessing();
 
-	void InputData();
+	void inputData();
 
 public:
-	void TriangulatePolycrystalNoStruct(const double preferredLength);
-	void TriangulatePolycrystalNoStruct(string filename, const double preferredLength);
-	void TriangulatePolycrystalNoStruct(const CrysesShell& crysesShell, const double preferredLength);
-	PolycrMesh* StructurizeTriangulation();
-	PolycrMesh* TriangulatePolycrystal(const double preferredLength);
-	PolycrMesh* TriangulatePolycrystal(string filename, const double preferredLength);
-	PolycrMesh* TriangulatePolycrystal(const CrysesShell& crysesShell, const double preferredLength);
-	PolycrMesh* GetLastTriangulation();
+	void generateMeshNoStruct(const double preferredLength);
+	void generateMeshNoStruct(string filename, const double preferredLength);
+	void generateMeshNoStruct(const CrysesShell& crysesShell, const double preferredLength);
+	PolycrMesh* structurizeMesh();
+	PolycrMesh* generateMesh(const double preferredLength);
+	PolycrMesh* generateMesh(string filename, const double preferredLength);
+	PolycrMesh* generateMesh(const CrysesShell& crysesShell, const double preferredLength);
+	PolycrMesh* getLastMesh();
 
-	void InputData(string filename);
-	void InputData(const CrysesShell& crysesShell);
-	void OutputData(string filename = "polycr.obj") const;
+	void inputData(string filename);
+	void inputData(const CrysesShell& crysesShell);
+	void outputData(string filename = "polycr.obj") const;
 
 	Polycrystal3();
 	Polycrystal3(string filename);

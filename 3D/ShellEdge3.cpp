@@ -1,18 +1,18 @@
 #include "ShellEdge3.h"
 
 
-const double ShellEdge3::Magnitude() const
+const double ShellEdge3::magnitude() const
 {
-	return sqrt(SqrMagnitude());
+	return sqrt(sqrMagnitude());
 }
 
-const double ShellEdge3::SqrMagnitude() const
+const double ShellEdge3::sqrMagnitude() const
 {
-	Vector3 buf = *vertexes[1] - *vertexes[0];
-	return Vector3::DotProduct(buf, buf);
+	Vec3 buf = *vertexes[1] - *vertexes[0];
+	return Vec3::dotProduct(buf, buf);
 }
 
-const bool ShellEdge3::IsContaining(const ShellVertex3& vertex) const
+const bool ShellEdge3::contains(const ShellVertex3& vertex) const
 {
 	if (vertexes[0] == &vertex ||
 		vertexes[1] == &vertex)

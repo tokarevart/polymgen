@@ -9,8 +9,8 @@ class ShellFacet3
 public:
 	ShellEdge3* edges[3];
 
-	const bool IsContaining(const ShellEdge3& edge) const;
-	const bool IsContaining(const ShellVertex3& vertex) const;
+	const bool contains(const ShellEdge3& edge) const;
+	const bool contains(const ShellVertex3& vertex) const;
 
 	ShellFacet3();
 	ShellFacet3(

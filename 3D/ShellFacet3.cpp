@@ -1,7 +1,7 @@
 #include "ShellFacet3.h"
 
 
-const bool ShellFacet3::IsContaining(const ShellEdge3& edge) const
+const bool ShellFacet3::contains(const ShellEdge3& edge) const
 {
 	for (auto &edge_ : edges)
 		if (edge_ == &edge)
@@ -10,10 +10,10 @@ const bool ShellFacet3::IsContaining(const ShellEdge3& edge) const
 	return false;
 }
 
-const bool ShellFacet3::IsContaining(const ShellVertex3& vertex) const
+const bool ShellFacet3::contains(const ShellVertex3& vertex) const
 {
 	for (auto &edge : edges)
-		if (edge->IsContaining(vertex))
+		if (edge->contains(vertex))
 			return true;
 
 	return false;

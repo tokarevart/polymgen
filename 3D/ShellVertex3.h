@@ -10,19 +10,19 @@ using std::list;
 class ShellVertex3
 {
 private:
-	unique_ptr<Vector3> _position;
+	unique_ptr<Vec3> _position;
 
 public:
 	//vector<ShellEdge3*> inclInEdges;
 
-	Vector3& GetPosition() const;
+	Vec3& getPosition() const;
 
 	unique_ptr<Vertex3>* FindAttachedVertex(
 		const vector<unique_ptr<Vertex3>*> &freeNodes);
 
 	double& operator[](const int &axisIndex);
-	Vector3 operator-(const ShellVertex3 &right) const;
-	Vector3 operator-(const Vertex3 &right) const;
+	Vec3 operator-(const ShellVertex3 &right) const;
+	Vec3 operator-(const Vertex3 &right) const;
 
 	ShellVertex3();
 	ShellVertex3(
@@ -30,6 +30,6 @@ public:
 		const double &coor1, 
 		const double &coor2);
 	ShellVertex3(
-		const Vector3 &position);
+		const Vec3 &position);
 	~ShellVertex3();
 };

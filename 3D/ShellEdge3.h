@@ -12,10 +12,10 @@ class ShellEdge3
 public:
 	ShellVertex3* vertexes[2];
 
-	const double Magnitude() const;
-	const double SqrMagnitude() const;
+	const double magnitude() const;
+	const double sqrMagnitude() const;
 
-	const bool IsContaining(const ShellVertex3& vertex) const;
+	const bool contains(const ShellVertex3& vertex) const;
 
 	ShellEdge3();
 	ShellEdge3(ShellVertex3& vertex0, ShellVertex3& vertex1);

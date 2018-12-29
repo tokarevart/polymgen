@@ -11,7 +11,7 @@ using std::list;
 class Vertex3 : public unique_ptr_helper<Vertex3>
 {
 private:
-	unique_ptr<Vector3> _position;
+	unique_ptr<Vec3> _position;
 
 public:
 	size_t globalNum;
@@ -24,22 +24,17 @@ public:
 	//list<unique_ptr<Edge3>*> inclInEdges;
 	//list<unique_ptr<Facet3>*> inclInFacets;
 
-	void SetPosition(
-		const Vector3 &newPos);
-	void SetPosition(
-		const double &coor0, 
-		const double &coor1, 
-		const double &coor2);
-
-	const Vector3& GetPosition() const;
+	const Vec3& getPosition() const;
+	      void  setPosition(const Vec3 &newPos);
+	      void  setPosition(const double &coor0, const double &coor1, const double &coor2);
 
 	//void DestroyIfNoLinks();
 
 	double& operator[](const int &axisIndex);
-	Vector3 operator-(const Vertex3 &right) const;
-	Vector3 operator-(const ShellVertex3 &right) const;
-	Vertex3& operator+=(const Vector3 &right);
-	Vertex3& operator-=(const Vector3 &right);
+	Vec3 operator-(const Vertex3 &right) const;
+	Vec3 operator-(const ShellVertex3 &right) const;
+	Vertex3& operator+=(const Vec3 &right);
+	Vertex3& operator-=(const Vec3 &right);
 
 	Vertex3();
 	Vertex3(
@@ -47,6 +42,6 @@ public:
 		const double &coor1, 
 		const double &coor2);
 	Vertex3(
-		const Vector3 &position);
+		const Vec3 &position);
 	~Vertex3();
 };

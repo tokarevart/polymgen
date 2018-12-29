@@ -7,7 +7,7 @@ class unique_ptr_helper
 public:
 	std::unique_ptr<T>* _uniquePtr;
 
-	std::unique_ptr<T>* GetPtrToUniquePtr()
+	std::unique_ptr<T>* getPtrToUPtr()
 	{
 		return _uniquePtr;
 	}
