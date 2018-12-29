@@ -257,12 +257,7 @@ double FrontEdge3::computeAngleExCos_OLD(const vector<unique_ptr<FrontFacet3>*>&
 			f_facet == f_facets[1])
 			continue;
 
-		if (Vec3::rayIntersectTriangle(
-			edge_inner_vec,
-			shell_inside_test,
-			(*(*(*f_facet)->facet->edges[0])->vertexes[0])->getPosition(),
-			(*(*(*f_facet)->facet->edges[0])->vertexes[1])->getPosition(),
-			(*(*f_facet)->facet->findVertexNotIncludedInEdge(**(*f_facet)->facet->edges[0]))->getPosition()))
+		if ((*f_facet)->facet->intersectsBy(edge_inner_vec, shell_inside_test))
 			intersects_num++;
 	}
 

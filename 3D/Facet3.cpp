@@ -173,12 +173,7 @@ const Vec3 FrontFacet3::computeNormal(const vector<unique_ptr<FrontFacet3>*>& fr
 			f_facet == this_uptr)
 			continue;
 
-		if (Vec3::rayIntersectTriangle(
-				center,
-				test_normal_correct_intersect,
-				(*(*(*f_facet)->facet->edges[0])->vertexes[0])->getPosition(),
-				(*(*(*f_facet)->facet->edges[0])->vertexes[1])->getPosition(),
-				(*(*f_facet)->facet->findVertexNotIncludedInEdge(**(*f_facet)->facet->edges[0]))->getPosition()))
+		if ((*f_facet)->facet->intersectsBy(center, test_normal_correct_intersect))
 			intersects_num++;
 	}
 
