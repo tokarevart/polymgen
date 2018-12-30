@@ -1,5 +1,5 @@
 #include "Vec3.h"
-#include "SpatialAlgorithms.h"
+#include "SpatialAlgs.h"
 
 #define DET(a, b, c, d) \
 		((a) * (d) - (b) * (c))
