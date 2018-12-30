@@ -18,13 +18,6 @@ const Vec3& Vertex3::getPosition() const
 	return *_position;
 }
 
-//void Vertex3::DestroyIfNoLinks()
-//{
-//	if (inclInEdges.empty())
-//	{
-//		delete _uniquePtr->release();
-//	}
-//}
 
 double& Vertex3::operator[](const int axis)
 {
@@ -50,7 +43,6 @@ Vertex3& Vertex3::operator+=(const Vec3& right)
 	else if (belongsToShellEdge)
 	{
 		(*_position) += Vec3(right).project(*belongsToShellEdge->vertexes[0] - *belongsToShellEdge->vertexes[1]);
-		//(*_position) += right;
 		return *this;
 	}
 	else if (belongsToShellFacet)
@@ -58,13 +50,10 @@ Vertex3& Vertex3::operator+=(const Vec3& right)
 		(*_position) += Vec3(right).project(
 			*belongsToShellFacet->edges[0]->vertexes[1] - *belongsToShellFacet->edges[0]->vertexes[0],
 			*belongsToShellFacet->edges[1]->vertexes[1] - *belongsToShellFacet->edges[1]->vertexes[0]);
-		//(*_position) += right;
 		return *this;
 	}
 	else
 	{
-		//(*_position) += right;
-
 		return *this;
 	}
 }

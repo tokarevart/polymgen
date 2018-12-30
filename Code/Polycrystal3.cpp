@@ -153,7 +153,7 @@ void Polycrystal3::triangulateShell()
 		if (*_startFrontEdges[i] &&
 			(*_startFrontEdges[i])->sqrMagnitude() > 2.25 * _preferredLength * _preferredLength)
 		{
-			(*_startFrontEdges[i])->MakeTwoInstead(_startFrontFacets, _startFrontEdges, _startFrontVertexes);
+			(*_startFrontEdges[i])->make2Instead(_startFrontFacets, _startFrontEdges, _startFrontVertexes);
 			edges_num += 2ull;
 		}
 	}
@@ -180,14 +180,14 @@ void Polycrystal3::startFrontDelaunayPostprocessing()
 			continue;
 		
 
-		(*_startFrontEdges[i])->Find2FacetsAround(_startFrontFacets, around_facets[0], around_facets[1]);
+		(*_startFrontEdges[i])->find2AdjFacets(_startFrontFacets, around_facets[0], around_facets[1]);
 		around_nodes[0] = (*around_facets[0])->findVertexNotIncludedInEdge(**_startFrontEdges[i]);
 		around_nodes[1] = (*around_facets[1])->findVertexNotIncludedInEdge(**_startFrontEdges[i]);
 		if ((*around_nodes[0])->belongsToShellEdge && (*around_nodes[1])->belongsToShellVertex ||
 			(*around_nodes[1])->belongsToShellEdge && (*around_nodes[0])->belongsToShellVertex)
 			continue;
 
-		(*_startFrontEdges[i])->FlipIfNeeded(_startFrontEdges, _startFrontFacets);
+		(*_startFrontEdges[i])->flipIfNeeded(_startFrontEdges, _startFrontFacets);
 	}
 }
 

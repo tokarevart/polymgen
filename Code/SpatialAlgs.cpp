@@ -43,6 +43,17 @@ const bool spatialalgs::project(
 }
 
 
+const bool spatialalgs::isRayIntersectPlane(
+	const Point3& origin, const Vec3& dir, 
+	const Point3& pl_p0, const Point3& pl_p1, const Point3& pl_p2)
+{
+	Vec3 edges[2]{ pl_p1 - pl_p0, pl_p2 - pl_p0 };
+
+	Vec3 pvec = Vec3::crossProduct(dir, edges[1]);
+	double det = Vec3::dotProduct(edges[0], pvec);
+	return det > 1e-6 || det < -1e-6;
+}
+
 const bool spatialalgs::rayIntersectPlane(
 	Point3& out_intersectPoint, 
 	const Point3& origin, const Vec3& dir, 

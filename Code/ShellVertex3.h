@@ -16,7 +16,7 @@ public:
 
 	Vec3& getPosition() const;
 
-	unique_ptr<Vertex3>* FindAttachedVertex(
+	unique_ptr<Vertex3>* findAttachedVertex(
 		const vector<unique_ptr<Vertex3>*>& freeNodes);
 
 	double& operator[](const int axis);

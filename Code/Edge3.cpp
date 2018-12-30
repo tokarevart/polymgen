@@ -22,13 +22,13 @@ const double Edge3::sqrMagnitude() const
 	return (**vertexes[1] - **vertexes[0]).sqrMagnitude();
 }
 
-void Edge3::Flip(
+void Edge3::flip(
 	vector<unique_ptr<Edge3>*> &edges, 
 	vector<unique_ptr<Facet3>*> &facets)
 {
 	unique_ptr<Vertex3>* around_nodes[2];
 	unique_ptr<Facet3>* around_facets[2];
-	Find2FacetsAround(facets, around_facets[0], around_facets[1]);
+	find2AdjFacets(facets, around_facets[0], around_facets[1]);
 	around_nodes[0] = (*around_facets[0])->findVertexNotIncludedInEdge(*this);
 	around_nodes[1] = (*around_facets[1])->findVertexNotIncludedInEdge(*this);
 	unique_ptr<Edge3>* new_edge = (new Edge3(**around_nodes[0], **around_nodes[1]))->getPtrToUPtr();
@@ -53,17 +53,17 @@ void Edge3::Flip(
 	delete getPtrToUPtr()->release();
 }
 
-const bool Edge3::FlipIfNeeded(
+const bool Edge3::flipIfNeeded(
 	vector<unique_ptr<Edge3>*> &edges, 
 	vector<unique_ptr<Facet3>*> &facets)
 {
-	if (NeedToFlip(facets))
-		Flip(edges, facets);
+	if (needToFlip(facets))
+		flip(edges, facets);
 
 	return false;
 }
 
-void Edge3::Find2FacetsAround(
+void Edge3::find2AdjFacets(
 	const vector<unique_ptr<Facet3>*> &facets, 
 	unique_ptr<Facet3>* &facet0, 
 	unique_ptr<Facet3>* &facet1)
@@ -88,19 +88,19 @@ void Edge3::Find2FacetsAround(
 	}
 }
 
-void Edge3::MakeTwoInstead(
+void Edge3::make2Instead(
 	vector<unique_ptr<Facet3>*> &facets, 
 	vector<unique_ptr<Edge3>*> &edges, 
 	vector<unique_ptr<Vertex3>*> &verts)//, vector<ShellEdge3*>& shellEdges, vector<ShellFacet3*>& shellFacets)
 {
 	if (!*vertexes[0] || !*vertexes[1])
-		throw std::logic_error("Something went wrong in Edge3::MakeTwoInstead");
+		throw std::logic_error("Something went wrong in Edge3::make2Instead");
 
 	unique_ptr<Vertex3>* inner_vert = (new Vertex3((*vertexes[0])->getPosition() + 0.5 * (**vertexes[1] - **vertexes[0])))->getPtrToUPtr();
 	verts.push_back(inner_vert);
 
 	unique_ptr<Facet3>* old_facets[2];
-	Find2FacetsAround(facets, old_facets[0], old_facets[1]);
+	find2AdjFacets(facets, old_facets[0], old_facets[1]);
 
 	unique_ptr<Edge3>* edge_halfs[2];
 	edge_halfs[0] = (new Edge3(**vertexes[0], **inner_vert))->getPtrToUPtr();
@@ -147,7 +147,7 @@ const bool Edge3::contains(const Vertex3& vertex) const
 	return false;
 }
 
-const bool Edge3::BelongsToShell()
+const bool Edge3::belongsToShell()
 {
 	if (((*vertexes[0])->belongsToShellVertex ||
 		 (*vertexes[0])->belongsToShellEdge   ||
@@ -160,11 +160,11 @@ const bool Edge3::BelongsToShell()
 	return false;
 }
 
-const bool Edge3::NeedToFlip(const vector<unique_ptr<Facet3>*> &facets)
+const bool Edge3::needToFlip(const vector<unique_ptr<Facet3>*> &facets)
 {
 	unique_ptr<Vertex3>* around_nodes[2];
 	unique_ptr<Facet3>* around_facets[2];
-	Find2FacetsAround(
+	find2AdjFacets(
 		facets, 
 		around_facets[0], 
 		around_facets[1]);
@@ -209,7 +209,7 @@ double FrontEdge3::getAngleExCos(const vector<unique_ptr<FrontFacet3>*>& frontFa
 double FrontEdge3::computeAngleExCos(const vector<unique_ptr<FrontFacet3>*>& frontFacets)
 {
 	unique_ptr<FrontFacet3>* f_facets[2];
-	FindFrontFacetsAround(frontFacets, f_facets[0], f_facets[1]);
+	findAdjacentFrontFacets(frontFacets, f_facets[0], f_facets[1]);
 
 	double normals_cos = Vec3::cos((*f_facets[0])->getNormal(), (*f_facets[1])->getNormal());
 
@@ -224,7 +224,7 @@ double FrontEdge3::computeAngleExCos(const vector<unique_ptr<FrontFacet3>*>& fro
 double FrontEdge3::computeAngleExCos_OLD(const vector<unique_ptr<FrontFacet3>*>& frontFacets)
 {
 	unique_ptr<FrontFacet3>* f_facets[2];
-	FindFrontFacetsAround(frontFacets, f_facets[0], f_facets[1]);
+	findAdjacentFrontFacets(frontFacets, f_facets[0], f_facets[1]);
 
 	Vec3 edge_inner_vec = 0.5 * ((*edge->vertexes[0])->getPosition() + (*edge->vertexes[1])->getPosition());
 	Vec3 opp_verts_poses[2];
@@ -261,10 +261,10 @@ double FrontEdge3::computeAngleExCos_OLD(const vector<unique_ptr<FrontFacet3>*>&
 		-2.0 - Vec3::cos(facets_inner_vecs[0], facets_inner_vecs[1]));
 }
 
-double FrontEdge3::AngleCos(bool &out_isConcave, const vector<unique_ptr<FrontFacet3>*> &frontFacets)
+double FrontEdge3::computeAngleCos(bool &out_isConcave, const vector<unique_ptr<FrontFacet3>*> &frontFacets)
 {
 	unique_ptr<FrontFacet3>* f_facets[2];
-	FindFrontFacetsAround(frontFacets, f_facets[0], f_facets[1]);
+	findAdjacentFrontFacets(frontFacets, f_facets[0], f_facets[1]);
 
 	Vec3 edge_inner_vec = 0.5 * ((*edge->vertexes[0])->getPosition() + (*edge->vertexes[1])->getPosition());
 	Vec3 opp_verts_poses[2];
@@ -303,10 +303,10 @@ double FrontEdge3::AngleCos(bool &out_isConcave, const vector<unique_ptr<FrontFa
 	return Vec3::cos(facets_inner_vecs[0], facets_inner_vecs[1]);
 }
 
-double FrontEdge3::Angle(const vector<unique_ptr<FrontFacet3>*> &frontFacets)
+double FrontEdge3::computeAngle(const vector<unique_ptr<FrontFacet3>*> &frontFacets)
 {
 	unique_ptr<FrontFacet3>* f_facets[2];
-	FindFrontFacetsAround(frontFacets, f_facets[0], f_facets[1]);
+	findAdjacentFrontFacets(frontFacets, f_facets[0], f_facets[1]);
 
 	Vec3 edge_inner_vec = 0.5 * ((*edge->vertexes[0])->getPosition() + (*edge->vertexes[1])->getPosition());
 	Vec3 opp_verts_poses[2];
@@ -347,7 +347,7 @@ double FrontEdge3::Angle(const vector<unique_ptr<FrontFacet3>*> &frontFacets)
 		PI + PI - min_angle;
 }
 
-void FrontEdge3::FindFrontFacetsAround(
+void FrontEdge3::findAdjacentFrontFacets(
 	const vector<unique_ptr<FrontFacet3>*> &frontFacets, 
 	unique_ptr<FrontFacet3>* &out_frontFacet0,
 	unique_ptr<FrontFacet3>* &out_frontFacet1)
@@ -371,17 +371,17 @@ void FrontEdge3::FindFrontFacetsAround(
 		}
 	}
 
-	throw std::logic_error("Something went wrong in FrontEdge3::FindFrontFacetsAround");
+	throw std::logic_error("Something went wrong in FrontEdge3::findAdjacentFrontFacets");
 }
 
-void FrontEdge3::FindOppositeVertexes(
+void FrontEdge3::findOppositeVertexes(
 	const vector<unique_ptr<FrontFacet3>*> &frontFacets, 
 	const vector<unique_ptr<FrontEdge3>*> &frontEdges, 
 	unique_ptr<Vertex3>* &out_vert0,
 	unique_ptr<Vertex3>* &out_vert1)
 {
 	unique_ptr<FrontFacet3>* around_f_facets[2];
-	FindFrontFacetsAround(
+	findAdjacentFrontFacets(
 		frontFacets, 
 		around_f_facets[0], 
 		around_f_facets[1]);
@@ -390,12 +390,12 @@ void FrontEdge3::FindOppositeVertexes(
 	out_vert1 = (*around_f_facets[1])->facet->findVertexNotIncludedInEdge(*edge);
 }
 
-unique_ptr<FrontEdge3>* FrontEdge3::FindOppositeFrontEdge(
+unique_ptr<FrontEdge3>* FrontEdge3::findOppositeFrontEdge(
 	const vector<unique_ptr<FrontFacet3>*> &frontFacets, 
 	const vector<unique_ptr<FrontEdge3>*> &frontEdges)
 {
 	unique_ptr<Vertex3>* opp_verts[2];
-	FindOppositeVertexes(
+	findOppositeVertexes(
 		frontFacets,
 		frontEdges,
 		opp_verts[0],
@@ -414,6 +414,11 @@ unique_ptr<FrontEdge3>* FrontEdge3::FindOppositeFrontEdge(
 	return nullptr;
 }
 
-FrontEdge3::FrontEdge3(Edge3* edge) : edge(edge), unique_ptr_helper<FrontEdge3>(this) {}
+FrontEdge3::FrontEdge3(Edge3* edge) : edge(edge), unique_ptr_helper<FrontEdge3>(this) 
+{
+	// For the future.
+	//_adjFacets[0] = nullptr;
+	//_adjFacets[1] = nullptr;
+}
 
 FrontEdge3::~FrontEdge3() {}

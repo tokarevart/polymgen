@@ -16,39 +16,39 @@ namespace spatialalgs
 
 	const bool isRayIntersectPlane(
 		const Point3& origin, const Vec3& dir, 
-		const Point3& pl_p0, const Point3& pl_p1, const Point3& pl_p2);
+		const Point3& plane_p0, const Point3& plane_p1, const Point3& plane_p2);
 	const bool isRayIntersectTriangle(
 		const Point3& origin, const Vec3& dir, 
-		const Point3& tr_p0, const Point3& tr_p1, const Point3& tr_p2);
+		const Point3& trngl_p0, const Point3& trngl_p1, const Point3& trngl_p2);
 	const bool rayIntersectPlane(
 		Point3& out_intersectPoint, 
 		const Point3& origin, const Vec3& dir, 
-		const Point3& pl_p0, const Point3& pl_p1, const Point3& pl_p2);
+		const Point3& plane_p0, const Point3& plane_p1, const Point3& plane_p2);
 	const bool rayIntersectTriangle(
 		Point3& out_intersectPoint, 
 		const Point3& origin, const Vec3& dir, 
-		const Point3& tr_p0, const Point3& tr_p1, const Point3& tr_p2);
+		const Point3& trngl_p0, const Point3& trngl_p1, const Point3& trngl_p2);
 	const bool isLineIntersectPlane(
 		const Point3& origin, const Vec3& dir, 
-		const Point3& pl_p0, const Point3& pl_p1, const Point3& pl_p2);
+		const Point3& plane_p0, const Point3& plane_p1, const Point3& plane_p2);
 	const bool lineIntersectPlane(
 		Point3& out_intersectPoint,
 		const Point3& line_p0, const Point3& line_p1, 
-		const Point3& pl_p0, const Point3& pl_p1, const Point3& pl_p2);
+		const Point3& plane_p0, const Point3& plane_p1, const Point3& plane_p2);
 	const bool isSegmentIntersectTriangle(
 		const Point3& segm_p0, const Point3& segm_p1, 
-		const Point3& tr_p0, const Point3& tr_p1, const Point3& tr_p2);
+		const Point3& trngl_p0, const Point3& trngl_p1, const Point3& trngl_p2);
 	const bool isSegmentIntersectPlane(
 		const Point3& segm_p0, const Point3& segm_p1, 
-		const Point3& pl_p0, const Point3& pl_p1, const Point3& pl_p2);
+		const Point3& plane_p0, const Point3& plane_p1, const Point3& plane_p2);
 	const bool segmentIntersectTriangle(
 		Point3& out_intersectPoint,
 		const Point3& segm_p0, const Point3& segm_p1, 
-		const Point3& tr_p0, const Point3& tr_p1, const Point3& tr_p2);
+		const Point3& trngl_p0, const Point3& trngl_p1, const Point3& trngl_p2);
 	const bool segmentIntersectPlane(
 		Point3& out_intersectPoint,
 		const Point3& segm_p0, const Point3& segm_p1, 
-		const Point3& pl_p0, const Point3& pl_p1, const Point3& pl_p2);
+		const Point3& plane_p0, const Point3& plane_p1, const Point3& plane_p2);
 
 	const double linesDistance(
 		const Point3& line0_p0, const Point3& line0_p1, 

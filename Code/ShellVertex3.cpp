@@ -6,7 +6,7 @@ Vec3& ShellVertex3::getPosition() const
 	return *_position;
 }
 
-unique_ptr<Vertex3>* ShellVertex3::FindAttachedVertex(const vector<unique_ptr<Vertex3>*>& freeNodes)
+unique_ptr<Vertex3>* ShellVertex3::findAttachedVertex(const vector<unique_ptr<Vertex3>*>& freeNodes)
 {
 	for (auto &vertex : freeNodes)
 		if ((*vertex)->belongsToShellVertex == this)

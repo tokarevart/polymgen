@@ -1,6 +1,19 @@
 #include "Facet3.h"
 
 
+const Vec3 Facet3::computeCenter()
+{
+	return 0.3333333333333333 * (
+		(*(*edges[0])->vertexes[0])->getPosition() +
+		(*(*edges[0])->vertexes[1])->getPosition() +
+		(*findVertexNotIncludedInEdge(**edges[0]))->getPosition());
+}
+
+const double Facet3::computeQuality()
+{
+	return (*findShortestEdge())->sqrMagnitude() / (*findLongestEdge())->sqrMagnitude();
+}
+
 unique_ptr<Edge3>* Facet3::intersectAlongAnEdge(const Facet3& facet0, const Facet3& facet1)
 {
 	int inters = 0;
@@ -17,7 +30,7 @@ unique_ptr<Edge3>* Facet3::intersectAlongAnEdge(const Facet3& facet0, const Face
 	return inters == 1 ? res : nullptr;
 }
 
-const bool Facet3::intersectsBy(const Vec3& origin, const Vec3& dir)
+const bool Facet3::intersectsBy(const Point3& origin, const Vec3& dir)
 {
 	return spatialalgs::isRayIntersectTriangle(
 		origin, dir,
@@ -63,7 +76,7 @@ unique_ptr<Edge3>* Facet3::findEdge(const Vertex3& vert0, const Vertex3& vert1)
 	return nullptr;
 }
 
-unique_ptr<Edge3>* Facet3::shortestEdge()
+unique_ptr<Edge3>* Facet3::findShortestEdge()
 {
 	if ((*edges[0])->sqrMagnitude() < (*edges[1])->sqrMagnitude())
 	{
@@ -83,7 +96,7 @@ unique_ptr<Edge3>* Facet3::shortestEdge()
 	return nullptr;
 }
 
-unique_ptr<Edge3>* Facet3::longestEdge()
+unique_ptr<Edge3>* Facet3::findLongestEdge()
 {
 	if ((*edges[0])->sqrMagnitude() > (*edges[1])->sqrMagnitude())
 	{
@@ -161,6 +174,7 @@ const Vec3 FrontFacet3::computeNormal(const vector<unique_ptr<FrontFacet3>*>& fr
 		(*(*facet->edges[0])->vertexes[0])->getPosition() - third_pos,
 		(*(*facet->edges[0])->vertexes[1])->getPosition() - third_pos).normalize();
 
+	// I don't know why it led to better(correct) result.
 	Vec3 test_normal_correct_intersect = normal + Vec3(2.1632737147, 1.488313178, -0.71123534278) * 1e-3;
 
 	auto this_uptr = getPtrToUPtr();
@@ -172,7 +186,7 @@ const Vec3 FrontFacet3::computeNormal(const vector<unique_ptr<FrontFacet3>*>& fr
 			f_facet == this_uptr)
 			continue;
 
-		if ((*f_facet)->facet->intersectsBy(center, test_normal_correct_intersect))
+		if ((*f_facet)->facet->intersectsBy(center, /*normal*/test_normal_correct_intersect))
 			intersects_num++;
 	}
 
@@ -181,10 +195,12 @@ const Vec3 FrontFacet3::computeNormal(const vector<unique_ptr<FrontFacet3>*>& fr
 
 const Vec3 FrontFacet3::computeCenter()
 {
-	return 0.3333333333333333 * (
-		(*(*facet->edges[0])->vertexes[0])->getPosition() + 
-		(*(*facet->edges[0])->vertexes[1])->getPosition() + 
-		(*facet->findVertexNotIncludedInEdge(**facet->edges[0]))->getPosition());
+	return facet->computeCenter();
+}
+
+const double FrontFacet3::computeQuality()
+{
+	return facet->computeQuality();
 }
 
 FrontFacet3::FrontFacet3(Facet3* facet) : facet(facet), unique_ptr_helper<FrontFacet3>(this) {}

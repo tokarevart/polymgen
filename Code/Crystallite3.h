@@ -15,6 +15,12 @@ class Crystallite3
 	template <class T>
 	void removePtrsToNullptr(vector<unique_ptr<T>*>& vec);
 
+	enum ExhaustType
+	{
+		WITHOUT_NEW_VERTEX,
+		WITH_NEW_VERTEX
+	};
+
 public:
 	vector<ShellFacet3*> shellFacets;
 	vector<ShellEdge3*> shellEdges;
@@ -48,14 +54,14 @@ public:
 	void addFrontEdge3(
 		unique_ptr<FrontEdge3>*& frontEdge);
 
-	const bool VertexInsideFrontCheck(const Vec3& v);
-	const bool LineSegmentGlobalIntersectionCheck(const Vec3& v0, const Vec3& v1);
-	const bool LineSegmentFrontIntersectionCheck (const Vec3& v0, const Vec3& v1);
-	const bool EdgeGlobalIntersectionCheck(const unique_ptr<Edge3>* edge);
-	const bool EdgeIntersectionCheck  (const unique_ptr<FrontEdge3>* frontEdge);
-	const bool FacetIntersectionCheck (const unique_ptr<Vertex3>* v0, const unique_ptr<Vertex3>* v1, const Vec3& v2);
-	const bool FacetIntersectionCheck (const unique_ptr<Vertex3>* v0, const unique_ptr<Vertex3>* v1, const unique_ptr<Vertex3>* v2);
-	const bool FacetsIntersectionCheck(const unique_ptr<FrontEdge3>* frontEdge);
+	const bool vertexInsideFrontCheck(const Vec3& v);
+	const bool lineSegmentGlobalIntersectionCheck(const Vec3& v0, const Vec3& v1);
+	const bool lineSegmentFrontIntersectionCheck (const Vec3& v0, const Vec3& v1);
+	const bool edgeGlobalIntersectionCheck(const unique_ptr<Edge3>* edge);
+	const bool edgeIntersectionCheck  (const unique_ptr<FrontEdge3>* frontEdge);
+	const bool facetIntersectionCheck (const unique_ptr<Vertex3>* v0, const unique_ptr<Vertex3>* v1, const Vec3& v2);
+	const bool facetIntersectionCheck (const unique_ptr<Vertex3>* v0, const unique_ptr<Vertex3>* v1, const unique_ptr<Vertex3>* v2);
+	const bool facetsIntersectionCheck(const unique_ptr<FrontEdge3>* frontEdge);
 	const bool insideSimplex3Check(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3, const Vec3& vert);
 	const bool anyVertexInsidePotentialSimplex3Check(const unique_ptr<FrontEdge3>* frontEdge);
 	const bool frontSplitCheck    (const unique_ptr<FrontEdge3>* frontEdge);
@@ -65,11 +71,11 @@ public:
 	unique_ptr<FrontEdge3>* currentFrontEdge(double maxExCos);
 	const bool exhaustWithoutNewVertexPriorityPredicate(unique_ptr<FrontEdge3>* currentFrontEdge);
 	const bool exhaustWithNewVertexPriorityPredicate   (unique_ptr<FrontEdge3>* currentFrontEdge);
-	const int  exhaustTypeQualityPriorityCalculation   (unique_ptr<FrontEdge3>* currentFrontEdge);
+	const ExhaustType exhaustTypeQualityPriorityCalculation   (unique_ptr<FrontEdge3>* currentFrontEdge);
 
-	void ExhaustWithoutNewVertexOppositeEdgeExists    (unique_ptr<FrontEdge3>* frontEdge, unique_ptr<FrontEdge3>* oppositeEdge);
-	void ExhaustWithoutNewVertexOppositeEdgeDontExists(unique_ptr<FrontEdge3>* frontEdge);
-	void ExhaustWithoutNewVertex(unique_ptr<FrontEdge3>* frontEdge, const bool oppositeEdgeExistence = true, unique_ptr<FrontEdge3>* oppositeEdge = nullptr);
+	void exhaustWithoutNewVertexOppositeEdgeExists    (unique_ptr<FrontEdge3>* frontEdge, unique_ptr<FrontEdge3>* oppositeEdge);
+	void exhaustWithoutNewVertexOppositeEdgeDontExists(unique_ptr<FrontEdge3>* frontEdge);
+	void exhaustWithoutNewVertex(unique_ptr<FrontEdge3>* frontEdge, const bool oppositeEdgeExistence = true, unique_ptr<FrontEdge3>* oppositeEdge = nullptr);
 	const bool newVertexPosition(unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos);
 	unique_ptr<FrontFacet3>* chooseFrontFacetForExhaustionWithNewVertex(unique_ptr<FrontEdge3>* frontEdge);
 	void exhaustWithNewVertex(unique_ptr<FrontFacet3>* frontFacet, Vec3 vertPos);

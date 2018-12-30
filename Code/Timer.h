@@ -13,7 +13,6 @@ enum TimeScale
 
 class Timer
 {
-private:
 	bool _isStarted = false;
 	bool _isPaused  = false;
 

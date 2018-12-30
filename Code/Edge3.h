@@ -15,35 +15,32 @@ class Edge3 : public unique_ptr_helper<Edge3>
 public:
 	unique_ptr<Vertex3>* vertexes[2];
 
-	//list<unique_ptr<Facet3>*> inclInFacets;
-
 	const double magnitude() const;
 	const double sqrMagnitude() const;
 
-	void Flip(
-		vector<unique_ptr<Edge3>*> &edges, 
-		vector<unique_ptr<Facet3>*> &facets);
-	const bool FlipIfNeeded(
-		vector<unique_ptr<Edge3>*> &edges, 
-		vector<unique_ptr<Facet3>*> &facets);
-	void Find2FacetsAround(
-		const vector<unique_ptr<Facet3>*> &facets, 
-		unique_ptr<Facet3>* &facet0, 
-		unique_ptr<Facet3>* &facet1);
+	void flip(
+		vector<unique_ptr<Edge3>*>& edges, 
+		vector<unique_ptr<Facet3>*>& facets);
+	const bool flipIfNeeded(
+		vector<unique_ptr<Edge3>*>& edges, 
+		vector<unique_ptr<Facet3>*>& facets);
+	// Adj means adjacent.
+	void find2AdjFacets(
+		const vector<unique_ptr<Facet3>*>& facets, 
+		unique_ptr<Facet3>*& facet0, 
+		unique_ptr<Facet3>*& facet1);
 	// Doesn't change vertexes relations.
-	void MakeTwoInstead(
-		vector<unique_ptr<Facet3>*> &facets, 
-		vector<unique_ptr<Edge3>*> &edges, 
-		vector<unique_ptr<Vertex3>*> &vertexes);//, vector<ShellEdge3*>& shellEdges, vector<ShellFacet3*>& shellFacets);
+	void make2Instead(
+		vector<unique_ptr<Facet3>*>& facets, 
+		vector<unique_ptr<Edge3>*>& edges, 
+		vector<unique_ptr<Vertex3>*>& vertexes);
 
 	const bool contains(const Vertex3& vertex) const;
 
-	const bool BelongsToShell();
+	const bool belongsToShell();
 
-	const bool NeedToFlip(const vector<unique_ptr<Facet3>*> &facets);
-
-	//void DestroyIfNoLinks();
-
+	const bool needToFlip(const vector<unique_ptr<Facet3>*>& facets);
+	
 	Edge3();
 	Edge3(Vertex3& vertex0, Vertex3& vertex1);
 	~Edge3();
@@ -52,6 +49,8 @@ public:
 class FrontEdge3 : public unique_ptr_helper<FrontEdge3>
 {
 	double _exCos;
+	// For the future.
+	//unique_ptr<FrontFacet3>* _adjFacets[2];
 
 public:
 	Edge3* edge;
@@ -60,18 +59,25 @@ public:
 	double getAngleExCos    (const vector<unique_ptr<FrontFacet3>*>& frontFacets);
 	double computeAngleExCos(const vector<unique_ptr<FrontFacet3>*>& frontFacets);
 	double computeAngleExCos_OLD(const vector<unique_ptr<FrontFacet3>*>& frontFacets);
-	double AngleCos  (bool &out_isConcave, const vector<unique_ptr<FrontFacet3>*>& frontFacets);
-	double Angle     (const vector<unique_ptr<FrontFacet3>*>& frontFacets);
-	void FindFrontFacetsAround(
+	double computeAngleCos  (bool &out_isConcave, const vector<unique_ptr<FrontFacet3>*>& frontFacets);
+	double computeAngle     (const vector<unique_ptr<FrontFacet3>*>& frontFacets);
+
+	// Adj means adjacent.
+	const bool adjFacetsArrayContains(const unique_ptr<FrontFacet3>* frontFacet);
+	unique_ptr<FrontFacet3>** getAdjFacets();
+	const bool addAdjFacetInArray(const unique_ptr<FrontFacet3>* frontFacet);
+	const bool removeAdjFacetFromArray(const unique_ptr<FrontFacet3>* frontFacet);
+
+	void findAdjacentFrontFacets(
 		const vector<unique_ptr<FrontFacet3>*>& frontFacets, 
 		unique_ptr<FrontFacet3>*& out_frontFacet0,
 		unique_ptr<FrontFacet3>*& out_frontFacet1);
-	void FindOppositeVertexes(
+	void findOppositeVertexes(
 		const vector<unique_ptr<FrontFacet3>*>& frontFacets, 
 		const vector<unique_ptr<FrontEdge3>*>&  frontEdges, 
 		unique_ptr<Vertex3>*& out_vert0, 
 		unique_ptr<Vertex3>*& out_vert1);
-	unique_ptr<FrontEdge3>* FindOppositeFrontEdge(
+	unique_ptr<FrontEdge3>* findOppositeFrontEdge(
 		const vector<unique_ptr<FrontFacet3>*>& frontFacets,
 		const vector<unique_ptr<FrontEdge3>*>& frontEdges);
 

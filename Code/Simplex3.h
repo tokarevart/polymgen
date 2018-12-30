@@ -12,8 +12,8 @@ class Simplex3 : public unique_ptr_helper<Simplex3>
 public:
 	unique_ptr<Vertex3>* vertexes[4];
 
-	double Volume() const;
-	double Quality() const;
+	double computeVolume() const;
+	double computeQuality() const;
 
 	Simplex3();
 	Simplex3(

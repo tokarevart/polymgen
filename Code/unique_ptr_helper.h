@@ -4,9 +4,9 @@
 template<class T>
 class unique_ptr_helper
 {
-public:
 	std::unique_ptr<T>* _uniquePtr;
 
+public:
 	std::unique_ptr<T>* getPtrToUPtr()
 	{
 		return _uniquePtr;

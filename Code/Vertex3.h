@@ -16,17 +16,11 @@ public:
 	ShellFacet3* belongsToShellFacet = nullptr;
 	ShellEdge3* belongsToShellEdge = nullptr;
 	ShellVertex3* belongsToShellVertex = nullptr;
-
-	//list<unique_ptr<Vertex3>*> neighbors;
-	//list<unique_ptr<Edge3>*> inclInEdges;
-	//list<unique_ptr<Facet3>*> inclInFacets;
-
+	
 	const Vec3& getPosition() const;
 	      void  setPosition(const Vec3& newPos);
 	      void  setPosition(const double coor0, const double coor1, const double coor2);
-
-	//void DestroyIfNoLinks();
-
+		  
 	double& operator[](const int axis);
 	Vec3 operator-(const Vertex3& right) const;
 	Vec3 operator-(const ShellVertex3& right) const;

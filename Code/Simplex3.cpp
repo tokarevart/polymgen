@@ -1,7 +1,7 @@
 #include "Simplex3.h"
 
 
-double Simplex3::Volume() const
+double Simplex3::computeVolume() const
 {
 	const Vec3& v0 = (*vertexes[0])->getPosition();
 	return 0.16666666666666666 * abs(Vec3::mixedProduct(
@@ -10,7 +10,7 @@ double Simplex3::Volume() const
 		(*vertexes[3])->getPosition() - v0));
 }
 
-double Simplex3::Quality() const
+double Simplex3::computeQuality() const
 {
 	double prods[4];
 	for (int i = 0; i < 4; i++)
@@ -22,7 +22,7 @@ double Simplex3::Quality() const
 	}
 	double max_prod = std::max({ prods[0], prods[1], prods[2], prods[3] });
 
-	return 8.48528137423857 * Volume() / max_prod;
+	return 8.48528137423857 * computeVolume() / max_prod;
 }
 
 Simplex3::Simplex3() : unique_ptr_helper<Simplex3>(this) {}
