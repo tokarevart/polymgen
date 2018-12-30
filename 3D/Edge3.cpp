@@ -214,17 +214,11 @@ double FrontEdge3::computeAngleExCos(const vector<unique_ptr<FrontFacet3>*>& fro
 	double normals_cos = Vec3::cos((*f_facets[0])->getNormal(), (*f_facets[1])->getNormal());
 
 	needProcessing = false;
-	// DEBUG
-	//if (Vec3::cpaTime(
-	//	(*f_facets[0])->computeCenter(), (*f_facets[0])->getNormal(),
-	//	(*f_facets[1])->computeCenter(), (*f_facets[1])->getNormal()) > 1e-6)
-	//	std::cout << "kek";
-	//
-	return _exCos = Vec3::cpaTime(
-		(*f_facets[0])->computeCenter(), (*f_facets[0])->getNormal(),
-		(*f_facets[1])->computeCenter(), (*f_facets[1])->getNormal()) < 1e-6 ?
-			-2.0 + normals_cos :
-			-normals_cos;
+	return _exCos = spatialalgs::cpaTime(
+			{ (*f_facets[0])->computeCenter(), (*f_facets[0])->getNormal() },
+			{ (*f_facets[1])->computeCenter(), (*f_facets[1])->getNormal() }) < 1e-6 ?
+		-2.0 + normals_cos :
+		-normals_cos;
 }
 
 double FrontEdge3::computeAngleExCos_OLD(const vector<unique_ptr<FrontFacet3>*>& frontFacets)
@@ -237,8 +231,8 @@ double FrontEdge3::computeAngleExCos_OLD(const vector<unique_ptr<FrontFacet3>*>&
 	opp_verts_poses[0] = (*(*f_facets[0])->facet->findVertexNotIncludedInEdge(*edge))->getPosition();
 	opp_verts_poses[1] = (*(*f_facets[1])->facet->findVertexNotIncludedInEdge(*edge))->getPosition();
 	Vec3 facets_inner_vecs[2];
-	facets_inner_vecs[0] = opp_verts_poses[0] - Vec3::project(opp_verts_poses[0], (*edge->vertexes[0])->getPosition(), (*edge->vertexes[1])->getPosition());
-	facets_inner_vecs[1] = opp_verts_poses[1] - Vec3::project(opp_verts_poses[1], (*edge->vertexes[0])->getPosition(), (*edge->vertexes[1])->getPosition());
+	facets_inner_vecs[0] = opp_verts_poses[0] - spatialalgs::project(opp_verts_poses[0], { (*edge->vertexes[0])->getPosition(), (*edge->vertexes[1])->getPosition() });
+	facets_inner_vecs[1] = opp_verts_poses[1] - spatialalgs::project(opp_verts_poses[1], { (*edge->vertexes[0])->getPosition(), (*edge->vertexes[1])->getPosition() });
 
 	double in_the_same_plane_dot = Vec3::mixedProduct(facets_inner_vecs[0], facets_inner_vecs[1], **edge->vertexes[1] - **edge->vertexes[0]);
 	if (in_the_same_plane_dot < 1e-6 && in_the_same_plane_dot > -1e-6)
@@ -277,8 +271,8 @@ double FrontEdge3::AngleCos(bool &out_isConcave, const vector<unique_ptr<FrontFa
 	opp_verts_poses[0] = (*(*f_facets[0])->facet->findVertexNotIncludedInEdge(*edge))->getPosition();
 	opp_verts_poses[1] = (*(*f_facets[1])->facet->findVertexNotIncludedInEdge(*edge))->getPosition();
 	Vec3 facets_inner_vecs[2];
-	facets_inner_vecs[0] = opp_verts_poses[0] - Vec3::project(opp_verts_poses[0], (*edge->vertexes[0])->getPosition(), (*edge->vertexes[1])->getPosition());
-	facets_inner_vecs[1] = opp_verts_poses[1] - Vec3::project(opp_verts_poses[1], (*edge->vertexes[0])->getPosition(), (*edge->vertexes[1])->getPosition());
+	facets_inner_vecs[0] = opp_verts_poses[0] - spatialalgs::project(opp_verts_poses[0], { (*edge->vertexes[0])->getPosition(), (*edge->vertexes[1])->getPosition() });
+	facets_inner_vecs[1] = opp_verts_poses[1] - spatialalgs::project(opp_verts_poses[1], { (*edge->vertexes[0])->getPosition(), (*edge->vertexes[1])->getPosition() });
 	
 	double in_the_same_plane_dot = Vec3::dotProduct(Vec3::crossProduct(facets_inner_vecs[0], facets_inner_vecs[1]), **edge->vertexes[1] - **edge->vertexes[0]);
 	if (in_the_same_plane_dot < 1e-6 && in_the_same_plane_dot > -1e-6)
@@ -297,9 +291,8 @@ double FrontEdge3::AngleCos(bool &out_isConcave, const vector<unique_ptr<FrontFa
 			f_facet == f_facets[1])
 			continue;
 
-		if (Vec3::rayIntersectTriangle(
-				edge_inner_vec,
-				shell_inside_test,
+		if (spatialalgs::isRayIntersectTriangle(
+				{ edge_inner_vec, shell_inside_test },
 				(*(*(*f_facet)->facet->edges[0])->vertexes[0])->getPosition(),
 				(*(*(*f_facet)->facet->edges[0])->vertexes[1])->getPosition(),
 				(*(*f_facet)->facet->findVertexNotIncludedInEdge(**(*f_facet)->facet->edges[0]))->getPosition()))
@@ -320,8 +313,8 @@ double FrontEdge3::Angle(const vector<unique_ptr<FrontFacet3>*> &frontFacets)
 	opp_verts_poses[0] = (*(*f_facets[0])->facet->findVertexNotIncludedInEdge(*edge))->getPosition();
 	opp_verts_poses[1] = (*(*f_facets[1])->facet->findVertexNotIncludedInEdge(*edge))->getPosition();
 	Vec3 facets_inner_vecs[2];
-	facets_inner_vecs[0] = opp_verts_poses[0] - Vec3::project(opp_verts_poses[0], (*edge->vertexes[0])->getPosition(), (*edge->vertexes[1])->getPosition());
-	facets_inner_vecs[1] = opp_verts_poses[1] - Vec3::project(opp_verts_poses[1], (*edge->vertexes[0])->getPosition(), (*edge->vertexes[1])->getPosition());
+	facets_inner_vecs[0] = opp_verts_poses[0] - spatialalgs::project(opp_verts_poses[0], { (*edge->vertexes[0])->getPosition(), (*edge->vertexes[1])->getPosition() });
+	facets_inner_vecs[1] = opp_verts_poses[1] - spatialalgs::project(opp_verts_poses[1], { (*edge->vertexes[0])->getPosition(), (*edge->vertexes[1])->getPosition() });
 	double in_the_same_plane_dot = Vec3::dotProduct(Vec3::crossProduct(facets_inner_vecs[0], facets_inner_vecs[1]), **edge->vertexes[1] - **edge->vertexes[0]);
 	if (in_the_same_plane_dot < 1e-6 && in_the_same_plane_dot > -1e-6)
 		return PI;
@@ -338,9 +331,8 @@ double FrontEdge3::Angle(const vector<unique_ptr<FrontFacet3>*> &frontFacets)
 			f_facet == f_facets[1])
 			continue;
 
-		if (Vec3::rayIntersectTriangle(
-				edge_inner_vec,
-				shell_inside_test,
+		if (spatialalgs::isRayIntersectTriangle(
+				{ edge_inner_vec, shell_inside_test },
 				(*(*(*f_facet)->facet->edges[0])->vertexes[0])->getPosition(),
 				(*(*(*f_facet)->facet->edges[0])->vertexes[1])->getPosition(),
 				(*(*f_facet)->facet->findVertexNotIncludedInEdge(**(*f_facet)->facet->edges[0]))->getPosition()))

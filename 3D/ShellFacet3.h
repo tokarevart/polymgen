@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "ClassDefinitions.h"
-#include "ClassInclusions.h"
+#include "Definitions.h"
+#include "Inclusions.h"
 
 class ShellFacet3
 {

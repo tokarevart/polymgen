@@ -1,5 +1,4 @@
 #pragma once
-class Vec3;
 class Polycrystal3;
 class Crystallite3;
 class Simplex3;

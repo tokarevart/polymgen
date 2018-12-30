@@ -1,5 +1,5 @@
 #pragma once
-#include "Vec3.h"
+#include "SpatialAlgorithms.h"
 #include "Polycrystal3.h"
 #include "Crystallite3.h"
 #include "Simplex3.h"

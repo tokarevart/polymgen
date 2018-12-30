@@ -1,16 +1,16 @@
 #include "Vertex3.h"
 
 
-void Vertex3::setPosition(const Vec3 &newPos)
+void Vertex3::setPosition(const Vec3& newPos)
 {
 	*_position = newPos;
 }
 
-void Vertex3::setPosition(const double &coor0, const double &coor1, const double &coor2)
+void Vertex3::setPosition(const double coor0, const double coor1, const double coor2)
 {
-	(*_position)[0] = coor0;
-	(*_position)[1] = coor1;
-	(*_position)[2] = coor2;
+	_position->coors[0] = coor0;
+	_position->coors[1] = coor1;
+	_position->coors[2] = coor2;
 }
 
 const Vec3& Vertex3::getPosition() const
@@ -26,22 +26,22 @@ const Vec3& Vertex3::getPosition() const
 //	}
 //}
 
-double& Vertex3::operator[](const int &axisIndex)
+double& Vertex3::operator[](const int axis)
 {
-	return (*_position)[axisIndex];
+	return _position->coors[axis];
 }
 
-Vec3 Vertex3::operator-(const Vertex3 &right) const
+Vec3 Vertex3::operator-(const Vertex3& right) const
 {
 	return *_position - *right._position;
 }
 
-Vec3 Vertex3::operator-(const ShellVertex3 &right) const
+Vec3 Vertex3::operator-(const ShellVertex3& right) const
 {
 	return *_position - right.getPosition();
 }
 
-Vertex3& Vertex3::operator+=(const Vec3 &right)
+Vertex3& Vertex3::operator+=(const Vec3& right)
 {
 	if (belongsToShellVertex)
 	{
@@ -92,7 +92,7 @@ Vertex3::Vertex3() : unique_ptr_helper<Vertex3>(this)
 	_position.reset(new Vec3());
 }
 
-Vertex3::Vertex3(const double& coor0, const double& coor1, const double& coor2) : unique_ptr_helper<Vertex3>(this)
+Vertex3::Vertex3(const double coor0, const double coor1, const double coor2) : unique_ptr_helper<Vertex3>(this)
 {
 	_position.reset(new Vec3(coor0, coor1, coor2));
 }
@@ -102,13 +102,4 @@ Vertex3::Vertex3(const Vec3& position) : unique_ptr_helper<Vertex3>(this)
 	_position.reset(new Vec3(position));
 }
 
-Vertex3::~Vertex3()
-{
-	//for (auto &edge : inclInEdges)
-	//{
-	//	if (*edge)
-	//	{
-	//		delete edge->release();
-	//	}
-	//}
-}
+Vertex3::~Vertex3() {}
