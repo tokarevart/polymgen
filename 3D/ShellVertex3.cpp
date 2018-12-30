@@ -15,9 +15,9 @@ unique_ptr<Vertex3>* ShellVertex3::FindAttachedVertex(const vector<unique_ptr<Ve
 	return nullptr;
 }
 
-double& ShellVertex3::operator[](const int& axisIndex)
+double& ShellVertex3::operator[](const int axis)
 {
-	return (*_position)[axisIndex];
+	return _position->coors[axis];
 }
 
 Vec3 ShellVertex3::operator-(const ShellVertex3& right) const
@@ -35,7 +35,7 @@ ShellVertex3::ShellVertex3()
 	_position.reset(new Vec3());
 }
 
-ShellVertex3::ShellVertex3(const double& coor0, const double& coor1, const double& coor2)
+ShellVertex3::ShellVertex3(const double coor0, const double coor1, const double coor2)
 {
 	_position.reset(new Vec3(coor0, coor1, coor2));
 }

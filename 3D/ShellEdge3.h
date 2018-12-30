@@ -1,8 +1,8 @@
 #pragma once
 #include <list>
 #include <memory>
-#include "ClassDefinitions.h"
-#include "ClassInclusions.h"
+#include "Definitions.h"
+#include "Inclusions.h"
 
 using std::unique_ptr;
 using std::list;

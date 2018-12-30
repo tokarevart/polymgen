@@ -55,18 +55,17 @@ void Polycrystal3::setLinksWithShell()
 		#pragma omp for
 		for (size_t i = 0ull; i < shell_edges_num; i++)
 		{
-			Vec3 proj_buf;
+			Point3 proj_buf;
 			for (auto &vert : _startFrontVertexes)
 			{
 				if ((*vert)->belongsToShellVertex)
 					continue;
 
-				if (Vec3::project(
-					proj_buf,
-					(*vert)->getPosition(),
-					_shellEdges[i]->vertexes[0]->getPosition(),
-					_shellEdges[i]->vertexes[1]->getPosition()) &&
-					(proj_buf - (*vert)->getPosition()).sqrMagnitude() < sqr_sufficient_dist)
+				if (spatialalgs::project(
+						proj_buf,
+						(*vert)->getPosition(),
+						_shellEdges[i]->vertexes[0]->getPosition(), _shellEdges[i]->vertexes[1]->getPosition()) &&
+						(proj_buf - (*vert)->getPosition()).sqrMagnitude() < sqr_sufficient_dist)
 				{
 					(*vert)->belongsToShellEdge = _shellEdges[i];
 				}
@@ -75,19 +74,18 @@ void Polycrystal3::setLinksWithShell()
 		#pragma omp for
 		for (size_t i = 0ull; i < shell_facets_num; i++)
 		{
-			Vec3 proj_buf;
+			Point3 proj_buf;
 			for (auto &vert : _startFrontVertexes)
 			{
 				if ((*vert)->belongsToShellVertex ||
 					(*vert)->belongsToShellEdge)
 					continue;
 
-				proj_buf =
-					_shellFacets[i]->edges[0]->vertexes[0]->getPosition()
-					+ (**vert
-						- *_shellFacets[i]->edges[0]->vertexes[0]).project(
-							*_shellFacets[i]->edges[0]->vertexes[1] - *_shellFacets[i]->edges[0]->vertexes[0],
-							*_shellFacets[i]->edges[1]->vertexes[1] - *_shellFacets[i]->edges[1]->vertexes[0]);
+				proj_buf = _shellFacets[i]->edges[0]->vertexes[0]->getPosition()
+							+ (**vert - *_shellFacets[i]->edges[0]->vertexes[0]).project(
+									*_shellFacets[i]->edges[0]->vertexes[1] - *_shellFacets[i]->edges[0]->vertexes[0],
+									*_shellFacets[i]->edges[1]->vertexes[1] - *_shellFacets[i]->edges[1]->vertexes[0]);
+
 				if ((proj_buf - (*vert)->getPosition()).sqrMagnitude() < sqr_sufficient_dist)
 					(*vert)->belongsToShellFacet = _shellFacets[i];
 			}

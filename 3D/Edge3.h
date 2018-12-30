@@ -2,8 +2,8 @@
 #include <list>
 #include <vector>
 #include <memory>
-#include "ClassDefinitions.h"
-#include "ClassInclusions.h"
+#include "Definitions.h"
+#include "Inclusions.h"
 #include "unique_ptr_helper.h"
 
 using std::unique_ptr;

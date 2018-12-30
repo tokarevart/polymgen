@@ -19,9 +19,8 @@ unique_ptr<Edge3>* Facet3::intersectAlongAnEdge(const Facet3& facet0, const Face
 
 const bool Facet3::intersectsBy(const Vec3& origin, const Vec3& dir)
 {
-	return Vec3::rayIntersectTriangle(
-		origin, 
-		dir, 
+	return spatialalgs::isRayIntersectTriangle(
+		origin, dir,
 		(*(*edges[0])->vertexes[0])->getPosition(), 
 		(*(*edges[0])->vertexes[1])->getPosition(), 
 		(*findVertexNotIncludedInEdge(**edges[0]))->getPosition());

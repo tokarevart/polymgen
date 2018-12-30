@@ -3,8 +3,8 @@
 #include <fstream>
 #include <vector>
 #include <memory>
-#include "ClassDefinitions.h"
-#include "ClassInclusions.h"
+#include "Definitions.h"
+#include "Inclusions.h"
 #include "PolycrMesh.h"
 #include "CrysesShell.h"
 
