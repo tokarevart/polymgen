@@ -211,7 +211,7 @@ double FrontEdge3::computeAngleExCos(const vector<unique_ptr<FrontFacet3>*>& fro
 	unique_ptr<FrontFacet3>* f_facets[2];
 	findAdjacentFrontFacets(frontFacets, f_facets[0], f_facets[1]);
 
-	double normals_cos = Vec3::cos((*f_facets[0])->getNormal(), (*f_facets[1])->getNormal());
+	double normals_cos = Vec3::dotProduct((*f_facets[0])->getNormal(), (*f_facets[1])->getNormal());
 
 	needProcessing = false;
 	return _exCos = spatialalgs::cpaTime(
