@@ -87,10 +87,17 @@ public:
 
 	Vec3 computeNormalInSimplex3(unique_ptr<FrontFacet3>* frontFacet, const Vec3& oppositeVertPos);
 	Vec3 computeNormalInSimplex3(unique_ptr<FrontFacet3>* frontFacet, unique_ptr<Edge3>* oneOfTheRemainingEdges);
+	
 	void exhaustWithoutNewVertexOppositeEdgeExists    (unique_ptr<FrontEdge3>* frontEdge, unique_ptr<FrontEdge3>* oppositeEdge);
 	void exhaustWithoutNewVertexOppositeEdgeDontExists(unique_ptr<FrontEdge3>* frontEdge);
 	void exhaustWithoutNewVertex(unique_ptr<FrontEdge3>* frontEdge, const bool oppositeEdgeExistence = true, unique_ptr<FrontEdge3>* oppositeEdge = nullptr);
-	const bool newVertexPosition(unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos);
+	
+	const bool tryComputeNewVertexPositionType3(unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos);
+	const bool tryComputeNewVertexPositionType2(const int smallAngleIndex0, const int smallAngleIndex1, unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos);
+	const bool tryComputeNewVertexPositionType1(const int smallAngleIndex, unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos);
+	const bool tryComputeNewVertexPositionType0(unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos);
+	const bool tryComputeNewVertexPosition(unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos);
+	
 	unique_ptr<FrontFacet3>* chooseFrontFacetForExhaustionWithNewVertex(unique_ptr<FrontEdge3>* frontEdge);
 	void exhaustWithNewVertex(unique_ptr<FrontFacet3>* frontFacet, Vec3 vertPos);
 	const bool NewVertexPosition_OLD(unique_ptr<FrontEdge3>* frontEdge, Vec3& out_pos);

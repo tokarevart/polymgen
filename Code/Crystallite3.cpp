@@ -29,6 +29,7 @@
 #define COS_DEG_90   0.0
 #define COS_DEG_100 -0.173648177666930348
 #define COS_DEG_120 -0.5
+#define COS_DEG_140 -0.766044443118978035
 #define COS_DEG_150 -0.866025403784438646
 #define COS_DEG_160 -0.939692620785908384
 #define COS_DEG_180 -1.0
@@ -873,7 +874,7 @@ const Crystallite3::ExhaustType Crystallite3::exhaustTypeQualityPriorityCalculat
 
 	auto f_facet = chooseFrontFacetForExhaustionWithNewVertex(currentFrontEdge);
 	Vec3 new_vert_pos;
-	if (!newVertexPosition(f_facet, new_vert_pos))
+	if (!tryComputeNewVertexPosition(f_facet, new_vert_pos))
 		return DONT_EXHAUST;
 
 	double with_nv_quality = computeSimplex3SimpleSqrQuality(
@@ -1118,9 +1119,28 @@ void Crystallite3::exhaustWithoutNewVertex(unique_ptr<FrontEdge3>* frontEdge, co
 	}
 }
 
-//
-const bool Crystallite3::newVertexPosition(unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos)
+const bool Crystallite3::tryComputeNewVertexPosition(unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos)
 {
+	double angs_coses[3]
+	{ 
+		(*findFrontEdge((*frontFacet)->facet->edges[0]))->getAngleExCos(this),
+		(*findFrontEdge((*frontFacet)->facet->edges[1]))->getAngleExCos(this),
+		(*findFrontEdge((*frontFacet)->facet->edges[2]))->getAngleExCos(this)
+	};
+	int indexes[3];
+	int small_angs_num = 0;
+	if (angs_coses[0] > COS_DEG_140) indexes[small_angs_num++] = 0;
+	if (angs_coses[1] > COS_DEG_140) indexes[small_angs_num++] = 1;
+	if (angs_coses[2] > COS_DEG_140) indexes[small_angs_num++] = 2;
+
+	switch (small_angs_num)
+	{
+	case 0: return tryComputeNewVertexPositionType0(                        frontFacet, out_pos);		
+	case 1: return tryComputeNewVertexPositionType1(indexes[0],             frontFacet, out_pos);
+	case 2: return tryComputeNewVertexPositionType2(indexes[0], indexes[1], frontFacet, out_pos);
+	case 3: return tryComputeNewVertexPositionType3(                        frontFacet, out_pos);
+	}
+
 	return true;
 }
 
@@ -1405,7 +1425,7 @@ const bool Crystallite3::tryExhaustWithNewVertex(unique_ptr<FrontEdge3>* frontEd
 
 	auto exhaust_f_facet = chooseFrontFacetForExhaustionWithNewVertex(frontEdge);
 	Vec3 new_vert_pos;
-	if (!newVertexPosition(exhaust_f_facet, new_vert_pos))
+	if (!tryComputeNewVertexPosition(exhaust_f_facet, new_vert_pos))
 		return false;
 
 	exhaustWithNewVertex(exhaust_f_facet, new_vert_pos);
@@ -1793,11 +1813,11 @@ void Crystallite3::processAngles(Polycrystal3* polycr)
 			Vec3* new_vert_pos = nullptr;
 			switch (exhaustTypeQualityPriorityCalculation(curr_f_edge, &exhaust_from_f_facet, &new_vert_pos))
 			{
-			case WITHOUT_NEW_VERTEX :
+			case WITHOUT_NEW_VERTEX:
 				exhaustWithoutNewVertex(curr_f_edge);
 				break;
 
-			case WITH_NEW_VERTEX :
+			case WITH_NEW_VERTEX:
 				if (new_vert_pos)
 				{
 					exhaustWithNewVertex(exhaust_from_f_facet, *new_vert_pos);
@@ -1812,6 +1832,9 @@ void Crystallite3::processAngles(Polycrystal3* polycr)
 						continue;
 					}
 				}
+				break;
+
+			case DONT_EXHAUST:
 				break;
 			}
 		}
