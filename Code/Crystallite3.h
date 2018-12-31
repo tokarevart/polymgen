@@ -68,14 +68,17 @@ public:
 	const bool insideSimplex3Check(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3, const Vec3& vert);
 	const bool anyVertexInsidePotentialSimplex3Check(const unique_ptr<FrontEdge3>* frontEdge);
 	const bool frontSplitCheck    (const unique_ptr<FrontEdge3>* frontEdge);
-	const bool parallelFacetsCheck(const unique_ptr<FrontEdge3>* frontEdge);
-	const bool frontContainsOfOnly1Simplex3OrEmpty();
+	const bool parallelFacetsCheck(const unique_ptr<FrontEdge3>* frontEdge) const;
+	const bool frontContainsOfOnly1Simplex3OrEmpty() const;
 
-	static const double computeShortestEdgeLength(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3);
-	static const double computeLongestEdgeLength(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3);
+	static const double computeMinEdgesLength(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3);
+	static const double computeMaxEdgesLength(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3);
+	static std::pair<double, double> computeMinMaxEdgesLengths(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3);
+	static std::pair<double, double> computeMinMaxEdgesSqrLengths(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3);
 	static const double computeSimplex3SimpleQuality(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3);
+	static const double computeSimplex3SimpleSqrQuality(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3);
 
-	unique_ptr<FrontEdge3>* currentFrontEdge(double maxExCos);
+	unique_ptr<FrontEdge3>* currentFrontEdge(double maxExCos) const;
 	const bool exhaustWithoutNewVertexPriorityPredicate(unique_ptr<FrontEdge3>* frontEdge);
 	const bool exhaustWithNewVertexPriorityPredicate   (unique_ptr<FrontEdge3>* frontEdge);
 	const ExhaustType exhaustTypeQualityPriorityCalculation(

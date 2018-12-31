@@ -3,7 +3,7 @@
 
 double Simplex3::computeVolume() const
 {
-	const Vec3& v0 = (*vertexes[0])->getPosition();
+	Vec3 v0 = (*vertexes[0])->getPosition();
 	return 0.16666666666666666 * abs(Vec3::mixedProduct(
 		(*vertexes[1])->getPosition() - v0, 
 		(*vertexes[2])->getPosition() - v0, 
@@ -12,17 +12,17 @@ double Simplex3::computeVolume() const
 
 double Simplex3::computeQuality() const
 {
-	double prods[4];
+	double sqr_prods[4];
 	for (int i = 0; i < 4; i++)
 	{
-		prods[i] = 1.0;
+		sqr_prods[i] = 1.0;
 		for (int j = 0; j < 4; j++)
 			if (j != i)
-				prods[i] *= (**vertexes[j] - **vertexes[i]).magnitude();
+				sqr_prods[i] *= (**vertexes[j] - **vertexes[i]).sqrMagnitude();
 	}
-	double max_prod = std::max({ prods[0], prods[1], prods[2], prods[3] });
+	double max_sqr_prod = std::max({ sqr_prods[0], sqr_prods[1], sqr_prods[2], sqr_prods[3] });
 
-	return 8.48528137423857 * computeVolume() / max_prod;
+	return 8.48528137423857 * computeVolume() / sqrt(max_sqr_prod);
 }
 
 Simplex3::Simplex3() : unique_ptr_helper<Simplex3>(this) {}

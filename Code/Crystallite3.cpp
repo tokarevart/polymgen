@@ -656,7 +656,7 @@ const bool Crystallite3::frontSplitCheck(const unique_ptr<FrontEdge3>* frontEdge
 	return true;
 }
 
-const bool Crystallite3::parallelFacetsCheck(const unique_ptr<FrontEdge3>* frontEdge)
+const bool Crystallite3::parallelFacetsCheck(const unique_ptr<FrontEdge3>* frontEdge) const
 {
 	unique_ptr<FrontFacet3>* adj_f_facets[2];
 	findAdjacentFrontFacets(frontEdge, adj_f_facets[0], adj_f_facets[1]);
@@ -724,7 +724,7 @@ const bool Crystallite3::parallelFacetsCheck(const unique_ptr<FrontEdge3>* front
 	return false;
 }
 
-const bool Crystallite3::frontContainsOfOnly1Simplex3OrEmpty()
+const bool Crystallite3::frontContainsOfOnly1Simplex3OrEmpty() const
 {
 	size_t f_facets_num = 0ull;
 	for (auto &f_facet : frontFacets)
@@ -740,7 +740,70 @@ const bool Crystallite3::frontContainsOfOnly1Simplex3OrEmpty()
 	return true;
 }
 
-unique_ptr<FrontEdge3>* Crystallite3::currentFrontEdge(double maxExCos)
+const double Crystallite3::computeMinEdgesLength(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3)
+{
+	double sqr_magns[6];
+	sqr_magns[0] = (p1 - p0).sqrMagnitude();
+	sqr_magns[1] = (p2 - p0).sqrMagnitude();
+	sqr_magns[2] = (p3 - p0).sqrMagnitude();
+	sqr_magns[3] = (p2 - p1).sqrMagnitude();
+	sqr_magns[4] = (p3 - p1).sqrMagnitude();
+	sqr_magns[5] = (p3 - p2).sqrMagnitude();
+	return sqrt(std::min({ sqr_magns[0], sqr_magns[1], sqr_magns[2], sqr_magns[3], sqr_magns[4], sqr_magns[5] }));
+}
+
+const double Crystallite3::computeMaxEdgesLength(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3)
+{
+	double sqr_magns[6];
+	sqr_magns[0] = (p1 - p0).sqrMagnitude();
+	sqr_magns[1] = (p2 - p0).sqrMagnitude();
+	sqr_magns[2] = (p3 - p0).sqrMagnitude();
+	sqr_magns[3] = (p2 - p1).sqrMagnitude();
+	sqr_magns[4] = (p3 - p1).sqrMagnitude();
+	sqr_magns[5] = (p3 - p2).sqrMagnitude();
+	return sqrt(std::max({ sqr_magns[0], sqr_magns[1], sqr_magns[2], sqr_magns[3], sqr_magns[4], sqr_magns[5] }));
+}
+
+std::pair<double, double> Crystallite3::computeMinMaxEdgesLengths(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3)
+{
+	double sqr_magns[6];
+	sqr_magns[0] = (p1 - p0).sqrMagnitude();
+	sqr_magns[1] = (p2 - p0).sqrMagnitude();
+	sqr_magns[2] = (p3 - p0).sqrMagnitude();
+	sqr_magns[3] = (p2 - p1).sqrMagnitude();
+	sqr_magns[4] = (p3 - p1).sqrMagnitude();
+	sqr_magns[5] = (p3 - p2).sqrMagnitude();
+	auto min_max = std::minmax({ sqr_magns[0], sqr_magns[1], sqr_magns[2], sqr_magns[3], sqr_magns[4], sqr_magns[5] });
+	min_max.first = sqrt(min_max.first);
+	min_max.second = sqrt(min_max.second);
+	return min_max;
+}
+
+std::pair<double, double> Crystallite3::computeMinMaxEdgesSqrLengths(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3)
+{
+	double sqr_magns[6];
+	sqr_magns[0] = (p1 - p0).sqrMagnitude();
+	sqr_magns[1] = (p2 - p0).sqrMagnitude();
+	sqr_magns[2] = (p3 - p0).sqrMagnitude();
+	sqr_magns[3] = (p2 - p1).sqrMagnitude();
+	sqr_magns[4] = (p3 - p1).sqrMagnitude();
+	sqr_magns[5] = (p3 - p2).sqrMagnitude();
+	return std::minmax({ sqr_magns[0], sqr_magns[1], sqr_magns[2], sqr_magns[3], sqr_magns[4], sqr_magns[5] });
+}
+
+const double Crystallite3::computeSimplex3SimpleQuality(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3)
+{
+	auto sqr_min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2, p3);
+	return sqrt(sqr_min_max.first / sqr_min_max.second);
+}
+
+const double Crystallite3::computeSimplex3SimpleSqrQuality(const Vec3 & p0, const Vec3 & p1, const Vec3 & p2, const Vec3 & p3)
+{
+	auto sqr_min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2, p3);
+	return sqr_min_max.first / sqr_min_max.second;
+}
+
+unique_ptr<FrontEdge3>* Crystallite3::currentFrontEdge(double maxExCos) const
 {
 	double curr_max_excos = -2.0;
 	unique_ptr<FrontEdge3>* curr_max_f_edge = nullptr;
@@ -791,7 +854,7 @@ const Crystallite3::ExhaustType Crystallite3::exhaustTypeQualityPriorityCalculat
 {
 	if (frontSplitCheck(currentFrontEdge))
 		return DONT_EXHAUST;
-
+	
 	if (parallelFacetsCheck(currentFrontEdge) ||
 		edgeIntersectionCheck(currentFrontEdge) ||
 		facetsIntersectionCheck(currentFrontEdge) ||
@@ -802,7 +865,29 @@ const Crystallite3::ExhaustType Crystallite3::exhaustTypeQualityPriorityCalculat
 
 	unique_ptr<Vertex3>* opp_verts[2];
 	findOppositeVertexes(currentFrontEdge, opp_verts[0], opp_verts[1]);
-	double without_nv_quality;
+	double without_nv_quality = computeSimplex3SimpleSqrQuality(
+		(*(*currentFrontEdge)->edge->vertexes[0])->getPosition(),
+		(*(*currentFrontEdge)->edge->vertexes[1])->getPosition(),
+		(*opp_verts[0])->getPosition(),
+		(*opp_verts[1])->getPosition());
+
+	auto f_facet = chooseFrontFacetForExhaustionWithNewVertex(currentFrontEdge);
+	Vec3 new_vert_pos;
+	if (!newVertexPosition(f_facet, new_vert_pos))
+		return DONT_EXHAUST;
+
+	double with_nv_quality = computeSimplex3SimpleSqrQuality(
+		(*(*(*f_facet)->facet->edges[0])->vertexes[0])->getPosition(),
+		(*(*(*f_facet)->facet->edges[0])->vertexes[1])->getPosition(),
+		(*(*f_facet)->facet->findVertexNotIncludedInEdge(**(*f_facet)->facet->edges[0]))->getPosition(),
+		new_vert_pos);
+
+	if (without_nv_quality > with_nv_quality)
+		return WITHOUT_NEW_VERTEX;
+
+	*out_withNWFrontFacet = f_facet;
+	*out_withNWNewVertPos = new Vec3(new_vert_pos);
+	return WITH_NEW_VERTEX;
 }
 
 Vec3 Crystallite3::computeNormalInSimplex3(unique_ptr<FrontFacet3>* frontFacet, const Vec3& oppositeVertPos)
@@ -1034,9 +1119,9 @@ void Crystallite3::exhaustWithoutNewVertex(unique_ptr<FrontEdge3>* frontEdge, co
 }
 
 //
-const bool Crystallite3::newVertexPosition(unique_ptr<FrontFacet3>* frontFacet, Vec3 & out_pos)
+const bool Crystallite3::newVertexPosition(unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos)
 {
-	return false;
+	return true;
 }
 
 unique_ptr<FrontFacet3>* Crystallite3::chooseFrontFacetForExhaustionWithNewVertex(unique_ptr<FrontEdge3>* frontEdge)
@@ -1307,6 +1392,7 @@ const bool Crystallite3::tryExhaustWithoutNewVertex(unique_ptr<FrontEdge3>* fron
 	}
 
 	exhaustWithoutNewVertex(frontEdge, oppositeEdgeExistence, oppositeEdge);
+	return true;
 }
 
 const bool Crystallite3::tryExhaustWithNewVertex(unique_ptr<FrontEdge3>* frontEdge)
@@ -1323,6 +1409,7 @@ const bool Crystallite3::tryExhaustWithNewVertex(unique_ptr<FrontEdge3>* frontEd
 		return false;
 
 	exhaustWithNewVertex(exhaust_f_facet, new_vert_pos);
+	return true;
 }
 
 template<class T>
@@ -1660,7 +1747,7 @@ void Crystallite3::processAngles(Polycrystal3* polycr)
 {
 	if (frontContainsOfOnly1Simplex3OrEmpty())
 	{
-		throw std::logic_error("Crystallite volume wasn't exhausted due to unexpected logical error.");
+		throw std::logic_error("Error in function: Crystallite::processAngles");
 
 		for (auto &f_facet : frontFacets)
 		{
@@ -1709,6 +1796,7 @@ void Crystallite3::processAngles(Polycrystal3* polycr)
 			case WITHOUT_NEW_VERTEX :
 				exhaustWithoutNewVertex(curr_f_edge);
 				break;
+
 			case WITH_NEW_VERTEX :
 				if (new_vert_pos)
 				{
@@ -1718,9 +1806,12 @@ void Crystallite3::processAngles(Polycrystal3* polycr)
 				}
 				else
 				{
-					tryExhaustWithNewVertex(curr_f_edge);
+					if (!tryExhaustWithNewVertex(curr_f_edge))
+					{
+						max_excos = (*curr_f_edge)->getAngleExCos(this);
+						continue;
+					}
 				}
-				
 				break;
 			}
 		}
@@ -1770,7 +1861,7 @@ void Crystallite3::processAngles(Polycrystal3* polycr)
 
 	polycr->outputData();
 	if (!frontContainsOfOnly1Simplex3OrEmpty())
-		throw std::logic_error("Crystallite volume wasn't exhausted due to unexpected logical error.");
+		throw std::logic_error("Error in function: Crystallite::processAngles");
 }
 
 void Crystallite3::processAngles_OLD(Polycrystal3* polycr)
