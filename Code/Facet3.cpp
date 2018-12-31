@@ -92,8 +92,6 @@ unique_ptr<Edge3>* Facet3::findShortestEdge()
 		else
 			return edges[2];
 	}
-
-	return nullptr;
 }
 
 unique_ptr<Edge3>* Facet3::findLongestEdge()
@@ -112,8 +110,6 @@ unique_ptr<Edge3>* Facet3::findLongestEdge()
 		else
 			return edges[2];
 	}
-
-	return nullptr;
 }
 
 const bool Facet3::contains(const Edge3& edge) const

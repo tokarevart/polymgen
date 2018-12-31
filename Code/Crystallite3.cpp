@@ -151,7 +151,7 @@ ShellEdge3* Crystallite3::findShellEdge(const ShellVertex3* v0, const ShellVerte
 	return nullptr;
 }
 
-unique_ptr<FrontFacet3>* Crystallite3::findFrontFacet(unique_ptr<Facet3>* facet)
+unique_ptr<FrontFacet3>* Crystallite3::findFrontFacet(const unique_ptr<Facet3>* facet)
 {
 	for (auto &f_facet : frontFacets)
 	{
@@ -178,7 +178,7 @@ unique_ptr<FrontEdge3>* Crystallite3::findFrontEdge(const unique_ptr<Vertex3>* v
 	return nullptr;
 }
 
-unique_ptr<FrontEdge3>* Crystallite3::findFrontEdge(unique_ptr<Edge3>* edge)
+unique_ptr<FrontEdge3>* Crystallite3::findFrontEdge(const unique_ptr<Edge3>* edge)
 {
 	for (auto &f_edge : frontEdges)
 	{
@@ -190,7 +190,58 @@ unique_ptr<FrontEdge3>* Crystallite3::findFrontEdge(unique_ptr<Edge3>* edge)
 	return nullptr;
 }
 
-unique_ptr<FrontFacet3>* Crystallite3::addFrontFacet3(unique_ptr<Edge3>* &edge0, unique_ptr<Edge3>* &edge1, unique_ptr<Edge3>* &edge2)
+void Crystallite3::findAdjacentFrontFacets(const unique_ptr<FrontEdge3>* frontEdge, unique_ptr<FrontFacet3>*& out_frontFacet0, unique_ptr<FrontFacet3>*& out_frontFacet1) const
+{
+	bool not_found_yet = true;
+	for (auto f_facet : frontFacets)
+	{
+		if (*f_facet &&
+			(*f_facet)->facet->contains(*(*frontEdge)->edge))
+		{
+			if (not_found_yet)
+			{
+				out_frontFacet0 = f_facet;
+				not_found_yet = false;
+			}
+			else
+			{
+				out_frontFacet1 = f_facet;
+				return;
+			}
+		}
+	}
+
+	throw std::logic_error("Something went wrong in Crystallite3::findAdjacentFrontFacets");
+}
+
+void Crystallite3::findOppositeVertexes(const unique_ptr<FrontEdge3>* frontEdge, unique_ptr<Vertex3>*& out_vert0, unique_ptr<Vertex3>*& out_vert1) const
+{
+	unique_ptr<FrontFacet3>* around_f_facets[2];
+	findAdjacentFrontFacets(frontEdge, around_f_facets[0], around_f_facets[1]);
+
+	out_vert0 = (*around_f_facets[0])->facet->findVertexNotIncludedInEdge(*(*frontEdge)->edge);
+	out_vert1 = (*around_f_facets[1])->facet->findVertexNotIncludedInEdge(*(*frontEdge)->edge);
+}
+
+unique_ptr<FrontEdge3>* Crystallite3::findOppositeFrontEdge(const unique_ptr<FrontEdge3>* frontEdge) const 
+{
+	unique_ptr<Vertex3>* opp_verts[2];
+	findOppositeVertexes(frontEdge, opp_verts[0], opp_verts[1]);
+
+	for (auto f_edge : frontEdges)
+	{
+		if (*f_edge &&
+			(((*f_edge)->edge->vertexes[0] == opp_verts[0]  &&
+			  (*f_edge)->edge->vertexes[1] == opp_verts[1]) ||
+			 ((*f_edge)->edge->vertexes[1] == opp_verts[0]  &&
+			  (*f_edge)->edge->vertexes[0] == opp_verts[1])))
+			return f_edge;
+	}
+
+	return nullptr;
+}
+
+unique_ptr<FrontFacet3>* Crystallite3::addFrontFacet3(unique_ptr<Edge3>* edge0, unique_ptr<Edge3>* edge1, unique_ptr<Edge3>* edge2)
 {
 	FrontFacet3* new_f_facet = new FrontFacet3(new Facet3(**edge0, **edge1, **edge2));
 
@@ -200,7 +251,7 @@ unique_ptr<FrontFacet3>* Crystallite3::addFrontFacet3(unique_ptr<Edge3>* &edge0,
 	return new_f_facet->getPtrToUPtr();
 }
 
-unique_ptr<FrontEdge3>* Crystallite3::addFrontEdge3(unique_ptr<Vertex3>* &vert0, unique_ptr<Vertex3>* &vert1)
+unique_ptr<FrontEdge3>* Crystallite3::addFrontEdge3(unique_ptr<Vertex3>* vert0, unique_ptr<Vertex3>* vert1)
 {
 	FrontEdge3* new_f_edge = new FrontEdge3(new Edge3(**vert0, **vert1));
 
@@ -210,7 +261,7 @@ unique_ptr<FrontEdge3>* Crystallite3::addFrontEdge3(unique_ptr<Vertex3>* &vert0,
 	return new_f_edge->getPtrToUPtr();
 }
 
-void Crystallite3::addFrontEdge3(unique_ptr<FrontEdge3>* &frontEdge)
+void Crystallite3::addFrontEdge3(unique_ptr<FrontEdge3>* frontEdge)
 {
 	frontEdges.push_back((*frontEdge)->getPtrToUPtr());
 	innerEdges.push_back((*frontEdge)->edge->getPtrToUPtr());
@@ -307,9 +358,8 @@ const bool XOR(const bool b0, const bool b1)
 const bool Crystallite3::edgeIntersectionCheck(const unique_ptr<FrontEdge3>* frontEdge)
 {
 	unique_ptr<Vertex3>* opp_verts[2];
-	(*frontEdge)->findOppositeVertexes(
-		frontFacets,
-		frontEdges,
+	findOppositeVertexes(
+		frontEdge,
 		opp_verts[0],
 		opp_verts[1]);
 	Vec3 opp_verts_poses[2];
@@ -515,7 +565,7 @@ const bool Crystallite3::facetIntersectionCheck(const unique_ptr<Vertex3>* v0, c
 const bool Crystallite3::facetsIntersectionCheck(const unique_ptr<FrontEdge3>* frontEdge)
 {
 	unique_ptr<Vertex3>* opp_verts[2];
-	(*frontEdge)->findOppositeVertexes(frontFacets, frontEdges, opp_verts[0], opp_verts[1]);
+	findOppositeVertexes(frontEdge, opp_verts[0], opp_verts[1]);
 
 	Vec3 opp_verts_poses[2];
 	opp_verts_poses[0] = (*opp_verts[0])->getPosition();
@@ -562,7 +612,7 @@ const bool Crystallite3::insideSimplex3Check(const Vec3& p0, const Vec3& p1, con
 const bool Crystallite3::anyVertexInsidePotentialSimplex3Check(const unique_ptr<FrontEdge3>* frontEdge)
 {
 	unique_ptr<Vertex3>* opp_verts[2];
-	(*frontEdge)->findOppositeVertexes(frontFacets, frontEdges, opp_verts[0], opp_verts[1]);
+	findOppositeVertexes(frontEdge, opp_verts[0], opp_verts[1]);
 
 	Vec3 points[4];
 	points[0] = (*opp_verts[0])->getPosition();
@@ -587,14 +637,13 @@ const bool Crystallite3::anyVertexInsidePotentialSimplex3Check(const unique_ptr<
 
 const bool Crystallite3::frontSplitCheck(const unique_ptr<FrontEdge3>* frontEdge)
 {
-	unique_ptr<FrontEdge3>* opp_f_edge = (*frontEdge)->findOppositeFrontEdge(frontFacets, frontEdges);
+	unique_ptr<FrontEdge3>* opp_f_edge = findOppositeFrontEdge(frontEdge);
 	if (!opp_f_edge)
 		return false;
 
 	unique_ptr<Vertex3>* opp_f_edge_opp_verts[2];
-	(*opp_f_edge)->findOppositeVertexes(
-		frontFacets, 
-		frontEdges, 
+	findOppositeVertexes(
+		opp_f_edge,
 		opp_f_edge_opp_verts[0], 
 		opp_f_edge_opp_verts[1]);
 
@@ -610,7 +659,7 @@ const bool Crystallite3::frontSplitCheck(const unique_ptr<FrontEdge3>* frontEdge
 const bool Crystallite3::parallelFacetsCheck(const unique_ptr<FrontEdge3>* frontEdge)
 {
 	unique_ptr<FrontFacet3>* adj_f_facets[2];
-	(*frontEdge)->findAdjacentFrontFacets(frontFacets, adj_f_facets[0], adj_f_facets[1]);
+	findAdjacentFrontFacets(frontEdge, adj_f_facets[0], adj_f_facets[1]);
 
 	unique_ptr<Vertex3>* opp_verts[2];
 	opp_verts[0] = (*adj_f_facets[0])->facet->findVertexNotIncludedInEdge(*(*frontEdge)->edge);
@@ -700,7 +749,7 @@ unique_ptr<FrontEdge3>* Crystallite3::currentFrontEdge(double maxExCos)
 		if (!*frontEdges[i])
 			continue;
 
-		double curr_excos = (*frontEdges[i])->getAngleExCos(frontFacets);
+		double curr_excos = (*frontEdges[i])->getAngleExCos(this);
 		if (curr_excos > curr_max_excos &&
 			curr_excos < maxExCos)
 		{
@@ -714,14 +763,14 @@ unique_ptr<FrontEdge3>* Crystallite3::currentFrontEdge(double maxExCos)
 
 const bool Crystallite3::exhaustWithoutNewVertexPriorityPredicate(unique_ptr<FrontEdge3>* currentFrontEdge)
 {
-	if ((*currentFrontEdge)->getAngleExCos(frontFacets) > COS_DEG_70)
+	if ((*currentFrontEdge)->getAngleExCos(this) > COS_DEG_70)
 		return true;
 
 	unique_ptr<Vertex3>* opp_verts[2];
-	(*currentFrontEdge)->findOppositeVertexes(frontFacets, frontEdges, opp_verts[0], opp_verts[1]);
+	findOppositeVertexes(currentFrontEdge, opp_verts[0], opp_verts[1]);
 	if (findFrontEdge(opp_verts[0], opp_verts[1]) ||
-		((*currentFrontEdge)->getAngleExCos(frontFacets) < COS_DEG_70 &&
-		 (*currentFrontEdge)->getAngleExCos(frontFacets) > COS_DEG_100 &&
+		((*currentFrontEdge)->getAngleExCos(this) < COS_DEG_70 &&
+		 (*currentFrontEdge)->getAngleExCos(this) > COS_DEG_100 &&
 		 (**opp_verts[1] - **opp_verts[0]).sqrMagnitude() <= _preferredLength * _preferredLength))
 		return true;
 
@@ -730,10 +779,57 @@ const bool Crystallite3::exhaustWithoutNewVertexPriorityPredicate(unique_ptr<Fro
 
 const bool Crystallite3::exhaustWithNewVertexPriorityPredicate(unique_ptr<FrontEdge3>* currentFrontEdge)
 {
-	if ((*currentFrontEdge)->getAngleExCos(frontFacets) < COS_DEG_120)
+	if ((*currentFrontEdge)->getAngleExCos(this) < COS_DEG_120)
 		return true;
 
 	return false;
+}
+
+const Crystallite3::ExhaustType Crystallite3::exhaustTypeQualityPriorityCalculation(
+	unique_ptr<FrontEdge3>* currentFrontEdge, 
+	unique_ptr<FrontFacet3>** out_withNWFrontFacet, Vec3** out_withNWNewVertPos)
+{
+	if (frontSplitCheck(currentFrontEdge))
+		return DONT_EXHAUST;
+
+	if (parallelFacetsCheck(currentFrontEdge) ||
+		edgeIntersectionCheck(currentFrontEdge) ||
+		facetsIntersectionCheck(currentFrontEdge) ||
+		anyVertexInsidePotentialSimplex3Check(currentFrontEdge))
+	{
+		return WITH_NEW_VERTEX;
+	}
+
+	unique_ptr<Vertex3>* opp_verts[2];
+	findOppositeVertexes(currentFrontEdge, opp_verts[0], opp_verts[1]);
+	double without_nv_quality;
+}
+
+Vec3 Crystallite3::computeNormalInSimplex3(unique_ptr<FrontFacet3>* frontFacet, const Vec3& oppositeVertPos)
+{
+	Vec3 third_pos = (*(*frontFacet)->facet->findVertexNotIncludedInEdge(**(*frontFacet)->facet->edges[0]))->getPosition();
+	Vec3 normal = Vec3::crossProduct(
+		(*(*(*frontFacet)->facet->edges[0])->vertexes[0])->getPosition() - third_pos,
+		(*(*(*frontFacet)->facet->edges[0])->vertexes[1])->getPosition() - third_pos).normalize();
+	if (Vec3::dotProduct(normal, oppositeVertPos - third_pos) > 0.0)
+		normal *= -1.0;
+
+	return normal;
+}
+
+Vec3 Crystallite3::computeNormalInSimplex3(unique_ptr<FrontFacet3>* frontFacet, unique_ptr<Edge3>* oneOfTheRemainingEdges)
+{
+	Vec3 opposite = (*frontFacet)->facet->contains(**(*oneOfTheRemainingEdges)->vertexes[0]) ?
+		(*(*oneOfTheRemainingEdges)->vertexes[1])->getPosition() :
+		(*(*oneOfTheRemainingEdges)->vertexes[0])->getPosition();
+	Vec3 third_pos = (*(*frontFacet)->facet->findVertexNotIncludedInEdge(**(*frontFacet)->facet->edges[0]))->getPosition();
+	Vec3 normal = Vec3::crossProduct(
+		(*(*(*frontFacet)->facet->edges[0])->vertexes[0])->getPosition() - third_pos,
+		(*(*(*frontFacet)->facet->edges[0])->vertexes[1])->getPosition() - third_pos).normalize();
+	if (Vec3::dotProduct(normal, opposite - third_pos) > 0.0)
+		normal *= -1.0;
+
+	return normal;
 }
 
 void Crystallite3::exhaustWithoutNewVertexOppositeEdgeExists(unique_ptr<FrontEdge3>* frontEdge, unique_ptr<FrontEdge3>* oppositeEdge)
@@ -741,14 +837,14 @@ void Crystallite3::exhaustWithoutNewVertexOppositeEdgeExists(unique_ptr<FrontEdg
 	unique_ptr<FrontEdge3>* opp_f_edge = oppositeEdge;
 
 	unique_ptr<FrontFacet3>* opp_f_facets[2];
-	(*opp_f_edge)->findAdjacentFrontFacets(
-		frontFacets,
+	findAdjacentFrontFacets(
+		opp_f_edge,
 		opp_f_facets[0], opp_f_facets[1]);
 
 	unique_ptr<FrontFacet3>* main_f_facets[3];
 	unique_ptr<Vertex3>* main_vert;
-	(*frontEdge)->findAdjacentFrontFacets(
-		frontFacets,
+	findAdjacentFrontFacets(
+		frontEdge,
 		main_f_facets[0], main_f_facets[1]);
 	if ((*opp_f_facets[0])->facet->contains(**(*frontEdge)->edge->vertexes[0]))
 	{
@@ -772,18 +868,18 @@ void Crystallite3::exhaustWithoutNewVertexOppositeEdgeExists(unique_ptr<FrontEdg
 	}
 
 	unique_ptr<FrontEdge3>* new_f_facet_f_edge;
-	unique_ptr<Edge3>* new_facet_edges[3];
+	unique_ptr<Edge3>* new_simp_edges[3];
 	for (int i = 0; i < 3; i++)
 	{
-		new_facet_edges[i] = (*main_f_facets[i])->facet->findEdgeNotContainingVertex(**main_vert);
-		new_f_facet_f_edge = findFrontEdge(new_facet_edges[i]);
+		new_simp_edges[i] = (*main_f_facets[i])->facet->findEdgeNotContainingVertex(**main_vert);
+		new_f_facet_f_edge = findFrontEdge(new_simp_edges[i]);
 		(*new_f_facet_f_edge)->needProcessing = true;
 	}
 
 	auto new_f_facet = addFrontFacet3(
-		new_facet_edges[0],
-		new_facet_edges[1],
-		new_facet_edges[2]);
+		new_simp_edges[0],
+		new_simp_edges[1],
+		new_simp_edges[2]);
 	Vec3 center = (*new_f_facet)->computeCenter();
 	Vec3 opposite = (*main_vert)->getPosition();
 	Vec3 third_pos = (*(*new_f_facet)->facet->findVertexNotIncludedInEdge(*(*oppositeEdge)->edge))->getPosition();
@@ -816,8 +912,8 @@ void Crystallite3::exhaustWithoutNewVertexOppositeEdgeDontExists(unique_ptr<Fron
 	unique_ptr<FrontEdge3>* opp_f_edge = nullptr;
 
 	unique_ptr<FrontFacet3>* adj_f_facets[2];
-	(*frontEdge)->findAdjacentFrontFacets(
-		frontFacets,
+	findAdjacentFrontFacets(
+		frontEdge,
 		adj_f_facets[0], adj_f_facets[1]);
 
 	unique_ptr<Vertex3>* opp_verts[2];
@@ -828,15 +924,15 @@ void Crystallite3::exhaustWithoutNewVertexOppositeEdgeDontExists(unique_ptr<Fron
 	addFrontEdge3(opp_f_edge);
 
 	unique_ptr<FrontEdge3>* new_f_facet_f_edge;
-	unique_ptr<Edge3>* new_facet_edges[3];
-	new_facet_edges[2] = (*opp_f_edge)->edge->getPtrToUPtr();
+	unique_ptr<Edge3>* new_simp_edges[3];
+	new_simp_edges[2] = (*opp_f_edge)->edge->getPtrToUPtr();
 
 	for (auto &edge : (*adj_f_facets[0])->facet->edges)
 		if ((*edge)->contains(**(*frontEdge)->edge->vertexes[0]) &&
 			((*edge)->contains(**(*opp_f_edge)->edge->vertexes[0]) ||
 			(*edge)->contains(**(*opp_f_edge)->edge->vertexes[1])))
 		{
-			new_facet_edges[0] = edge;
+			new_simp_edges[0] = edge;
 			new_f_facet_f_edge = findFrontEdge(edge);
 			if ((*new_f_facet_f_edge)->needProcessing == false)
 				(*new_f_facet_f_edge)->needProcessing = true;
@@ -847,18 +943,18 @@ void Crystallite3::exhaustWithoutNewVertexOppositeEdgeDontExists(unique_ptr<Fron
 			((*edge)->contains(**(*opp_f_edge)->edge->vertexes[0]) ||
 			(*edge)->contains(**(*opp_f_edge)->edge->vertexes[1])))
 		{
-			new_facet_edges[1] = edge;
+			new_simp_edges[1] = edge;
 			new_f_facet_f_edge = findFrontEdge(edge);
 			if ((*new_f_facet_f_edge)->needProcessing == false)
 				(*new_f_facet_f_edge)->needProcessing = true;
 			break;
 		}
 	auto new_f_facet = addFrontFacet3(
-		new_facet_edges[0],
-		new_facet_edges[1],
-		new_facet_edges[2]);
+		new_simp_edges[0],
+		new_simp_edges[1],
+		new_simp_edges[2]);
 	Vec3 center = (*new_f_facet)->computeCenter();
-	Vec3 opposite = (*new_facet_edges[0])->contains(**(*frontEdge)->edge->vertexes[0]) ?
+	Vec3 opposite = (*new_simp_edges[0])->contains(**(*frontEdge)->edge->vertexes[0]) ?
 		(*(*frontEdge)->edge->vertexes[1])->getPosition() :
 		(*(*frontEdge)->edge->vertexes[0])->getPosition();
 	Vec3 third_pos = (*(*new_f_facet)->facet->findVertexNotIncludedInEdge(*(*opp_f_edge)->edge))->getPosition();
@@ -874,7 +970,7 @@ void Crystallite3::exhaustWithoutNewVertexOppositeEdgeDontExists(unique_ptr<Fron
 			((*edge)->contains(**(*opp_f_edge)->edge->vertexes[0]) ||
 			(*edge)->contains(**(*opp_f_edge)->edge->vertexes[1])))
 		{
-			new_facet_edges[0] = edge;
+			new_simp_edges[0] = edge;
 			new_f_facet_f_edge = findFrontEdge(edge);
 			if ((*new_f_facet_f_edge)->needProcessing == false)
 				(*new_f_facet_f_edge)->needProcessing = true;
@@ -885,18 +981,18 @@ void Crystallite3::exhaustWithoutNewVertexOppositeEdgeDontExists(unique_ptr<Fron
 			((*edge)->contains(**(*opp_f_edge)->edge->vertexes[0]) ||
 			(*edge)->contains(**(*opp_f_edge)->edge->vertexes[1])))
 		{
-			new_facet_edges[1] = edge;
+			new_simp_edges[1] = edge;
 			new_f_facet_f_edge = findFrontEdge(edge);
 			if ((*new_f_facet_f_edge)->needProcessing == false)
 				(*new_f_facet_f_edge)->needProcessing = true;
 			break;
 		}
 	new_f_facet = addFrontFacet3(
-		new_facet_edges[0],
-		new_facet_edges[1],
-		new_facet_edges[2]);
+		new_simp_edges[0],
+		new_simp_edges[1],
+		new_simp_edges[2]);
 	center = (*new_f_facet)->computeCenter();
-	opposite = (*new_facet_edges[0])->contains(**(*frontEdge)->edge->vertexes[0]) ?
+	opposite = (*new_simp_edges[0])->contains(**(*frontEdge)->edge->vertexes[0]) ?
 		(*(*frontEdge)->edge->vertexes[1])->getPosition() :
 		(*(*frontEdge)->edge->vertexes[0])->getPosition();
 	third_pos = (*(*new_f_facet)->facet->findVertexNotIncludedInEdge(*(*opp_f_edge)->edge))->getPosition();
@@ -924,7 +1020,7 @@ void Crystallite3::exhaustWithoutNewVertex(unique_ptr<FrontEdge3>* frontEdge, co
 	if (oppositeEdgeExistence && oppositeEdge)
 		opp_f_edge = oppositeEdge;
 	else if (oppositeEdgeExistence)
-		opp_f_edge = (*frontEdge)->findOppositeFrontEdge(frontFacets, frontEdges);
+		opp_f_edge = findOppositeFrontEdge(frontEdge);
 
 	if ((oppositeEdge && oppositeEdgeExistence) ||
 		opp_f_edge)
@@ -937,16 +1033,67 @@ void Crystallite3::exhaustWithoutNewVertex(unique_ptr<FrontEdge3>* frontEdge, co
 	}
 }
 
+//
+const bool Crystallite3::newVertexPosition(unique_ptr<FrontFacet3>* frontFacet, Vec3 & out_pos)
+{
+	return false;
+}
+
 unique_ptr<FrontFacet3>* Crystallite3::chooseFrontFacetForExhaustionWithNewVertex(unique_ptr<FrontEdge3>* frontEdge)
 {
 	unique_ptr<FrontFacet3>* adj_f_facets[2];
-	(*frontEdge)->findAdjacentFrontFacets(
-		frontFacets,
+	findAdjacentFrontFacets(
+		frontEdge,
 		adj_f_facets[0], adj_f_facets[1]);
 
 	return (*adj_f_facets[0])->computeQuality() < (*adj_f_facets[1])->computeQuality() ?
 		adj_f_facets[0] :
 		adj_f_facets[1];
+}
+
+void Crystallite3::exhaustWithNewVertex(unique_ptr<FrontFacet3>* frontFacet, Vec3 vertPos)
+{
+	unique_ptr<Vertex3>* new_vert = (new Vertex3(vertPos))->getPtrToUPtr();
+	innerVerts.push_back(new_vert);
+
+	unique_ptr<Edge3>* new_simp_edges[6];
+	new_simp_edges[0] = (*(*frontFacet)->facet->edges[0])->getPtrToUPtr();
+	new_simp_edges[1] = (*(*frontFacet)->facet->edges[1])->getPtrToUPtr();
+	new_simp_edges[2] = (*(*frontFacet)->facet->edges[2])->getPtrToUPtr();
+	new_simp_edges[3] = (*addFrontEdge3((*new_simp_edges[0])->vertexes[0], new_vert))->edge->getPtrToUPtr();
+	new_simp_edges[4] = (*addFrontEdge3((*new_simp_edges[0])->vertexes[1], new_vert))->edge->getPtrToUPtr();
+	auto far_vert = (*frontFacet)->facet->findVertexNotIncludedInEdge(**new_simp_edges[0]);
+	new_simp_edges[5] = (*addFrontEdge3(far_vert, new_vert))->edge->getPtrToUPtr();
+
+	(*findFrontEdge(new_simp_edges[0]))->needProcessing = true;
+	(*findFrontEdge(new_simp_edges[1]))->needProcessing = true;
+	(*findFrontEdge(new_simp_edges[2]))->needProcessing = true;
+	
+	auto new_f_facet = addFrontFacet3(
+		new_simp_edges[0],
+		new_simp_edges[3],
+		new_simp_edges[4]);
+	(*new_f_facet)->setNormal(computeNormalInSimplex3(new_f_facet, (*far_vert)->getPosition()));
+
+	new_f_facet = addFrontFacet3(
+		new_simp_edges[2],
+		new_simp_edges[3],
+		new_simp_edges[5]);
+	(*new_f_facet)->setNormal(computeNormalInSimplex3(new_f_facet, (*(*new_simp_edges[0])->vertexes[1])->getPosition()));
+
+	new_f_facet = addFrontFacet3(
+		new_simp_edges[1],
+		new_simp_edges[4],
+		new_simp_edges[5]);
+	(*new_f_facet)->setNormal(computeNormalInSimplex3(new_f_facet, (*(*new_simp_edges[0])->vertexes[0])->getPosition()));
+
+	innerSimps.push_back((new Simplex3(
+		**(*new_simp_edges[0])->vertexes[0],
+		**(*new_simp_edges[0])->vertexes[1],
+		**(*new_simp_edges[5])->vertexes[0],
+		**(*new_simp_edges[5])->vertexes[1]))->getPtrToUPtr());
+
+	delete frontFacet->release();
 }
 
 const bool Crystallite3::NewVertexPosition_OLD(unique_ptr<FrontEdge3>* frontEdge, Vec3& out_pos)
@@ -958,7 +1105,7 @@ const bool Crystallite3::NewVertexPosition_OLD(unique_ptr<FrontEdge3>* frontEdge
 	Vec3 orig = 0.5 * (f_edge_verts_poses[0] + f_edge_verts_poses[1]);
 
 	unique_ptr<FrontFacet3>* f_facets[2];
-	(*frontEdge)->findAdjacentFrontFacets(frontFacets, f_facets[0], f_facets[1]);
+	findAdjacentFrontFacets(frontEdge, f_facets[0], f_facets[1]);
 
 	unique_ptr<Vertex3>* opp_verts[2];
 	opp_verts[0] = (*f_facets[0])->facet->findVertexNotIncludedInEdge(*(*frontEdge)->edge);
@@ -1037,9 +1184,7 @@ const bool Crystallite3::NewVertexPosition_OLD(unique_ptr<FrontEdge3>* frontEdge
 void Crystallite3::ExhaustWithNewVertex_OLD(unique_ptr<FrontEdge3>* frontEdge, Vec3 vertPos)
 {
 	unique_ptr<FrontFacet3>* adj_f_facets[2];
-	(*frontEdge)->findAdjacentFrontFacets(
-		frontFacets,
-		adj_f_facets[0], adj_f_facets[1]);
+	findAdjacentFrontFacets(frontEdge, adj_f_facets[0], adj_f_facets[1]);
 
 	unique_ptr<Vertex3>* opp_verts[2];
 	opp_verts[0] = (*adj_f_facets[0])->facet->findVertexNotIncludedInEdge(*(*frontEdge)->edge);
@@ -1048,106 +1193,136 @@ void Crystallite3::ExhaustWithNewVertex_OLD(unique_ptr<FrontEdge3>* frontEdge, V
 	unique_ptr<Vertex3>* new_vert = (new Vertex3(vertPos))->getPtrToUPtr();
 	innerVerts.push_back(new_vert);
 
-	unique_ptr<Edge3>* new_facet_edges[9];
-	new_facet_edges[0] = (*frontEdge)->edge->getPtrToUPtr();
-	new_facet_edges[1] = (*addFrontEdge3((*frontEdge)->edge->vertexes[0], new_vert))->edge->getPtrToUPtr();
-	new_facet_edges[2] = (*addFrontEdge3((*frontEdge)->edge->vertexes[1], new_vert))->edge->getPtrToUPtr();
-	new_facet_edges[3] = (*adj_f_facets[0])->facet->findEdge(**(*frontEdge)->edge->vertexes[0], **opp_verts[0]);
-	new_facet_edges[4] = (*addFrontEdge3(opp_verts[0], new_vert))->edge->getPtrToUPtr();
-	new_facet_edges[5] = (*adj_f_facets[0])->facet->findEdge(**(*frontEdge)->edge->vertexes[1], **opp_verts[0]);
-	new_facet_edges[6] = (*adj_f_facets[1])->facet->findEdge(**(*frontEdge)->edge->vertexes[0], **opp_verts[1]);
-	new_facet_edges[7] = (*addFrontEdge3(opp_verts[1], new_vert))->edge->getPtrToUPtr();
-	new_facet_edges[8] = (*adj_f_facets[1])->facet->findEdge(**(*frontEdge)->edge->vertexes[1], **opp_verts[1]);
+	unique_ptr<Edge3>* new_simp_edges[9];
+	new_simp_edges[0] = (*frontEdge)->edge->getPtrToUPtr();
+	new_simp_edges[1] = (*addFrontEdge3((*frontEdge)->edge->vertexes[0], new_vert))->edge->getPtrToUPtr();
+	new_simp_edges[2] = (*addFrontEdge3((*frontEdge)->edge->vertexes[1], new_vert))->edge->getPtrToUPtr();
+	new_simp_edges[3] = (*adj_f_facets[0])->facet->findEdge(**(*frontEdge)->edge->vertexes[0], **opp_verts[0]);
+	new_simp_edges[4] = (*addFrontEdge3(opp_verts[0], new_vert))->edge->getPtrToUPtr();
+	new_simp_edges[5] = (*adj_f_facets[0])->facet->findEdge(**(*frontEdge)->edge->vertexes[1], **opp_verts[0]);
+	new_simp_edges[6] = (*adj_f_facets[1])->facet->findEdge(**(*frontEdge)->edge->vertexes[0], **opp_verts[1]);
+	new_simp_edges[7] = (*addFrontEdge3(opp_verts[1], new_vert))->edge->getPtrToUPtr();
+	new_simp_edges[8] = (*adj_f_facets[1])->facet->findEdge(**(*frontEdge)->edge->vertexes[1], **opp_verts[1]);
 
-	(*findFrontEdge(new_facet_edges[3]))->needProcessing = true;
-	(*findFrontEdge(new_facet_edges[5]))->needProcessing = true;
-	(*findFrontEdge(new_facet_edges[6]))->needProcessing = true;
-	(*findFrontEdge(new_facet_edges[8]))->needProcessing = true;
+	(*findFrontEdge(new_simp_edges[3]))->needProcessing = true;
+	(*findFrontEdge(new_simp_edges[5]))->needProcessing = true;
+	(*findFrontEdge(new_simp_edges[6]))->needProcessing = true;
+	(*findFrontEdge(new_simp_edges[8]))->needProcessing = true;
 
 	innerFacets.push_back((new Facet3(
-		**new_facet_edges[0], 
-		**new_facet_edges[1], 
-		**new_facet_edges[2]))->getPtrToUPtr());
+		**new_simp_edges[0], 
+		**new_simp_edges[1], 
+		**new_simp_edges[2]))->getPtrToUPtr());
 
 	unique_ptr<FrontFacet3>* new_f_facet;
 	new_f_facet = addFrontFacet3(
-		new_facet_edges[1],
-		new_facet_edges[3],
-		new_facet_edges[4]);
+		new_simp_edges[1],
+		new_simp_edges[3],
+		new_simp_edges[4]);
 	Vec3 center = (*new_f_facet)->computeCenter();
-	Vec3 opposite = (*new_f_facet)->facet->contains(**(*new_facet_edges[0])->vertexes[0]) ?
-		(*(*new_facet_edges[0])->vertexes[1])->getPosition() :
-		(*(*new_facet_edges[0])->vertexes[0])->getPosition();
-	Vec3 third_pos = (*(*new_f_facet)->facet->findVertexNotIncludedInEdge(**new_facet_edges[4]))->getPosition();
+	Vec3 opposite = (*new_f_facet)->facet->contains(**(*new_simp_edges[0])->vertexes[0]) ?
+		(*(*new_simp_edges[0])->vertexes[1])->getPosition() :
+		(*(*new_simp_edges[0])->vertexes[0])->getPosition();
+	Vec3 third_pos = (*(*new_f_facet)->facet->findVertexNotIncludedInEdge(**new_simp_edges[4]))->getPosition();
 	Vec3 normal = Vec3::crossProduct(
-		(*(*new_facet_edges[4])->vertexes[0])->getPosition() - third_pos,
-		(*(*new_facet_edges[4])->vertexes[1])->getPosition() - third_pos).normalize();
+		(*(*new_simp_edges[4])->vertexes[0])->getPosition() - third_pos,
+		(*(*new_simp_edges[4])->vertexes[1])->getPosition() - third_pos).normalize();
 	if (Vec3::dotProduct(normal, opposite - center) > 0.0)
 		normal *= -1.0;
 	(*new_f_facet)->setNormal(normal);
 
 	new_f_facet = addFrontFacet3(
-		new_facet_edges[2],
-		new_facet_edges[4],
-		new_facet_edges[5]);
+		new_simp_edges[2],
+		new_simp_edges[4],
+		new_simp_edges[5]);
 	center = (*new_f_facet)->computeCenter();
-	opposite = (*new_f_facet)->facet->contains(**(*new_facet_edges[0])->vertexes[0]) ?
-		(*(*new_facet_edges[0])->vertexes[1])->getPosition() :
-		(*(*new_facet_edges[0])->vertexes[0])->getPosition();
-	third_pos = (*(*new_f_facet)->facet->findVertexNotIncludedInEdge(**new_facet_edges[4]))->getPosition();
+	opposite = (*new_f_facet)->facet->contains(**(*new_simp_edges[0])->vertexes[0]) ?
+		(*(*new_simp_edges[0])->vertexes[1])->getPosition() :
+		(*(*new_simp_edges[0])->vertexes[0])->getPosition();
+	third_pos = (*(*new_f_facet)->facet->findVertexNotIncludedInEdge(**new_simp_edges[4]))->getPosition();
 	normal = Vec3::crossProduct(
-		(*(*new_facet_edges[4])->vertexes[0])->getPosition() - third_pos,
-		(*(*new_facet_edges[4])->vertexes[1])->getPosition() - third_pos).normalize();
+		(*(*new_simp_edges[4])->vertexes[0])->getPosition() - third_pos,
+		(*(*new_simp_edges[4])->vertexes[1])->getPosition() - third_pos).normalize();
 	if (Vec3::dotProduct(normal, opposite - center) > 0.0)
 		normal *= -1.0;
 	(*new_f_facet)->setNormal(normal);
 
 	new_f_facet = addFrontFacet3(
-		new_facet_edges[1],
-		new_facet_edges[6],
-		new_facet_edges[7]);
+		new_simp_edges[1],
+		new_simp_edges[6],
+		new_simp_edges[7]);
 	center = (*new_f_facet)->computeCenter();
-	opposite = (*new_f_facet)->facet->contains(**(*new_facet_edges[0])->vertexes[0]) ?
-		(*(*new_facet_edges[0])->vertexes[1])->getPosition() :
-		(*(*new_facet_edges[0])->vertexes[0])->getPosition();
-	third_pos = (*(*new_f_facet)->facet->findVertexNotIncludedInEdge(**new_facet_edges[7]))->getPosition();
+	opposite = (*new_f_facet)->facet->contains(**(*new_simp_edges[0])->vertexes[0]) ?
+		(*(*new_simp_edges[0])->vertexes[1])->getPosition() :
+		(*(*new_simp_edges[0])->vertexes[0])->getPosition();
+	third_pos = (*(*new_f_facet)->facet->findVertexNotIncludedInEdge(**new_simp_edges[7]))->getPosition();
 	normal = Vec3::crossProduct(
-		(*(*new_facet_edges[7])->vertexes[0])->getPosition() - third_pos,
-		(*(*new_facet_edges[7])->vertexes[1])->getPosition() - third_pos).normalize();
+		(*(*new_simp_edges[7])->vertexes[0])->getPosition() - third_pos,
+		(*(*new_simp_edges[7])->vertexes[1])->getPosition() - third_pos).normalize();
 	if (Vec3::dotProduct(normal, opposite - center) > 0.0)
 		normal *= -1.0;
 	(*new_f_facet)->setNormal(normal);
 
 	new_f_facet = addFrontFacet3(
-		new_facet_edges[2],
-		new_facet_edges[8],
-		new_facet_edges[7]);
+		new_simp_edges[2],
+		new_simp_edges[8],
+		new_simp_edges[7]);
 	center = (*new_f_facet)->computeCenter();
-	opposite = (*new_f_facet)->facet->contains(**(*new_facet_edges[0])->vertexes[0]) ?
-		(*(*new_facet_edges[0])->vertexes[1])->getPosition() :
-		(*(*new_facet_edges[0])->vertexes[0])->getPosition();
-	third_pos = (*(*new_f_facet)->facet->findVertexNotIncludedInEdge(**new_facet_edges[7]))->getPosition();
+	opposite = (*new_f_facet)->facet->contains(**(*new_simp_edges[0])->vertexes[0]) ?
+		(*(*new_simp_edges[0])->vertexes[1])->getPosition() :
+		(*(*new_simp_edges[0])->vertexes[0])->getPosition();
+	third_pos = (*(*new_f_facet)->facet->findVertexNotIncludedInEdge(**new_simp_edges[7]))->getPosition();
 	normal = Vec3::crossProduct(
-		(*(*new_facet_edges[7])->vertexes[0])->getPosition() - third_pos,
-		(*(*new_facet_edges[7])->vertexes[1])->getPosition() - third_pos).normalize();
+		(*(*new_simp_edges[7])->vertexes[0])->getPosition() - third_pos,
+		(*(*new_simp_edges[7])->vertexes[1])->getPosition() - third_pos).normalize();
 	if (Vec3::dotProduct(normal, opposite - center) > 0.0)
 		normal *= -1.0;
 	(*new_f_facet)->setNormal(normal);
 
 	innerSimps.push_back((new Simplex3(
-		**(*new_facet_edges[0])->vertexes[0],
-		**(*new_facet_edges[0])->vertexes[1],
-		**(*new_facet_edges[4])->vertexes[0],
-		**(*new_facet_edges[4])->vertexes[1]))->getPtrToUPtr());
+		**(*new_simp_edges[0])->vertexes[0],
+		**(*new_simp_edges[0])->vertexes[1],
+		**(*new_simp_edges[4])->vertexes[0],
+		**(*new_simp_edges[4])->vertexes[1]))->getPtrToUPtr());
 	innerSimps.push_back((new Simplex3(
-		**(*new_facet_edges[0])->vertexes[0],
-		**(*new_facet_edges[0])->vertexes[1],
-		**(*new_facet_edges[7])->vertexes[0],
-		**(*new_facet_edges[7])->vertexes[1]))->getPtrToUPtr());
+		**(*new_simp_edges[0])->vertexes[0],
+		**(*new_simp_edges[0])->vertexes[1],
+		**(*new_simp_edges[7])->vertexes[0],
+		**(*new_simp_edges[7])->vertexes[1]))->getPtrToUPtr());
 
 	delete adj_f_facets[0]->release();
 	delete adj_f_facets[1]->release();
 	delete frontEdge->release();
+}
+
+const bool Crystallite3::tryExhaustWithoutNewVertex(unique_ptr<FrontEdge3>* frontEdge, const bool oppositeEdgeExistence, unique_ptr<FrontEdge3>* oppositeEdge)
+{
+	if (parallelFacetsCheck(frontEdge) ||
+		edgeIntersectionCheck(frontEdge) ||
+		facetsIntersectionCheck(frontEdge) ||
+		anyVertexInsidePotentialSimplex3Check(frontEdge) ||
+		frontSplitCheck(frontEdge))
+	{
+		return false;
+	}
+
+	exhaustWithoutNewVertex(frontEdge, oppositeEdgeExistence, oppositeEdge);
+}
+
+const bool Crystallite3::tryExhaustWithNewVertex(unique_ptr<FrontEdge3>* frontEdge)
+{
+	if (edgeIntersectionCheck(frontEdge) ||
+		parallelFacetsCheck(frontEdge))
+	{
+		return false;
+	}
+
+	auto exhaust_f_facet = chooseFrontFacetForExhaustionWithNewVertex(frontEdge);
+	Vec3 new_vert_pos;
+	if (!newVertexPosition(exhaust_f_facet, new_vert_pos))
+		return false;
+
+	exhaustWithNewVertex(exhaust_f_facet, new_vert_pos);
 }
 
 template<class T>
@@ -1183,7 +1358,7 @@ const bool Crystallite3::ProcessVerySmallAngles(Polycrystal3* polycr)
 			continue;
 		}
 
-		if ((*frontEdges[i])->getAngleExCos(frontFacets) <= COS_DEG_80 ||
+		if ((*frontEdges[i])->getAngleExCos(this) <= COS_DEG_80 ||
 			parallelFacetsCheck(frontEdges[i]) ||
 			edgeIntersectionCheck(frontEdges[i]) ||
 			facetsIntersectionCheck(frontEdges[i]) ||
@@ -1266,7 +1441,7 @@ const bool Crystallite3::ProcessSmallAngles(Polycrystal3* polycr)
 			continue;
 		}
 
-		if ((*frontEdges[i])->getAngleExCos(frontFacets) <= COS_DEG_100 ||
+		if ((*frontEdges[i])->getAngleExCos(this) <= COS_DEG_100 ||
 			parallelFacetsCheck(frontEdges[i]) ||
 			edgeIntersectionCheck(frontEdges[i]) ||
 			facetsIntersectionCheck(frontEdges[i]) ||
@@ -1350,7 +1525,7 @@ const bool Crystallite3::ProcessMediumAngles(Polycrystal3* polycr)
 		}
 
 		Vec3 new_vert_pos;
-		if ((*frontEdges[i])->getAngleExCos(frontFacets) <= COS_DEG_150 ||
+		if ((*frontEdges[i])->getAngleExCos(this) <= COS_DEG_150 ||
 			edgeIntersectionCheck(frontEdges[i]) ||
 			parallelFacetsCheck(frontEdges[i]) ||
 			!NewVertexPosition_OLD(frontEdges[i], new_vert_pos))
@@ -1433,7 +1608,7 @@ void Crystallite3::ProcessLargeAngles(Polycrystal3* polycr)
 		}
 
 		Vec3 new_vert_pos;
-		if ((*frontEdges[i])->getAngleExCos(frontFacets) <= COS_DEG_180 ||
+		if ((*frontEdges[i])->getAngleExCos(this) <= COS_DEG_180 ||
 			edgeIntersectionCheck(frontEdges[i]) ||
 			parallelFacetsCheck(frontEdges[i]) ||
 			!NewVertexPosition_OLD(frontEdges[i], new_vert_pos))
@@ -1506,39 +1681,49 @@ void Crystallite3::processAngles(Polycrystal3* polycr)
 		if (!curr_f_edge)
 		{
 			polycr->outputData();
-			throw std::logic_error("currentFrontEdge returned nullptr");
+			throw std::logic_error("Crystallite3::currentFrontEdge returned nullptr");
 		}
 
-		//if (exhaustWithoutNewVertexPriorityPredicate(curr_f_edge))
-		//{
-		//	if (!tryExhaustWithoutNewVertex(curr_f_edge))
-		//	{
-		//		max_excos = (*curr_f_edge)->getAngleExCos(frontFacets);
-		//		continue;
-		//	}
-		//}
-		//else if (exhaustWithNewVertexPriorityPredicate(curr_f_edge))
-		//{
-		//	if (!tryExhaustWithNewVertex(curr_f_edge))
-		//	{
-		//		max_excos = (*curr_f_edge)->getAngleExCos(frontFacets);
-		//		continue;
-		//	}
-		//}
-		//else
-		//{
-		//	switch (exhaustTypeQualityPriorityCalculation(curr_f_edge))
-		//	{
-		//	case WITHOUT_NEW_VERTEX :
-		//		if (!tryExhaustWithoutNewVertex(curr_f_edge))
-		//			throw std::logic_error("Error in function: tryExhaustWithoutNewVertex");
-		//		break;
-		//	case WITH_NEW_VERTEX:
-		//		if (!tryExhaustWithNewVertex(curr_f_edge))
-		//			throw std::logic_error("Error in function: tryExhaustWithNewVertex");
-		//		break;
-		//	}
-		//}
+		if (exhaustWithoutNewVertexPriorityPredicate(curr_f_edge))
+		{
+			if (!tryExhaustWithoutNewVertex(curr_f_edge))
+			{
+				max_excos = (*curr_f_edge)->getAngleExCos(this);
+				continue;
+			}
+		}
+		else if (exhaustWithNewVertexPriorityPredicate(curr_f_edge))
+		{
+			if (!tryExhaustWithNewVertex(curr_f_edge))
+			{
+				max_excos = (*curr_f_edge)->getAngleExCos(this);
+				continue;
+			}
+		}
+		else
+		{
+			unique_ptr<FrontFacet3>* exhaust_from_f_facet = nullptr;
+			Vec3* new_vert_pos = nullptr;
+			switch (exhaustTypeQualityPriorityCalculation(curr_f_edge, &exhaust_from_f_facet, &new_vert_pos))
+			{
+			case WITHOUT_NEW_VERTEX :
+				exhaustWithoutNewVertex(curr_f_edge);
+				break;
+			case WITH_NEW_VERTEX :
+				if (new_vert_pos)
+				{
+					exhaustWithNewVertex(exhaust_from_f_facet, *new_vert_pos);
+					delete new_vert_pos;
+					delete exhaust_from_f_facet;
+				}
+				else
+				{
+					tryExhaustWithNewVertex(curr_f_edge);
+				}
+				
+				break;
+			}
+		}
 
 		//polycr->outputData();
 
@@ -1641,7 +1826,7 @@ void Crystallite3::processAngles_OLD(Polycrystal3* polycr)
 		//	continue;
 		//}
 		//
-		if ((*curr_f_edge)->getAngleExCos(frontFacets) > COS_DEG_100)
+		if ((*curr_f_edge)->getAngleExCos(this) > COS_DEG_100)
 		{
 			if (parallelFacetsCheck(curr_f_edge) ||
 				edgeIntersectionCheck(curr_f_edge) ||
@@ -1670,7 +1855,7 @@ void Crystallite3::processAngles_OLD(Polycrystal3* polycr)
 				//}
 				//continue;
 		
-				max_excos = (*curr_f_edge)->getAngleExCos(frontFacets);
+				max_excos = (*curr_f_edge)->getAngleExCos(this);
 				continue;
 			}
 		
@@ -1684,7 +1869,7 @@ void Crystallite3::processAngles_OLD(Polycrystal3* polycr)
 				parallelFacetsCheck(curr_f_edge) ||
 				!NewVertexPosition_OLD(curr_f_edge, new_vert_pos))
 			{
-				max_excos = (*curr_f_edge)->getAngleExCos(frontFacets);
+				max_excos = (*curr_f_edge)->getAngleExCos(this);
 				continue;
 			}
 		
@@ -1770,7 +1955,7 @@ void Crystallite3::generateMesh(const double preferredLength, Polycrystal3* poly
 	processAngles_OLD(polycr);
 	polycr->outputData();
 	if (globalIntersectionCheck())
-		throw std::logic_error("Intersection error.");
+		throw std::logic_error("Intersection error. Crystallite3::globalIntersectionCheck returned true.");
 	smoothMesh(10);
 }
 

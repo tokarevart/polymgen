@@ -17,6 +17,7 @@ class Crystallite3
 
 	enum ExhaustType
 	{
+		DONT_EXHAUST,
 		WITHOUT_NEW_VERTEX,
 		WITH_NEW_VERTEX
 	};
@@ -39,20 +40,22 @@ public:
 
 	ShellEdge3* findShellEdge(const ShellVertex3* v0, const ShellVertex3* v1) const;
 
-	unique_ptr<FrontFacet3>* findFrontFacet(unique_ptr<Facet3>* facet);
+	unique_ptr<FrontFacet3>* findFrontFacet(const unique_ptr<Facet3>* facet);
 	unique_ptr<FrontEdge3>* findFrontEdge(const unique_ptr<Vertex3>* v0, const unique_ptr<Vertex3>* v1);
-	unique_ptr<FrontEdge3>* findFrontEdge(unique_ptr<Edge3>* edge);
+	unique_ptr<FrontEdge3>* findFrontEdge(const unique_ptr<Edge3>* edge);
+
+	void findAdjacentFrontFacets(
+		const unique_ptr<FrontEdge3>* frontEdge,
+		unique_ptr<FrontFacet3>*& out_frontFacet0, unique_ptr<FrontFacet3>*& out_frontFacet1) const;
+	void findOppositeVertexes(
+		const unique_ptr<FrontEdge3>* frontEdge,
+		unique_ptr<Vertex3>*& out_vert0, unique_ptr<Vertex3>*& out_vert1) const;
+	unique_ptr<FrontEdge3>* findOppositeFrontEdge(const unique_ptr<FrontEdge3>* frontEdge) const;
 
 	// Adds new front facet and corresponding facet.
-	unique_ptr<FrontFacet3>* addFrontFacet3(
-		unique_ptr<Edge3>*& edge0, 
-		unique_ptr<Edge3>*& edge1, 
-		unique_ptr<Edge3>*& edge2);
-	unique_ptr<FrontEdge3>* addFrontEdge3(
-		unique_ptr<Vertex3>*& vert0,
-		unique_ptr<Vertex3>*& vert1);
-	void addFrontEdge3(
-		unique_ptr<FrontEdge3>*& frontEdge);
+	unique_ptr<FrontFacet3>* addFrontFacet3(unique_ptr<Edge3>* edge0, unique_ptr<Edge3>* edge1, unique_ptr<Edge3>* edge2);
+	unique_ptr<FrontEdge3>* addFrontEdge3(unique_ptr<Vertex3>* vert0, unique_ptr<Vertex3>* vert1);
+	void addFrontEdge3(unique_ptr<FrontEdge3>* frontEdge);
 
 	const bool vertexInsideFrontCheck(const Vec3& v);
 	const bool lineSegmentGlobalIntersectionCheck(const Vec3& v0, const Vec3& v1);
@@ -68,11 +71,19 @@ public:
 	const bool parallelFacetsCheck(const unique_ptr<FrontEdge3>* frontEdge);
 	const bool frontContainsOfOnly1Simplex3OrEmpty();
 
-	unique_ptr<FrontEdge3>* currentFrontEdge(double maxExCos);
-	const bool exhaustWithoutNewVertexPriorityPredicate(unique_ptr<FrontEdge3>* currentFrontEdge);
-	const bool exhaustWithNewVertexPriorityPredicate   (unique_ptr<FrontEdge3>* currentFrontEdge);
-	const ExhaustType exhaustTypeQualityPriorityCalculation   (unique_ptr<FrontEdge3>* currentFrontEdge);
+	static const double computeShortestEdgeLength(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3);
+	static const double computeLongestEdgeLength(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3);
+	static const double computeSimplex3SimpleQuality(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3);
 
+	unique_ptr<FrontEdge3>* currentFrontEdge(double maxExCos);
+	const bool exhaustWithoutNewVertexPriorityPredicate(unique_ptr<FrontEdge3>* frontEdge);
+	const bool exhaustWithNewVertexPriorityPredicate   (unique_ptr<FrontEdge3>* frontEdge);
+	const ExhaustType exhaustTypeQualityPriorityCalculation(
+		unique_ptr<FrontEdge3>* frontEdge,
+		unique_ptr<FrontFacet3>** out_withNWFrontFacet = nullptr, Vec3** out_withNWNewVertPos = nullptr);
+
+	Vec3 computeNormalInSimplex3(unique_ptr<FrontFacet3>* frontFacet, const Vec3& oppositeVertPos);
+	Vec3 computeNormalInSimplex3(unique_ptr<FrontFacet3>* frontFacet, unique_ptr<Edge3>* oneOfTheRemainingEdges);
 	void exhaustWithoutNewVertexOppositeEdgeExists    (unique_ptr<FrontEdge3>* frontEdge, unique_ptr<FrontEdge3>* oppositeEdge);
 	void exhaustWithoutNewVertexOppositeEdgeDontExists(unique_ptr<FrontEdge3>* frontEdge);
 	void exhaustWithoutNewVertex(unique_ptr<FrontEdge3>* frontEdge, const bool oppositeEdgeExistence = true, unique_ptr<FrontEdge3>* oppositeEdge = nullptr);
@@ -82,8 +93,8 @@ public:
 	const bool NewVertexPosition_OLD(unique_ptr<FrontEdge3>* frontEdge, Vec3& out_pos);
 	void ExhaustWithNewVertex_OLD(unique_ptr<FrontEdge3>* frontEdge, Vec3 vertPos);
 
-	bool tryExhaustWithoutNewVertex(unique_ptr<FrontEdge3>* frontEdge, const bool oppositeEdgeExistence = true, unique_ptr<FrontEdge3>* oppositeEdge = nullptr);
-	bool tryExhaustWithNewVertex(unique_ptr<FrontEdge3>* frontEdge);
+	const bool tryExhaustWithoutNewVertex(unique_ptr<FrontEdge3>* frontEdge, const bool oppositeEdgeExistence = true, unique_ptr<FrontEdge3>* oppositeEdge = nullptr);
+	const bool tryExhaustWithNewVertex(unique_ptr<FrontEdge3>* frontEdge);
 
 	const bool ProcessVerySmallAngles(Polycrystal3* polycr);
 	const bool ProcessSmallAngles(Polycrystal3* polycr);

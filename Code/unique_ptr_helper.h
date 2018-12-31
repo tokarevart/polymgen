@@ -13,7 +13,7 @@ public:
 	}
 
 	unique_ptr_helper() {}
-	unique_ptr_helper(T* const& ptr)
+	unique_ptr_helper(T* ptr)
 	{
 		_uniquePtr = new std::unique_ptr<T>();
 		_uniquePtr->reset(ptr);

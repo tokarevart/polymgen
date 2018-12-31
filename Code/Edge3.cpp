@@ -198,18 +198,18 @@ Edge3::Edge3(Vertex3& vertex0, Vertex3& vertex1) : unique_ptr_helper<Edge3>(this
 
 Edge3::~Edge3() {}
 
-double FrontEdge3::getAngleExCos(const vector<unique_ptr<FrontFacet3>*>& frontFacets)
+double FrontEdge3::getAngleExCos(const Crystallite3* crys)
 {
 	if (!needProcessing)
 		return _exCos;
 	
-	return computeAngleExCos(frontFacets);
+	return computeAngleExCos(crys);
 }
 
-double FrontEdge3::computeAngleExCos(const vector<unique_ptr<FrontFacet3>*>& frontFacets)
+double FrontEdge3::computeAngleExCos(const Crystallite3* crys)
 {
 	unique_ptr<FrontFacet3>* f_facets[2];
-	findAdjacentFrontFacets(frontFacets, f_facets[0], f_facets[1]);
+	crys->findAdjacentFrontFacets(getPtrToUPtr(), f_facets[0], f_facets[1]);
 
 	double normals_cos = Vec3::dotProduct((*f_facets[0])->getNormal(), (*f_facets[1])->getNormal());
 
@@ -221,10 +221,10 @@ double FrontEdge3::computeAngleExCos(const vector<unique_ptr<FrontFacet3>*>& fro
 		-normals_cos;
 }
 
-double FrontEdge3::computeAngleExCos_OLD(const vector<unique_ptr<FrontFacet3>*>& frontFacets)
+double FrontEdge3::computeAngleExCos_OLD(const Crystallite3* crys)
 {
 	unique_ptr<FrontFacet3>* f_facets[2];
-	findAdjacentFrontFacets(frontFacets, f_facets[0], f_facets[1]);
+	crys->findAdjacentFrontFacets(getPtrToUPtr(), f_facets[0], f_facets[1]);
 
 	Vec3 edge_inner_vec = 0.5 * ((*edge->vertexes[0])->getPosition() + (*edge->vertexes[1])->getPosition());
 	Vec3 opp_verts_poses[2];
@@ -244,7 +244,7 @@ double FrontEdge3::computeAngleExCos_OLD(const vector<unique_ptr<FrontFacet3>*>&
 	shell_inside_test += add_for_correct_intersect;
 
 	int intersects_num = 0;
-	for (auto &f_facet : frontFacets)
+	for (auto &f_facet : crys->frontFacets)
 	{
 		if (!*f_facet ||
 			f_facet == f_facets[0] ||
@@ -261,10 +261,10 @@ double FrontEdge3::computeAngleExCos_OLD(const vector<unique_ptr<FrontFacet3>*>&
 		-2.0 - Vec3::cos(facets_inner_vecs[0], facets_inner_vecs[1]));
 }
 
-double FrontEdge3::computeAngleCos(bool &out_isConcave, const vector<unique_ptr<FrontFacet3>*> &frontFacets)
+double FrontEdge3::computeAngleCos(bool &out_isConcave, const Crystallite3* crys)
 {
 	unique_ptr<FrontFacet3>* f_facets[2];
-	findAdjacentFrontFacets(frontFacets, f_facets[0], f_facets[1]);
+	crys->findAdjacentFrontFacets(getPtrToUPtr(), f_facets[0], f_facets[1]);
 
 	Vec3 edge_inner_vec = 0.5 * ((*edge->vertexes[0])->getPosition() + (*edge->vertexes[1])->getPosition());
 	Vec3 opp_verts_poses[2];
@@ -284,7 +284,7 @@ double FrontEdge3::computeAngleCos(bool &out_isConcave, const vector<unique_ptr<
 	shell_inside_test += add_for_correct_intersect;
 
 	int intersects_num = 0;
-	for (auto &f_facet : frontFacets)
+	for (auto &f_facet : crys->frontFacets)
 	{
 		if (!*f_facet ||
 			f_facet == f_facets[0] ||
@@ -303,10 +303,10 @@ double FrontEdge3::computeAngleCos(bool &out_isConcave, const vector<unique_ptr<
 	return Vec3::cos(facets_inner_vecs[0], facets_inner_vecs[1]);
 }
 
-double FrontEdge3::computeAngle(const vector<unique_ptr<FrontFacet3>*> &frontFacets)
+double FrontEdge3::computeAngle(const Crystallite3* crys)
 {
 	unique_ptr<FrontFacet3>* f_facets[2];
-	findAdjacentFrontFacets(frontFacets, f_facets[0], f_facets[1]);
+	crys->findAdjacentFrontFacets(getPtrToUPtr(), f_facets[0], f_facets[1]);
 
 	Vec3 edge_inner_vec = 0.5 * ((*edge->vertexes[0])->getPosition() + (*edge->vertexes[1])->getPosition());
 	Vec3 opp_verts_poses[2];
@@ -324,7 +324,7 @@ double FrontEdge3::computeAngle(const vector<unique_ptr<FrontFacet3>*> &frontFac
 	shell_inside_test += add_for_correct_intersect;
 
 	int intersects_num = 0;
-	for (auto &f_facet : frontFacets)
+	for (auto &f_facet : crys->frontFacets)
 	{
 		if (!*f_facet ||
 			f_facet == f_facets[0] ||
@@ -347,72 +347,72 @@ double FrontEdge3::computeAngle(const vector<unique_ptr<FrontFacet3>*> &frontFac
 		PI + PI - min_angle;
 }
 
-void FrontEdge3::findAdjacentFrontFacets(
-	const vector<unique_ptr<FrontFacet3>*> &frontFacets, 
-	unique_ptr<FrontFacet3>* &out_frontFacet0,
-	unique_ptr<FrontFacet3>* &out_frontFacet1)
-{
-	bool not_found_yet = true;
-	for (auto f_facet : frontFacets)
-	{
-		if (*f_facet &&
-			(*f_facet)->facet->contains(*edge))
-		{
-			if (not_found_yet)
-			{
-				out_frontFacet0 = f_facet;
-				not_found_yet = false;
-			}
-			else
-			{
-				out_frontFacet1 = f_facet;
-				return;
-			}
-		}
-	}
-
-	throw std::logic_error("Something went wrong in FrontEdge3::findAdjacentFrontFacets");
-}
-
-void FrontEdge3::findOppositeVertexes(
-	const vector<unique_ptr<FrontFacet3>*> &frontFacets, 
-	const vector<unique_ptr<FrontEdge3>*> &frontEdges, 
-	unique_ptr<Vertex3>* &out_vert0,
-	unique_ptr<Vertex3>* &out_vert1)
-{
-	unique_ptr<FrontFacet3>* around_f_facets[2];
-	findAdjacentFrontFacets(
-		frontFacets, 
-		around_f_facets[0], 
-		around_f_facets[1]);
-
-	out_vert0 = (*around_f_facets[0])->facet->findVertexNotIncludedInEdge(*edge);
-	out_vert1 = (*around_f_facets[1])->facet->findVertexNotIncludedInEdge(*edge);
-}
-
-unique_ptr<FrontEdge3>* FrontEdge3::findOppositeFrontEdge(
-	const vector<unique_ptr<FrontFacet3>*> &frontFacets, 
-	const vector<unique_ptr<FrontEdge3>*> &frontEdges)
-{
-	unique_ptr<Vertex3>* opp_verts[2];
-	findOppositeVertexes(
-		frontFacets,
-		frontEdges,
-		opp_verts[0],
-		opp_verts[1]);
-
-	for (auto f_edge : frontEdges)
-	{
-		if (*f_edge &&
-			(((*f_edge)->edge->vertexes[0] == opp_verts[0] &&
-			  (*f_edge)->edge->vertexes[1] == opp_verts[1]) ||
-			 ((*f_edge)->edge->vertexes[1] == opp_verts[0] &&
-			  (*f_edge)->edge->vertexes[0] == opp_verts[1])))
-			return f_edge;
-	}
-
-	return nullptr;
-}
+//void FrontEdge3::findAdjacentFrontFacets(
+//	const vector<unique_ptr<FrontFacet3>*> &frontFacets, 
+//	unique_ptr<FrontFacet3>* &out_frontFacet0,
+//	unique_ptr<FrontFacet3>* &out_frontFacet1)
+//{
+//	bool not_found_yet = true;
+//	for (auto f_facet : frontFacets)
+//	{
+//		if (*f_facet &&
+//			(*f_facet)->facet->contains(*edge))
+//		{
+//			if (not_found_yet)
+//			{
+//				out_frontFacet0 = f_facet;
+//				not_found_yet = false;
+//			}
+//			else
+//			{
+//				out_frontFacet1 = f_facet;
+//				return;
+//			}
+//		}
+//	}
+//
+//	throw std::logic_error("Something went wrong in FrontEdge3::findAdjacentFrontFacets");
+//}
+//
+//void FrontEdge3::findOppositeVertexes(
+//	const vector<unique_ptr<FrontFacet3>*> &frontFacets, 
+//	const vector<unique_ptr<FrontEdge3>*> &frontEdges, 
+//	unique_ptr<Vertex3>* &out_vert0,
+//	unique_ptr<Vertex3>* &out_vert1)
+//{
+//	unique_ptr<FrontFacet3>* around_f_facets[2];
+//	findAdjacentFrontFacets(
+//		frontFacets, 
+//		around_f_facets[0], 
+//		around_f_facets[1]);
+//
+//	out_vert0 = (*around_f_facets[0])->facet->findVertexNotIncludedInEdge(*edge);
+//	out_vert1 = (*around_f_facets[1])->facet->findVertexNotIncludedInEdge(*edge);
+//}
+//
+//unique_ptr<FrontEdge3>* FrontEdge3::findOppositeFrontEdge(
+//	const vector<unique_ptr<FrontFacet3>*> &frontFacets, 
+//	const vector<unique_ptr<FrontEdge3>*> &frontEdges)
+//{
+//	unique_ptr<Vertex3>* opp_verts[2];
+//	findOppositeVertexes(
+//		frontFacets,
+//		frontEdges,
+//		opp_verts[0],
+//		opp_verts[1]);
+//
+//	for (auto f_edge : frontEdges)
+//	{
+//		if (*f_edge &&
+//			(((*f_edge)->edge->vertexes[0] == opp_verts[0] &&
+//			  (*f_edge)->edge->vertexes[1] == opp_verts[1]) ||
+//			 ((*f_edge)->edge->vertexes[1] == opp_verts[0] &&
+//			  (*f_edge)->edge->vertexes[0] == opp_verts[1])))
+//			return f_edge;
+//	}
+//
+//	return nullptr;
+//}
 
 FrontEdge3::FrontEdge3(Edge3* edge) : edge(edge), unique_ptr_helper<FrontEdge3>(this) 
 {
