@@ -17,8 +17,8 @@ public:
 	ShellEdge3* belongsToShellEdge = nullptr;
 	ShellVertex3* belongsToShellVertex = nullptr;
 	
-	const Vec3& getPosition() const;
-	      void  setPosition(const Vec3& newPos);
+	const Point3& getPosition() const;
+	      void  setPosition(const Point3& newPos);
 	      void  setPosition(const double coor0, const double coor1, const double coor2);
 		  
 	double& operator[](const int axis);
@@ -29,6 +29,6 @@ public:
 
 	Vertex3();
 	Vertex3(const double coor0, const double coor1, const double coor2);
-	Vertex3(const Vec3& position);
+	Vertex3(const Point3& position);
 	~Vertex3();
 };

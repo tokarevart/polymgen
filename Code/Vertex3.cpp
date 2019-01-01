@@ -1,7 +1,7 @@
 #include "Vertex3.h"
 
 
-void Vertex3::setPosition(const Vec3& newPos)
+void Vertex3::setPosition(const Point3& newPos)
 {
 	*_position = newPos;
 }
@@ -13,7 +13,7 @@ void Vertex3::setPosition(const double coor0, const double coor1, const double c
 	_position->coors[2] = coor2;
 }
 
-const Vec3& Vertex3::getPosition() const
+const Point3& Vertex3::getPosition() const
 {
 	return *_position;
 }
@@ -78,17 +78,17 @@ Vertex3& Vertex3::operator-=(const Vec3& right)
 
 Vertex3::Vertex3() : unique_ptr_helper<Vertex3>(this)
 {
-	_position.reset(new Vec3());
+	_position.reset(new Point3());
 }
 
 Vertex3::Vertex3(const double coor0, const double coor1, const double coor2) : unique_ptr_helper<Vertex3>(this)
 {
-	_position.reset(new Vec3(coor0, coor1, coor2));
+	_position.reset(new Point3(coor0, coor1, coor2));
 }
 
-Vertex3::Vertex3(const Vec3& position) : unique_ptr_helper<Vertex3>(this)
+Vertex3::Vertex3(const Point3& position) : unique_ptr_helper<Vertex3>(this)
 {
-	_position.reset(new Vec3(position));
+	_position.reset(new Point3(position));
 }
 
 Vertex3::~Vertex3() {}

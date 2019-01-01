@@ -22,6 +22,9 @@ class Crystallite3
 		WITH_NEW_VERTEX
 	};
 
+	#define debug debug
+	void debug();
+
 public:
 	vector<ShellFacet3*> shellFacets;
 	vector<ShellEdge3*> shellEdges;
@@ -59,7 +62,7 @@ public:
 
 	const bool vertexInsideFrontCheck(const Vec3& v);
 	const bool lineSegmentGlobalIntersectionCheck(const Vec3& v0, const Vec3& v1);
-	const bool lineSegmentFrontIntersectionCheck (const Vec3& v0, const Vec3& v1);
+	const bool segmentFrontIntersectionCheck (const Vec3& v0, const Vec3& v1);
 	const bool edgeGlobalIntersectionCheck(const unique_ptr<Edge3>* edge);
 	const bool edgeIntersectionCheck  (const unique_ptr<FrontEdge3>* frontEdge);
 	const bool facetIntersectionCheck (const unique_ptr<Vertex3>* v0, const unique_ptr<Vertex3>* v1, const Vec3& v2);
@@ -92,9 +95,15 @@ public:
 	void exhaustWithoutNewVertexOppositeEdgeDontExists(unique_ptr<FrontEdge3>* frontEdge);
 	void exhaustWithoutNewVertex(unique_ptr<FrontEdge3>* frontEdge, const bool oppositeEdgeExistence = true, unique_ptr<FrontEdge3>* oppositeEdge = nullptr);
 	
+
 	const bool tryComputeNewVertexPositionType3(unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos);
-	const bool tryComputeNewVertexPositionType2(const int smallAngleIndex0, const int smallAngleIndex1, unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos);
-	const bool tryComputeNewVertexPositionType1(const int smallAngleIndex, unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos);
+	const bool tryComputeNewVertexPositionType2(
+		const int smallAngleIndex0, const double angleCos0,
+		const int smallAngleIndex1, const double angleCos1,
+		unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos);
+	const bool tryComputeNewVertexPositionType1(
+		const int smallAngleIndex, const double angleCos, 
+		unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos);
 	const bool tryComputeNewVertexPositionType0(unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos);
 	const bool tryComputeNewVertexPosition(unique_ptr<FrontFacet3>* frontFacet, Vec3& out_pos);
 	

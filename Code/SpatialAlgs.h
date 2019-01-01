@@ -33,7 +33,10 @@ namespace spatialalgs
 		const Point3& plane_p0, const Point3& plane_p1, const Point3& plane_p2);
 	const bool lineIntersectPlane(
 		Point3& out_intersectPoint,
-		const Point3& line_p0, const Point3& line_p1, 
+		const Point3& line_point, const Point3& line_dir,
+		const Point3& plane_p0, const Point3& plane_p1, const Point3& plane_p2);
+	const Point3 lineIntersectPlane(
+		const Point3& line_point, const Point3& line_dir,
 		const Point3& plane_p0, const Point3& plane_p1, const Point3& plane_p2);
 	const bool isSegmentIntersectTriangle(
 		const Point3& segm_p0, const Point3& segm_p1, 

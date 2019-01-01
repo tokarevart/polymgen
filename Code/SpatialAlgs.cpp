@@ -103,24 +103,36 @@ const bool spatialalgs::isRayIntersectTriangle(
 
 const bool spatialalgs::lineIntersectPlane(
 	Point3& out_intersectPoint,
-	const Point3& segm_p0, const Point3& segm_p1,
-	const Point3& pl_p0, const Point3& pl_p1, const Point3& pl_p2)
+	const Point3& line_point, const Point3& line_dir,
+	const Point3& plane_p0, const Point3& plane_p1, const Point3& plane_p2)
 {
-	const Vec3 dir = segm_p1 - segm_p0;
+	Vec3 edges[2]{ plane_p1 - plane_p0, plane_p2 - plane_p0 };
 
-	Vec3 edges[2]{ pl_p1 - pl_p0, pl_p2 - pl_p0 };
-
-	Vec3 pvec = Vec3::crossProduct(dir, edges[1]);
+	Vec3 pvec = Vec3::crossProduct(line_dir, edges[1]);
 	double det = Vec3::dotProduct(edges[0], pvec);
 	if (det < 1e-6 && det > -1e-6)
 		return false;
 
-	Vec3 tvec = segm_p0 - pl_p0;
+	Vec3 tvec = line_point - plane_p0;
 	Vec3 qvec = Vec3::crossProduct(tvec, edges[0]);
 
 	double t = Vec3::dotProduct(edges[1], qvec) / det;
-	out_intersectPoint = segm_p0 + t * dir;
+	out_intersectPoint = line_point + t * line_dir;
 	return true;
+}
+
+const Point3 spatialalgs::lineIntersectPlane(
+	const Point3& line_point, const Point3& line_dir, 
+	const Point3& plane_p0, const Point3& plane_p1, const Point3& plane_p2)
+{
+	Vec3 edges[2]{ plane_p1 - plane_p0, plane_p2 - plane_p0 };
+
+	Vec3 pvec = Vec3::crossProduct(line_dir, edges[1]);
+	Vec3 tvec = line_point - plane_p0;
+	Vec3 qvec = Vec3::crossProduct(tvec, edges[0]);
+
+	double t = Vec3::dotProduct(edges[1], qvec) / Vec3::dotProduct(edges[0], pvec);
+	return line_point + t * line_dir;
 }
 
 const bool spatialalgs::isSegmentIntersectTriangle(
