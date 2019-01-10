@@ -289,6 +289,7 @@ void Polycrystal3::generateMeshNoStruct(const double preferredLength)
 	Timer tmr;
 	tmr.Start();
 	double min_q = 0.0, av_q = 0.0;
+	size_t n_elems = 0ull;
 	#pragma omp parallel for
 	for (size_t i = 0ull, max = crystallites.size(); i < max; i++)
 	{
@@ -299,13 +300,15 @@ void Polycrystal3::generateMeshNoStruct(const double preferredLength)
 		crystallites[i]->analyzeMeshQuality(buf_min_q, buf_av_q);
 		min_q += buf_min_q;
 		av_q += buf_av_q;
+		n_elems += crystallites[i]->innerSimps.size();
 	}
 	min_q /= crystallites.size();
 	av_q /= crystallites.size();
 	tmr.Stop();
 	std::ofstream out("log.txt");
-	out << ">>  Minimum quality    " << min_q
+	out <<   ">>  Minimum quality    " << min_q
 		<< "\n>>  Average quality    " << av_q
+		<< "\n>>  Elements number    " << n_elems
 		<< "\n>>  Run time           " << tmr.GetLastDuration(microseconds) * 1e-6 << " s";
 	out.close();
 }
@@ -705,7 +708,7 @@ void Polycrystal3::outputData(string filename) const
 			(*crys->innerVerts[j])->globalNum = i + 1ull;
 		}
 	}
-#define DEV_DEBUG
+//#define DEV_DEBUG
 #ifdef DEV_DEBUG
 	for (auto &f_facet : crystallites[0]->frontFacets)
 	{
