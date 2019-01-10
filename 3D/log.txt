@@ -1,0 +1,3 @@
+>>  Minimum quality    0.264335
+>>  Average quality    0.60152
+>>  Elements num       183
