@@ -708,23 +708,27 @@ void Polycrystal3::outputData(string filename) const
 			(*crys->innerVerts[j])->globalNum = i + 1ull;
 		}
 	}
-//#define DEV_DEBUG
-#ifdef DEV_DEBUG
-	for (auto &f_facet : crystallites[0]->frontFacets)
+	
+	//#define DEV_DEBUG
+	#ifdef DEV_DEBUG
+	for (auto &crys : crystallites)
 	{
-		if (!*f_facet)
-			continue;
-		auto facet = (*f_facet)->facet->getPtrToUPtr();
-	
-		vector<size_t> gl_nums;
-		for (auto &edge : (*facet)->edges)
-			for (auto &vert : (*edge)->vertexes)
-				if (std::find(gl_nums.begin(), gl_nums.end(), (*vert)->globalNum) == gl_nums.end())
-					gl_nums.push_back((*vert)->globalNum);
-	
-		file << "f " << gl_nums[0] << ' ' << gl_nums[1] << ' ' << gl_nums[2] << '\n';
+		for (auto &f_facet : crys->frontFacets)
+		{
+			if (!*f_facet)
+				continue;
+			auto facet = (*f_facet)->facet->getPtrToUPtr();
+
+			vector<size_t> gl_nums;
+			for (auto &edge : (*facet)->edges)
+				for (auto &vert : (*edge)->vertexes)
+					if (std::find(gl_nums.begin(), gl_nums.end(), (*vert)->globalNum) == gl_nums.end())
+						gl_nums.push_back((*vert)->globalNum);
+
+			file << "f " << gl_nums[0] << ' ' << gl_nums[1] << ' ' << gl_nums[2] << '\n';
+		}
 	}
-#else
+	#else
 	for (auto &facet : _startFrontFacets)
 	{
 		if (!*facet)
@@ -739,20 +743,23 @@ void Polycrystal3::outputData(string filename) const
 		file << "f " << gl_nums[0] << ' ' << gl_nums[1] << ' ' << gl_nums[2] << '\n';
 	}
 
-	for (auto &facet : crystallites[0]->innerFacets)
+	for (auto &crys : crystallites)
 	{
-		if (!*facet)
-			continue;
+		for (auto &facet : crys->innerFacets)
+		{
+			if (!*facet)
+				continue;
 
-		vector<size_t> gl_nums;
-		for (auto &edge : (*facet)->edges)
-			for (auto &vert : (*edge)->vertexes)
-				if (std::find(gl_nums.begin(), gl_nums.end(), (*vert)->globalNum) == gl_nums.end())
-					gl_nums.push_back((*vert)->globalNum);
+			vector<size_t> gl_nums;
+			for (auto &edge : (*facet)->edges)
+				for (auto &vert : (*edge)->vertexes)
+					if (std::find(gl_nums.begin(), gl_nums.end(), (*vert)->globalNum) == gl_nums.end())
+						gl_nums.push_back((*vert)->globalNum);
 
-		file << "f " << gl_nums[0] << ' ' << gl_nums[1] << ' ' << gl_nums[2] << '\n';
+			file << "f " << gl_nums[0] << ' ' << gl_nums[1] << ' ' << gl_nums[2] << '\n';
+		}
 	}
-#endif
+	#endif
 
 	file.close();
 }
