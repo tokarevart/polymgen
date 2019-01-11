@@ -195,11 +195,11 @@ PolycrMesh* Polycrystal3::structurizeMesh()
 {
 	PolycrMesh* pol_triang = new PolycrMesh;
 
-	pol_triang->crysesNum = crystallites.size();
+	pol_triang->crysesNum = _crystallites.size();
 	pol_triang->crysesTetrsNum = new size_t[pol_triang->crysesNum];
 
 	size_t nodes_num = _startFrontVertexes.size();
-	for (auto &crys : crystallites)
+	for (auto &crys : _crystallites)
 		nodes_num += std::count_if(
 			crys->innerVerts.begin(),
 			crys->innerVerts.end(),
@@ -230,7 +230,7 @@ PolycrMesh* Polycrystal3::structurizeMesh()
 		pol_triang->nodesPositions[3ull * node_ind + 2ull] = (**s_f_vert)[2];
 		node_ind++;
 	}
-	for (auto &crys : crystallites)
+	for (auto &crys : _crystallites)
 	{
 		for (auto &vert : crys->innerVerts)
 		{
@@ -249,8 +249,8 @@ PolycrMesh* Polycrystal3::structurizeMesh()
 	for (size_t i = 0ull; i < pol_triang->crysesNum; i++)
 	{
 		pol_triang->crysesTetrsNum[i] = std::count_if(
-			crystallites[i]->innerSimps.begin(),
-			crystallites[i]->innerSimps.end(),
+			_crystallites[i]->innerSimps.begin(),
+			_crystallites[i]->innerSimps.end(),
 			[](auto simp)-> bool { return (bool)*simp; });
 
 		tetrs_num += pol_triang->crysesTetrsNum[i];
@@ -262,7 +262,7 @@ PolycrMesh* Polycrystal3::structurizeMesh()
 	size_t tetr_ind = 0ull;
 	for (size_t i = 0ull; i < pol_triang->crysesNum; i++)
 	{
-		for (auto &tetr : crystallites[i]->innerSimps)
+		for (auto &tetr : _crystallites[i]->innerSimps)
 		{
 			if (!*tetr)
 				continue;
@@ -291,19 +291,22 @@ void Polycrystal3::generateMeshNoStruct(const double preferredLength)
 	double min_q = 0.0, av_q = 0.0;
 	size_t n_elems = 0ull;
 	#pragma omp parallel for
-	for (size_t i = 0ull, max = crystallites.size(); i < max; i++)
+	for (size_t i = 0ull, max = _crystallites.size(); i < max; i++)
 	{
-		crystallites[i]->setStartFront(_startFrontEdges, _startFrontFacets);
-		crystallites[i]->generateMesh(_preferredLength, this);
+		_crystallites[i]->setStartFront(_startFrontEdges, _startFrontFacets);
+		_crystallites[i]->generateMesh(_preferredLength, this);
 
 		double buf_min_q, buf_av_q;
-		crystallites[i]->analyzeMeshQuality(buf_min_q, buf_av_q);
-		min_q += buf_min_q;
-		av_q += buf_av_q;
-		n_elems += crystallites[i]->innerSimps.size();
+		_crystallites[i]->analyzeMeshQuality(buf_min_q, buf_av_q);
+		#pragma omp critical
+		{
+			min_q += buf_min_q;
+			av_q += buf_av_q;
+			n_elems += _crystallites[i]->innerSimps.size();
+		}
 	}
-	min_q /= crystallites.size();
-	av_q /= crystallites.size();
+	min_q /= _crystallites.size();
+	av_q /= _crystallites.size();
 	tmr.Stop();
 	std::ofstream out("log.txt");
 	out <<   ">>  Minimum quality    " << min_q
@@ -345,7 +348,7 @@ PolycrMesh* Polycrystal3::generateMesh(const CrysesShell& crysesShell, const dou
 
 PolycrMesh* Polycrystal3::getLastMesh()
 {
-	return lastTriangulation;
+	return _lastTriangulation;
 }
 
 void Polycrystal3::inputData()
@@ -398,9 +401,9 @@ void Polycrystal3::inputData()
 		new ShellFacet3(*_shellEdges[8], *_shellEdges[16], *_shellEdges[17])
 	});
 
-	crystallites.push_back(new Crystallite3);
-	crystallites.front()->shellEdges = _shellEdges;
-	crystallites.front()->shellFacets = _shellFacets;
+	_crystallites.push_back(new Crystallite3);
+	_crystallites.front()->shellEdges = _shellEdges;
+	_crystallites.front()->shellFacets = _shellFacets;
 
 
 	_startFrontVertexes.insert(_startFrontVertexes.end(),
@@ -487,9 +490,9 @@ void Polycrystal3::inputData()
 		new ShellFacet3(*_shellEdges[9], *_shellEdges[10], *_shellEdges[11])
 	});
 
-	crystallites.push_back(new Crystallite3);
-	crystallites.front()->shellEdges = _shellEdges;
-	crystallites.front()->shellFacets = _shellFacets;
+	_crystallites.push_back(new Crystallite3);
+	_crystallites.front()->shellEdges = _shellEdges;
+	_crystallites.front()->shellFacets = _shellFacets;
 
 
 	_startFrontVertexes.insert(_startFrontVertexes.end(),
@@ -587,7 +590,7 @@ void Polycrystal3::inputData(string filename)
 
 	size_t cryses_num;
 	input >> cryses_num;
-	crystallites.insert(crystallites.end(), cryses_num, new Crystallite3);
+	_crystallites.insert(_crystallites.end(), cryses_num, new Crystallite3);
 
 	size_t* cryses_facets_nums = new size_t[cryses_num];
 	for (size_t i = 0ull; i < cryses_num; i++)
@@ -600,16 +603,16 @@ void Polycrystal3::inputData(string filename)
 			size_t facet_ind;
 			input >> facet_ind;
 
-			if (std::find(crystallites[i]->shellEdges.begin(), crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[0]) == crystallites[i]->shellEdges.end())
-				crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[0]);
+			if (std::find(_crystallites[i]->shellEdges.begin(), _crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[0]) == _crystallites[i]->shellEdges.end())
+				_crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[0]);
 
-			if (std::find(crystallites[i]->shellEdges.begin(), crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[1]) == crystallites[i]->shellEdges.end())
-				crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[1]);
+			if (std::find(_crystallites[i]->shellEdges.begin(), _crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[1]) == _crystallites[i]->shellEdges.end())
+				_crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[1]);
 
-			if (std::find(crystallites[i]->shellEdges.begin(), crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[2]) == crystallites[i]->shellEdges.end())
-				crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[2]);
+			if (std::find(_crystallites[i]->shellEdges.begin(), _crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[2]) == _crystallites[i]->shellEdges.end())
+				_crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[2]);
 
-			crystallites[i]->shellFacets.push_back(_shellFacets[facet_ind]);
+			_crystallites[i]->shellFacets.push_back(_shellFacets[facet_ind]);
 		}
 	}
 
@@ -665,7 +668,7 @@ void Polycrystal3::inputData(const CrysesShell& crysesShell)
 			**findStartFrontEdge(_startFrontVertexes[facet_nodes_inds[2]], _startFrontVertexes[facet_nodes_inds[0]])))->getPtrToUPtr());
 	}
 
-	crystallites.insert(crystallites.end(), crysesShell.crysesNum, new Crystallite3);
+	_crystallites.insert(_crystallites.end(), crysesShell.crysesNum, new Crystallite3);
 	
 	size_t cryses_inner_ind = 0ull;
 	for (size_t i = 0ull; i < crysesShell.crysesNum; i++)
@@ -674,16 +677,16 @@ void Polycrystal3::inputData(const CrysesShell& crysesShell)
 		{
 			size_t facet_ind = crysesShell.cryses[cryses_inner_ind++];
 
-			if (std::find(crystallites[i]->shellEdges.begin(), crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[0]) == crystallites[i]->shellEdges.end())
-				crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[0]);
+			if (std::find(_crystallites[i]->shellEdges.begin(), _crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[0]) == _crystallites[i]->shellEdges.end())
+				_crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[0]);
 
-			if (std::find(crystallites[i]->shellEdges.begin(), crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[1]) == crystallites[i]->shellEdges.end())
-				crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[1]);
+			if (std::find(_crystallites[i]->shellEdges.begin(), _crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[1]) == _crystallites[i]->shellEdges.end())
+				_crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[1]);
 
-			if (std::find(crystallites[i]->shellEdges.begin(), crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[2]) == crystallites[i]->shellEdges.end())
-				crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[2]);
+			if (std::find(_crystallites[i]->shellEdges.begin(), _crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[2]) == _crystallites[i]->shellEdges.end())
+				_crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[2]);
 
-			crystallites[i]->shellFacets.push_back(_shellFacets[facet_ind]);
+			_crystallites[i]->shellFacets.push_back(_shellFacets[facet_ind]);
 		}
 	}
 }
@@ -697,7 +700,7 @@ void Polycrystal3::outputData(string filename) const
 		file << "v " << (**_startFrontVertexes[i])[0] << ' ' << (**_startFrontVertexes[i])[1] << ' ' << (**_startFrontVertexes[i])[2] << '\n';
 		(*_startFrontVertexes[i])->globalNum = i + 1ull;
 	}
-	for (auto &crys : crystallites)
+	for (auto &crys : _crystallites)
 	{
 		if (!crys)
 			continue;
@@ -711,7 +714,7 @@ void Polycrystal3::outputData(string filename) const
 	
 	//#define DEV_DEBUG
 	#ifdef DEV_DEBUG
-	for (auto &crys : crystallites)
+	for (auto &crys : _crystallites)
 	{
 		for (auto &f_facet : crys->frontFacets)
 		{
@@ -743,7 +746,7 @@ void Polycrystal3::outputData(string filename) const
 		file << "f " << gl_nums[0] << ' ' << gl_nums[1] << ' ' << gl_nums[2] << '\n';
 	}
 
-	for (auto &crys : crystallites)
+	for (auto &crys : _crystallites)
 	{
 		for (auto &facet : crys->innerFacets)
 		{
@@ -778,7 +781,7 @@ Polycrystal3::Polycrystal3(const CrysesShell& crysesShell)
 
 Polycrystal3::~Polycrystal3()
 {
-	for (auto &crys : crystallites)
+	for (auto &crys : _crystallites)
 		delete crys;
 
 	for (auto &facet : _shellFacets)

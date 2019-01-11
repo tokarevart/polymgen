@@ -16,12 +16,11 @@ using std::string;
 
 class Polycrystal3
 {
-private:
 	double _preferredLength;
 
-	PolycrMesh* lastTriangulation = nullptr;
+	PolycrMesh* _lastTriangulation = nullptr;
 
-	vector<Crystallite3*> crystallites;
+	vector<Crystallite3*> _crystallites;
 
 	vector<ShellFacet3*> _shellFacets;
 	vector<ShellEdge3*> _shellEdges;
@@ -31,15 +30,17 @@ private:
 	vector<unique_ptr<Edge3>*> _startFrontEdges;
 	vector<unique_ptr<Vertex3>*> _startFrontVertexes;
 
+	// Later replace ShellVertex3::findAttachedVertex with that function
+	unique_ptr<Vertex3>* findAttachedVertex(const ShellVertex3* shellVertex);
 	ShellEdge3* findShellEdge(const ShellVertex3* v0, const ShellVertex3* v1) const;
 	unique_ptr<Edge3>* findStartFrontEdge(const unique_ptr<Vertex3>* v0, const unique_ptr<Vertex3>* v1) const;
 
 	template <class T>
 	void removePtrsToNullptr(vector<unique_ptr<T>*>& vec);
 
-	void setLinksWithShell();
 	void removePtrsToNullptrFromVectors();
 	void triangulateShell();
+	void setLinksWithShell();
 	void startFrontDelaunayPostprocessing();
 
 	void inputData();
