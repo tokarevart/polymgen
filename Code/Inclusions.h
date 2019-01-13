@@ -1,4 +1,5 @@
 #pragma once
+#include "SpatialAlgs.h"
 #include "Polycrystal3.h"
 #include "Crystallite3.h"
 #include "Simplex3.h"
@@ -8,4 +9,3 @@
 #include "ShellEdge3.h"
 #include "Vertex3.h"
 #include "ShellVertex3.h"
-#include "Vector3.h"

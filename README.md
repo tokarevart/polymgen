@@ -1,15 +1,15 @@
 # PolycrystalTriangulation
 # Example:
 ```c++
-CrystallitesShell crystallites_shell;
+CrysesShell crysesShell;
 ...
-Polycrystal3 polycr("crystallites_shell.txt");
+Polycrystal3 polycr("crysesShell.txt");
 // Or
-Polycrystal3 polycr(crystallites_shell);
+Polycrystal3 polycr(crysesShell);
 
-double preferred_tetrahedron_edge_length = 0.2;
-PolycrystalTriangulation* triangulation = polycr.TriangulatePolycrystal(preferred_tetrahedron_edge_length);
+double preferredTetrahedronEdgeLength = 0.2;
+PolycrMesh* mesh = polycr.generateMesh(preferredTetrahedronEdgeLength);
 ...
-delete triangulation;
+delete mesh;
 ```
 ![Cube triangulation](https://github.com/Tokarevart/PolycrystalTriangulation/blob/master/images/shell_triang_3d_7.png)

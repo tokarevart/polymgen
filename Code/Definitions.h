@@ -10,4 +10,3 @@ class ShellEdge3;
 class Edge3;
 class Vertex3;
 class ShellVertex3;
-class Vector3;
