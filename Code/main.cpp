@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
     #ifdef GENERATE
 
     std::cout << "Generating polycrystal...";
-    CrysesShell* shell = polycrgen::generateRectanglesPolycrystal(9, 9, 9);
+    CrysesShell* shell = polycrgen::generateCuboidsPolycrystal(9, 9, 9);
     std::cout << " done.\n";
 
     //std::ofstream polycr_mesh("polycr_mesh_test.txt");
