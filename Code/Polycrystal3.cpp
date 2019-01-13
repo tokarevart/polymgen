@@ -309,9 +309,9 @@ void Polycrystal3::generateMeshNoStruct(const double preferredLength)
     #pragma omp parallel for
     for (size_t i = 0ull, max = _crystallites.size(); i < max; i++)
     {
-        outputData();
+        //outputData();
         _crystallites[i]->setStartFront(_startFrontEdges, _startFrontFacets);
-        outputData();
+        //outputData();
         _crystallites[i]->generateMesh(_preferredLength, this);
 
         double buf_min_q, buf_av_q;
@@ -456,19 +456,24 @@ void Polycrystal3::outputDataOBJ(string filename) const
 void Polycrystal3::outputDataK(string filename) const
 {
     ofstream file(filename);
-
-    file << "*NODE\n$# nid x y z tc rc\n";
+    file.setf(std::ios::right);
+    file << "*NODE\n$#   nid               x               y               z      tc      rc\n";
     size_t i = 0ull;
     for (size_t verts_num = _startFrontVertexes.size(); i < verts_num; i++)
     {
         (*_startFrontVertexes[i])->globalNum = i + 1ull;
-        file 
-            << (*_startFrontVertexes[i])->globalNum << ' ' 
-            << (**_startFrontVertexes[i])[0] << ' ' 
-            << (**_startFrontVertexes[i])[1] << ' ' 
-            << (**_startFrontVertexes[i])[2] << ' ' 
-            << 0 << ' ' 
-            << 0 << '\n';
+        file.width(8);
+        file << (*_startFrontVertexes[i])->globalNum;
+        file.width(16);
+        file << (**_startFrontVertexes[i])[0];
+        file.width(16);
+        file << (**_startFrontVertexes[i])[1];
+        file.width(16);
+        file << (**_startFrontVertexes[i])[2];
+        file.width(8);
+        file << 0;
+        file.width(8);
+        file << 0 << '\n';
     }
     for (auto &crys : _crystallites)
     {
@@ -478,33 +483,46 @@ void Polycrystal3::outputDataK(string filename) const
         for (size_t j = 0ull, verts_num = crys->innerVerts.size(); j < verts_num; i++, j++)
         {
             (*crys->innerVerts[j])->globalNum = i + 1ull;
-            file
-                << (*crys->innerVerts[j])->globalNum << ' '
-                << (**crys->innerVerts[j])[0] << ' '
-                << (**crys->innerVerts[j])[1] << ' '
-                << (**crys->innerVerts[j])[2] << ' '
-                << 0 << ' '
-                << 0 << '\n';
+            file.width(8);
+            file << (*crys->innerVerts[j])->globalNum;
+            file.width(16);
+            file << (**crys->innerVerts[j])[0];
+            file.width(16);
+            file << (**crys->innerVerts[j])[1];
+            file.width(16);
+            file << (**crys->innerVerts[j])[2];
+            file.width(8);
+            file << 0;
+            file.width(8);
+            file << 0 << '\n';
         }
     }
-
-    file << "*ELEMENT_SOLID\n$# eid pid n1 n2 n3 n4 n5 n6 n7 n8\n";
+    file << "*ELEMENT_SOLID\n$#   eid     pid      n1      n2      n3      n4      n5      n6      n7      n8\n";
     size_t ind = 1ull;
     for (auto &crys : _crystallites)
     {
         for (auto simp : crys->innerSimps)
         {
-            file 
-                << ind++ << ' ' 
-                << 1 << ' ' 
-                << (*(*simp)->vertexes[0])->globalNum << ' ' 
-                << (*(*simp)->vertexes[1])->globalNum << ' '
-                << (*(*simp)->vertexes[2])->globalNum << ' '
-                << (*(*simp)->vertexes[3])->globalNum << ' '
-                << (*(*simp)->vertexes[3])->globalNum << ' '
-                << (*(*simp)->vertexes[3])->globalNum << ' '
-                << (*(*simp)->vertexes[3])->globalNum << ' '
-                << (*(*simp)->vertexes[3])->globalNum << '\n';
+            file.width(8);
+            file << ind++;
+            file.width(8);
+            file << 1;
+            file.width(8);
+            file << (*(*simp)->vertexes[0])->globalNum;
+            file.width(8);
+            file << (*(*simp)->vertexes[1])->globalNum;
+            file.width(8);
+            file << (*(*simp)->vertexes[2])->globalNum;
+            file.width(8);
+            file << (*(*simp)->vertexes[3])->globalNum;
+            file.width(8);
+            file << (*(*simp)->vertexes[3])->globalNum;
+            file.width(8);
+            file << (*(*simp)->vertexes[3])->globalNum;
+            file.width(8);
+            file << (*(*simp)->vertexes[3])->globalNum;
+            file.width(8);
+            file << (*(*simp)->vertexes[3])->globalNum << '\n';
         }
     }
     file << "*END";

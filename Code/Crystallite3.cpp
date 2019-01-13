@@ -2383,7 +2383,7 @@ void Crystallite3::generateMesh(const double preferredLength, Polycrystal3* poly
     //ProcessLargeAngles(polycr);
     computeFrontNormals();
     processAngles(polycr);
-    polycr->outputData();
+    //polycr->outputData();
     if (globalIntersectionCheck())
         throw std::logic_error("Intersection error. Crystallite3::globalIntersectionCheck returned true.");
     smoothMesh(10);

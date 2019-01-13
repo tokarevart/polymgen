@@ -57,8 +57,8 @@ int main(int argc, char* argv[])
     std::cout << " done.\n";
 
     std::cout << "Outputting data to file...";
-    polycr.outputData("polycr_729_crys.k", K);
-    polycr.outputData("polycr_729_crys.obj", OBJ);
+    polycr.outputData("polycr_729_crysts.k", K);
+    polycr.outputData("polycr_729_crysts.obj", OBJ);
     std::cout << " done.\n";
 
     #else
