@@ -1,4 +1,0 @@
->>  Minimum quality    0.287168
->>  Average quality    0.652468
->>  Elements number    230
->>  Run time           0.032145 s

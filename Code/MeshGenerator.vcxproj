@@ -156,6 +156,7 @@
     <ClInclude Include="Crystallite3.h" />
     <ClInclude Include="Edge3.h" />
     <ClInclude Include="Facet3.h" />
+    <ClInclude Include="PolycrGen.h" />
     <ClInclude Include="PolycrMesh.h" />
     <ClInclude Include="Polycrystal3.h" />
     <ClInclude Include="ShellEdge3.h" />
@@ -174,6 +175,7 @@
     <ClCompile Include="Edge3.cpp" />
     <ClCompile Include="Facet3.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PolycrGen.cpp" />
     <ClCompile Include="PolycrMesh.cpp" />
     <ClCompile Include="Polycrystal3.cpp" />
     <ClCompile Include="ShellEdge3.cpp" />

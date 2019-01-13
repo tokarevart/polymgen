@@ -7,15 +7,18 @@
 class ShellFacet3
 {
 public:
-	ShellEdge3* edges[3];
+    ShellEdge3* edges[3];
 
-	const bool contains(const ShellEdge3& edge) const;
-	const bool contains(const ShellVertex3& vertex) const;
+    ShellVertex3* findVertexNotIncludedInEdge(const ShellEdge3& edge) const;
 
-	ShellFacet3();
-	ShellFacet3(
-		ShellEdge3& edge0, 
-		ShellEdge3& edge1, 
-		ShellEdge3& edge2);
-	~ShellFacet3();
+    const bool contains(const ShellEdge3& edge) const;
+    const bool contains(const ShellVertex3& vertex) const;
+
+
+    ShellFacet3();
+    ShellFacet3(
+        ShellEdge3& edge0, 
+        ShellEdge3& edge1, 
+        ShellEdge3& edge2);
+    ~ShellFacet3();
 };

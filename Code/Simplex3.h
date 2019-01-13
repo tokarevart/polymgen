@@ -10,16 +10,16 @@ using std::unique_ptr;
 class Simplex3 : public unique_ptr_helper<Simplex3>
 {
 public:
-	unique_ptr<Vertex3>* vertexes[4];
+    unique_ptr<Vertex3>* vertexes[4];
 
-	double computeVolume() const;
-	double computeQuality() const;
+    double computeVolume() const;
+    double computeQuality() const;
 
-	Simplex3();
-	Simplex3(
-		Vertex3 &vert0,
-		Vertex3 &vert1,
-		Vertex3 &vert2,
-		Vertex3 &vert3);
-	~Simplex3();
+    Simplex3();
+    Simplex3(
+        Vertex3 &vert0,
+        Vertex3 &vert1,
+        Vertex3 &vert2,
+        Vertex3 &vert3);
+    ~Simplex3();
 };

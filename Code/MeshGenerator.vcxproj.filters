@@ -16,6 +16,12 @@
     <Filter Include="SpatialAlgs">
       <UniqueIdentifier>{0cddfc8e-60b3-40a9-b337-737aa8d51915}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PolycrGen">
+      <UniqueIdentifier>{220fbe6c-72af-440c-b03d-5c0e85b82c70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data Structures">
+      <UniqueIdentifier>{4fde53df-e790-48a3-8e93-db27fde21ae8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Crystallite3.h">
@@ -60,14 +66,17 @@
     <ClInclude Include="SpatialAlgs.h">
       <Filter>SpatialAlgs</Filter>
     </ClInclude>
-    <ClInclude Include="CrysesShell.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PolycrMesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Vec3.h">
       <Filter>SpatialAlgs</Filter>
+    </ClInclude>
+    <ClInclude Include="PolycrGen.h">
+      <Filter>PolycrGen</Filter>
+    </ClInclude>
+    <ClInclude Include="CrysesShell.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="PolycrMesh.h">
+      <Filter>Data Structures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -107,14 +116,17 @@
     <ClCompile Include="SpatialAlgs.cpp">
       <Filter>SpatialAlgs</Filter>
     </ClCompile>
-    <ClCompile Include="CrysesShell.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PolycrMesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Vec3.cpp">
       <Filter>SpatialAlgs</Filter>
+    </ClCompile>
+    <ClCompile Include="PolycrGen.cpp">
+      <Filter>PolycrGen</Filter>
+    </ClCompile>
+    <ClCompile Include="PolycrMesh.cpp">
+      <Filter>Data Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="CrysesShell.cpp">
+      <Filter>Data Structures</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@ PolycrMesh::PolycrMesh() {}
 
 PolycrMesh::~PolycrMesh()
 {
-	delete[] nodesPositions;
-	delete[] tetrs;
-	delete[] crysesTetrsNum;
+    delete[] nodesPositions;
+    delete[] tetrs;
+    delete[] nCrysesTetrs;
 }
