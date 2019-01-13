@@ -1,7 +1,7 @@
 #include "PolycrGen.h"
 
 
-CrysesShell* polycrgen::generateRectanglesPolycrystal(size_t nX, size_t nY, size_t nZ, double dX, double dY, double dZ)
+CrysesShell* polycrgen::generateCuboidsPolycrystal(size_t nX, size_t nY, size_t nZ, double dX, double dY, double dZ)
 {
     const size_t w = nX;
     const size_t t = nY;
