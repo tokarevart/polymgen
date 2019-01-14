@@ -453,7 +453,7 @@ void Polycrystal3::outputDataOBJ(string filename) const
     file.close();
 }
 
-void Polycrystal3::outputDataK(string filename) const
+void Polycrystal3::outputDataLS_DYNA_KEYWORD(string filename) const
 {
     ofstream file(filename);
     file.setf(std::ios::right);
@@ -698,8 +698,8 @@ void Polycrystal3::outputData(string filename, FileType filetype) const
         outputDataOBJ(filename);
         break;
 
-    case K:
-        outputDataK(filename);
+    case LS_DYNA_KEYWORD:
+        outputDataLS_DYNA_KEYWORD(filename);
         break;
 
     default:

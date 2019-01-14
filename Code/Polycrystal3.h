@@ -17,7 +17,7 @@ using std::string;
 enum FileType
 {
     OBJ,
-    K
+    LS_DYNA_KEYWORD
 };
 
 class Polycrystal3
@@ -50,7 +50,7 @@ class Polycrystal3
     void startFrontDelaunayPostprocessing();
 
     void outputDataOBJ(string filename) const;
-    void outputDataK(string filename) const;
+    void outputDataLS_DYNA_KEYWORD(string filename) const;
 
 public:
     void generateMeshNoStruct(const double preferredLength);
