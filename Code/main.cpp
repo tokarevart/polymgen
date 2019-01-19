@@ -53,12 +53,12 @@ int main(int argc, char* argv[])
     delete shell;
 
     std::cout << "Generating mesh...";
-    PolycrMesh* mesh = polycr.generateMesh(preferredEdgeLength);
+    polycr.generateMeshNoStruct(preferredEdgeLength);
     std::cout << " done.\n";
 
     std::cout << "Outputting data to file...";
     polycr.outputData("polycr_729_crysts.kw", LS_DYNA_KEYWORD);
-    polycr.outputData("polycr_729_crysts.obj", OBJ);
+    //polycr.outputData("polycr_729_crysts.obj", OBJ);
     std::cout << " done.\n";
 
     #else
@@ -77,6 +77,5 @@ int main(int argc, char* argv[])
 
     #endif
 
-    delete mesh;
     return 0;
 }

@@ -509,10 +509,23 @@ void Polycrystal3::outputDataLS_DYNA_KEYWORD(string filename) const
             file << 1;
             file.width(8);
             file << (*(*simp)->vertexes[0])->globalNum;
-            file.width(8);
-            file << (*(*simp)->vertexes[1])->globalNum;
-            file.width(8);
-            file << (*(*simp)->vertexes[2])->globalNum;
+            Vec3 v0 = (*(*simp)->vertexes[1])->getPosition() - (*(*simp)->vertexes[0])->getPosition();
+            Vec3 v1 = (*(*simp)->vertexes[2])->getPosition() - (*(*simp)->vertexes[0])->getPosition();
+            Vec3 v2 = (*(*simp)->vertexes[3])->getPosition() - (*(*simp)->vertexes[0])->getPosition();
+            if (Vec3::dotProduct(v2, Vec3::crossProduct(v0, v1)) > 0.0)
+            {
+                file.width(8);
+                file << (*(*simp)->vertexes[1])->globalNum;
+                file.width(8);
+                file << (*(*simp)->vertexes[2])->globalNum;
+            }
+            else
+            {
+                file.width(8);
+                file << (*(*simp)->vertexes[2])->globalNum;
+                file.width(8);
+                file << (*(*simp)->vertexes[1])->globalNum;
+            }
             file.width(8);
             file << (*(*simp)->vertexes[3])->globalNum;
             file.width(8);
