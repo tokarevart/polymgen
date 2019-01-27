@@ -1,11 +1,11 @@
 # PolycrystalTriangulation
 # Example:
 ```c++
-CrysesShell crysesShell;
+PolyStruct polyStruct;
 ...
-Polycrystal3 polycr("crysesShell.txt");
+Polycrystal3 polycr("polyStruct.txt");
 // Or
-Polycrystal3 polycr(crysesShell);
+Polycrystal3 polycr(polyStruct);
 
 double preferredTetrahedronEdgeLength = 0.2;
 PolycrMesh* mesh = polycr.generateMesh(preferredTetrahedronEdgeLength);
