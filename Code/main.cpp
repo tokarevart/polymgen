@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "Polycrystal3.h"
-#include "PolycrGen.h"
+#include "PolyGen.h"
 
 int main(int argc, char* argv[])
 {
@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
     #ifdef GENERATE
 
     std::cout << "Generating polycrystal...";
-    CrysesShell* shell = polycrgen::generateCuboidsPolycrystal(9, 9, 9);
+    PolyStruct* polystr = polygen::generateCuboidsPolycrystal(6, 6, 6);
     std::cout << " done.\n";
 
     //std::ofstream polycr_mesh("polycr_mesh_test.txt");
@@ -48,17 +48,17 @@ int main(int argc, char* argv[])
     //}
     
     std::cout << "\nInitializing polycrystal data...";
-    Polycrystal3 polycr(shell);
+    Polycrystal3 polycr(polystr);
     std::cout << " done.\n";
-    delete shell;
+    delete polystr;
 
     std::cout << "Generating mesh...";
-    polycr.generateMeshNoStruct(preferredEdgeLength);
+    polycr.generateMeshNoStructGen(preferredEdgeLength);
     std::cout << " done.\n";
 
     std::cout << "Outputting data to file...";
-    polycr.outputData("polycr_729_crysts.kw", LS_DYNA_KEYWORD);
-    //polycr.outputData("polycr_729_crysts.obj", OBJ);
+    polycr.outputData("polycr_216_crysts.kw", LS_DYNA_KEYWORD);
+    //polycr.outputData("polycr_216_crysts.obj", OBJ);
     std::cout << " done.\n";
 
     #else
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
     std::cout << " done.\n";
 
     std::cout << "Generating mesh...";
-    PolycrMesh* mesh = polycr.generateMesh(preferredEdgeLength); // 0.45 is quite good
+    PolyMesh* mesh = polycr.generateMesh(preferredEdgeLength); // 0.45 is quite good
     std::cout << " done.\n";
 
     std::cout << "Outputting data to file...";

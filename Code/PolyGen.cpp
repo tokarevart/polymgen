@@ -1,13 +1,13 @@
-#include "PolycrGen.h"
+#include "PolyGen.h"
 
 
-CrysesShell* polycrgen::generateCuboidsPolycrystal(size_t nX, size_t nY, size_t nZ, double dX, double dY, double dZ)
+PolyStruct* polygen::generateCuboidsPolycrystal(size_t nX, size_t nY, size_t nZ, double dX, double dY, double dZ)
 {
     const size_t w = nX;
     const size_t t = nY;
     const size_t h = nZ;
 
-    CrysesShell* shell = new CrysesShell;
+    PolyStruct* shell = new PolyStruct;
     shell->nNodes  = (w + 1ull) * (t + 1ull) * (h + 1ull);
     shell->nFacets = 2ull * (w * h * (t + 1ull)
                            + t * h * (w + 1ull)

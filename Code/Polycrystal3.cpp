@@ -207,9 +207,9 @@ void Polycrystal3::startFrontDelaunayPostprocessing()
     }
 }
 
-PolycrMesh* Polycrystal3::structurizeMesh()
+PolyMesh* Polycrystal3::structurizeMesh()
 {
-    PolycrMesh* pol_triang = new PolycrMesh;
+    PolyMesh* pol_triang = new PolyMesh;
 
     pol_triang->nCryses = _crystallites.size();
     pol_triang->nCrysesTetrs = new size_t[pol_triang->nCryses];
@@ -294,7 +294,7 @@ PolycrMesh* Polycrystal3::structurizeMesh()
     return pol_triang;
 }
 
-void Polycrystal3::generateMeshNoStruct(const double preferredLength)
+void Polycrystal3::generateMeshNoStructGen(const double preferredLength)
 {
     _preferredLength = preferredLength;
 
@@ -334,42 +334,42 @@ void Polycrystal3::generateMeshNoStruct(const double preferredLength)
     out.close();
 }
 
-void Polycrystal3::generateMeshNoStruct(string filename, const double preferredLength)
+void Polycrystal3::generateMeshNoStructGen(string filename, const double preferredLength)
 {
     inputData(filename);
-    generateMeshNoStruct(preferredLength);
+    generateMeshNoStructGen(preferredLength);
 }
 
-void Polycrystal3::generateMeshNoStruct(const CrysesShell* crysesShell, const double preferredLength)
+void Polycrystal3::generateMeshNoStructGen(const PolyStruct* crysesShell, const double preferredLength)
 {
     inputData(crysesShell);
-    generateMeshNoStruct(preferredLength);
+    generateMeshNoStructGen(preferredLength);
 }
 
-PolycrMesh* Polycrystal3::generateMesh(const double preferredLength)
+PolyMesh* Polycrystal3::generateMesh(const double preferredLength)
 {
-    generateMeshNoStruct(preferredLength);
+    generateMeshNoStructGen(preferredLength);
     return structurizeMesh();
 }
 
-PolycrMesh* Polycrystal3::generateMesh(string filename, const double preferredLength)
+PolyMesh* Polycrystal3::generateMesh(string filename, const double preferredLength)
 {
-    generateMeshNoStruct(filename, preferredLength);
+    generateMeshNoStructGen(filename, preferredLength);
     return structurizeMesh();
 }
 
-PolycrMesh* Polycrystal3::generateMesh(const CrysesShell* crysesShell, const double preferredLength)
+PolyMesh* Polycrystal3::generateMesh(const PolyStruct* crysesShell, const double preferredLength)
 {
-    generateMeshNoStruct(crysesShell, preferredLength);
+    generateMeshNoStructGen(crysesShell, preferredLength);
     return structurizeMesh();
 }
 
-PolycrMesh* Polycrystal3::getLastMesh()
+PolyMesh* Polycrystal3::getLastMesh()
 {
     return _lastTriangulation;
 }
 
-void Polycrystal3::outputDataOBJ(string filename) const
+void Polycrystal3::outputDataObj(string filename) const
 {
     ofstream file(filename);
 
@@ -453,11 +453,26 @@ void Polycrystal3::outputDataOBJ(string filename) const
     file.close();
 }
 
-void Polycrystal3::outputDataLS_DYNA_KEYWORD(string filename) const
+void Polycrystal3::outputDataLSDynaKeyword_PART(std::ofstream& file, int polycrystalId) const
 {
-    ofstream file(filename);
-    file.setf(std::ios::right);
-    file << "*NODE\n$#   nid               x               y               z      tc      rc\n";
+    size_t body_delta = 10000000ull * polycrystalId;
+    for (size_t id = 1ull, max_id = _crystallites.size() + 1ull; id < max_id; id++)
+    {
+        file << "*PART\n"
+                "$#     pid     secid       mid     eosid      hgid      grav    adpopt      tmid\n";
+        file.width(10);
+        file << body_delta + id;
+        file << "         0";
+        file.width(10);
+        file << id;
+        file << "         0         0         0         0         0\n";
+    }
+}
+
+void Polycrystal3::outputDataLSDynaKeyword_NODE(std::ofstream& file) const
+{
+    file << "*NODE\n"
+            "$#   nid               x               y               z      tc      rc\n";
     size_t i = 0ull;
     for (size_t verts_num = _startFrontVertexes.size(); i < verts_num; i++)
     {
@@ -470,10 +485,7 @@ void Polycrystal3::outputDataLS_DYNA_KEYWORD(string filename) const
         file << (**_startFrontVertexes[i])[1];
         file.width(16);
         file << (**_startFrontVertexes[i])[2];
-        file.width(8);
-        file << 0;
-        file.width(8);
-        file << 0 << '\n';
+        file << "       0       0\n";
     }
     for (auto &crys : _crystallites)
     {
@@ -491,22 +503,25 @@ void Polycrystal3::outputDataLS_DYNA_KEYWORD(string filename) const
             file << (**crys->innerVerts[j])[1];
             file.width(16);
             file << (**crys->innerVerts[j])[2];
-            file.width(8);
-            file << 0;
-            file.width(8);
-            file << 0 << '\n';
+            file << "       0       0\n";
         }
     }
-    file << "*ELEMENT_SOLID\n$#   eid     pid      n1      n2      n3      n4      n5      n6      n7      n8\n";
-    size_t ind = 1ull;
+}
+
+void Polycrystal3::outputDataLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, int polycrystalId) const
+{
+    file << "*ELEMENT_SOLID\n"
+            "$#   eid     pid      n1      n2      n3      n4      n5      n6      n7      n8\n";
+    size_t pid = 10000000ull * polycrystalId + 1ull;
+    size_t eid = 1ull;
     for (auto &crys : _crystallites)
     {
-        for (auto simp : crys->innerSimps)
+        for (auto &simp : crys->innerSimps)
         {
             file.width(8);
-            file << ind++;
+            file << eid++;
             file.width(8);
-            file << 1;
+            file << pid;
             file.width(8);
             file << (*(*simp)->vertexes[0])->globalNum;
             Vec3 v0 = (*(*simp)->vertexes[1])->getPosition() - (*(*simp)->vertexes[0])->getPosition();
@@ -537,7 +552,18 @@ void Polycrystal3::outputDataLS_DYNA_KEYWORD(string filename) const
             file.width(8);
             file << (*(*simp)->vertexes[3])->globalNum << '\n';
         }
+        pid++;
     }
+}
+
+void Polycrystal3::outputDataLSDynaKeyword(string filename, int polycrystalId) const
+{
+    ofstream file(filename);
+    file.setf(std::ios::right);
+    
+    outputDataLSDynaKeyword_PART(file);
+    outputDataLSDynaKeyword_NODE(file);
+    outputDataLSDynaKeyword_ELEMENT_SOLID(file);
     file << "*END";
 
     file.close();
@@ -631,7 +657,7 @@ void Polycrystal3::inputData(string filename)
     delete[] cryses_facets_nums;
 }
 
-void Polycrystal3::inputData(const CrysesShell* crysesShell)
+void Polycrystal3::inputData(const PolyStruct* crysesShell)
 {
     for (size_t i = 0ull; i < crysesShell->nNodes; i++)
     {
@@ -703,16 +729,16 @@ void Polycrystal3::inputData(const CrysesShell* crysesShell)
     }
 }
 
-void Polycrystal3::outputData(string filename, FileType filetype) const
+void Polycrystal3::outputData(string filename, FileType filetype, int polycrystalId) const
 {
     switch (filetype)
     {
     case OBJ:
-        outputDataOBJ(filename);
+        outputDataObj(filename);
         break;
 
     case LS_DYNA_KEYWORD:
-        outputDataLS_DYNA_KEYWORD(filename);
+        outputDataLSDynaKeyword(filename, polycrystalId);
         break;
 
     default:
@@ -727,7 +753,7 @@ Polycrystal3::Polycrystal3(string filename)
     inputData(filename);
 }
 
-Polycrystal3::Polycrystal3(const CrysesShell* crysesShell)
+Polycrystal3::Polycrystal3(const PolyStruct* crysesShell)
 {
     inputData(crysesShell);
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-struct PolycrMesh
+struct PolyMesh
 {
     size_t  nNodes;
 
@@ -18,6 +18,6 @@ struct PolycrMesh
     // { ... c[i]_t[0]_n[0..3] ... c[i]_t[nCrysesTetrs[i]]_n[0..3] }
     size_t* tetrs;
 
-    PolycrMesh();
-    ~PolycrMesh();
+    PolyMesh();
+    ~PolyMesh();
 };

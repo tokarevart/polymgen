@@ -10,6 +10,8 @@ using std::unique_ptr;
 class Simplex3 : public unique_ptr_helper<Simplex3>
 {
 public:
+    size_t globalNum;
+
     unique_ptr<Vertex3>* vertexes[4];
 
     double computeVolume() const;

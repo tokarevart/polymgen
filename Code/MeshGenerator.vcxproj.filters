@@ -16,11 +16,11 @@
     <Filter Include="SpatialAlgs">
       <UniqueIdentifier>{0cddfc8e-60b3-40a9-b337-737aa8d51915}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PolycrGen">
-      <UniqueIdentifier>{220fbe6c-72af-440c-b03d-5c0e85b82c70}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Data Structures">
       <UniqueIdentifier>{4fde53df-e790-48a3-8e93-db27fde21ae8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PolyGen">
+      <UniqueIdentifier>{220fbe6c-72af-440c-b03d-5c0e85b82c70}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -69,13 +69,13 @@
     <ClInclude Include="Vec3.h">
       <Filter>SpatialAlgs</Filter>
     </ClInclude>
-    <ClInclude Include="PolycrGen.h">
-      <Filter>PolycrGen</Filter>
-    </ClInclude>
-    <ClInclude Include="CrysesShell.h">
+    <ClInclude Include="PolyStruct.h">
       <Filter>Data Structures</Filter>
     </ClInclude>
-    <ClInclude Include="PolycrMesh.h">
+    <ClInclude Include="PolyGen.h">
+      <Filter>PolyGen</Filter>
+    </ClInclude>
+    <ClInclude Include="PolyMesh.h">
       <Filter>Data Structures</Filter>
     </ClInclude>
   </ItemGroup>
@@ -119,13 +119,13 @@
     <ClCompile Include="Vec3.cpp">
       <Filter>SpatialAlgs</Filter>
     </ClCompile>
-    <ClCompile Include="PolycrGen.cpp">
-      <Filter>PolycrGen</Filter>
-    </ClCompile>
-    <ClCompile Include="PolycrMesh.cpp">
+    <ClCompile Include="PolyStruct.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
-    <ClCompile Include="CrysesShell.cpp">
+    <ClCompile Include="PolyGen.cpp">
+      <Filter>PolyGen</Filter>
+    </ClCompile>
+    <ClCompile Include="PolyMesh.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
   </ItemGroup>

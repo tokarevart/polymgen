@@ -1,8 +1,8 @@
-#include "CrysesShell.h"
+#include "PolyStruct.h"
 
-CrysesShell::CrysesShell() {}
+PolyStruct::PolyStruct() {}
 
-CrysesShell::~CrysesShell()
+PolyStruct::~PolyStruct()
 {
     delete[] nodesPositions;
     delete[] facets;

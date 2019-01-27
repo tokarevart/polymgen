@@ -1,8 +1,8 @@
-#include "PolycrMesh.h"
+#include "PolyMesh.h"
 
-PolycrMesh::PolycrMesh() {}
+PolyMesh::PolyMesh() {}
 
-PolycrMesh::~PolycrMesh()
+PolyMesh::~PolyMesh()
 {
     delete[] nodesPositions;
     delete[] tetrs;

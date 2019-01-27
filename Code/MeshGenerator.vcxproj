@@ -150,14 +150,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CrysesShell.h" />
+    <ClInclude Include="PolyStruct.h" />
     <ClInclude Include="Definitions.h" />
     <ClInclude Include="Inclusions.h" />
     <ClInclude Include="Crystallite3.h" />
     <ClInclude Include="Edge3.h" />
     <ClInclude Include="Facet3.h" />
-    <ClInclude Include="PolycrGen.h" />
-    <ClInclude Include="PolycrMesh.h" />
+    <ClInclude Include="PolyGen.h" />
+    <ClInclude Include="PolyMesh.h" />
     <ClInclude Include="Polycrystal3.h" />
     <ClInclude Include="ShellEdge3.h" />
     <ClInclude Include="ShellFacet3.h" />
@@ -170,13 +170,13 @@
     <ClInclude Include="Vertex3.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CrysesShell.cpp" />
+    <ClCompile Include="PolyStruct.cpp" />
     <ClCompile Include="Crystallite3.cpp" />
     <ClCompile Include="Edge3.cpp" />
     <ClCompile Include="Facet3.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="PolycrGen.cpp" />
-    <ClCompile Include="PolycrMesh.cpp" />
+    <ClCompile Include="PolyGen.cpp" />
+    <ClCompile Include="PolyMesh.cpp" />
     <ClCompile Include="Polycrystal3.cpp" />
     <ClCompile Include="ShellEdge3.cpp" />
     <ClCompile Include="ShellFacet3.cpp" />

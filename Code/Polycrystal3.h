@@ -5,8 +5,8 @@
 #include <memory>
 #include "Definitions.h"
 #include "Inclusions.h"
-#include "PolycrMesh.h"
-#include "CrysesShell.h"
+#include "PolyMesh.h"
+#include "PolyStruct.h"
 
 using std::ifstream;
 using std::ofstream;
@@ -24,7 +24,7 @@ class Polycrystal3
 {
     double _preferredLength;
 
-    PolycrMesh* _lastTriangulation = nullptr;
+    PolyMesh* _lastTriangulation = nullptr;
 
     vector<Crystallite3*> _crystallites;
 
@@ -49,25 +49,28 @@ class Polycrystal3
     void setLinksWithShell();
     void startFrontDelaunayPostprocessing();
 
-    void outputDataOBJ(string filename) const;
-    void outputDataLS_DYNA_KEYWORD(string filename) const;
+    void outputDataObj(string filename) const;
+    void outputDataLSDynaKeyword_PART(std::ofstream& file, int polycrystalId = 1) const;
+    void outputDataLSDynaKeyword_NODE(std::ofstream& file) const;
+    void outputDataLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, int polycrystalId = 1) const;
+    void outputDataLSDynaKeyword(string filename, int polycrystalId = 1) const;
 
 public:
-    void generateMeshNoStruct(const double preferredLength);
-    void generateMeshNoStruct(string filename, const double preferredLength);
-    void generateMeshNoStruct(const CrysesShell* crysesShell, const double preferredLength);
-    PolycrMesh* structurizeMesh();
-    PolycrMesh* generateMesh(const double preferredLength);
-    PolycrMesh* generateMesh(string filename, const double preferredLength);
-    PolycrMesh* generateMesh(const CrysesShell* crysesShell, const double preferredLength);
-    PolycrMesh* getLastMesh();
+    void generateMeshNoStructGen(const double preferredLength);
+    void generateMeshNoStructGen(string filename, const double preferredLength);
+    void generateMeshNoStructGen(const PolyStruct* crysesShell, const double preferredLength);
+    PolyMesh* structurizeMesh();
+    PolyMesh* generateMesh(const double preferredLength);
+    PolyMesh* generateMesh(string filename, const double preferredLength);
+    PolyMesh* generateMesh(const PolyStruct* crysesShell, const double preferredLength);
+    PolyMesh* getLastMesh();
 
     void inputData(string filename);
-    void inputData(const CrysesShell* crysesShell);
-    void outputData(string filename = "polycr.obj", FileType filetype = OBJ) const;
+    void inputData(const PolyStruct* crysesShell);
+    void outputData(string filename = "polycr.obj", FileType filetype = OBJ, int polycrystalId = 1) const;
 
     Polycrystal3();
     Polycrystal3(string filename);
-    Polycrystal3(const CrysesShell* crysesShell);
+    Polycrystal3(const PolyStruct* crysesShell);
     ~Polycrystal3();
 };
