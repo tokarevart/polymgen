@@ -1,5 +1,6 @@
 #include "Polycrystal3.h"
 #include <algorithm>
+#include <sstream>
 #include <iostream>
 #include "Timer.h"
 
@@ -294,24 +295,40 @@ PolyMesh* Polycrystal3::structurizeMesh()
     return pol_triang;
 }
 
-void Polycrystal3::generateMeshNoStructGen(const double preferredLength)
+std::string Polycrystal3::generateMeshNoStructGen_generateLogFileName(std::string logFileName) const
+{
+    if (logFileName != "_AUTO_")
+        return logFileName;
+
+    std::stringstream ss;
+    ss << "log_" << _crystallites.size() << "_ncr_";
+    size_t av_nfe = 0ull;
+    for (auto& crys : _crystallites)
+        av_nfe += crys->innerSimps.size();
+    av_nfe /= _crystallites.size();
+    ss << av_nfe << "_fe_per_cr.log";
+
+    return ss.str();
+}
+
+void Polycrystal3::generateMeshNoStructGen(const double preferredLength, std::string logFileName)
 {
     _preferredLength = preferredLength;
 
+    Timer tmr;
+    tmr.Start();
     triangulateShell();
     setLinksWithShell();
     startFrontDelaunayPostprocessing();
+    tmr.Stop();
 
-    Timer tmr;
     tmr.Start();
     double min_q = 0.0, av_q = 0.0;
     size_t n_elems = 0ull;
     #pragma omp parallel for
     for (size_t i = 0ull, max = _crystallites.size(); i < max; i++)
     {
-        //outputData();
         _crystallites[i]->setStartFront(_startFrontEdges, _startFrontFacets);
-        //outputData();
         _crystallites[i]->generateMesh(_preferredLength, this);
 
         double buf_min_q, buf_av_q;
@@ -326,41 +343,43 @@ void Polycrystal3::generateMeshNoStructGen(const double preferredLength)
     min_q /= _crystallites.size();
     av_q /= _crystallites.size();
     tmr.Stop();
-    std::ofstream out("log.txt");
-    out <<   ">>  Minimum quality    " << min_q
-        << "\n>>  Average quality    " << av_q
-        << "\n>>  Elements number    " << n_elems
-        << "\n>>  Run time           " << tmr.GetLastDuration(microseconds) * 1e-6 << " s";
+    std::ofstream out(_lastLogFileName = generateMeshNoStructGen_generateLogFileName(logFileName));
+    out <<   ">>  Minimum quality             " << min_q
+        << "\n>>  Average quality             " << av_q
+        << "\n>>  Crystallites number         " << _crystallites.size()
+        << "\n>>  Elements number             " << n_elems
+        << "\n>>  Shell triangulation time    " << tmr.GetDuration(0, microseconds) * 1e-6  << " s"
+        << "\n>>  Volume exhaustion time      " << tmr.GetLastDuration(microseconds) * 1e-6 << " s";
     out.close();
 }
 
-void Polycrystal3::generateMeshNoStructGen(string filename, const double preferredLength)
+void Polycrystal3::generateMeshNoStructGen(std::string polyStructFileName, const double preferredLength, std::string logFileName)
 {
-    inputData(filename);
+    inputData(polyStructFileName);
     generateMeshNoStructGen(preferredLength);
 }
 
-void Polycrystal3::generateMeshNoStructGen(const PolyStruct* crysesShell, const double preferredLength)
+void Polycrystal3::generateMeshNoStructGen(const PolyStruct* polyStruct, const double preferredLength, std::string logFileName)
 {
-    inputData(crysesShell);
+    inputData(polyStruct);
     generateMeshNoStructGen(preferredLength);
 }
 
-PolyMesh* Polycrystal3::generateMesh(const double preferredLength)
+PolyMesh* Polycrystal3::generateMesh(const double preferredLength, std::string logFileName)
 {
     generateMeshNoStructGen(preferredLength);
     return structurizeMesh();
 }
 
-PolyMesh* Polycrystal3::generateMesh(string filename, const double preferredLength)
+PolyMesh* Polycrystal3::generateMesh(std::string polyStructFileName, const double preferredLength, std::string logFileName)
 {
-    generateMeshNoStructGen(filename, preferredLength);
+    generateMeshNoStructGen(polyStructFileName, preferredLength);
     return structurizeMesh();
 }
 
-PolyMesh* Polycrystal3::generateMesh(const PolyStruct* crysesShell, const double preferredLength)
+PolyMesh* Polycrystal3::generateMesh(const PolyStruct* polyStruct, const double preferredLength, std::string logFileName)
 {
-    generateMeshNoStructGen(crysesShell, preferredLength);
+    generateMeshNoStructGen(polyStruct, preferredLength);
     return structurizeMesh();
 }
 
@@ -369,7 +388,7 @@ PolyMesh* Polycrystal3::getLastMesh()
     return _lastTriangulation;
 }
 
-void Polycrystal3::outputDataObj(string filename) const
+void Polycrystal3::outputDataObj(std::string filename) const
 {
     ofstream file(filename);
 
@@ -556,9 +575,9 @@ void Polycrystal3::outputDataLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, in
     }
 }
 
-void Polycrystal3::outputDataLSDynaKeyword(string filename, int polycrystalId) const
+void Polycrystal3::outputDataLSDynaKeyword(std::string filename, int polycrystalId) const
 {
-    ofstream file(filename);
+    std::ofstream file(filename);
     file.setf(std::ios::right);
     
     outputDataLSDynaKeyword_PART(file);
@@ -569,9 +588,9 @@ void Polycrystal3::outputDataLSDynaKeyword(string filename, int polycrystalId) c
     file.close();
 }
 
-void Polycrystal3::inputData(string filename)
+void Polycrystal3::inputData(std::string polyStructFileName)
 {
-    ifstream input(filename);
+    ifstream input(polyStructFileName);
 
     size_t nodes_num;
     input >> nodes_num;
@@ -657,25 +676,25 @@ void Polycrystal3::inputData(string filename)
     delete[] cryses_facets_nums;
 }
 
-void Polycrystal3::inputData(const PolyStruct* crysesShell)
+void Polycrystal3::inputData(const PolyStruct* polyStruct)
 {
-    for (size_t i = 0ull; i < crysesShell->nNodes; i++)
+    for (size_t i = 0ull; i < polyStruct->nNodes; i++)
     {
         double coors[3];
-        coors[0] = crysesShell->nodesPositions[3ull * i];
-        coors[1] = crysesShell->nodesPositions[3ull * i + 1ull];
-        coors[2] = crysesShell->nodesPositions[3ull * i + 2ull];
+        coors[0] = polyStruct->nodesPositions[3ull * i];
+        coors[1] = polyStruct->nodesPositions[3ull * i + 1ull];
+        coors[2] = polyStruct->nodesPositions[3ull * i + 2ull];
 
         _shellVertexes.push_back(new ShellVertex3(coors[0], coors[1], coors[2]));
         _startFrontVertexes.push_back((new Vertex3(coors[0], coors[1], coors[2]))->getPtrToUPtr());
     }
 
-    for (size_t i = 0ull; i < crysesShell->nFacets; i++)
+    for (size_t i = 0ull; i < polyStruct->nFacets; i++)
     {
         size_t facet_nodes_inds[3];
-        facet_nodes_inds[0] = crysesShell->facets[3ull * i];
-        facet_nodes_inds[1] = crysesShell->facets[3ull * i + 1ull];
-        facet_nodes_inds[2] = crysesShell->facets[3ull * i + 2ull];
+        facet_nodes_inds[0] = polyStruct->facets[3ull * i];
+        facet_nodes_inds[1] = polyStruct->facets[3ull * i + 1ull];
+        facet_nodes_inds[2] = polyStruct->facets[3ull * i + 2ull];
 
         if (!findShellEdge(_shellVertexes[facet_nodes_inds[0]], _shellVertexes[facet_nodes_inds[1]]))
         {
@@ -705,15 +724,15 @@ void Polycrystal3::inputData(const PolyStruct* crysesShell)
             **findStartFrontEdge(_startFrontVertexes[facet_nodes_inds[2]], _startFrontVertexes[facet_nodes_inds[0]])))->getPtrToUPtr());
     }
 
-    for (size_t i = 0ull; i < crysesShell->nCryses; i++)
+    for (size_t i = 0ull; i < polyStruct->nCryses; i++)
         _crystallites.push_back(new Crystallite3);
     
     size_t cryses_inner_ind = 0ull;
-    for (size_t i = 0ull; i < crysesShell->nCryses; i++)
+    for (size_t i = 0ull; i < polyStruct->nCryses; i++)
     {
-        for (size_t j = 0ull; j < crysesShell->nCrysesFacets[i]; j++)
+        for (size_t j = 0ull; j < polyStruct->nCrysesFacets[i]; j++)
         {
-            size_t facet_ind = crysesShell->cryses[cryses_inner_ind++];
+            size_t facet_ind = polyStruct->cryses[cryses_inner_ind++];
 
             if (std::find(_crystallites[i]->shellEdges.begin(), _crystallites[i]->shellEdges.end(), _shellFacets[facet_ind]->edges[0]) == _crystallites[i]->shellEdges.end())
                 _crystallites[i]->shellEdges.push_back(_shellFacets[facet_ind]->edges[0]);
@@ -729,33 +748,67 @@ void Polycrystal3::inputData(const PolyStruct* crysesShell)
     }
 }
 
-void Polycrystal3::outputData(string filename, FileType filetype, int polycrystalId) const
+std::string Polycrystal3::outputData_generateFilename(FileType filetype, std::string filename) const
 {
+    if (filename != "_AUTO_")
+        return filename;
+
+    std::stringstream ss;
+    ss << "polycr_" << _crystallites.size() << "_ncr_";
+    size_t av_nfe = 0ull;
+    for (auto& crys : _crystallites)
+        av_nfe += crys->innerSimps.size();
+    av_nfe /= _crystallites.size();
+    ss << av_nfe << "_fe_per_cr";
     switch (filetype)
     {
     case OBJ:
-        outputDataObj(filename);
+        return ss.str() + ".obj";
         break;
 
     case LS_DYNA_KEYWORD:
-        outputDataLSDynaKeyword(filename, polycrystalId);
+        return ss.str() + ".kw";
         break;
 
     default:
-        throw std::range_error("Wrong FileType.");
+        throw std::range_error("Wrong FileType.\nError in function: Polycrystal3::outputData_generateFilename");
     }
+}
+
+void Polycrystal3::outputData(FileType filetype, std::string filename, int polycrystalId) const
+{
+    Timer tmr;
+    tmr.Start();
+    switch (filetype)
+    {
+    case OBJ:
+        outputDataObj(outputData_generateFilename(OBJ, filename));
+        break;
+
+    case LS_DYNA_KEYWORD:
+        outputDataLSDynaKeyword(outputData_generateFilename(LS_DYNA_KEYWORD, filename), polycrystalId);
+        break;
+
+    default:
+        throw std::range_error("Wrong FileType.\nError in function: Polycrystal3::outputData");
+    }
+    tmr.Stop();
+
+    std::ofstream out(_lastLogFileName, std::ios::app);
+    out << "\n>>  Mesh file writing time      " << tmr.GetLastDuration(microseconds) * 1e-6 << " s";
+    out.close();
 }
 
 Polycrystal3::Polycrystal3() {}
 
-Polycrystal3::Polycrystal3(string filename)
+Polycrystal3::Polycrystal3(std::string polyStructFileName)
 {
-    inputData(filename);
+    inputData(polyStructFileName);
 }
 
-Polycrystal3::Polycrystal3(const PolyStruct* crysesShell)
+Polycrystal3::Polycrystal3(const PolyStruct* polyStruct)
 {
-    inputData(crysesShell);
+    inputData(polyStruct);
 }
 
 Polycrystal3::~Polycrystal3()

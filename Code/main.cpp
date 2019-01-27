@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
     #ifdef GENERATE
 
     std::cout << "Generating polycrystal...";
-    PolyStruct* polystr = polygen::generateCuboidsPolycrystal(6, 6, 6);
+    PolyStruct* polystr = polygen::generateCuboidsPolycrystal(9, 9, 9);
     std::cout << " done.\n";
 
     //std::ofstream polycr_mesh("polycr_mesh_test.txt");
@@ -57,8 +57,8 @@ int main(int argc, char* argv[])
     std::cout << " done.\n";
 
     std::cout << "Outputting data to file...";
-    polycr.outputData("polycr_216_crysts.kw", LS_DYNA_KEYWORD);
-    //polycr.outputData("polycr_216_crysts.obj", OBJ);
+    polycr.outputData(LS_DYNA_KEYWORD);
+    //polycr.outputData(OBJ);
     std::cout << " done.\n";
 
     #else

@@ -25,6 +25,7 @@ class Polycrystal3
     double _preferredLength;
 
     PolyMesh* _lastTriangulation = nullptr;
+    std::string _lastLogFileName;
 
     vector<Crystallite3*> _crystallites;
 
@@ -49,28 +50,31 @@ class Polycrystal3
     void setLinksWithShell();
     void startFrontDelaunayPostprocessing();
 
-    void outputDataObj(string filename) const;
+    void outputDataObj(std::string filename) const;
     void outputDataLSDynaKeyword_PART(std::ofstream& file, int polycrystalId = 1) const;
     void outputDataLSDynaKeyword_NODE(std::ofstream& file) const;
     void outputDataLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, int polycrystalId = 1) const;
-    void outputDataLSDynaKeyword(string filename, int polycrystalId = 1) const;
+    void outputDataLSDynaKeyword(std::string filename, int polycrystalId = 1) const;
+
+    std::string generateMeshNoStructGen_generateLogFileName(std::string logFileName) const;
+    std::string outputData_generateFilename(FileType filetype, std::string filename) const;
 
 public:
-    void generateMeshNoStructGen(const double preferredLength);
-    void generateMeshNoStructGen(string filename, const double preferredLength);
-    void generateMeshNoStructGen(const PolyStruct* crysesShell, const double preferredLength);
+    void generateMeshNoStructGen(const double preferredLength, std::string logFileName = "_AUTO_");
+    void generateMeshNoStructGen(std::string polyStructFileName, const double preferredLength, std::string logFileName = "_AUTO_");
+    void generateMeshNoStructGen(const PolyStruct* polyStruct, const double preferredLength, std::string logFileName = "_AUTO_");
     PolyMesh* structurizeMesh();
-    PolyMesh* generateMesh(const double preferredLength);
-    PolyMesh* generateMesh(string filename, const double preferredLength);
-    PolyMesh* generateMesh(const PolyStruct* crysesShell, const double preferredLength);
+    PolyMesh* generateMesh(const double preferredLength, std::string logFileName = "_AUTO_");
+    PolyMesh* generateMesh(std::string polyStructFileName, const double preferredLength, std::string logFileName = "_AUTO_");
+    PolyMesh* generateMesh(const PolyStruct* polyStruct, const double preferredLength, std::string logFileName = "_AUTO_");
     PolyMesh* getLastMesh();
 
-    void inputData(string filename);
-    void inputData(const PolyStruct* crysesShell);
-    void outputData(string filename = "polycr.obj", FileType filetype = OBJ, int polycrystalId = 1) const;
+    void inputData(std::string polyStructFileName);
+    void inputData(const PolyStruct* polyStruct);
+    void outputData(FileType filetype = OBJ, std::string filename = "_AUTO_", int polycrystalId = 1) const;
 
     Polycrystal3();
-    Polycrystal3(string filename);
-    Polycrystal3(const PolyStruct* crysesShell);
+    Polycrystal3(std::string polyStructFileName);
+    Polycrystal3(const PolyStruct* polyStruct);
     ~Polycrystal3();
 };
