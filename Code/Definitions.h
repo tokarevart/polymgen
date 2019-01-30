@@ -1,0 +1,12 @@
+#pragma once
+class Polycrystal3;
+class Crystallite3;
+class Simplex3;
+class FrontFacet3;
+class ShellFacet3;
+class Facet3;
+class FrontEdge3;
+class ShellEdge3;
+class Edge3;
+class Vertex3;
+class ShellVertex3;
