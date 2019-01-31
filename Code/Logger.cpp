@@ -35,14 +35,14 @@ void Logger::flush()
 
 
 
-Logger::Iomanip Logger::setw(std::streamsize new_width)
+Logger::Iomanip<Logger::IomanipType::WIDTH> Logger::setw(std::streamsize new_width)
 {
-    return Iomanip{ WIDTH, new_width };
+    return Iomanip<WIDTH>{ new_width };
 }
 
-Logger::Iomanip Logger::setprecision(std::streamsize new_precision)
+Logger::Iomanip<Logger::IomanipType::PRECISION> Logger::setprecision(std::streamsize new_precision)
 {
-    return Iomanip{ PRECISION, new_precision };
+    return Iomanip<PRECISION>{ new_precision };
 }
 
 
@@ -114,16 +114,22 @@ std::ios::fmtflags Logger::setf(std::ios::fmtflags flags, std::ios::fmtflags mas
 
 
 
+void Logger::istreamTypeOperatorHelper()
+{
+    m_values.push_back(m_bufiss->str());
+    std::ios::fmtflags fmtflags_buf = m_bufiss->flags();
+    m_bufiss.reset(new std::stringstream(std::ios::in | std::ios::out));
+    m_bufiss->flags(fmtflags_buf);
+}
+
+
 Logger& Logger::operator<<(short value)
 {
     if (m_turnFlag != 1)
         throw std::logic_error("Wrong input order.\nError in function: Logger::operator<<");
 
     *m_bufiss << value;
-    m_values.push_back(m_bufiss->str());
-    std::ios::fmtflags fmtflags_buf = m_bufiss->flags();
-    m_bufiss.reset(new std::stringstream(std::ios::in | std::ios::out));
-    m_bufiss->flags(fmtflags_buf);
+    istreamTypeOperatorHelper();
 
     m_turnFlag++;
     return *this;
@@ -136,10 +142,7 @@ Logger& Logger::operator<<(unsigned short value)
         throw std::logic_error("Wrong input order.\nError in function: Logger::operator<<");
 
     *m_bufiss << value;
-    m_values.push_back(m_bufiss->str());
-    std::ios::fmtflags fmtflags_buf = m_bufiss->flags();
-    m_bufiss.reset(new std::stringstream(std::ios::in | std::ios::out));
-    m_bufiss->flags(fmtflags_buf);
+    istreamTypeOperatorHelper();
 
     m_turnFlag++;
     return *this;
@@ -152,10 +155,7 @@ Logger& Logger::operator<<(int value)
         throw std::logic_error("Wrong input order.\nError in function: Logger::operator<<");
 
     *m_bufiss << value;
-    m_values.push_back(m_bufiss->str());
-    std::ios::fmtflags fmtflags_buf = m_bufiss->flags();
-    m_bufiss.reset(new std::stringstream(std::ios::in | std::ios::out));
-    m_bufiss->flags(fmtflags_buf);
+    istreamTypeOperatorHelper();
 
     m_turnFlag++;
     return *this;
@@ -168,10 +168,7 @@ Logger& Logger::operator<<(unsigned int value)
         throw std::logic_error("Wrong input order.\nError in function: Logger::operator<<");
 
     *m_bufiss << value;
-    m_values.push_back(m_bufiss->str());
-    std::ios::fmtflags fmtflags_buf = m_bufiss->flags();
-    m_bufiss.reset(new std::stringstream(std::ios::in | std::ios::out));
-    m_bufiss->flags(fmtflags_buf);
+    istreamTypeOperatorHelper();
 
     m_turnFlag++;
     return *this;
@@ -184,10 +181,7 @@ Logger& Logger::operator<<(long value)
         throw std::logic_error("Wrong input order.\nError in function: Logger::operator<<");
 
     *m_bufiss << value;
-    m_values.push_back(m_bufiss->str());
-    std::ios::fmtflags fmtflags_buf = m_bufiss->flags();
-    m_bufiss.reset(new std::stringstream(std::ios::in | std::ios::out));
-    m_bufiss->flags(fmtflags_buf);
+    istreamTypeOperatorHelper();
 
     m_turnFlag++;
     return *this;
@@ -200,10 +194,7 @@ Logger& Logger::operator<<(unsigned long value)
         throw std::logic_error("Wrong input order.\nError in function: Logger::operator<<");
 
     *m_bufiss << value;
-    m_values.push_back(m_bufiss->str());
-    std::ios::fmtflags fmtflags_buf = m_bufiss->flags();
-    m_bufiss.reset(new std::stringstream(std::ios::in | std::ios::out));
-    m_bufiss->flags(fmtflags_buf);
+    istreamTypeOperatorHelper();
 
     m_turnFlag++;
     return *this;
@@ -216,10 +207,7 @@ Logger& Logger::operator<<(long long value)
         throw std::logic_error("Wrong input order.\nError in function: Logger::operator<<");
 
     *m_bufiss << value;
-    m_values.push_back(m_bufiss->str());
-    std::ios::fmtflags fmtflags_buf = m_bufiss->flags();
-    m_bufiss.reset(new std::stringstream(std::ios::in | std::ios::out));
-    m_bufiss->flags(fmtflags_buf);
+    istreamTypeOperatorHelper();
 
     m_turnFlag++;
     return *this;
@@ -232,10 +220,7 @@ Logger& Logger::operator<<(unsigned long long value)
         throw std::logic_error("Wrong input order.\nError in function: Logger::operator<<");
 
     *m_bufiss << value;
-    m_values.push_back(m_bufiss->str());
-    std::ios::fmtflags fmtflags_buf = m_bufiss->flags();
-    m_bufiss.reset(new std::stringstream(std::ios::in | std::ios::out));
-    m_bufiss->flags(fmtflags_buf);
+    istreamTypeOperatorHelper();
 
     m_turnFlag++;
     return *this;
@@ -248,10 +233,7 @@ Logger& Logger::operator<<(float value)
         throw std::logic_error("Wrong input order.\nError in function: Logger::operator<<");
 
     *m_bufiss << value;
-    m_values.push_back(m_bufiss->str());
-    std::ios::fmtflags fmtflags_buf = m_bufiss->flags();
-    m_bufiss.reset(new std::stringstream(std::ios::in | std::ios::out));
-    m_bufiss->flags(fmtflags_buf);
+    istreamTypeOperatorHelper();
 
     m_turnFlag++;
     return *this;
@@ -264,10 +246,7 @@ Logger& Logger::operator<<(double value)
         throw std::logic_error("Wrong input order.\nError in function: Logger::operator<<");
 
     *m_bufiss << value;
-    m_values.push_back(m_bufiss->str());
-    std::ios::fmtflags fmtflags_buf = m_bufiss->flags();
-    m_bufiss.reset(new std::stringstream(std::ios::in | std::ios::out));
-    m_bufiss->flags(fmtflags_buf);
+    istreamTypeOperatorHelper();
 
     m_turnFlag++;
     return *this;
@@ -280,10 +259,7 @@ Logger& Logger::operator<<(long double value)
         throw std::logic_error("Wrong input order.\nError in function: Logger::operator<<");
 
     *m_bufiss << value;
-    m_values.push_back(m_bufiss->str());
-    std::ios::fmtflags fmtflags_buf = m_bufiss->flags();
-    m_bufiss.reset(new std::stringstream(std::ios::in | std::ios::out));
-    m_bufiss->flags(fmtflags_buf);
+    istreamTypeOperatorHelper();
 
     m_turnFlag++;
     return *this;
@@ -296,10 +272,7 @@ Logger& Logger::operator<<(bool value)
         throw std::logic_error("Wrong input order.\nError in function: Logger::operator<<");
 
     *m_bufiss << value;
-    m_values.push_back(m_bufiss->str());
-    std::ios::fmtflags fmtflags_buf = m_bufiss->flags();
-    m_bufiss.reset(new std::stringstream(std::ios::in | std::ios::out));
-    m_bufiss->flags(fmtflags_buf);
+    istreamTypeOperatorHelper();
 
     m_turnFlag++;
     return *this;
@@ -312,10 +285,7 @@ Logger& Logger::operator<<(const void* value)
         throw std::logic_error("Wrong input order.\nError in function: Logger::operator<<");
 
     *m_bufiss << value;
-    m_values.push_back(m_bufiss->str());
-    std::ios::fmtflags fmtflags_buf = m_bufiss->flags();
-    m_bufiss.reset(new std::stringstream(std::ios::in | std::ios::out));
-    m_bufiss->flags(fmtflags_buf);
+    istreamTypeOperatorHelper();
 
     m_turnFlag++;
     return *this;
@@ -364,9 +334,13 @@ Logger& Logger::operator<<(std::ostream& (*func)(std::ostream&))
     return *this;
 }
 
-Logger& Logger::operator<<(Logger::Iomanip ioManip)
+
+
+
+template <Logger::IomanipType IomT>
+Logger& Logger::operator<<(Logger::Iomanip<IomT> ioManip)
 {
-    switch (ioManip.manipType)
+    switch (IomT)
     {
     case WIDTH:     m_bufiss->width(    ioManip.param); break;
     case PRECISION: m_bufiss->precision(ioManip.param); break;

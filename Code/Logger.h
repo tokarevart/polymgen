@@ -10,18 +10,18 @@ namespace tva
 {
     class Logger
     {
-        struct Iomanip;
-
-    public:
         enum IomanipType
         {
             WIDTH,
             PRECISION
         };
 
+        template <IomanipType IomT>
+        struct Iomanip;
 
-        static Logger::Iomanip setw(std::streamsize new_width);
-        static Logger::Iomanip setprecision(std::streamsize new_precision);
+    public:
+        static Logger::Iomanip<WIDTH>     setw        (std::streamsize new_width);
+        static Logger::Iomanip<PRECISION> setprecision(std::streamsize new_precision);
 
         bool isOpen() const;
         void open(const std::string& filename, std::ios::openmode mode = std::ios::out);
@@ -51,8 +51,9 @@ namespace tva
         Logger& operator<<(const char* value);
         Logger& operator<<(const std::string& str);
         Logger& operator<<(std::ios_base& (*func)(std::ios_base&));
-        Logger& operator<<(std::ostream& (*func)(std::ostream&));
-        Logger& operator<<(Logger::Iomanip ioManip);
+        Logger& operator<<(std::ostream&  (*func)(std::ostream&));
+        template <IomanipType IomT>
+        Logger& operator<<(Logger::Iomanip<IomT> ioManip);
 
         Logger();
         Logger(const std::string& filename, std::ios::openmode mode = std::ios::out);
@@ -60,6 +61,12 @@ namespace tva
 
 
     private:
+        template <IomanipType IomT>
+        struct Iomanip
+        {
+            std::streamsize param;
+        };
+
         std::ofstream m_file;
 
         std::vector<std::string> m_descriptions;
@@ -71,10 +78,6 @@ namespace tva
 
         void flush();
 
-        struct Iomanip
-        {
-            IomanipType manipType;
-            std::streamsize param;
-        };
+        void istreamTypeOperatorHelper();
     };
 }
