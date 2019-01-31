@@ -8,7 +8,7 @@
 #include "ShellEdge3.h"
 #include "Vertex3.h"
 #include "ShellVertex3.h"
-#include "Helpers/SpatialAlgs/Vec3.h"
+#include "helpers/spatialalgs/Vec3.h"
 
 class Simplex3;
 class FrontFacet3;

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "Polycrystal3.h"
-#include "PolyGen/PolyGen.h"
+#include "polygen/PolyGen.h"
 
 
 int main(int argc, char* argv[])

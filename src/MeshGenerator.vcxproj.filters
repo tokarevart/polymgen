@@ -13,17 +13,17 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Data Structures">
-      <UniqueIdentifier>{4fde53df-e790-48a3-8e93-db27fde21ae8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="PolyGen">
-      <UniqueIdentifier>{220fbe6c-72af-440c-b03d-5c0e85b82c70}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Helpers">
+    <Filter Include="helpers">
       <UniqueIdentifier>{c077f0f8-00e3-4b98-b7b5-d727a63d0e8f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Helpers\SpatialAlgs">
+    <Filter Include="helpers\spatialalgs">
       <UniqueIdentifier>{0cddfc8e-60b3-40a9-b337-737aa8d51915}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="polygen">
+      <UniqueIdentifier>{220fbe6c-72af-440c-b03d-5c0e85b82c70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data-structures">
+      <UniqueIdentifier>{4fde53df-e790-48a3-8e93-db27fde21ae8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -55,25 +55,25 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Helpers\Logger.h">
-      <Filter>Helpers</Filter>
+      <Filter>helpers</Filter>
     </ClInclude>
     <ClInclude Include="Helpers\Timer.h">
-      <Filter>Helpers</Filter>
+      <Filter>helpers</Filter>
     </ClInclude>
     <ClInclude Include="Helpers\SpatialAlgs\SpatialAlgs.h">
-      <Filter>Helpers\SpatialAlgs</Filter>
+      <Filter>helpers\spatialalgs</Filter>
     </ClInclude>
     <ClInclude Include="Helpers\SpatialAlgs\Vec3.h">
-      <Filter>Helpers\SpatialAlgs</Filter>
+      <Filter>helpers\spatialalgs</Filter>
     </ClInclude>
     <ClInclude Include="PolyGen\PolyGen.h">
-      <Filter>PolyGen</Filter>
+      <Filter>polygen</Filter>
     </ClInclude>
-    <ClInclude Include="Data Structures\PolyMesh.h">
-      <Filter>Data Structures</Filter>
+    <ClInclude Include="data-structures\PolyMesh.h">
+      <Filter>data-structures</Filter>
     </ClInclude>
-    <ClInclude Include="Data Structures\PolyStruct.h">
-      <Filter>Data Structures</Filter>
+    <ClInclude Include="data-structures\PolyStruct.h">
+      <Filter>data-structures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -108,25 +108,25 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Helpers\Logger.cpp">
-      <Filter>Helpers</Filter>
+      <Filter>helpers</Filter>
     </ClCompile>
     <ClCompile Include="Helpers\Timer.cpp">
-      <Filter>Helpers</Filter>
+      <Filter>helpers</Filter>
     </ClCompile>
     <ClCompile Include="Helpers\SpatialAlgs\SpatialAlgs.cpp">
-      <Filter>Helpers\SpatialAlgs</Filter>
+      <Filter>helpers\spatialalgs</Filter>
     </ClCompile>
     <ClCompile Include="Helpers\SpatialAlgs\Vec3.cpp">
-      <Filter>Helpers\SpatialAlgs</Filter>
+      <Filter>helpers\spatialalgs</Filter>
     </ClCompile>
     <ClCompile Include="PolyGen\PolyGen.cpp">
-      <Filter>PolyGen</Filter>
+      <Filter>polygen</Filter>
     </ClCompile>
-    <ClCompile Include="Data Structures\PolyMesh.cpp">
-      <Filter>Data Structures</Filter>
+    <ClCompile Include="data-structures\PolyMesh.cpp">
+      <Filter>data-structures</Filter>
     </ClCompile>
-    <ClCompile Include="Data Structures\PolyStruct.cpp">
-      <Filter>Data Structures</Filter>
+    <ClCompile Include="data-structures\PolyStruct.cpp">
+      <Filter>data-structures</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

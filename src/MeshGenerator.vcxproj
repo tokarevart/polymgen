@@ -154,8 +154,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Crystallite3.h" />
-    <ClInclude Include="Data Structures\PolyMesh.h" />
-    <ClInclude Include="Data Structures\PolyStruct.h" />
+    <ClInclude Include="data-structures\PolyMesh.h" />
+    <ClInclude Include="data-structures\PolyStruct.h" />
     <ClInclude Include="Helpers\Logger.h" />
     <ClInclude Include="Helpers\SpatialAlgs\SpatialAlgs.h" />
     <ClInclude Include="Helpers\SpatialAlgs\Vec3.h" />
@@ -171,8 +171,8 @@
     <ClInclude Include="Vertex3.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Data Structures\PolyMesh.cpp" />
-    <ClCompile Include="Data Structures\PolyStruct.cpp" />
+    <ClCompile Include="data-structures\PolyMesh.cpp" />
+    <ClCompile Include="data-structures\PolyStruct.cpp" />
     <ClCompile Include="Helpers\Logger.cpp" />
     <ClCompile Include="Helpers\SpatialAlgs\SpatialAlgs.cpp" />
     <ClCompile Include="Helpers\SpatialAlgs\Vec3.cpp" />

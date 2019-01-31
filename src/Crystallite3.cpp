@@ -1,7 +1,7 @@
 #include "Crystallite3.h"
 #include <algorithm>
 #include <iostream>
-#include "Helpers/SpatialAlgs/SpatialAlgs.h"
+#include "helpers/spatialalgs/SpatialAlgs.h"
 
 
 

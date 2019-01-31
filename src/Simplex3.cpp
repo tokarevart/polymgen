@@ -1,5 +1,5 @@
 #include "Simplex3.h"
-#include "Helpers/SpatialAlgs/Vec3.h"
+#include "helpers/spatialalgs/Vec3.h"
 
 namespace tva { struct tva::Vec3; }
 

@@ -2,7 +2,7 @@
 #include "Crystallite3.h"
 #include "Edge3.h"
 #include "Vertex3.h"
-#include "Helpers/SpatialAlgs/Vec3.h"
+#include "helpers/spatialalgs/Vec3.h"
 
 class Crystallite3;
 class Edge3;

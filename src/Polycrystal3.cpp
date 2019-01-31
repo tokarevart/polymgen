@@ -3,8 +3,8 @@
 #include <sstream>
 #include <iomanip>
 #include <iostream>
-#include "Helpers/SpatialAlgs/SpatialAlgs.h"
-#include "Helpers/Timer.h"
+#include "helpers/spatialalgs/SpatialAlgs.h"
+#include "helpers/Timer.h"
 
 //#define DEV_DEBUG
 
