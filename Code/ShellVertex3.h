@@ -2,7 +2,7 @@
 #include <vector>
 #include <memory>
 #include "Vertex3.h"
-#include "Vec3.h"
+#include "Helpers/SpatialAlgs/Vec3.h"
 
 class Vertex3;
 namespace tva { struct tva::Vec3; }

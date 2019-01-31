@@ -8,7 +8,7 @@
 #include "ShellEdge3.h"
 #include "Vertex3.h"
 #include "ShellVertex3.h"
-#include "Vec3.h"
+#include "Helpers/SpatialAlgs/Vec3.h"
 
 class Simplex3;
 class FrontFacet3;
@@ -27,6 +27,8 @@ using tva::Vec3;
 class Crystallite3
 {
 public:
+    double getPreferredLength();
+
     void addShellFacet(const ShellFacet3* shellFacet);
     void addShellEdge(const ShellEdge3* shellEdge);
 
@@ -101,7 +103,8 @@ private:
     static double computeSimp3SimpleQuality(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3);
     static double computeSimp3SimpleSqrQuality(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3);
 
-    FrontEdge3* currentFrontEdge(double maxExCos) const;
+    //FrontEdge3* currentFrontEdge(double maxExCos) const;
+    FrontEdge3* currentFrontEdge(double maxCompl) const;
     bool exhaustWithoutNewVertPriorityPredicate(FrontEdge3* fEdge);
     bool exhaustWithNewVertPriorityPredicate(FrontEdge3* fEdge);
     ExhaustType computeExhaustionTypeQualityPriority(
@@ -131,13 +134,16 @@ private:
     void         exhaustWithNewVert(FrontFacet3* fFacet, Vec3 vertPos);
 
     bool tryExhaustWithoutNewVert(FrontEdge3* fEdge, bool doesOppEdgeExists = true, FrontEdge3* oppEdge = nullptr);
-    bool tryExhaustWithNewVert(FrontEdge3* fEdge);
+    bool tryExhaustWithNewVert   (FrontEdge3* fEdge);
 
-    void processAngles();
     bool globalIntersectionCheck();
+    bool shellContainsVert(const Vertex3* vert);
+
+    void processLastSimp3();
+    void processAngles();
+
     void smoothMesh(int nIterations);
     void smoothNotFinisedMesh(int nIterations);
     void smoothFront(int nIterations);
     void smoothAroundFrontVert(Vertex3* frontVert);
-    bool shellContainsVert(const Vertex3* vert);
 };

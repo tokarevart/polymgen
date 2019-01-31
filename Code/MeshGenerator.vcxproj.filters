@@ -51,29 +51,29 @@
     <ClInclude Include="Vertex3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpatialAlgs.h">
-      <Filter>Helpers\SpatialAlgs</Filter>
-    </ClInclude>
-    <ClInclude Include="Vec3.h">
-      <Filter>Helpers\SpatialAlgs</Filter>
-    </ClInclude>
-    <ClInclude Include="PolyStruct.h">
-      <Filter>Data Structures</Filter>
-    </ClInclude>
-    <ClInclude Include="PolyGen.h">
-      <Filter>PolyGen</Filter>
-    </ClInclude>
-    <ClInclude Include="PolyMesh.h">
-      <Filter>Data Structures</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="Logger.h">
-      <Filter>Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="Crystallite3.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\Logger.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\Timer.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\SpatialAlgs\SpatialAlgs.h">
+      <Filter>Helpers\SpatialAlgs</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\SpatialAlgs\Vec3.h">
+      <Filter>Helpers\SpatialAlgs</Filter>
+    </ClInclude>
+    <ClInclude Include="PolyGen\PolyGen.h">
+      <Filter>PolyGen</Filter>
+    </ClInclude>
+    <ClInclude Include="Data Structures\PolyMesh.h">
+      <Filter>Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Data Structures\PolyStruct.h">
+      <Filter>Data Structures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -107,26 +107,26 @@
     <ClCompile Include="Vertex3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpatialAlgs.cpp">
+    <ClCompile Include="Helpers\Logger.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\Timer.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\SpatialAlgs\SpatialAlgs.cpp">
       <Filter>Helpers\SpatialAlgs</Filter>
     </ClCompile>
-    <ClCompile Include="Vec3.cpp">
+    <ClCompile Include="Helpers\SpatialAlgs\Vec3.cpp">
       <Filter>Helpers\SpatialAlgs</Filter>
     </ClCompile>
-    <ClCompile Include="PolyStruct.cpp">
-      <Filter>Data Structures</Filter>
-    </ClCompile>
-    <ClCompile Include="PolyGen.cpp">
+    <ClCompile Include="PolyGen\PolyGen.cpp">
       <Filter>PolyGen</Filter>
     </ClCompile>
-    <ClCompile Include="PolyMesh.cpp">
+    <ClCompile Include="Data Structures\PolyMesh.cpp">
       <Filter>Data Structures</Filter>
     </ClCompile>
-    <ClCompile Include="Logger.cpp">
-      <Filter>Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Helpers</Filter>
+    <ClCompile Include="Data Structures\PolyStruct.cpp">
+      <Filter>Data Structures</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

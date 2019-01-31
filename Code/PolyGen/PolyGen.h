@@ -1,5 +1,5 @@
 #pragma once
-#include "PolyStruct.h"
+#include "../Data Structures/PolyStruct.h"
 
 
 namespace polygen

@@ -1,5 +1,5 @@
 #include "Facet3.h"
-#include "SpatialAlgs.h"
+#include "Helpers/SpatialAlgs/SpatialAlgs.h"
 
 
 

@@ -1,7 +1,7 @@
 #include "Crystallite3.h"
 #include <algorithm>
 #include <iostream>
-#include "SpatialAlgs.h"
+#include "Helpers/SpatialAlgs/SpatialAlgs.h"
 
 
 
@@ -659,17 +659,34 @@ double Crystallite3::computeSimp3SimpleSqrQuality(const Vec3& p0, const Vec3& p1
 
 
 
-FrontEdge3* Crystallite3::currentFrontEdge(double maxExCos) const
+//FrontEdge3* Crystallite3::currentFrontEdge(double maxExCos) const
+//{
+//    double curr_max_excos = -2.0;
+//    FrontEdge3* curr_max_f_edge = nullptr;
+//    for (auto& f_edge : m_frontEdges)
+//    {
+//        double curr_excos = f_edge->getAngleExCos();
+//        if (curr_excos > curr_max_excos &&
+//            curr_excos < maxExCos)
+//        {
+//            curr_max_excos = curr_excos;
+//            curr_max_f_edge = f_edge;
+//        }
+//    }
+//
+//    return curr_max_f_edge;
+//}
+FrontEdge3* Crystallite3::currentFrontEdge(double maxCompl) const
 {
-    double curr_max_excos = -2.0;
+    double curr_max_compl = 0.0;
     FrontEdge3* curr_max_f_edge = nullptr;
     for (auto& f_edge : m_frontEdges)
     {
-        double curr_excos = f_edge->getAngleExCos();
-        if (curr_excos > curr_max_excos &&
-            curr_excos < maxExCos)
+        double curr_compl = f_edge->getComplexity();
+        if (curr_compl > curr_max_compl &&
+            curr_compl < maxCompl)
         {
-            curr_max_excos = curr_excos;
+            curr_max_compl = curr_compl;
             curr_max_f_edge = f_edge;
         }
     }
@@ -1367,25 +1384,48 @@ bool Crystallite3::tryExhaustWithNewVert(FrontEdge3* frontEdge)
 
 
 
+void Crystallite3::processLastSimp3()
+{
+    FrontFacet3* f_facets[4];
+    int n_facets = 0;
+    for (auto& f_facet : m_frontFacets)
+    {
+        f_facets[n_facets] = f_facet;
+        n_facets++;
+        if (n_facets == 4)
+        {
+            m_innerSimps.push_back(new Simplex3(
+                f_facet->facet->edges[0]->verts[0],
+                f_facet->facet->edges[0]->verts[1],
+                f_facet->facet->findVertNotIncludedInEdge(f_facet->facet->edges[0]),
+                f_facets[0]->facet->findVertNotIncludedInEdge(Facet3::intersectAlongAnEdge(f_facets[0]->facet, f_facet->facet))));
+            break;
+        }
+    }
+
+    for (auto& f_facet : m_frontFacets)
+        delete f_facet;
+    m_frontFacets.clear();
+
+    for (auto& f_edge : m_frontEdges)
+        delete f_edge;
+    m_frontEdges.clear();
+}
+
+
 void Crystallite3::processAngles()
 {
-    if (m_frontFacets.size() <= 4ull)
+    if (m_frontFacets.size() < 4ull)
+        throw std::logic_error("Wrong input data.\nError in function: Crystallite::processAngles");
+
+    if (m_frontFacets.size() == 4ull)
     {
-        throw std::logic_error("Error in function: Crystallite::processAngles");
-
-        for (auto& f_facet : m_frontFacets)
-            delete f_facet;
-        m_frontFacets.clear();
-
-        for (auto& f_edge : m_frontEdges)
-            delete f_edge;
-        m_frontEdges.clear();
-
+        processLastSimp3();
         return;
     }
 
-    double max_excos = 2.0;
-    for (FrontEdge3* curr_f_edge = currentFrontEdge(max_excos);; curr_f_edge = currentFrontEdge(max_excos))
+    double max_compl = DBL_MAX;
+    for (FrontEdge3* curr_f_edge = currentFrontEdge(max_compl);; curr_f_edge = currentFrontEdge(max_compl))
     {
         if (!curr_f_edge)
             throw std::logic_error("Crystallite3::currentFrontEdge returned nullptr");
@@ -1394,7 +1434,7 @@ void Crystallite3::processAngles()
         {
             if (!tryExhaustWithoutNewVert(curr_f_edge))
             {
-                max_excos = curr_f_edge->getAngleExCos();
+                max_compl = curr_f_edge->getComplexity();
                 continue;
             }
         }
@@ -1402,7 +1442,7 @@ void Crystallite3::processAngles()
         {
             if (!tryExhaustWithNewVert(curr_f_edge))
             {
-                max_excos = curr_f_edge->getAngleExCos();
+                max_compl = curr_f_edge->getComplexity();
                 continue;
             }
         }
@@ -1426,47 +1466,23 @@ void Crystallite3::processAngles()
                 {
                     if (!tryExhaustWithNewVert(curr_f_edge))
                     {
-                        max_excos = curr_f_edge->getAngleExCos();
+                        max_compl = curr_f_edge->getComplexity();
                         continue;
                     }
                 }
                 break;
 
             case DONT_EXHAUST:
-                max_excos = curr_f_edge->getAngleExCos();
+                max_compl = curr_f_edge->getComplexity();
                 continue;
                 break;
             }
         }
-        max_excos = 2.0;
+        max_compl = DBL_MAX;
 
         if (m_frontFacets.size() == 4ull)
         {
-            FrontFacet3* f_facets[4];
-            int n_facets = 0;
-            for (auto& f_facet : m_frontFacets)
-            {
-                f_facets[n_facets] = f_facet;
-                n_facets++;
-                if (n_facets == 4)
-                {
-                    m_innerSimps.push_back(new Simplex3(
-                        f_facet->facet->edges[0]->verts[0],
-                        f_facet->facet->edges[0]->verts[1],
-                        f_facet->facet->findVertNotIncludedInEdge(f_facet->facet->edges[0]),
-                        f_facets[0]->facet->findVertNotIncludedInEdge(Facet3::intersectAlongAnEdge(f_facets[0]->facet, f_facet->facet))));
-                    break;
-                }
-            }
-
-            for (auto& f_facet : m_frontFacets)
-                delete f_facet;
-            m_frontFacets.clear();
-
-            for (auto& f_edge : m_frontEdges)
-                delete f_edge;
-            m_frontEdges.clear();
-
+            processLastSimp3();
             return;
         }
     }
@@ -1479,7 +1495,7 @@ void Crystallite3::generateMesh(const double preferredLength)
     computeFrontNormals();
     processAngles();
     if (globalIntersectionCheck())
-        throw std::logic_error("Intersection error. Crystallite3::globalIntersectionCheck returned true.");
+        throw std::logic_error("Intersection error.\nCrystallite3::globalIntersectionCheck returned true.");
     smoothMesh(10);
 }
 
@@ -1605,15 +1621,26 @@ Crystallite3::~Crystallite3()
 
 
 
+
+double Crystallite3::getPreferredLength()
+{
+    return m_preferredLength;
+}
+
+
 void Crystallite3::addShellFacet(const ShellFacet3* shellFacet)
 {
     m_shellFacets.push_back((ShellFacet3*)shellFacet);
 }
 
+
 void Crystallite3::addShellEdge(const ShellEdge3* shellEdge)
 {
     m_shellEdges.push_back((ShellEdge3*)shellEdge);
 }
+
+
+
 
 bool Crystallite3::shellFacetsContains(const ShellFacet3* shellFacet)
 {
@@ -1626,25 +1653,34 @@ bool Crystallite3::shellEdgesContains(const ShellEdge3* shellEdge)
     return std::find(m_shellEdges.begin(), m_shellEdges.end(), shellEdge) != m_shellEdges.end();
 }
 
+
+
+
 const std::vector<Simplex3*>& Crystallite3::getInnerSimplexes3()
 {
     return m_innerSimps;
 }
+
 
 const std::vector<Facet3*>& Crystallite3::getInnerFacets()
 {
     return m_innerFacets;
 }
 
+
 const std::vector<Vertex3*>& Crystallite3::getInnerVertexes()
 {
     return m_innerVerts;
 }
 
+
+
+
 const std::list<FrontFacet3*>& Crystallite3::getFrontFacets()
 {
     return m_frontFacets;
 }
+
 
 const std::list<FrontEdge3*>& Crystallite3::getFrontEdges()
 {

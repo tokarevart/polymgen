@@ -154,39 +154,39 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Crystallite3.h" />
-    <ClInclude Include="Logger.h" />
-    <ClInclude Include="PolyStruct.h" />
+    <ClInclude Include="Data Structures\PolyMesh.h" />
+    <ClInclude Include="Data Structures\PolyStruct.h" />
+    <ClInclude Include="Helpers\Logger.h" />
+    <ClInclude Include="Helpers\SpatialAlgs\SpatialAlgs.h" />
+    <ClInclude Include="Helpers\SpatialAlgs\Vec3.h" />
+    <ClInclude Include="Helpers\Timer.h" />
+    <ClInclude Include="PolyGen\PolyGen.h" />
     <ClInclude Include="Edge3.h" />
     <ClInclude Include="Facet3.h" />
-    <ClInclude Include="PolyGen.h" />
-    <ClInclude Include="PolyMesh.h" />
     <ClInclude Include="Polycrystal3.h" />
     <ClInclude Include="ShellEdge3.h" />
     <ClInclude Include="ShellFacet3.h" />
     <ClInclude Include="ShellVertex3.h" />
     <ClInclude Include="Simplex3.h" />
-    <ClInclude Include="SpatialAlgs.h" />
-    <ClInclude Include="Timer.h" />
-    <ClInclude Include="Vec3.h" />
     <ClInclude Include="Vertex3.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Logger.cpp" />
-    <ClCompile Include="PolyStruct.cpp" />
+    <ClCompile Include="Data Structures\PolyMesh.cpp" />
+    <ClCompile Include="Data Structures\PolyStruct.cpp" />
+    <ClCompile Include="Helpers\Logger.cpp" />
+    <ClCompile Include="Helpers\SpatialAlgs\SpatialAlgs.cpp" />
+    <ClCompile Include="Helpers\SpatialAlgs\Vec3.cpp" />
+    <ClCompile Include="Helpers\Timer.cpp" />
+    <ClCompile Include="PolyGen\PolyGen.cpp" />
     <ClCompile Include="Crystallite3.cpp" />
     <ClCompile Include="Edge3.cpp" />
     <ClCompile Include="Facet3.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="PolyGen.cpp" />
-    <ClCompile Include="PolyMesh.cpp" />
     <ClCompile Include="Polycrystal3.cpp" />
     <ClCompile Include="ShellEdge3.cpp" />
     <ClCompile Include="ShellFacet3.cpp" />
     <ClCompile Include="ShellVertex3.cpp" />
     <ClCompile Include="Simplex3.cpp" />
-    <ClCompile Include="SpatialAlgs.cpp" />
-    <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="Vec3.cpp" />
     <ClCompile Include="Vertex3.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -12,9 +12,9 @@
 #include "ShellEdge3.h"
 #include "Vertex3.h"
 #include "ShellVertex3.h"
-#include "PolyMesh.h"
-#include "PolyStruct.h"
-#include "Logger.h"
+#include "Data Structures/PolyMesh.h"
+#include "Data Structures/PolyStruct.h"
+#include "Helpers/Logger.h"
 
 class Crystallite3;
 class Simplex3;

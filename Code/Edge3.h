@@ -83,7 +83,8 @@ private:
     Crystallite3* m_relatedCrys;
     std::pair<FrontFacet3*, FrontFacet3*> m_adjFacets{ nullptr, nullptr };
 
-    bool m_needProcessing = true;
+    bool m_needAngleExCosProcessing = true;
+    bool m_needComplexityProcessing = true;
     double m_exCos;
     double m_complexity;
 

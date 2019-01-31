@@ -1,7 +1,7 @@
 #include "Edge3.h"
 #include <algorithm>
 #include <iostream>
-#include "SpatialAlgs.h"
+#include "Helpers/SpatialAlgs/SpatialAlgs.h"
 
 
 #define PI 3.141592653589793
@@ -13,6 +13,9 @@
 #define INSIDE_RECTANGLE(corner0, corner1, point) \
         (BETWEEN(corner0[0], corner1[0], point[0]) && \
          BETWEEN(corner0[1], corner1[1], point[1]))
+
+
+#define K_ALPHA 2.5
 
 
 
@@ -222,15 +225,30 @@ Edge3::~Edge3() {}
 
 void FrontEdge3::refreshAngleData()
 {
-    m_needProcessing = true;
+    m_needAngleExCosProcessing = true;
+    m_needComplexityProcessing = true;
+}
+
+double FrontEdge3::getComplexity()
+{
+    if (!m_needComplexityProcessing)
+        return m_complexity;
+    
+    return computeComplexity();
 }
 
 double FrontEdge3::getAngleExCos()
 {
-    if (!m_needProcessing)
+    if (!m_needAngleExCosProcessing)
         return m_exCos;
     
     return computeAngleExCos();
+}
+
+double FrontEdge3::computeComplexity()
+{
+    m_needComplexityProcessing = false;
+    return m_complexity = m_relatedCrys->getPreferredLength() / edge->magnitude() + K_ALPHA * PI / computeAngle();
 }
 
 
@@ -240,12 +258,19 @@ double FrontEdge3::computeAngleExCos()
 
     double normals_cos = tva::Vec3::dotProduct(adj_facets.first->getNormal(), adj_facets.second->getNormal());
 
-    m_needProcessing = false;
+    m_needAngleExCosProcessing = false;
     return m_exCos = tva::spatialalgs::cpaTime(
             adj_facets.first->computeCenter(), adj_facets.first->getNormal(),
             adj_facets.second->computeCenter(), adj_facets.second->getNormal()) < 1e-6 ?
         -2.0 + normals_cos :
         -normals_cos;
+}
+
+double FrontEdge3::computeAngle()
+{
+    return getAngleExCos() < -1.0 ?
+        acos(m_exCos + 2.0) + PI :
+        acos(m_exCos);
 }
 
 
