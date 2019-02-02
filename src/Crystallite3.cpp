@@ -1,6 +1,7 @@
 #include "Crystallite3.h"
 #include <algorithm>
 #include <iostream>
+#include <float.h>
 #include "helpers/spatialalgs/SpatialAlgs.h"
 
 
@@ -50,7 +51,7 @@ bool Crystallite3::shellContainsVert(const Vertex3* vert)
 {
     if (vert->belongsToShellFacet)
     {
-        for (auto& s_facet : m_shellFacets)
+        for (auto& s_facet : mm_shellFacets)
         {
             if (s_facet == vert->belongsToShellFacet)
                 return true;
@@ -58,7 +59,7 @@ bool Crystallite3::shellContainsVert(const Vertex3* vert)
     }
     else if (vert->belongsToShellEdge)
     {
-        for (auto& s_edge : m_shellEdges)
+        for (auto& s_edge : mm_shellEdges)
         {
             if (s_edge == vert->belongsToShellEdge)
                 return true;
@@ -66,7 +67,7 @@ bool Crystallite3::shellContainsVert(const Vertex3* vert)
     }
     else if (vert->belongsToShellVertex)
     {
-        for (auto& s_edge : m_shellEdges)
+        for (auto& s_edge : mm_shellEdges)
         {
             if (s_edge->verts[0] == vert->belongsToShellVertex ||
                 s_edge->verts[1] == vert->belongsToShellVertex)
@@ -112,7 +113,7 @@ void Crystallite3::computeFrontNormals()
 
 ShellEdge3* Crystallite3::findShellEdge(const ShellVertex3* v0, const ShellVertex3* v1) const
 {
-    for (auto& s_edge : m_shellEdges)
+    for (auto& s_edge : mm_shellEdges)
     {
         if ((s_edge->verts[0] == v0  &&
              s_edge->verts[1] == v1) ||
@@ -192,7 +193,7 @@ FrontEdge3* Crystallite3::addFrontEdge3(const Vertex3* vert0, const Vertex3* ver
 
 void Crystallite3::addFrontEdge3(const FrontEdge3* frontEdge)
 {
-    m_frontEdges.push_back((FrontEdge3*)frontEdge);
+    m_frontEdges.push_back(const_cast<FrontEdge3*>(frontEdge));
     m_innerEdges.push_back(frontEdge->edge);
 }
 
@@ -202,23 +203,18 @@ void Crystallite3::addFrontEdge3(const FrontEdge3* frontEdge)
 bool Crystallite3::vertInsideFrontCheck(const Vec3& v)
 {
     int inters_num = 0;
+    Vec3 dir = 0.3333333333333333 * (m_frontFacets.front()->computeCenter() - 3.0 * v);
+
     for (auto& f_facet : m_frontFacets)
-    {       
-        Vec3 dir = 0.3333333333333333 * (f_facet->computeCenter() - 3.0 * v);
-
-        for (auto& f_facetj : m_frontFacets)
+    {
+        if (tva::spatialalgs::isRayIntersectTriangle(
+                v, dir,
+                f_facet->facet->edges[0]->verts[0]->getPos(),
+                f_facet->facet->edges[0]->verts[1]->getPos(),
+                f_facet->facet->findVertNotIncludedInEdge(f_facet->facet->edges[0])->getPos()))
         {
-            if (tva::spatialalgs::isRayIntersectTriangle(
-                    v, dir,
-                    f_facetj->facet->edges[0]->verts[0]->getPos(),
-                    f_facetj->facet->edges[0]->verts[1]->getPos(),
-                    f_facetj->facet->findVertNotIncludedInEdge(f_facetj->facet->edges[0])->getPos()))
-            {
-                inters_num++;
-            }
+             inters_num++;
         }
-
-        break;
     }
 
     return inters_num % 2 == 1;
@@ -468,11 +464,11 @@ bool Crystallite3::insideSimplex3Check(const Vec3& p0, const Vec3& p1, const Vec
     Vec3 vert_to_p3 = p3 - vert;
 
     double abs_mixed_prods[5];
-    abs_mixed_prods[0] = abs(Vec3::mixedProduct(vert_to_p0, vert_to_p2, vert_to_p3));
-    abs_mixed_prods[1] = abs(Vec3::mixedProduct(vert_to_p0, vert_to_p1, vert_to_p2));
-    abs_mixed_prods[2] = abs(Vec3::mixedProduct(vert_to_p0, vert_to_p1, vert_to_p3));
-    abs_mixed_prods[3] = abs(Vec3::mixedProduct(vert_to_p1, vert_to_p2, vert_to_p3));
-    abs_mixed_prods[4] = abs(Vec3::mixedProduct(p1 - p0, p2 - p0, p3 - p0));
+    abs_mixed_prods[0] = std::abs(Vec3::mixedProduct(vert_to_p0, vert_to_p2, vert_to_p3));
+    abs_mixed_prods[1] = std::abs(Vec3::mixedProduct(vert_to_p0, vert_to_p1, vert_to_p2));
+    abs_mixed_prods[2] = std::abs(Vec3::mixedProduct(vert_to_p0, vert_to_p1, vert_to_p3));
+    abs_mixed_prods[3] = std::abs(Vec3::mixedProduct(vert_to_p1, vert_to_p2, vert_to_p3));
+    abs_mixed_prods[4] = std::abs(Vec3::mixedProduct(p1 - p0, p2 - p0, p3 - p0));
 
     return abs_mixed_prods[0] + abs_mixed_prods[1] + abs_mixed_prods[2] + abs_mixed_prods[3] < abs_mixed_prods[4] * 1.000001;
 }
@@ -544,7 +540,7 @@ bool Crystallite3::parallelFacetsCheck(FrontEdge3* frontEdge) const
         {
             inters_reses[0] = Facet3::intersectAlongAnEdge(f_facet->facet, adj_f_facets.first->facet);
             inters_reses[1] = Facet3::intersectAlongAnEdge(f_facet->facet, adj_f_facets.second->facet);
-            if (!XOR((bool)inters_reses[0], (bool)inters_reses[1]))
+            if (!XOR(static_cast<bool>(inters_reses[0]), static_cast<bool>(inters_reses[1])))
                 continue;
 
             Vertex3* f_facet_to_verts[2];
@@ -557,8 +553,8 @@ bool Crystallite3::parallelFacetsCheck(FrontEdge3* frontEdge) const
             f_plane[1] = *f_facet_to_verts[1] - *f_facet_from_vert;
             Vec3 f_normal = Vec3::crossProduct(f_plane[0], f_plane[1]).normalize();
 
-            if (abs(abs(Vec3::dotProduct(f_normal, normal0)) - 1.0) < 1e-6 ||
-                abs(abs(Vec3::dotProduct(f_normal, normal1)) - 1.0) < 1e-6)
+            if (std::abs(std::abs(Vec3::dotProduct(f_normal, normal0)) - 1.0) < 1e-6 ||
+                std::abs(std::abs(Vec3::dotProduct(f_normal, normal1)) - 1.0) < 1e-6)
             {
                 int i = inters_reses[0] ? 0 : 1;
 
@@ -892,6 +888,8 @@ void Crystallite3::exhaustWithoutNewVertOppEdgeDontExists(FrontEdge3* frontEdge)
     FrontEdge3* opp_f_edge = addFrontEdge3(opp_verts[0], opp_verts[1]);
 
     Edge3* new_simp_edges[3];
+    new_simp_edges[0] = nullptr;
+    new_simp_edges[1] = nullptr;
     new_simp_edges[2] = opp_f_edge->edge;
 
     FrontEdge3* buf_f_edge;
@@ -1040,11 +1038,6 @@ bool Crystallite3::tryComputeNewVertPosType3(FrontFacet3* frontFacet, Vec3& out_
     auto third_edge = frontFacet->facet->findEdgeNotContainingVert(main_vert);
     auto third_f_edge = findFrontEdge(third_edge);
 
-    double av_magn = 0.3333333333333333 * (
-          frontFacet->facet->edges[0]->magnitude()
-        + frontFacet->facet->edges[1]->magnitude()
-        + frontFacet->facet->edges[2]->magnitude());
-
     auto v0 = main_edges[0]->verts[0] == main_vert ? main_edges[0]->verts[1] : main_edges[0]->verts[0];
     auto v1 = main_edges[1]->verts[0] == main_vert ? main_edges[1]->verts[1] : main_edges[1]->verts[0];
     auto v2 = main_vert;
@@ -1138,7 +1131,7 @@ bool Crystallite3::tryComputeNewVertPosType2(const int smallAngleIndex0, const d
     Vec3 np_mn1 = Vec3::crossProduct(v2_pos - v1_pos, e_mn1);
 
     Vec3 e = Vec3::crossProduct(np_mn0, np_mn1).normalize();
-    if (Vec3::dotProduct(e, n_m)) e *= -1.0;
+    if (Vec3::dotProduct(e, n_m) < 0.0) e *= -1.0;
 
     Vec3 new_pos = angleCos0 > COS_DEG_80 && angleCos1 > COS_DEG_80 ?
         v2_pos + 0.5 * av_magn * e :
@@ -1415,10 +1408,10 @@ void Crystallite3::processLastSimp3()
 
 void Crystallite3::processAngles()
 {
-    if (m_frontFacets.size() < 4ull)
+    if (m_frontFacets.size() < 4)
         throw std::logic_error("Wrong input data.\nError in function: Crystallite::processAngles");
 
-    if (m_frontFacets.size() == 4ull)
+    if (m_frontFacets.size() == 4)
     {
         processLastSimp3();
         return;
@@ -1475,12 +1468,11 @@ void Crystallite3::processAngles()
             case DONT_EXHAUST:
                 max_compl = curr_f_edge->getComplexity();
                 continue;
-                break;
             }
         }
         max_compl = DBL_MAX;
 
-        if (m_frontFacets.size() == 4ull)
+        if (m_frontFacets.size() == 4)
         {
             processLastSimp3();
             return;
@@ -1585,7 +1577,7 @@ void Crystallite3::smoothAroundFrontVert(Vertex3* fVert)
 
 std::pair<double, double> Crystallite3::analyzeMeshQuality()
 {
-    size_t simps_num = 0ull;
+    size_t simps_num = 0;
     double av_q = 0.0;
     double min_q = 1.0;
     for (auto &simp : m_innerSimps)
@@ -1630,13 +1622,13 @@ double Crystallite3::getPreferredLength()
 
 void Crystallite3::addShellFacet(const ShellFacet3* shellFacet)
 {
-    m_shellFacets.push_back((ShellFacet3*)shellFacet);
+    mm_shellFacets.push_back(const_cast<ShellFacet3*>(shellFacet));
 }
 
 
 void Crystallite3::addShellEdge(const ShellEdge3* shellEdge)
 {
-    m_shellEdges.push_back((ShellEdge3*)shellEdge);
+    mm_shellEdges.push_back(const_cast<ShellEdge3*>(shellEdge));
 }
 
 
@@ -1644,13 +1636,13 @@ void Crystallite3::addShellEdge(const ShellEdge3* shellEdge)
 
 bool Crystallite3::shellFacetsContains(const ShellFacet3* shellFacet)
 {
-    return std::find(m_shellFacets.begin(), m_shellFacets.end(), shellFacet) != m_shellFacets.end();
+    return std::find(mm_shellFacets.begin(), mm_shellFacets.end(), shellFacet) != mm_shellFacets.end();
 }
 
 
 bool Crystallite3::shellEdgesContains(const ShellEdge3* shellEdge)
 {
-    return std::find(m_shellEdges.begin(), m_shellEdges.end(), shellEdge) != m_shellEdges.end();
+    return std::find(mm_shellEdges.begin(), mm_shellEdges.end(), shellEdge) != mm_shellEdges.end();
 }
 
 

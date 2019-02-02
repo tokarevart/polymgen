@@ -14,18 +14,18 @@ void Logger::flush()
         m_endings.push_back("");
     }
 
-    size_t max_descriptions_size = 0ull;
-    for (size_t i = 0ull, buf, max = m_descriptions.size(); i < max; i++)
+    size_t max_descriptions_size = 0;
+    for (size_t i = 0, buf, max = m_descriptions.size(); i < max; i++)
     {
         buf = m_descriptions[i].size();
         if (buf > max_descriptions_size)
             max_descriptions_size = buf;
     }
 
-    size_t extended_line_description_size = max_descriptions_size + 6ull;
+    size_t extended_line_description_size = max_descriptions_size + 6;
     size_t records_number = m_descriptions.size();
 
-    for (size_t i = 0ull; i < records_number; i++)
+    for (size_t i = 0; i < records_number; i++)
     {
         m_file << ">>  " + m_descriptions[i] + std::string(extended_line_description_size - m_descriptions[i].size(), '.')
             + ">>  " + m_values[i] + ' ' + m_endings[i] << '\n';
@@ -329,7 +329,7 @@ Logger& Logger::operator<<(std::ios_base& (*func)(std::ios_base&))
 
 Logger& Logger::operator<<(std::ostream& (*func)(std::ostream&))
 {
-    if (func != (std::ostream&(*)(std::ostream&))std::endl)
+    if (func != static_cast<std::ostream&(*)(std::ostream&)>(std::endl))
         *m_bufiss << func;
     return *this;
 }
@@ -342,9 +342,8 @@ Logger& Logger::operator<<(Logger::Iomanip<IomT> ioManip)
 {
     switch (IomT)
     {
-    case WIDTH:     m_bufiss->width(    ioManip.param); break;
+    case WIDTH:     m_bufiss->width    (ioManip.param); break;
     case PRECISION: m_bufiss->precision(ioManip.param); break;
-    default: throw std::range_error("Wrong tva::Logger::Iomanip value.\nError in function: tva::Logger::operator<<");
     }
     
     return *this;

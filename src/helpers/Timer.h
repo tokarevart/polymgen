@@ -1,4 +1,5 @@
 #pragma once
+#include <stddef.h>
 #include <chrono>
 #include <vector>
 
@@ -19,7 +20,7 @@ namespace tva
         };
 
         // If the measurement already started it restarts.
-        void start(size_t nestingLevel = 0ull);
+        void start(size_t nestingLevel = 0);
         void suspend();
         void resume();
         void stop();

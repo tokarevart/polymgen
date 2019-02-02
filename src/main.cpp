@@ -1,17 +1,18 @@
+#include <stddef.h>
 #include <iostream>
 #include <fstream>
 #include "Polycrystal3.h"
 #include "polygen/PolyGen.h"
 
 
-int main(int argc, char* argv[])
+int main()
 {
     double preferredEdgeLength = 0.45;
     //std::cout << "Enter preferred edge length: ";
     //std::cin >> preferredEdgeLength;
     
     std::cout << "Generating polycrystal...";
-    int n = 4;
+    size_t n = 4;
     PolyStruct* polystr = polygen::generateCuboidsPolycrystal(n, n, n);
     std::cout << " done.\n";
         

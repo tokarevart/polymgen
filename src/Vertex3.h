@@ -1,4 +1,5 @@
 #pragma once
+#include <stddef.h>
 #include <memory>
 #include "ShellFacet3.h"
 #include "ShellEdge3.h"

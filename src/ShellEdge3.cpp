@@ -1,9 +1,10 @@
 #include "ShellEdge3.h"
+#include <cmath>
 
 
 double ShellEdge3::magnitude() const
 {
-    return sqrt(sqrMagnitude());
+    return std::sqrt(sqrMagnitude());
 }
 
 double ShellEdge3::sqrMagnitude() const
@@ -29,8 +30,8 @@ ShellEdge3::ShellEdge3()
 
 ShellEdge3::ShellEdge3(const ShellVertex3* vert0, const ShellVertex3* vert1)
 {
-    verts[0] = (ShellVertex3*)vert0;
-    verts[1] = (ShellVertex3*)vert1;
+    verts[0] = const_cast<ShellVertex3*>(vert0);
+    verts[1] = const_cast<ShellVertex3*>(vert1);
 }
 
 ShellEdge3::~ShellEdge3() {}

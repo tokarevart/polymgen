@@ -45,7 +45,7 @@ public:
 
     void inputData(const std::string& polyStructFileName);
     void inputData(const PolyStruct* polyStruct);
-    void outputData(FileType filetype = OBJ, const std::string& filename = "_AUTO_", int polycrystalId = 1) const;
+    void outputData(FileType filetype = OBJ, const std::string& filename = "_AUTO_", unsigned polycrystalId = 1u) const;
 
     Polycrystal3();
     Polycrystal3(const std::string& polyStructFileName);
@@ -56,18 +56,18 @@ public:
 private:
     double m_preferredLength;
 
-    PolyMesh* _lastMesh = nullptr;
-    std::unique_ptr<tva::Logger> _lastLogger;
+    PolyMesh* m_lastMesh = nullptr;
+    std::unique_ptr<tva::Logger> m_lastLogger;
 
-    std::vector<Crystallite3*> _crystallites;
+    std::vector<Crystallite3*> m_crystallites;
 
-    std::vector<ShellFacet3*> _shellFacets;
-    std::vector<ShellEdge3*> _shellEdges;
-    std::vector<ShellVertex3*> _shellVertexes;
+    std::vector<ShellFacet3*> m_shellFacets;
+    std::vector<ShellEdge3*> m_shellEdges;
+    std::vector<ShellVertex3*> m_shellVertexes;
 
-    std::list<Facet3*> _startFrontFacets;
-    std::list<Edge3*> _startFrontEdges;
-    std::list<Vertex3*> _startFrontVertexes;
+    std::list<Facet3*> m_startFrontFacets;
+    std::list<Edge3*> m_startFrontEdges;
+    std::list<Vertex3*> m_startFrontVertexes;
 
     // Later replace ShellVertex3::findAttachedVertex with that function
     Vertex3* findAttachedVertex(const ShellVertex3* shellVertex);
@@ -81,8 +81,8 @@ private:
     void outputDataObj(const std::string& filename) const;
     void outputDataLSDynaKeyword_PART(std::ofstream& file) const;
     void outputDataLSDynaKeyword_NODE(std::ofstream& file) const;
-    void outputDataLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, int polycrystalId = 1) const;
-    void outputDataLSDynaKeyword(const std::string& filename, int polycrystalId = 1) const;
+    void outputDataLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, unsigned polycrystalId = 1u) const;
+    void outputDataLSDynaKeyword(const std::string& filename, unsigned polycrystalId = 1u) const;
 
     std::string generateMesh_generateLogFileName(const std::string& logFileName) const;
     std::string outputData_generateFilename(FileType filetype, const std::string& filename) const;

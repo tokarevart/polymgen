@@ -17,7 +17,7 @@ namespace tva
             const tva::Point3& segm_p0, const tva::Point3& segm_p1);
 
         bool isRayIntersectPlane(
-            const tva::Point3& origin, const tva::Vec3& dir,
+            const tva::Vec3& dir,
             const tva::Point3& plane_p0, const tva::Point3& plane_p1, const tva::Point3& plane_p2);
         bool isRayIntersectTriangle(
             const tva::Point3& origin, const tva::Vec3& dir,

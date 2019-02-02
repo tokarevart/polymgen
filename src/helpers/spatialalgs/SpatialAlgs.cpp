@@ -52,7 +52,7 @@ bool tva::spatialalgs::project(
 
 
 bool tva::spatialalgs::isRayIntersectPlane(
-    const tva::Point3& origin, const tva::Vec3& dir, 
+    const tva::Vec3& dir,
     const tva::Point3& pl_p0, const tva::Point3& pl_p1, const tva::Point3& pl_p2)
 {
     tva::Vec3 edges[2]{ pl_p1 - pl_p0, pl_p2 - pl_p0 };
@@ -329,8 +329,8 @@ double tva::spatialalgs::segmentsDistance(
     }
 
     // Finally do the division to get sc and tc
-    sc = (abs(sN) < 1e-6 ? 0.0 : sN / sD);
-    tc = (abs(tN) < 1e-6 ? 0.0 : tN / tD);
+    sc = (std::abs(sN) < 1e-6 ? 0.0 : sN / sD);
+    tc = (std::abs(tN) < 1e-6 ? 0.0 : tN / tD);
 
     // Get the difference of the two closest points
     tva::Vec3 diff_p = w + (sc * u) - (tc * v); // =  S1(sc) - S2(tc)

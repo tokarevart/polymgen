@@ -1,5 +1,5 @@
 #include "Facet3.h"
-#include "Helpers/SpatialAlgs/SpatialAlgs.h"
+#include "helpers/spatialalgs/SpatialAlgs.h"
 
 
 
@@ -161,9 +161,9 @@ Facet3::Facet3()
 
 Facet3::Facet3(const Edge3* edge0, const Edge3* edge1, const Edge3* edge2)
 {
-    edges[0] = (Edge3*)edge0;
-    edges[1] = (Edge3*)edge1;
-    edges[2] = (Edge3*)edge2;
+    edges[0] = const_cast<Edge3*>(edge0);
+    edges[1] = const_cast<Edge3*>(edge1);
+    edges[2] = const_cast<Edge3*>(edge2);
 }
 
 
@@ -209,7 +209,7 @@ tva::Vec3 FrontFacet3::computeNormal()
         if (f_facet == this)
             continue;
 
-        if (f_facet->facet->intersectsBy(center, /*normal*/test_normal_correct_intersect))
+        if (f_facet->facet->intersectsBy(center, test_normal_correct_intersect))
             intersects_num++;
     }
 
@@ -234,7 +234,7 @@ double FrontFacet3::computeQuality()
 
 
 FrontFacet3::FrontFacet3(const Crystallite3* relatedCrys, const Facet3* facet) 
-    : m_relatedCrys((Crystallite3*)relatedCrys), facet((Facet3*)facet) {}
+    : facet(const_cast<Facet3*>(facet)), m_relatedCrys(const_cast<Crystallite3*>(relatedCrys)) {}
 
 
 FrontFacet3::~FrontFacet3() {}

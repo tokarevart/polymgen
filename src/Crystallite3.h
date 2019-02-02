@@ -61,8 +61,8 @@ private:
 
     double m_preferredLength;
 
-    std::vector<ShellFacet3*> m_shellFacets;
-    std::vector<ShellEdge3*>  m_shellEdges;
+    std::vector<ShellFacet3*> mm_shellFacets;
+    std::vector<ShellEdge3*>  mm_shellEdges;
 
     std::vector<Simplex3*> m_innerSimps;
     std::vector<Facet3*>   m_innerFacets;

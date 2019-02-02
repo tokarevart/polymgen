@@ -1,4 +1,5 @@
 #include "Timer.h"
+#include <stdexcept>
 
 
 
@@ -8,17 +9,15 @@ size_t tva::Timer::durationCast(std::chrono::high_resolution_clock::duration dur
     switch (timeScale)
     {
     case MICROSECONDS:
-        return std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
+        return static_cast<size_t>(std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
 
     case MILLISECONDS:
-        return std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+        return static_cast<size_t>(std::chrono::duration_cast<std::chrono::milliseconds>(duration).count());
 
     case SECONDS:
-        return std::chrono::duration_cast<std::chrono::seconds>(duration).count();
-        
-    default:
-        throw std::invalid_argument("Wrong time scale.");
+        return static_cast<size_t>(std::chrono::duration_cast<std::chrono::seconds>(duration).count());
     }
+    throw std::exception();
 }
 
 

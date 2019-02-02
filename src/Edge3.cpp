@@ -1,7 +1,7 @@
 #include "Edge3.h"
 #include <algorithm>
 #include <iostream>
-#include "Helpers/SpatialAlgs/SpatialAlgs.h"
+#include "helpers/spatialalgs/SpatialAlgs.h"
 
 
 #define PI 3.141592653589793
@@ -213,8 +213,8 @@ Edge3::Edge3()
 
 Edge3::Edge3(const Vertex3* vert0, const Vertex3* vert1)
 {
-    verts[0] = (Vertex3*)vert0;
-    verts[1] = (Vertex3*)vert1;
+    verts[0] = const_cast<Vertex3*>(vert0);
+    verts[1] = const_cast<Vertex3*>(vert1);
 }
 
 
@@ -318,9 +318,9 @@ std::pair<FrontFacet3*, FrontFacet3*> FrontEdge3::getAdjFacets()
 bool FrontEdge3::addAdjFacetInPair(const FrontFacet3* fFacet)
 {
     if (!m_adjFacets.first)
-        m_adjFacets.first  = (FrontFacet3*)fFacet;
+        m_adjFacets.first  = const_cast<FrontFacet3*>(fFacet);
     else if (!m_adjFacets.second)
-        m_adjFacets.second = (FrontFacet3*)fFacet;
+        m_adjFacets.second = const_cast<FrontFacet3*>(fFacet);
     else
         return false;
 
@@ -330,9 +330,9 @@ bool FrontEdge3::addAdjFacetInPair(const FrontFacet3* fFacet)
 
 bool FrontEdge3::removeAdjFacetFromPair(const FrontFacet3* fFacet)
 {
-    if (m_adjFacets.first == (FrontFacet3*)fFacet)
+    if (m_adjFacets.first == const_cast<FrontFacet3*>(fFacet))
         m_adjFacets.first = nullptr;
-    else if (m_adjFacets.second == (FrontFacet3*)fFacet)
+    else if (m_adjFacets.second == const_cast<FrontFacet3*>(fFacet))
         m_adjFacets.second = nullptr;
     else
         return false;
@@ -345,11 +345,11 @@ bool FrontEdge3::removeAdjFacetFromPair(const FrontFacet3* fFacet)
 
 bool FrontEdge3::adjFacetsPairContains(const FrontFacet3* fFacet) const
 {
-    return (m_adjFacets.first == (FrontFacet3*)fFacet) || (m_adjFacets.second == (FrontFacet3*)fFacet);
+    return (m_adjFacets.first == const_cast<FrontFacet3*>(fFacet)) || (m_adjFacets.second == const_cast<FrontFacet3*>(fFacet));
 }
 
 FrontEdge3::FrontEdge3(const Crystallite3* relatedCrys, const Edge3* edge)
-    : m_relatedCrys((Crystallite3*)relatedCrys), edge((Edge3*)edge) {}
+    : edge(const_cast<Edge3*>(edge)), m_relatedCrys(const_cast<Crystallite3*>(relatedCrys)) {}
 
 
 FrontEdge3::~FrontEdge3() {}

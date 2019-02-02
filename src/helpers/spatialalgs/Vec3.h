@@ -5,6 +5,10 @@ namespace tva
     struct Vec3;
     typedef Vec3 Point3;
 
+    Vec3 operator*(const Vec3& vec, double scalar);
+    Vec3 operator*(double scalar, const Vec3& vec);
+    Vec3 operator/(const Vec3& vec, double scalar);
+
     struct Vec3
     {
         double coors[3];

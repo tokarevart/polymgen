@@ -5,7 +5,7 @@
 #include "helpers/spatialalgs/Vec3.h"
 
 class Vertex3;
-namespace tva { struct tva::Vec3; }
+namespace tva { struct Vec3; }
 
 
 class ShellVertex3

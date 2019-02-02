@@ -42,9 +42,9 @@ ShellFacet3::ShellFacet3(
     const ShellEdge3* edge1,
     const ShellEdge3* edge2)
 {
-    edges[0] = (ShellEdge3*)edge0;
-    edges[1] = (ShellEdge3*)edge1;
-    edges[2] = (ShellEdge3*)edge2;
+    edges[0] = const_cast<ShellEdge3*>(edge0);
+    edges[1] = const_cast<ShellEdge3*>(edge1);
+    edges[2] = const_cast<ShellEdge3*>(edge2);
 }
 
 ShellFacet3::~ShellFacet3() {}
