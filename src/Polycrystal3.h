@@ -79,7 +79,7 @@ private:
     void startFrontDelaunayPostprocessing();
 
     void outputDataObj(const std::string& filename) const;
-    void outputDataLSDynaKeyword_PART(std::ofstream& file, int polycrystalId = 1) const;
+    void outputDataLSDynaKeyword_PART(std::ofstream& file) const;
     void outputDataLSDynaKeyword_NODE(std::ofstream& file) const;
     void outputDataLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, int polycrystalId = 1) const;
     void outputDataLSDynaKeyword(const std::string& filename, int polycrystalId = 1) const;

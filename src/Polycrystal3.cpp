@@ -231,14 +231,13 @@ void Polycrystal3::outputDataObj(const std::string& filename) const
 }
 
 
-void Polycrystal3::outputDataLSDynaKeyword_PART(std::ofstream& file, int polycrystalId) const
+void Polycrystal3::outputDataLSDynaKeyword_PART(std::ofstream& file) const
 {
-    size_t body_delta = 10000000ull * polycrystalId;
     for (size_t id = 1ull, max_id = _crystallites.size() + 1ull; id < max_id; id++)
     {
         file << "*PART\n"
             "$#     pid     secid       mid     eosid      hgid      grav    adpopt      tmid\n";
-        file << std::setw(10) << body_delta + id;
+        file << std::setw(10) << id;
         file << "         0";
         file << std::setw(10) << id;
         file << "         0         0         0         0         0\n";
@@ -279,8 +278,8 @@ void Polycrystal3::outputDataLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, in
 {
     file << "*ELEMENT_SOLID\n"
         "$#   eid     pid      n1      n2      n3      n4      n5      n6      n7      n8\n";
-    size_t pid = 10000000ull * polycrystalId + 1ull;
-    size_t eid = 1ull;
+    size_t pid = 1ull;
+    size_t eid = 10000000ull * polycrystalId + 1ull;
     for (auto& crys : _crystallites)
     {
         for (auto& simp : crys->getInnerSimplexes3())
