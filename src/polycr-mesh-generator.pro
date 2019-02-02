@@ -20,7 +20,7 @@ SOURCES += \
     helpers/spatialalgs/Vec3.cpp \
     helpers/Logger.cpp \
     helpers/Timer.cpp \
-    polygen/PolyGen.cpp \
+    polygen/PolyGen.cpp
 
 HEADERS += \
     Crystallite3.h \
@@ -38,4 +38,4 @@ HEADERS += \
     helpers/spatialalgs/Vec3.h \
     helpers/Logger.h \
     helpers/Timer.h \
-    polygen/PolyGen.h \
+    polygen/PolyGen.h
