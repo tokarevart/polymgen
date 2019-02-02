@@ -1,4 +1,4 @@
-# PolycrystalTriangulation
+# polycr-mesh-generator
 # Example:
 ```c++
 PolyStruct polyStruct;
