@@ -15,7 +15,7 @@ int main()
     size_t n = 4;
     PolyStruct* polystr = polygen::generateCuboidsPolycrystal(n, n, n);
     std::cout << " done.\n";
-        
+
     std::cout << "\nInitializing polycrystal data...";
     Polycrystal3 polycr(polystr);
     std::cout << " done.\n";

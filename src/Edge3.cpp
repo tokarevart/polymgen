@@ -256,12 +256,12 @@ double FrontEdge3::computeAngleExCos()
 {
     auto adj_facets = getAdjFacets();
 
-    double normals_cos = tva::Vec3::dotProduct(adj_facets.first->getNormal(), adj_facets.second->getNormal());
+    double normals_cos = tva::Vec3::dotProduct(std::get<0>(adj_facets)->getNormal(), std::get<1>(adj_facets)->getNormal());
 
     m_needAngleExCosProcessing = false;
     return m_exCos = tva::spatialalgs::cpaTime(
-            adj_facets.first->computeCenter(), adj_facets.first->getNormal(),
-            adj_facets.second->computeCenter(), adj_facets.second->getNormal()) < 1e-6 ?
+            std::get<0>(adj_facets)->computeCenter(), std::get<0>(adj_facets)->getNormal(),
+            std::get<1>(adj_facets)->computeCenter(), std::get<1>(adj_facets)->getNormal()) < 1e-6 ?
         -2.0 + normals_cos :
         -normals_cos;
 }
@@ -280,8 +280,8 @@ std::pair<Vertex3*, Vertex3*> FrontEdge3::findOppVerts()
 {
     auto adj_facets = getAdjFacets();
 
-    return { adj_facets.first->facet->findVertNotIncludedInEdge(edge), 
-             adj_facets.second->facet->findVertNotIncludedInEdge(edge) };
+    return { std::get<0>(adj_facets)->facet->findVertNotIncludedInEdge(edge),
+             std::get<1>(adj_facets)->facet->findVertNotIncludedInEdge(edge) };
 }
 
 
@@ -291,10 +291,10 @@ FrontEdge3* FrontEdge3::findOppEdge()
 
     for (auto& f_edge : m_relatedCrys->getFrontEdges())
     {
-        if (((f_edge->edge->verts[0] == opp_verts.first &&
-              f_edge->edge->verts[1] == opp_verts.second) ||
-             (f_edge->edge->verts[1] == opp_verts.first &&
-              f_edge->edge->verts[0] == opp_verts.second)))
+        if (((f_edge->edge->verts[0] == std::get<0>(opp_verts) &&
+              f_edge->edge->verts[1] == std::get<1>(opp_verts)) ||
+             (f_edge->edge->verts[1] == std::get<0>(opp_verts) &&
+              f_edge->edge->verts[0] == std::get<1>(opp_verts))))
             return f_edge;
     }
 
@@ -317,10 +317,10 @@ std::pair<FrontFacet3*, FrontFacet3*> FrontEdge3::getAdjFacets()
 
 bool FrontEdge3::addAdjFacetInPair(const FrontFacet3* fFacet)
 {
-    if (!m_adjFacets.first)
-        m_adjFacets.first  = const_cast<FrontFacet3*>(fFacet);
-    else if (!m_adjFacets.second)
-        m_adjFacets.second = const_cast<FrontFacet3*>(fFacet);
+    if (!std::get<0>(m_adjFacets))
+        std::get<0>(m_adjFacets)  = const_cast<FrontFacet3*>(fFacet);
+    else if (!std::get<1>(m_adjFacets))
+        std::get<1>(m_adjFacets) = const_cast<FrontFacet3*>(fFacet);
     else
         return false;
 
@@ -330,10 +330,10 @@ bool FrontEdge3::addAdjFacetInPair(const FrontFacet3* fFacet)
 
 bool FrontEdge3::removeAdjFacetFromPair(const FrontFacet3* fFacet)
 {
-    if (m_adjFacets.first == const_cast<FrontFacet3*>(fFacet))
-        m_adjFacets.first = nullptr;
-    else if (m_adjFacets.second == const_cast<FrontFacet3*>(fFacet))
-        m_adjFacets.second = nullptr;
+    if (std::get<0>(m_adjFacets) == const_cast<FrontFacet3*>(fFacet))
+        std::get<0>(m_adjFacets) = nullptr;
+    else if (std::get<1>(m_adjFacets) == const_cast<FrontFacet3*>(fFacet))
+        std::get<1>(m_adjFacets) = nullptr;
     else
         return false;
 
@@ -345,7 +345,7 @@ bool FrontEdge3::removeAdjFacetFromPair(const FrontFacet3* fFacet)
 
 bool FrontEdge3::adjFacetsPairContains(const FrontFacet3* fFacet) const
 {
-    return (m_adjFacets.first == const_cast<FrontFacet3*>(fFacet)) || (m_adjFacets.second == const_cast<FrontFacet3*>(fFacet));
+    return (std::get<0>(m_adjFacets) == const_cast<FrontFacet3*>(fFacet)) || (std::get<1>(m_adjFacets) == const_cast<FrontFacet3*>(fFacet));
 }
 
 FrontEdge3::FrontEdge3(const Crystallite3* relatedCrys, const Edge3* edge)
@@ -359,7 +359,7 @@ FrontEdge3::~FrontEdge3() {}
 
 bool FrontEdge3::isAdjFacetsFull()
 {
-    return m_adjFacets.first && m_adjFacets.second;
+    return std::get<0>(m_adjFacets) && std::get<1>(m_adjFacets);
 }
 
 std::pair<FrontFacet3*, FrontFacet3*> FrontEdge3::fillAdjFacets()
