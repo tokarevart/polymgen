@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <iostream>
 #include <fstream>
+#include <memory>
 #include "Polycrystal3.h"
 #include "polygen/PolyGen.h"
 
@@ -13,13 +14,13 @@ int main()
     
     std::cout << "Generating polycrystal...";
     size_t n = 4;
-    PolyStruct* polystr = polygen::generateCuboidsPolycrystal(n, n, n);
+    std::unique_ptr<PolyStruct> polystr = polygen::generateCuboidsPolycrystal(n, n, n);
     std::cout << " done.\n";
 
     std::cout << "\nInitializing polycrystal data...";
     Polycrystal3 polycr(polystr);
     std::cout << " done.\n";
-    delete polystr;
+    polystr.reset();
 
     std::cout << "Generating mesh...";
     polycr.generateMesh(preferredEdgeLength);
@@ -27,7 +28,7 @@ int main()
 
     std::cout << "Outputting data to file...";
     polycr.outputData(Polycrystal3::LS_DYNA_KEYWORD);
-    //polycr.outputData(Polycrystal3::OBJ);
+//    polycr.outputData(Polycrystal3::OBJ);
     std::cout << " done.\n";
 
     return 0;

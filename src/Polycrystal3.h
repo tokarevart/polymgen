@@ -39,17 +39,17 @@ public:
 
     void generateMesh(const double preferredLength, const std::string& logFileName = "_AUTO_");
     void generateMesh(const std::string& polyStructFileName, const double preferredLength, const std::string& logFileName = "_AUTO_");
-    void generateMesh(const PolyStruct* polyStruct, const double preferredLength, const std::string& logFileName = "_AUTO_");
+    void generateMesh(const std::unique_ptr<PolyStruct>& polyStruct, const double preferredLength, const std::string& logFileName = "_AUTO_");
     const PolyMesh* structurizeMesh();
     const PolyMesh* getLastMesh();
 
     void inputData(const std::string& polyStructFileName);
-    void inputData(const PolyStruct* polyStruct);
+    void inputData(const std::unique_ptr<PolyStruct>& polyStruct);
     void outputData(FileType filetype = OBJ, const std::string& filename = "_AUTO_", unsigned polycrystalId = 1u) const;
 
     Polycrystal3();
     Polycrystal3(const std::string& polyStructFileName);
-    Polycrystal3(const PolyStruct* polyStruct);
+    Polycrystal3(const std::unique_ptr<PolyStruct>& polyStruct);
     ~Polycrystal3();
 
 

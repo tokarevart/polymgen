@@ -15,7 +15,7 @@ void Logger::flush()
     }
 
     size_t max_descriptions_size = 0;
-    for (size_t i = 0, buf, max = m_descriptions.size(); i < max; i++)
+    for (size_t i = 0, buf; i < m_descriptions.size(); i++)
     {
         buf = m_descriptions[i].size();
         if (buf > max_descriptions_size)
@@ -23,9 +23,8 @@ void Logger::flush()
     }
 
     size_t extended_line_description_size = max_descriptions_size + 6;
-    size_t records_number = m_descriptions.size();
 
-    for (size_t i = 0; i < records_number; i++)
+    for (size_t i = 0; i < m_descriptions.size(); i++)
     {
         m_file << ">>  " + m_descriptions[i] + std::string(extended_line_description_size - m_descriptions[i].size(), '.')
             + ">>  " + m_values[i] + ' ' + m_endings[i] << '\n';

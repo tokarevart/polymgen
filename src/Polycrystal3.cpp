@@ -122,8 +122,7 @@ void Polycrystal3::startFrontDelaunayPostprocessing()
 {
     Vertex3* around_nodes[2];
     Facet3* around_facets[2];
-    size_t edges_num = m_startFrontEdges.size();
-    for (size_t i = 0; i < edges_num; i++)
+    for (size_t i = 0; i < m_startFrontEdges.size(); i++)
     {
         Edge3* cur_edge = *std::next(m_startFrontEdges.begin(), static_cast<long long>(i));
         if ((cur_edge->verts[0]->belongsToShellEdge == cur_edge->verts[1]->belongsToShellEdge &&
@@ -232,7 +231,7 @@ void Polycrystal3::outputDataObj(const std::string& filename) const
 
 void Polycrystal3::outputDataLSDynaKeyword_PART(std::ofstream& file) const
 {
-    for (size_t id = 1, max_id = m_crystallites.size() + 1; id < max_id; id++)
+    for (size_t id = 1; id < m_crystallites.size() + 1; id++)
     {
         file << "*PART\n"
             "$#     pid     secid       mid     eosid      hgid      grav    adpopt      tmid\n";
@@ -398,7 +397,7 @@ void Polycrystal3::generateMesh(const std::string& polyStructFileName, const dou
 }
 
 
-void Polycrystal3::generateMesh(const PolyStruct* polyStruct, const double preferredLength, const std::string& logFileName)
+void Polycrystal3::generateMesh(const std::unique_ptr<PolyStruct>& polyStruct, const double preferredLength, const std::string& logFileName)
 {
     inputData(polyStruct);
     generateMesh(preferredLength, logFileName);
@@ -595,7 +594,7 @@ void Polycrystal3::inputData(const std::string& polyStructFileName)
 }
 
 
-void Polycrystal3::inputData(const PolyStruct* polyStruct)
+void Polycrystal3::inputData(const std::unique_ptr<PolyStruct>& polyStruct)
 {
     for (size_t i = 0; i < polyStruct->nNodes; i++)
     {
@@ -739,7 +738,7 @@ Polycrystal3::Polycrystal3(const std::string& polyStructFileName)
 }
 
 
-Polycrystal3::Polycrystal3(const PolyStruct* polyStruct)
+Polycrystal3::Polycrystal3(const std::unique_ptr<PolyStruct>& polyStruct)
 {
     inputData(polyStruct);
 }

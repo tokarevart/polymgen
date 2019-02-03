@@ -1,13 +1,13 @@
 #include "PolyGen.h"
 
 
-PolyStruct* polygen::generateCuboidsPolycrystal(size_t nX, size_t nY, size_t nZ, double dX, double dY, double dZ)
+std::unique_ptr<PolyStruct> polygen::generateCuboidsPolycrystal(size_t nX, size_t nY, size_t nZ, double dX, double dY, double dZ)
 {
     const size_t w = nX;
     const size_t t = nY;
     const size_t h = nZ;
 
-    PolyStruct* shell = new PolyStruct;
+    std::unique_ptr<PolyStruct> shell = std::make_unique<PolyStruct>();
     shell->nNodes  = (w + 1) * (t + 1) * (h + 1);
     shell->nFacets = 2 * (w * h * (t + 1)
                         + t * h * (w + 1)
