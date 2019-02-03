@@ -9,11 +9,11 @@
 int main()
 {
     double preferredEdgeLength = 0.45;
-    //std::cout << "Enter preferred edge length: ";
-    //std::cin >> preferredEdgeLength;
+//    std::cout << "Enter preferred edge length: ";
+//    std::cin >> preferredEdgeLength;
     
     std::cout << "Generating polycrystal...";
-    size_t n = 4;
+    size_t n = 1;
     std::unique_ptr<PolyStruct> polystr = polygen::generateCuboidsPolycrystal(n, n, n);
     std::cout << " done.\n";
 
