@@ -15,12 +15,12 @@ SOURCES += \
     Simplex3.cpp \
     Vertex3.cpp \
     data-structures/PolyMesh.cpp \
-    data-structures/PolyStruct.cpp \
     helpers/spatialalgs/SpatialAlgs.cpp \
     helpers/spatialalgs/Vec3.cpp \
     helpers/Logger.cpp \
     helpers/Timer.cpp \
-    polygen/PolyGen.cpp
+    polygen/PolyGen.cpp \
+    data-structures/PolyStruct.cpp
 
 HEADERS += \
     Crystallite3.h \

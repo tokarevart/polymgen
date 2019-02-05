@@ -13,21 +13,21 @@ int main()
 //    std::cin >> preferredEdgeLength;
     
     std::cout << "Generating polycrystal...";
-    size_t n = 1;
-    std::unique_ptr<PolyStruct> polystr = polygen::generateCuboidsPolycrystal(n, n, n);
+    size_t n = 4;
+    PolyStruct polystr = polygen::generateCuboidsPolycrystal(n, n, n);
     std::cout << " done.\n";
 
     std::cout << "\nInitializing polycrystal data...";
     Polycrystal3 polycr(polystr);
     std::cout << " done.\n";
-    polystr.reset();
+    polystr.clear();
 
     std::cout << "Generating mesh...";
     polycr.generateMesh(preferredEdgeLength);
     std::cout << " done.\n";
 
     std::cout << "Outputting data to file...";
-    polycr.outputData(Polycrystal3::LS_DYNA_KEYWORD);
+    polycr.outputData(Polycrystal3::FileType::LS_DYNA_KEYWORD);
 //    polycr.outputData(Polycrystal3::OBJ);
     std::cout << " done.\n";
 

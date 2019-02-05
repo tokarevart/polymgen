@@ -1,6 +1,8 @@
 #pragma once
 #include <stddef.h>
 
+// Note:
+// Make memory leak safe later.
 
 struct PolyMesh
 {

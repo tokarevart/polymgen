@@ -721,14 +721,14 @@ Crystallite3::ExhaustType Crystallite3::computeExhaustionTypeQualityPriority(
     FrontFacet3** out_withNWFrontFacet, Vec3** out_withNWNewVertPos)
 {
     if (frontSplitCheck(currentFrontEdge))
-        return DONT_EXHAUST;
+        return ExhaustType::DONT_EXHAUST;
     
     if (parallelFacetsCheck(currentFrontEdge) ||
         edgeIntersectionCheck(currentFrontEdge) ||
         facetsIntersectionCheck(currentFrontEdge) ||
         anyVertInsidePotentialSimp3Check(currentFrontEdge))
     {
-        return WITH_NEW_VERTEX;
+        return ExhaustType::WITH_NEW_VERTEX;
     }
 
     auto opp_verts = currentFrontEdge->findOppVerts();
@@ -741,7 +741,7 @@ Crystallite3::ExhaustType Crystallite3::computeExhaustionTypeQualityPriority(
     FrontFacet3* f_facet = chooseFacetForExhaustionWithNewVert(currentFrontEdge);
     Vec3 new_vert_pos;
     if (!tryComputeNewVertPos(f_facet, new_vert_pos))
-        return DONT_EXHAUST;
+        return ExhaustType::DONT_EXHAUST;
 
     double with_nv_quality = computeSimp3SimpleSqrQuality(
         f_facet->facet->edges[0]->verts[0]->getPos(),
@@ -750,11 +750,11 @@ Crystallite3::ExhaustType Crystallite3::computeExhaustionTypeQualityPriority(
         new_vert_pos);
 
     if (without_nv_quality > with_nv_quality)
-        return WITHOUT_NEW_VERTEX;
+        return ExhaustType::WITHOUT_NEW_VERTEX;
 
     *out_withNWFrontFacet = f_facet;
     *out_withNWNewVertPos = new Vec3(new_vert_pos);
-    return WITH_NEW_VERTEX;
+    return ExhaustType::WITH_NEW_VERTEX;
 }
 
 
@@ -1445,11 +1445,11 @@ void Crystallite3::processAngles()
             Vec3* new_vert_pos = nullptr;
             switch (computeExhaustionTypeQualityPriority(curr_f_edge, &exhaust_from_f_facet, &new_vert_pos))
             {
-            case WITHOUT_NEW_VERTEX:
+            case ExhaustType::WITHOUT_NEW_VERTEX:
                 exhaustWithoutNewVert(curr_f_edge);
                 break;
 
-            case WITH_NEW_VERTEX:
+            case ExhaustType::WITH_NEW_VERTEX:
                 if (new_vert_pos)
                 {
                     exhaustWithNewVert(exhaust_from_f_facet, *new_vert_pos);
@@ -1465,7 +1465,7 @@ void Crystallite3::processAngles()
                 }
                 break;
 
-            case DONT_EXHAUST:
+            case ExhaustType::DONT_EXHAUST:
                 max_compl = curr_f_edge->getComplexity();
                 continue;
             }

@@ -4,17 +4,17 @@
 
 
 
-size_t tva::Timer::durationCast(std::chrono::high_resolution_clock::duration duration, TimeScale timeScale) const
+size_t tva::Timer::durationCast(hi_res_clock::duration duration, TimeScale timeScale) const
 {
     switch (timeScale)
     {
-    case MICROSECONDS:
+    case TimeScale::MICROSECONDS:
         return static_cast<size_t>(std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
 
-    case MILLISECONDS:
+    case TimeScale::MILLISECONDS:
         return static_cast<size_t>(std::chrono::duration_cast<std::chrono::milliseconds>(duration).count());
 
-    case SECONDS:
+    case TimeScale::SECONDS:
         return static_cast<size_t>(std::chrono::duration_cast<std::chrono::seconds>(duration).count());
     }
     throw std::exception();

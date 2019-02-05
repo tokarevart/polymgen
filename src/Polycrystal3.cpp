@@ -364,7 +364,7 @@ void Polycrystal3::generateMesh(const double preferredLength, const std::string&
         }
         catch (std::logic_error error)
         {
-            outputData(OBJ, "debug.obj");
+            outputData(FileType::OBJ, "debug.obj");
             throw error;
         }
 
@@ -385,8 +385,8 @@ void Polycrystal3::generateMesh(const double preferredLength, const std::string&
         << "Average quality"          << av_q  << ""
         << "Crystallites number"      << m_crystallites.size() << ""
         << "Elements number"          << n_elems              << ""
-        << "Shell triangulation time" << tmr.getDuration(0,  tva::Timer::MICROSECONDS) * 1e-6 << "s"
-        << "Volume exhaustion time"   << tmr.getLastDuration(tva::Timer::MICROSECONDS) * 1e-6 << "s";
+        << "Shell triangulation time" << tmr.getDuration(0,  tva::Timer::TimeScale::MICROSECONDS) * 1e-6 << "s"
+        << "Volume exhaustion time"   << tmr.getLastDuration(tva::Timer::TimeScale::MICROSECONDS) * 1e-6 << "s";
 }
 
 
@@ -397,7 +397,7 @@ void Polycrystal3::generateMesh(const std::string& polyStructFileName, const dou
 }
 
 
-void Polycrystal3::generateMesh(const std::unique_ptr<PolyStruct>& polyStruct, const double preferredLength, const std::string& logFileName)
+void Polycrystal3::generateMesh(const PolyStruct& polyStruct, const double preferredLength, const std::string& logFileName)
 {
     inputData(polyStruct);
     generateMesh(preferredLength, logFileName);
@@ -594,75 +594,70 @@ void Polycrystal3::inputData(const std::string& polyStructFileName)
 }
 
 
-void Polycrystal3::inputData(const std::unique_ptr<PolyStruct>& polyStruct)
+void Polycrystal3::inputData(const PolyStruct& polyStruct)
 {
-    for (size_t i = 0; i < polyStruct->nNodes; i++)
+    for (size_t i = 0; i < polyStruct.nodes.size(); i++)
     {
         double coors[3];
-        coors[0] = polyStruct->nodesPositions[3 * i];
-        coors[1] = polyStruct->nodesPositions[3 * i + 1];
-        coors[2] = polyStruct->nodesPositions[3 * i + 2];
+        coors[0] = polyStruct.nodes[i](0);
+        coors[1] = polyStruct.nodes[i](1);
+        coors[2] = polyStruct.nodes[i](2);
 
         m_shellVertexes.push_back(new ShellVertex3(coors[0], coors[1], coors[2]));
         m_startFrontVertexes.push_back(new Vertex3(coors[0], coors[1], coors[2]));
     }
 
-    for (size_t i = 0; i < polyStruct->nFacets; i++)
+    for (const auto& facet : polyStruct.facets)
     {
-        size_t facet_nodes_inds[3];
-        facet_nodes_inds[0] = polyStruct->facets[3 * i];
-        facet_nodes_inds[1] = polyStruct->facets[3 * i + 1];
-        facet_nodes_inds[2] = polyStruct->facets[3 * i + 2];
-
-        if (!findShellEdge(m_shellVertexes[facet_nodes_inds[0]], m_shellVertexes[facet_nodes_inds[1]]))
+        if (!findShellEdge(m_shellVertexes[facet(0)], m_shellVertexes[facet(1)]))
         {
-            m_shellEdges.push_back(new ShellEdge3(m_shellVertexes[facet_nodes_inds[0]], m_shellVertexes[facet_nodes_inds[1]]));
+            m_shellEdges.push_back(new ShellEdge3(m_shellVertexes[facet(0)], m_shellVertexes[facet(1)]));
             m_startFrontEdges.push_back(new Edge3(
-                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet_nodes_inds[0])),
-                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet_nodes_inds[1]))));
+                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet(0))),
+                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet(1)))));
         }
 
-        if (!findShellEdge(m_shellVertexes[facet_nodes_inds[1]], m_shellVertexes[facet_nodes_inds[2]]))
+        if (!findShellEdge(m_shellVertexes[facet(1)], m_shellVertexes[facet(2)]))
         {
-            m_shellEdges.push_back(new ShellEdge3(m_shellVertexes[facet_nodes_inds[1]], m_shellVertexes[facet_nodes_inds[2]]));
+            m_shellEdges.push_back(new ShellEdge3(m_shellVertexes[facet(1)], m_shellVertexes[facet(2)]));
             m_startFrontEdges.push_back(new Edge3(
-                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet_nodes_inds[1])),
-                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet_nodes_inds[2]))));
+                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet(1))),
+                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet(2)))));
         }
 
-        if (!findShellEdge(m_shellVertexes[facet_nodes_inds[2]], m_shellVertexes[facet_nodes_inds[0]]))
+        if (!findShellEdge(m_shellVertexes[facet(2)], m_shellVertexes[facet(0)]))
         {
-            m_shellEdges.push_back(new ShellEdge3(m_shellVertexes[facet_nodes_inds[2]], m_shellVertexes[facet_nodes_inds[0]]));
+            m_shellEdges.push_back(new ShellEdge3(m_shellVertexes[facet(2)], m_shellVertexes[facet(0)]));
             m_startFrontEdges.push_back(new Edge3(
-                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet_nodes_inds[2])),
-                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet_nodes_inds[0]))));
+                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet(2))),
+                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet(0)))));
         }
 
         m_shellFacets.push_back(new ShellFacet3(
-            findShellEdge(m_shellVertexes[facet_nodes_inds[0]], m_shellVertexes[facet_nodes_inds[1]]),
-            findShellEdge(m_shellVertexes[facet_nodes_inds[1]], m_shellVertexes[facet_nodes_inds[2]]),
-            findShellEdge(m_shellVertexes[facet_nodes_inds[2]], m_shellVertexes[facet_nodes_inds[0]])));
+            findShellEdge(m_shellVertexes[facet(0)], m_shellVertexes[facet(1)]),
+            findShellEdge(m_shellVertexes[facet(1)], m_shellVertexes[facet(2)]),
+            findShellEdge(m_shellVertexes[facet(2)], m_shellVertexes[facet(0)])));
         m_startFrontFacets.push_back(new Facet3(
             findStartFrontEdge(
-                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet_nodes_inds[0])),
-                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet_nodes_inds[1]))),
+                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet(0))),
+                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet(1)))),
             findStartFrontEdge(
-                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet_nodes_inds[1])),
-                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet_nodes_inds[2]))),
+                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet(1))),
+                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet(2)))),
             findStartFrontEdge(
-                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet_nodes_inds[2])),
-                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet_nodes_inds[0])))));
+                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet(2))),
+                *std::next(m_startFrontVertexes.begin(), static_cast<long long>(facet(0))))));
     }
 
-    for (size_t i = 0; i < polyStruct->nCryses; i++)
+    m_crystallites.reserve(polyStruct.cryses.size());
+    for (size_t i = 0; i < polyStruct.cryses.size(); ++i)
         m_crystallites.push_back(new Crystallite3);
-    
-    size_t cryses_inner_ind = 0;
-    for (size_t i = 0; i < polyStruct->nCryses; i++)
+
+    for (size_t i = 0; i < polyStruct.cryses.size(); ++i)
     {
-        for (size_t j = 0; j < polyStruct->nCrysesFacets[i]; j++)
+        for (size_t j = 0; j < polyStruct.cryses[i].size(); ++j)
         {
-            size_t facet_ind = polyStruct->cryses[cryses_inner_ind++];
+            size_t facet_ind = polyStruct.cryses[i][j];
 
             if (!m_crystallites[i]->shellEdgesContains(m_shellFacets[facet_ind]->edges[0]))
                 m_crystallites[i]->addShellEdge(m_shellFacets[facet_ind]->edges[0]);
@@ -693,10 +688,10 @@ std::string Polycrystal3::outputData_generateFilename(FileType filetype, const s
     ss << av_nfe << "_fe_per_cr";
     switch (filetype)
     {
-    case OBJ:
+    case FileType::OBJ:
         return ss.str() + ".obj";
 
-    case LS_DYNA_KEYWORD:
+    case FileType::LS_DYNA_KEYWORD:
         return ss.str() + ".kw";
     }
     throw std::exception();
@@ -709,19 +704,19 @@ void Polycrystal3::outputData(FileType filetype, const std::string& filename, un
     tmr.start();
     switch (filetype)
     {
-    case OBJ:
-        outputDataObj(outputData_generateFilename(OBJ, filename));
+    case FileType::OBJ:
+        outputDataObj(outputData_generateFilename(FileType::OBJ, filename));
         break;
 
-    case LS_DYNA_KEYWORD:
-        outputDataLSDynaKeyword(outputData_generateFilename(LS_DYNA_KEYWORD, filename), polycrystalId);
+    case FileType::LS_DYNA_KEYWORD:
+        outputDataLSDynaKeyword(outputData_generateFilename(FileType::LS_DYNA_KEYWORD, filename), polycrystalId);
         break;
     }
     tmr.stop();
 
     if (m_lastLogger && m_lastLogger->isOpen())
     {
-        *m_lastLogger << "Mesh file writing time" << tmr.getLastDuration(tva::Timer::MICROSECONDS) * 1e-6 << "s";
+        *m_lastLogger << "Mesh file writing time" << tmr.getLastDuration(tva::Timer::TimeScale::MICROSECONDS) * 1e-6 << "s";
         m_lastLogger->close();
     }
 }
@@ -738,7 +733,7 @@ Polycrystal3::Polycrystal3(const std::string& polyStructFileName)
 }
 
 
-Polycrystal3::Polycrystal3(const std::unique_ptr<PolyStruct>& polyStruct)
+Polycrystal3::Polycrystal3(const PolyStruct& polyStruct)
 {
     inputData(polyStruct);
 }

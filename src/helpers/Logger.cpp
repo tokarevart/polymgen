@@ -36,12 +36,12 @@ void Logger::flush()
 
 Logger::Iomanip<Logger::IomanipType::WIDTH> Logger::setw(std::streamsize new_width)
 {
-    return Iomanip<WIDTH>{ new_width };
+    return Iomanip<IomanipType::WIDTH>{ new_width };
 }
 
 Logger::Iomanip<Logger::IomanipType::PRECISION> Logger::setprecision(std::streamsize new_precision)
 {
-    return Iomanip<PRECISION>{ new_precision };
+    return Iomanip<IomanipType::PRECISION>{ new_precision };
 }
 
 
@@ -341,8 +341,8 @@ Logger& Logger::operator<<(Logger::Iomanip<IomT> ioManip)
 {
     switch (IomT)
     {
-    case WIDTH:     m_bufiss->width    (ioManip.param); break;
-    case PRECISION: m_bufiss->precision(ioManip.param); break;
+    case IomanipType::WIDTH :     m_bufiss->width    (ioManip.param); break;
+    case IomanipType::PRECISION : m_bufiss->precision(ioManip.param); break;
     }
     
     return *this;

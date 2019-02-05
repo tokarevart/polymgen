@@ -52,7 +52,7 @@ public:
 
 
 private:
-    enum ExhaustType
+    enum class ExhaustType
     {
         DONT_EXHAUST,
         WITHOUT_NEW_VERTEX,
