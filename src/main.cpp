@@ -28,7 +28,7 @@ int main()
 
     std::cout << "Outputting data to file...";
     polycr.outputData(Polycrystal3::FileType::LS_DYNA_KEYWORD);
-//    polycr.outputData(Polycrystal3::OBJ);
+//    polycr.outputData(Polycrystal3::FileType::OBJ);
     std::cout << " done.\n";
 
     return 0;
