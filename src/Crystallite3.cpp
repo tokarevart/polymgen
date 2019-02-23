@@ -1498,7 +1498,7 @@ void Crystallite3::generateMesh(const double preferredLength)
     processAngles();
     if (globalIntersectionCheck())
         throw std::logic_error("Intersection error.\nCrystallite3::globalIntersectionCheck returned true.");
-    smoothMesh(10);
+    smoothMesh(20);
 }
 
 
