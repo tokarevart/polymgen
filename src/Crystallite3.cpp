@@ -1273,10 +1273,20 @@ bool Crystallite3::tryComputeNewVertPos(FrontFacet3* frontFacet, Vec3& out_pos)
 
 
 
+
+double Crystallite3::sqr4FacetArea(const FrontFacet3* fFacet) const
+{
+    Vec3 vec0 = *fFacet->facet->edges[0]->verts[1] - *fFacet->facet->edges[0]->verts[0];
+    Vec3 vec1 = *fFacet->facet->edges[1]->verts[1] - *fFacet->facet->edges[1]->verts[0];
+    return Vec3::crossProduct(vec0, vec1).sqrMagnitude();
+}
+
+
 FrontFacet3* Crystallite3::chooseFacetForExhaustionWithNewVert(FrontEdge3* frontEdge)
 {
     auto adj_f_facets = frontEdge->getAdjFacets();
 
+//    return sqr4FacetArea(std::get<0>(adj_f_facets)) < sqr4FacetArea(std::get<1>(adj_f_facets)) ?
     return std::get<0>(adj_f_facets)->computeQuality() < std::get<1>(adj_f_facets)->computeQuality() ?
         std::get<0>(adj_f_facets) :
         std::get<1>(adj_f_facets);
@@ -1516,12 +1526,13 @@ void Crystallite3::smoothMesh(int iterationsNum)
                 if (vert == edge->verts[0])
                 {
                     shift += *edge->verts[1] - *vert;
+                    delta_shifts_num++;
                 }
                 else if (vert == edge->verts[1])
                 {
                     shift += *edge->verts[0] - *vert;
+                    delta_shifts_num++;
                 }
-                delta_shifts_num++;
             }
             shift /= delta_shifts_num;
             vert->setPos(vert->getPos() + shift);

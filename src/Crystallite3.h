@@ -130,6 +130,8 @@ private:
     bool tryComputeNewVertPosType0(FrontFacet3* fFacet, Vec3& out_pos);
     bool tryComputeNewVertPos(FrontFacet3* fFacet, Vec3& out_pos);
 
+    double       sqr4FacetArea(const FrontFacet3* fFacet) const;
+    // Сurrently i don't know which method of choice is better
     FrontFacet3* chooseFacetForExhaustionWithNewVert(FrontEdge3* fEdge);
     void         exhaustWithNewVert(FrontFacet3* fFacet, Vec3 vertPos);
 
