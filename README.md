@@ -12,4 +12,4 @@ PolycrMesh* mesh = polycr.generateMesh(preferredTetrahedronEdgeLength);
 ...
 delete mesh;
 ```
-![Cube triangulation](https://github.com/Tokarevart/PolycrystalTriangulation/blob/master/images/shell_triang_3d_7.png)
+![Cube triangulation](https://github.com/Tokarevart/polycr-mesh-generator/blob/master/images/shell_triang_3d_7.png)
