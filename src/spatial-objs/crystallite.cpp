@@ -25,16 +25,17 @@ using pair_ff   = std::pair<FrSuFacet*, FrSuFacet*>;
         (BETWEEN(corner0[0], corner1[0], point[0]) && \
          BETWEEN(corner0[1], corner1[1], point[1]))
 
+#define ALPHA_P      70.52877936550931
+#define DEG_1_IN_RAD  0.0174532925199432957
 
-#define DEG_1_IN_RAD 0.0174532925199432957
-
-
-#define SQRT_2_DIV_3             0.8164965809277260
-#define ONE_PLUS_SQRT2_DIV_SQRT3 1.3938468501173517
+#define SQRT_2_3             0.8164965809277260
+#define ONE_PLUS_SQRT2_SQRT3 1.3938468501173517
 
 #define NOT_TOO_CLOSE          1e-1
 #define FROM_VERT_COEF         1e-2
 #define EDGES_INTERS_DIST_COEF 4e-3
+
+#define K_D 0.3
 
 
 template <typename T>
@@ -1457,7 +1458,7 @@ bool Crystallite::tryComputeNewVertPosType0(FrSuFacet* fFacet, Vec& out_pos)
           fFacet->facet->edges[0]->magnitude()
         + fFacet->facet->edges[1]->magnitude()
         + fFacet->facet->edges[2]->magnitude());
-    Vec new_pos = fFacet->computeCenter() + SQRT_2_DIV_3 * av_magn * fFacet->normal;
+    Vec new_pos = fFacet->computeCenter() + SQRT_2_3 * av_magn * fFacet->normal;
 
     auto v0 = fFacet->facet->edges[0]->verts[0];
     auto v1 = fFacet->facet->edges[0]->verts[1];

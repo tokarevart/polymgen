@@ -257,12 +257,12 @@ std::string Polycrystal::generateMesh_generateLogFileName(const std::string& log
         return logFileName;
 
     std::stringstream ss;
-    ss << "log_" << m_crystallites.size() << "_ncr_";
+    ss << "pmg_log_" << m_crystallites.size() << "_nc_";
     size_t av_nfe = 0;
     for (auto& crys : m_crystallites)
         av_nfe += crys->innerTetrs().size();
     av_nfe /= m_crystallites.size();
-    ss << av_nfe << "_fe_per_cr.log";
+    ss << av_nfe << "_cfe.log";
 
     return ss.str();
 }
@@ -318,7 +318,8 @@ void Polycrystal::generateMesh(double preferredLength, const std::string& logFil
         << "Minimum quality"          << min_q << ""
         << "Average quality"          << av_q  << ""
         << "Crystallites number"      << m_crystallites.size() << ""
-        << "Elements number"          << n_elems              << ""
+        << "Elements number"          << n_elems               << ""
+        << "Preferred edge length"    << m_preferredLength     << ""
         << "Shell triangulation time" << tmr.getDuration(0,  tva::Timer::TimeScale::Microseconds) * 1e-6 << "s"
         << "Volume exhaustion time"   << tmr.getLastDuration(tva::Timer::TimeScale::Microseconds) * 1e-6 << "s";
 }
@@ -596,12 +597,12 @@ std::string Polycrystal::output_generateFilename(FileType filetype, const std::s
         return filename;
 
     std::stringstream ss;
-    ss << "polycr_" << m_crystallites.size() << "_ncr_";
+    ss << "plcr_" << m_crystallites.size() << "_nc_";
     size_t av_nfe = 0;
     for (auto& crys : m_crystallites)
         av_nfe += crys->innerTetrs().size();
     av_nfe /= m_crystallites.size();
-    ss << av_nfe << "_fe_per_cr";
+    ss << av_nfe << "_cfe";
     switch (filetype)
     {
     case FileType::Obj:
