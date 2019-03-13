@@ -36,7 +36,7 @@ using pair_ff   = std::pair<FrSuFacet*, FrSuFacet*>;
 #define FROM_VERT_COEF         1e-2
 #define EDGES_INTERS_DIST_COEF 4e-3
 
-#define K_MAXD 1.3
+#define K_MAXD 1.2
 #define K_D    0.3
 
 
@@ -1449,6 +1449,9 @@ bool Crystallite::tryComputeNewVertPosType2(FrSuFacet* fFacet, Vec& out_pos, int
         x0_2 = sf0 / Vec::cross(v2->pos() - v0->pos(), e).magnitude();
         x1_2 = sf1 / Vec::cross(v2->pos() - v1->pos(), e).magnitude();
         new_pos = v2_pos + (x0_2 + x1_2) * e;
+        v0_to_np = new_pos - v0_pos;
+        v1_to_np = new_pos - v1_pos;
+        v2_to_np = new_pos - v2_pos;
         if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
             segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np) ||
             segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos + NOT_TOO_CLOSE * v2_to_np) ||
@@ -1513,6 +1516,9 @@ bool Crystallite::tryComputeNewVertPosType1(FrSuFacet* fFacet, Vec& out_pos, int
         facetIntersectionCheck(v1, v2, new_pos))
     {
         new_pos = c + xt * e;
+        v0_to_np = new_pos - v0_pos;
+        v1_to_np = new_pos - v1_pos;
+        v2_to_np = new_pos - v2_pos;
         if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
             segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np) ||
             segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos + NOT_TOO_CLOSE * v2_to_np) ||
@@ -1558,6 +1564,9 @@ bool Crystallite::tryComputeNewVertPosType0(FrSuFacet* fFacet, Vec& out_pos)
         facetIntersectionCheck(v1, v2, new_pos))
     {
         new_pos = fFacet->computeCenter() + SQRT_2_3 * av_magn * fFacet->normal;
+        v0_to_np = new_pos - v0_pos;
+        v1_to_np = new_pos - v1_pos;
+        v2_to_np = new_pos - v2_pos;
         if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
             segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np) ||
             segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos + NOT_TOO_CLOSE * v2_to_np) ||
