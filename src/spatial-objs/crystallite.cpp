@@ -28,6 +28,7 @@ using pair_ff   = std::pair<FrSuFacet*, FrSuFacet*>;
 #define ALPHA_P      70.52877936550931
 #define DEG_1_IN_RAD  0.0174532925199432957
 
+#define SQRT3_2              0.8660254037844386
 #define SQRT_2_3             0.8164965809277260
 #define ONE_PLUS_SQRT2_SQRT3 1.3938468501173517
 
@@ -35,7 +36,8 @@ using pair_ff   = std::pair<FrSuFacet*, FrSuFacet*>;
 #define FROM_VERT_COEF         1e-2
 #define EDGES_INTERS_DIST_COEF 4e-3
 
-#define K_D 0.3
+#define K_MAXD 1.3
+#define K_D    0.3
 
 
 template <typename T>
@@ -918,6 +920,16 @@ void Crystallite::exhaustFrontCollapse(FrSuEdge *fEdge, FrSuEdge *oppFEdge)
         oppFEdge->edge->verts[0],
         oppFEdge->edge->verts[1]));
 
+    auto new_tetr = new Tetr(fEdge->edge->verts[0],
+                             fEdge->edge->verts[1],
+                             oppFEdge->edge->verts[0],
+                             oppFEdge->edge->verts[1]);
+    m_innerTetrs.push_back(new_tetr);
+
+//    if (new_tetr->computeQuality() < 1e-2)
+//        m_polycr->output(Polycrystal::FileType::Obj, "debug.obj");
+
+
     std::vector<FrSuEdge*> fedges_to_erase;
     fedges_to_erase.reserve(4);
     for (auto& fedge : opp_ffacets.first->fEdges)
@@ -1044,11 +1056,20 @@ void Crystallite::exhaustFrontSplit(FrSuEdge* fEdge, FrSuEdge* oppFEdge)
 
     setFEdgesInFrontSplit(fEdge, new_opp_fedges, new_ffacets, opp_ffacets);
 
-    m_innerTetrs.push_back(new Tetr(
-        fEdge->edge->verts[0],
-        fEdge->edge->verts[1],
-        opp_verts[0],
-        opp_verts[1]));
+//    m_innerTetrs.push_back(new Tetr(
+//        fEdge->edge->verts[0],
+//        fEdge->edge->verts[1],
+//        opp_verts[0],
+//        opp_verts[1]));
+
+    auto new_tetr = new Tetr(fEdge->edge->verts[0],
+                             fEdge->edge->verts[1],
+                             opp_verts[0],
+                             opp_verts[1]);
+    m_innerTetrs.push_back(new_tetr);
+
+//    if (new_tetr->computeQuality() < 1e-2)
+//        m_polycr->output(Polycrystal::FileType::Obj, "debug.obj");
 
 
     removeFromFront(adj_f_facets.first);
@@ -1108,11 +1129,20 @@ void Crystallite::exhaustWithoutNewVertOppEdgeExists(FrSuEdge* fEdge, FrSuEdge* 
     new_ffacet->addFEdge(new_tetr_fedges[2]);
     new_ffacet->normal = computeNormalInTetr(new_ffacet, main_vert->pos());
 
-    m_innerTetrs.push_back(new Tetr(
-        fEdge->edge->verts[0],
-        fEdge->edge->verts[1],
-        oppFEdge->edge->verts[0],
-        oppFEdge->edge->verts[1]));
+//    m_innerTetrs.push_back(new Tetr(
+//        fEdge->edge->verts[0],
+//        fEdge->edge->verts[1],
+//        oppFEdge->edge->verts[0],
+//        oppFEdge->edge->verts[1]));
+
+    auto new_tetr = new Tetr(fEdge->edge->verts[0],
+                             fEdge->edge->verts[1],
+                             oppFEdge->edge->verts[0],
+                             oppFEdge->edge->verts[1]);
+    m_innerTetrs.push_back(new_tetr);
+
+//    if (new_tetr->computeQuality() < 1e-2)
+//        m_polycr->output(Polycrystal::FileType::Obj, "debug.obj");
 
     std::vector<FrSuEdge*> erased_fedges;
     erased_fedges.reserve(3);
@@ -1222,11 +1252,21 @@ void Crystallite::exhaustWithoutNewVertOppEdgeDontExists(FrSuEdge* fEdge)
     new_ffacet->addFEdge(new_tetr_fedges[2]);
     new_ffacet->normal = computeNormalInTetr(new_ffacet, fEdge->edge);
 
-    m_innerTetrs.push_back(new Tetr(
-        fEdge->edge->verts[0],
-        fEdge->edge->verts[1],
-        opp_verts[0],
-        opp_verts[1]));
+//    m_innerTetrs.push_back(new Tetr(
+//        fEdge->edge->verts[0],
+//        fEdge->edge->verts[1],
+//        opp_verts[0],
+//        opp_verts[1]));
+
+    auto new_tetr = new Tetr(fEdge->edge->verts[0],
+                             fEdge->edge->verts[1],
+                             opp_verts[0],
+                             opp_verts[1]);
+    m_innerTetrs.push_back(new_tetr);
+
+//    std::cout << std::endl << fEdge->edge->magnitude() << ' ' << fEdge->computeAngle() * 180.0 / M_PI;
+//    if (new_tetr->computeQuality() < 1e-2)
+//        m_polycr->output(Polycrystal::FileType::Obj, "debug.obj");
 
     
     removeFromFront(adj_f_facets.first);
@@ -1334,6 +1374,8 @@ bool Crystallite::tryComputeNewVertPosType3(FrSuFacet* fFacet, Vec& out_pos)
         return false;
     }
 
+//    std::cout << std::endl << "Type3";
+
     out_pos = new_pos;
     return true;
 }
@@ -1380,9 +1422,18 @@ bool Crystallite::tryComputeNewVertPosType2(FrSuFacet* fFacet, Vec& out_pos, int
     if (Vec::dot(e, n_m) < 0.0) e *= -1.0;
 
     double f_facet_area = fFacet->facet->computeArea();
-    double x0 = (f_facet_area + fn0->facet->computeArea()) / Vec::cross(v2->pos() - v0->pos(), e).magnitude();
-    double x1 = (f_facet_area + fn1->facet->computeArea()) / Vec::cross(v2->pos() - v1->pos(), e).magnitude();
-    Vec new_pos = v2_pos + 0.5 * (x0 + x1) * e;
+    double sp = SQRT3_2 * 0.5 * m_preferredLength * m_preferredLength;
+    double sf0 = 0.5 * (f_facet_area + fn0->facet->computeArea());
+    double sf1 = 0.5 * (f_facet_area + fn1->facet->computeArea());
+    double raw_deform0 = K_D * (sp - sf0);
+    double raw_deform1 = K_D * (sp - sf1);
+    double deform0 = raw_deform0 < sf0 * K_MAXD * 0.3 ? raw_deform0 : sf0 * K_MAXD * 0.3;
+    double deform1 = raw_deform1 < sf1 * K_MAXD * 0.3 ? raw_deform1 : sf1 * K_MAXD * 0.3;
+    double sc0 = sf0 + deform0;
+    double sc1 = sf1 + deform1;
+    double x0_2 = sc0 / Vec::cross(v2->pos() - v0->pos(), e).magnitude();
+    double x1_2 = sc1 / Vec::cross(v2->pos() - v1->pos(), e).magnitude();
+    Vec new_pos = v2_pos + (x0_2 + x1_2) * e;
 
     Vec v0_to_np = new_pos - v0_pos;
     Vec v1_to_np = new_pos - v1_pos;
@@ -1395,8 +1446,20 @@ bool Crystallite::tryComputeNewVertPosType2(FrSuFacet* fFacet, Vec& out_pos, int
         facetIntersectionCheck(v0, v2, new_pos) ||
         facetIntersectionCheck(v1, v2, new_pos))
     {
-        return false;
+        x0_2 = sf0 / Vec::cross(v2->pos() - v0->pos(), e).magnitude();
+        x1_2 = sf1 / Vec::cross(v2->pos() - v1->pos(), e).magnitude();
+        new_pos = v2_pos + (x0_2 + x1_2) * e;
+        if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
+            segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np) ||
+            segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos + NOT_TOO_CLOSE * v2_to_np) ||
+            !vertInsideFrontCheck(new_pos) ||
+            facetIntersectionCheck(v0, v1, new_pos) ||
+            facetIntersectionCheck(v0, v2, new_pos) ||
+            facetIntersectionCheck(v1, v2, new_pos))
+            return false;
     }
+
+//    std::cout << std::endl << "Type2";
 
     out_pos = new_pos;
     return true;
@@ -1419,19 +1482,24 @@ bool Crystallite::tryComputeNewVertPosType1(FrSuFacet* fFacet, Vec& out_pos, int
     auto fn = std::get<0>(adj_f_facets) == fFacet ? std::get<1>(adj_f_facets) : std::get<0>(adj_f_facets);
     auto vn = fn->facet->findVertNot(main_edge);
 
-    const Vec& v0_pos = v0->pos();
-    const Vec& v1_pos = v1->pos();
-    const Vec& v2_pos = v2->pos();
-    const Vec& vn_pos = vn->pos();
+    Point v0_pos = v0->pos();
+    Point v1_pos = v1->pos();
+    Point v2_pos = v2->pos();
+    Point vn_pos = vn->pos();
 
-    Vec v2pr = tva::spatalgs::project(v2_pos, v0_pos, v1_pos);
-    Vec vnpr = tva::spatalgs::project(vn_pos, v0_pos, v1_pos);
+    Point v2pr = tva::spatalgs::project(v2_pos, v0_pos, v1_pos);
+    Point vnpr = tva::spatalgs::project(vn_pos, v0_pos, v1_pos);
 
-    Vec c = 0.25 * (v0_pos + v1_pos + v2pr + vnpr);
-    Vec e = (fFacet->normal + fn->normal).normalize();
-    Vec new_pos = c + 0.5 * (  Vec::cross(v2->pos() - v0->pos(), v2->pos() - v1->pos()).magnitude()
-                             + Vec::cross(vn->pos() - v0->pos(), vn->pos() - v1->pos()).magnitude())
-                            / main_edge->magnitude() * e;
+    Point c = 0.25 * (v0_pos + v1_pos + v2pr + vnpr);
+    Vec   e = (fFacet->normal + fn->normal).normalize();
+    double me_magn = main_edge->magnitude();
+    double xp = SQRT3_2 * m_preferredLength * m_preferredLength / me_magn;
+    double xt = 0.5 * (  Vec::cross(v2->pos() - v0->pos(), v2->pos() - v1->pos()).magnitude()
+                       + Vec::cross(vn->pos() - v0->pos(), vn->pos() - v1->pos()).magnitude())
+                       / me_magn;
+    double raw_deform = K_D * (xp - xt);
+    double deform = raw_deform < xt * K_MAXD ? raw_deform : xt * K_MAXD;
+    Point new_pos = c + (xt + deform) * e;
 
     Vec v0_to_np = new_pos - v0_pos;
     Vec v1_to_np = new_pos - v1_pos;
@@ -1444,8 +1512,18 @@ bool Crystallite::tryComputeNewVertPosType1(FrSuFacet* fFacet, Vec& out_pos, int
         facetIntersectionCheck(v0, v2, new_pos) ||
         facetIntersectionCheck(v1, v2, new_pos))
     {
-        return false;
+        new_pos = c + xt * e;
+        if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
+            segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np) ||
+            segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos + NOT_TOO_CLOSE * v2_to_np) ||
+            !vertInsideFrontCheck(new_pos) ||
+            facetIntersectionCheck(v0, v1, new_pos) ||
+            facetIntersectionCheck(v0, v2, new_pos) ||
+            facetIntersectionCheck(v1, v2, new_pos))
+            return false;
     }
+
+//    std::cout << std::endl << "Type1";
 
     out_pos = new_pos;
     return true;
@@ -1458,7 +1536,9 @@ bool Crystallite::tryComputeNewVertPosType0(FrSuFacet* fFacet, Vec& out_pos)
           fFacet->facet->edges[0]->magnitude()
         + fFacet->facet->edges[1]->magnitude()
         + fFacet->facet->edges[2]->magnitude());
-    Vec new_pos = fFacet->computeCenter() + SQRT_2_3 * av_magn * fFacet->normal;
+    double raw_deform = K_D * (m_preferredLength - av_magn);
+    double deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
+    Vec new_pos = fFacet->computeCenter() + SQRT_2_3 * (av_magn + deform) * fFacet->normal;
 
     auto v0 = fFacet->facet->edges[0]->verts[0];
     auto v1 = fFacet->facet->edges[0]->verts[1];
@@ -1477,8 +1557,18 @@ bool Crystallite::tryComputeNewVertPosType0(FrSuFacet* fFacet, Vec& out_pos)
         facetIntersectionCheck(v0, v2, new_pos) ||
         facetIntersectionCheck(v1, v2, new_pos))
     {
-        return false;
+        new_pos = fFacet->computeCenter() + SQRT_2_3 * av_magn * fFacet->normal;
+        if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
+            segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np) ||
+            segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos + NOT_TOO_CLOSE * v2_to_np) ||
+            !vertInsideFrontCheck(new_pos) ||
+            facetIntersectionCheck(v0, v1, new_pos) ||
+            facetIntersectionCheck(v0, v2, new_pos) ||
+            facetIntersectionCheck(v1, v2, new_pos))
+            return false;
     }
+
+//    std::cout << std::endl << "Type0";
 
     out_pos = new_pos;
     return true;
@@ -1525,8 +1615,8 @@ FrSuFacet* Crystallite::chooseFacetForExhaustionWithNewVert(FrSuEdge* fEdge)
 {
     auto adj_f_facets = fEdge->getAdjFFacets();
 
-//    return sqr4FacetArea(std::get<0>(adj_f_facets)) < sqr4FacetArea(std::get<1>(adj_f_facets)) ?
-    return std::get<0>(adj_f_facets)->computeQuality() < std::get<1>(adj_f_facets)->computeQuality() ?
+    return sqr4FacetArea(std::get<0>(adj_f_facets)) < sqr4FacetArea(std::get<1>(adj_f_facets)) ?
+//    return std::get<0>(adj_f_facets)->computeQuality() < std::get<1>(adj_f_facets)->computeQuality() ?
         std::get<0>(adj_f_facets) :
         std::get<1>(adj_f_facets);
 }
@@ -1578,11 +1668,19 @@ void Crystallite::exhaustWithNewVert(FrSuFacet* fFacet, const Vec& vertPos)
     new_ffacet->addFEdge(new_tetr_fedges[5]);
     new_ffacet->normal = computeNormalInTetr(new_ffacet, new_tetr_fedges[0]->edge->verts[0]->pos());
 
-    m_innerTetrs.push_back(new Tetr(
-        new_tetr_fedges[0]->edge->verts[0],
-        new_tetr_fedges[0]->edge->verts[1],
-        new_tetr_fedges[5]->edge->verts[0],
-        new_tetr_fedges[5]->edge->verts[1]));
+//    m_innerTetrs.push_back(new Tetr(
+//        new_tetr_fedges[0]->edge->verts[0],
+//        new_tetr_fedges[0]->edge->verts[1],
+//        new_tetr_fedges[5]->edge->verts[0],
+//        new_tetr_fedges[5]->edge->verts[1]));
+
+    auto new_tetr = new Tetr(new_tetr_fedges[0]->edge->verts[0],
+                             new_tetr_fedges[0]->edge->verts[1],
+                             new_tetr_fedges[5]->edge->verts[0],
+                             new_tetr_fedges[5]->edge->verts[1]);
+    m_innerTetrs.push_back(new_tetr);
+//    if (new_tetr->computeQuality() < 1e-2)
+//        m_polycr->output(Polycrystal::FileType::Obj, "debug.obj");
 
     removeFromFront(fFacet);
 }
@@ -1699,10 +1797,10 @@ void Crystallite::processAngles()
 
 #ifdef DEV_DEBUG
         m_polycr->output(Polycrystal::FileType::Obj, "debug.obj");
-        if (debug_i++ >= 229)
+        if (debug_i++ >= 0)
             std::cout << std::endl << debug_i - 1;
 
-        debug();
+//        debug();
 #endif
 
         if (isFrontExhausted())
