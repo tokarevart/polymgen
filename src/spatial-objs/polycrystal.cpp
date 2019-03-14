@@ -10,7 +10,7 @@
 using namespace pmg;
 
 
-//#define DEV_DEBUG
+#define DEV_DEBUG
 
 
 

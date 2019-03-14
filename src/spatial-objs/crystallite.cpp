@@ -32,11 +32,11 @@ using pair_ff   = std::pair<FrSuFacet*, FrSuFacet*>;
 #define SQRT_2_3             0.8164965809277260
 #define ONE_PLUS_SQRT2_SQRT3 1.3938468501173517
 
-#define NOT_TOO_CLOSE          1e-1
+#define NOT_TOO_CLOSE          2e-1
 #define FROM_VERT_COEF         1e-2
 #define EDGES_INTERS_DIST_COEF 4e-3
 
-#define K_MAXD 1.2
+#define K_MAXD 0.4
 #define K_D    0.3
 
 
@@ -1427,8 +1427,8 @@ bool Crystallite::tryComputeNewVertPosType2(FrSuFacet* fFacet, Vec& out_pos, int
     double sf1 = 0.5 * (f_facet_area + fn1->facet->computeArea());
     double raw_deform0 = K_D * (sp - sf0);
     double raw_deform1 = K_D * (sp - sf1);
-    double deform0 = raw_deform0 < sf0 * K_MAXD * 0.3 ? raw_deform0 : sf0 * K_MAXD * 0.3;
-    double deform1 = raw_deform1 < sf1 * K_MAXD * 0.3 ? raw_deform1 : sf1 * K_MAXD * 0.3;
+    double deform0 = raw_deform0 < sf0 * K_MAXD ? raw_deform0 : sf0 * K_MAXD;
+    double deform1 = raw_deform1 < sf1 * K_MAXD ? raw_deform1 : sf1 * K_MAXD;
     double sc0 = sf0 + deform0;
     double sc1 = sf1 + deform1;
     double x0_2 = sc0 / Vec::cross(v2->pos() - v0->pos(), e).magnitude();

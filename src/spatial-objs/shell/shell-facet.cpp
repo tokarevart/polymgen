@@ -23,6 +23,9 @@ using tva::Point;
 #define FROM_VERT_COEF 1e-2
 #define EDGES_INTERS_DIST_COEF 1e-4
 
+#define K_MAXD 1.2
+#define K_D    0.3
+
 
 template <typename T>
 constexpr double degToRad(T value)
@@ -305,6 +308,11 @@ bool shell::Facet::tryComputeNewVertPosType1(FrPlEdge* fEdge, Point& out_pos, in
 
 bool shell::Facet::tryComputeNewVertPosType0(FrPlEdge* fEdge, Point& out_pos)
 {
+//    double magn = fEdge->edge->magnitude();
+//    double raw_deform = K_D * (m_preferredLength - SQRT3_2 * magn);
+//    double deform = (magn + raw_deform) < magn * K_MAXD ? raw_deform : magn * K_MAXD;
+//    Point new_pos = fEdge->computeCenter() + fEdge->normal * SQRT3_2 * (magn + deform);
+
     Point new_pos = fEdge->computeCenter() + fEdge->normal * m_preferredLength * SQRT3_2;
 
     Vec v0_pos = fEdge->edge->verts[0]->pos();
