@@ -3,7 +3,7 @@
 #include "helpers/spatial-algs/spatial-algs.h"
 
 
-#define K_ALPHA 2.5
+#define K_ALPHA 1e+3 //2.5
 
 
 using FrPlEdge   = pmg::front::plane::Edge;

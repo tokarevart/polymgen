@@ -8,7 +8,7 @@
 
 int main()
 {
-    double preferredEdgeLength = 0.30;
+    double preferredEdgeLength = 0.28;
 //    std::cout << "Enter preferred shell::Edge length: ";
 //    std::cin >> preferredEdgeLength;
     

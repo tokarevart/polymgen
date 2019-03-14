@@ -3,7 +3,7 @@
 #include "helpers/spatial-algs/spatial-algs.h"
 
 
-#define K_ALPHA 2.5
+#define K_ALPHA 4.0
 
 
 using FrSuFacet = pmg::front::surface::Facet;

@@ -32,11 +32,11 @@ using pair_ff   = std::pair<FrSuFacet*, FrSuFacet*>;
 #define SQRT_2_3             0.8164965809277260
 #define ONE_PLUS_SQRT2_SQRT3 1.3938468501173517
 
-#define NOT_TOO_CLOSE          2e-1
+#define NOT_TOO_CLOSE          3e-1
 #define FROM_VERT_COEF         1e-2
 #define EDGES_INTERS_DIST_COEF 4e-3
 
-#define K_MAXD 0.4
+#define K_MAXD 0.2
 #define K_D    0.3
 
 
@@ -1401,12 +1401,16 @@ bool Crystallite::tryComputeNewVertPosType2(FrSuFacet* fFacet, Vec& out_pos, int
 
     auto adj_f_facets = main_fedges[0]->getAdjFFacets();
     auto fn0 = std::get<0>(adj_f_facets) == fFacet ? std::get<1>(adj_f_facets) : std::get<0>(adj_f_facets);
+    auto vn0 = fn0->facet->findVertNot(main_fedges[0]->edge);
     adj_f_facets = main_fedges[1]->getAdjFFacets();
     auto fn1 = std::get<0>(adj_f_facets) == fFacet ? std::get<1>(adj_f_facets) : std::get<0>(adj_f_facets);
+    auto vn1 = fn1->facet->findVertNot(main_fedges[1]->edge);
 
-    Vec v0_pos = v0->pos();
-    Vec v1_pos = v1->pos();
-    Vec v2_pos = v2->pos();
+    Point v0_pos = v0->pos();
+    Point v1_pos = v1->pos();
+    Point v2_pos = v2->pos();
+    Point vn0_pos = vn0->pos();
+    Point vn1_pos = vn1->pos();
 
     Vec n_m = fFacet->normal;
     Vec n_n0 = fn0->normal;
@@ -1421,19 +1425,27 @@ bool Crystallite::tryComputeNewVertPosType2(FrSuFacet* fFacet, Vec& out_pos, int
     Vec e = Vec::cross(np_mn0, np_mn1).normalize();
     if (Vec::dot(e, n_m) < 0.0) e *= -1.0;
 
-    double f_facet_area = fFacet->facet->computeArea();
-    double sp = SQRT3_2 * 0.5 * m_preferredLength * m_preferredLength;
-    double sf0 = 0.5 * (f_facet_area + fn0->facet->computeArea());
-    double sf1 = 0.5 * (f_facet_area + fn1->facet->computeArea());
-    double raw_deform0 = K_D * (sp - sf0);
-    double raw_deform1 = K_D * (sp - sf1);
-    double deform0 = raw_deform0 < sf0 * K_MAXD ? raw_deform0 : sf0 * K_MAXD;
-    double deform1 = raw_deform1 < sf1 * K_MAXD ? raw_deform1 : sf1 * K_MAXD;
-    double sc0 = sf0 + deform0;
-    double sc1 = sf1 + deform1;
-    double x0_2 = sc0 / Vec::cross(v2->pos() - v0->pos(), e).magnitude();
-    double x1_2 = sc1 / Vec::cross(v2->pos() - v1->pos(), e).magnitude();
-    Vec new_pos = v2_pos + (x0_2 + x1_2) * e;
+//    double f_facet_area = fFacet->facet->computeArea();
+//    double sp = SQRT3_2 * 0.5 * m_preferredLength * m_preferredLength;
+//    double sf0 = 0.5 * (f_facet_area + fn0->facet->computeArea());
+//    double sf1 = 0.5 * (f_facet_area + fn1->facet->computeArea());
+//    double raw_deform0 = K_D * (sp - sf0);
+//    double raw_deform1 = K_D * (sp - sf1);
+//    double deform0 = raw_deform0 < sf0 * K_MAXD ? raw_deform0 : sf0 * K_MAXD;
+//    double deform1 = raw_deform1 < sf1 * K_MAXD ? raw_deform1 : sf1 * K_MAXD;
+//    double sc0 = sf0 + deform0;
+//    double sc1 = sf1 + deform1;
+//    double x0_2 = sc0 / Vec::cross(v2->pos() - v0->pos(), e).magnitude();
+//    double x1_2 = sc1 / Vec::cross(v2->pos() - v1->pos(), e).magnitude();
+//    Vec new_pos = v2_pos + (x0_2 + x1_2) * e;
+    double l0 = (v1_pos - v0_pos).magnitude();
+    double l1 = (vn0_pos - v0_pos).magnitude();
+    double l2 = (vn0_pos - v2_pos).magnitude();
+    double l3 = (vn1_pos - v1_pos).magnitude();
+    double l4 = (vn1_pos - v2_pos).magnitude();
+    double av_magn = (main_edges[0]->magnitude() + main_edges[1]->magnitude() + l0 + l1 + l2 + l3 + l4) / 7.0;
+    double raw_deform = K_D * (m_preferredLength - av_magn);
+    Vec new_pos = v2_pos + (av_magn + raw_deform) * e;
 
     Vec v0_to_np = new_pos - v0_pos;
     Vec v1_to_np = new_pos - v1_pos;
@@ -1446,9 +1458,9 @@ bool Crystallite::tryComputeNewVertPosType2(FrSuFacet* fFacet, Vec& out_pos, int
         facetIntersectionCheck(v0, v2, new_pos) ||
         facetIntersectionCheck(v1, v2, new_pos))
     {
-        x0_2 = sf0 / Vec::cross(v2->pos() - v0->pos(), e).magnitude();
-        x1_2 = sf1 / Vec::cross(v2->pos() - v1->pos(), e).magnitude();
-        new_pos = v2_pos + (x0_2 + x1_2) * e;
+//        x0_2 = sf0 / Vec::cross(v2->pos() - v0->pos(), e).magnitude();
+//        x1_2 = sf1 / Vec::cross(v2->pos() - v1->pos(), e).magnitude();
+        new_pos = new_pos = v2_pos + av_magn * e;
         v0_to_np = new_pos - v0_pos;
         v1_to_np = new_pos - v1_pos;
         v2_to_np = new_pos - v2_pos;
@@ -1496,13 +1508,16 @@ bool Crystallite::tryComputeNewVertPosType1(FrSuFacet* fFacet, Vec& out_pos, int
     Point c = 0.25 * (v0_pos + v1_pos + v2pr + vnpr);
     Vec   e = (fFacet->normal + fn->normal).normalize();
     double me_magn = main_edge->magnitude();
-    double xp = SQRT3_2 * m_preferredLength * m_preferredLength / me_magn;
-    double xt = 0.5 * (  Vec::cross(v2->pos() - v0->pos(), v2->pos() - v1->pos()).magnitude()
-                       + Vec::cross(vn->pos() - v0->pos(), vn->pos() - v1->pos()).magnitude())
-                       / me_magn;
-    double raw_deform = K_D * (xp - xt);
-    double deform = raw_deform < xt * K_MAXD ? raw_deform : xt * K_MAXD;
-    Point new_pos = c + (xt + deform) * e;
+    double l0 = (v2_pos - v0_pos).magnitude();
+    double l1 = (v2_pos - v1_pos).magnitude();
+    double l2 = (vn_pos - v0_pos).magnitude();
+    double l3 = (vn_pos - v1_pos).magnitude();
+    double av_magn = 0.2 * (me_magn + l0 + l1 + l2 + l3);
+    double v0_c_dist = (c - v0_pos).magnitude();
+    double raw_deform = K_D * (m_preferredLength - av_magn);
+    double deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
+    double magn_d = av_magn + deform;
+    Point new_pos = c + sqrt(magn_d * magn_d - v0_c_dist * v0_c_dist) * e;
 
     Vec v0_to_np = new_pos - v0_pos;
     Vec v1_to_np = new_pos - v1_pos;
@@ -1515,7 +1530,7 @@ bool Crystallite::tryComputeNewVertPosType1(FrSuFacet* fFacet, Vec& out_pos, int
         facetIntersectionCheck(v0, v2, new_pos) ||
         facetIntersectionCheck(v1, v2, new_pos))
     {
-        new_pos = c + xt * e;
+        new_pos = c + sqrt(av_magn * av_magn - v0_c_dist * v0_c_dist) * e;
         v0_to_np = new_pos - v0_pos;
         v1_to_np = new_pos - v1_pos;
         v2_to_np = new_pos - v2_pos;
@@ -1538,13 +1553,14 @@ bool Crystallite::tryComputeNewVertPosType1(FrSuFacet* fFacet, Vec& out_pos, int
 
 bool Crystallite::tryComputeNewVertPosType0(FrSuFacet* fFacet, Vec& out_pos)
 {
-    double av_magn = 0.3333333333333333 * (
+    double av_magn = 0.3333333333333 * (
           fFacet->facet->edges[0]->magnitude()
         + fFacet->facet->edges[1]->magnitude()
         + fFacet->facet->edges[2]->magnitude());
     double raw_deform = K_D * (m_preferredLength - av_magn);
     double deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
-    Vec new_pos = fFacet->computeCenter() + SQRT_2_3 * (av_magn + deform) * fFacet->normal;
+    double magn_d = av_magn + deform;
+    Vec new_pos = fFacet->computeCenter() + sqrt(magn_d * magn_d - 0.33333333333 * av_magn * av_magn) * fFacet->normal;
 
     auto v0 = fFacet->facet->edges[0]->verts[0];
     auto v1 = fFacet->facet->edges[0]->verts[1];
@@ -1563,7 +1579,7 @@ bool Crystallite::tryComputeNewVertPosType0(FrSuFacet* fFacet, Vec& out_pos)
         facetIntersectionCheck(v0, v2, new_pos) ||
         facetIntersectionCheck(v1, v2, new_pos))
     {
-        new_pos = fFacet->computeCenter() + SQRT_2_3 * av_magn * fFacet->normal;
+        new_pos = fFacet->computeCenter() + sqrt(av_magn * av_magn - 0.33333333333 * av_magn * av_magn) * fFacet->normal;
         v0_to_np = new_pos - v0_pos;
         v1_to_np = new_pos - v1_pos;
         v2_to_np = new_pos - v2_pos;
@@ -1805,9 +1821,10 @@ void Crystallite::processAngles()
         max_compl = std::numeric_limits<double>::max();
 
 #ifdef DEV_DEBUG
-        m_polycr->output(Polycrystal::FileType::Obj, "debug.obj");
-        if (debug_i++ >= 0)
-            std::cout << std::endl << debug_i - 1;
+//        if (debug_i++ >= 1200)
+//        m_polycr->output(Polycrystal::FileType::Obj, "debug.obj");
+//        if (debug_i++ >= 0)
+//            std::cout << std::endl << debug_i - 1;
 
 //        debug();
 #endif
@@ -1847,8 +1864,8 @@ void Crystallite::generateMesh(double preferredLen)
     initializeFront();
     computeFrontNormals();
     processAngles();
-    if (globalIntersectionCheck())
-        throw std::logic_error("Intersection error.\npmg::Crystallite3::globalIntersectionCheck returned true.");
+//    if (globalIntersectionCheck())
+//        throw std::logic_error("Intersection error.\npmg::Crystallite3::globalIntersectionCheck returned true.");
     smoothMesh(20);
 }
 
