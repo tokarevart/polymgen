@@ -19,12 +19,12 @@ using tva::Point;
 #define SIXTEEN_DIV_NINE 1.7777777777777777
 #define SQRT3_2          0.8660254037844386
 
-#define NOT_TOO_CLOSE  1e-1
+#define NOT_TOO_CLOSE  2e-1
 #define FROM_VERT_COEF 1e-2
 #define EDGES_INTERS_DIST_COEF 1e-4
 
-#define K_MAXD 1.2
-#define K_D    0.3
+#define K_MAXD 0.3
+#define K_D    0.5
 
 
 template <typename T>
@@ -108,7 +108,7 @@ void shell::Facet::triangulate(double preferredLen)
     computeFrontNormals();
     processAngles();
 //    if (globalIntersectionCheck())
-//        throw std::logic_error("Intersection error.\nCrystallite3::globalIntersectionCheck returned true.");
+//        throw std::logic_error("Intersection error.\npmg::shell::Facet::globalIntersectionCheck returned true.");
 
     smoothMesh(20);
     for (int i = 0; i < 3; i++)
@@ -293,7 +293,12 @@ bool shell::Facet::tryComputeNewVertPosType1(FrPlEdge* fEdge, Point& out_pos, in
     Vec e = (sec_vert->pos() - 2.0 * main_vert->pos() + vn->pos()).normalize();
 
     double av_magn = 0.5 * (fEdge->edge->magnitude() + en->edge->magnitude());
-    Point new_pos = main_vert->pos() + av_magn * e;
+    double raw_deform = K_D * (m_preferredLength - av_magn);
+    double deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
+    double magn_d = av_magn + deform;
+    Point new_pos = main_vert->pos() + magn_d * e;
+
+//    Point new_pos = main_vert->pos() + av_magn * e;
 
     Vec v0_to_np = new_pos - main_vert->pos();
     Vec v1_to_np = new_pos - sec_vert->pos();
@@ -308,12 +313,13 @@ bool shell::Facet::tryComputeNewVertPosType1(FrPlEdge* fEdge, Point& out_pos, in
 
 bool shell::Facet::tryComputeNewVertPosType0(FrPlEdge* fEdge, Point& out_pos)
 {
-//    double magn = fEdge->edge->magnitude();
-//    double raw_deform = K_D * (m_preferredLength - SQRT3_2 * magn);
-//    double deform = (magn + raw_deform) < magn * K_MAXD ? raw_deform : magn * K_MAXD;
-//    Point new_pos = fEdge->computeCenter() + fEdge->normal * SQRT3_2 * (magn + deform);
+    double magn = fEdge->edge->magnitude();
+    double raw_deform = K_D * (m_preferredLength - magn);
+    double deform = raw_deform < magn * K_MAXD ? raw_deform : magn * K_MAXD;
+    double magn_d = magn + deform;
+    Point new_pos = fEdge->computeCenter() + 0.5 * sqrt(4.0 * magn_d * magn_d - magn * magn) * fEdge->normal;
 
-    Point new_pos = fEdge->computeCenter() + fEdge->normal * m_preferredLength * SQRT3_2;
+//    Point new_pos = fEdge->computeCenter() + fEdge->normal * m_preferredLength * SQRT3_2;
 
     Vec v0_pos = fEdge->edge->verts[0]->pos();
     Vec v1_pos = fEdge->edge->verts[1]->pos();

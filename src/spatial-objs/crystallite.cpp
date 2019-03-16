@@ -32,12 +32,12 @@ using pair_ff   = std::pair<FrSuFacet*, FrSuFacet*>;
 #define SQRT_2_3             0.8164965809277260
 #define ONE_PLUS_SQRT2_SQRT3 1.3938468501173517
 
-#define NOT_TOO_CLOSE          3e-1
+#define NOT_TOO_CLOSE          2e-1
 #define FROM_VERT_COEF         1e-2
 #define EDGES_INTERS_DIST_COEF 4e-3
 
-#define K_MAXD 0.2
-#define K_D    0.3
+#define K_MAXD 0.3
+#define K_D    0.4
 
 
 template <typename T>
@@ -1379,30 +1379,22 @@ bool Crystallite::tryComputeNewVertPosType3(FrSuFacet* fFacet, Vec& out_pos)
     Vec v0_to_np = new_pos - v0_pos;
     Vec v1_to_np = new_pos - v1_pos;
     Vec v2_to_np = new_pos - v2_pos;
-    double sum_magn0 =  fn0->facet->edges[0]->magnitude()
-                      + fn0->facet->edges[1]->magnitude()
-                      + fn0->facet->edges[2]->magnitude();
-    double sum_magn1 =  fn1->facet->edges[0]->magnitude()
-                      + fn1->facet->edges[1]->magnitude()
-                      + fn1->facet->edges[2]->magnitude();
-    double sum_magn2 =  fn2->facet->edges[0]->magnitude()
-                      + fn2->facet->edges[1]->magnitude()
-                      + fn2->facet->edges[2]->magnitude();
-    double sum_magn3 =  fFacet->facet->edges[0]->magnitude()
-                      + fFacet->facet->edges[1]->magnitude()
-                      + fFacet->facet->edges[2]->magnitude();
-    double av_magn = (sum_magn0 + sum_magn1 + sum_magn2 + sum_magn3) / 12.0;
-    if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
-        segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np) ||
-        segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos + NOT_TOO_CLOSE * v2_to_np) ||
-//        doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
-        !vertInsideFrontCheck(new_pos) ||
+    double sum_magns[4];
+    int i = 0;
+    for (auto& ffacet : { fn0, fn1, fn2, fFacet })
+        sum_magns[i++] =  ffacet->facet->edges[0]->magnitude()
+                        + ffacet->facet->edges[1]->magnitude()
+                        + ffacet->facet->edges[2]->magnitude();
+    double av_magn = (sum_magns[0] + sum_magns[1] + sum_magns[2] + sum_magns[3]) / 12.0;
+    if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos /*+ NOT_TOO_CLOSE * v0_to_np*/) ||
+        segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos /*+ NOT_TOO_CLOSE * v1_to_np*/) ||
+        segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos /*+ NOT_TOO_CLOSE * v2_to_np*/) ||
+        doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
+//        !vertInsideFrontCheck(new_pos) ||
         facetIntersectionCheck(v0, v1, new_pos) ||
         facetIntersectionCheck(v0, v2, new_pos) ||
         facetIntersectionCheck(v1, v2, new_pos))
-    {
         return false;
-    }
 
 //    std::cout << std::endl << "Type3";
 
@@ -1482,10 +1474,10 @@ bool Crystallite::tryComputeNewVertPosType2(FrSuFacet* fFacet, Vec& out_pos, int
     Vec v0_to_np = new_pos - v0_pos;
     Vec v1_to_np = new_pos - v1_pos;
     Vec v2_to_np = new_pos - v2_pos;
-    if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
-        segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np) ||
-        segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos + NOT_TOO_CLOSE * v2_to_np) ||
-//        doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * magn_d) ||
+    if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos /*+ NOT_TOO_CLOSE * v0_to_np*/) ||
+        segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos /*+ NOT_TOO_CLOSE * v1_to_np*/) ||
+        segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos /*+ NOT_TOO_CLOSE * v2_to_np*/) ||
+        doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * magn_d) ||
         !vertInsideFrontCheck(new_pos) ||
         facetIntersectionCheck(v0, v1, new_pos) ||
         facetIntersectionCheck(v0, v2, new_pos) ||
@@ -1497,11 +1489,11 @@ bool Crystallite::tryComputeNewVertPosType2(FrSuFacet* fFacet, Vec& out_pos, int
         v0_to_np = new_pos - v0_pos;
         v1_to_np = new_pos - v1_pos;
         v2_to_np = new_pos - v2_pos;
-        if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
-            segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np) ||
-            segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos + NOT_TOO_CLOSE * v2_to_np) ||
-//            doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
-            !vertInsideFrontCheck(new_pos) ||
+        if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos /*+ NOT_TOO_CLOSE * v0_to_np*/) ||
+            segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos /*+ NOT_TOO_CLOSE * v1_to_np*/) ||
+            segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos /*+ NOT_TOO_CLOSE * v2_to_np*/) ||
+            doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
+//            !vertInsideFrontCheck(new_pos) ||
             facetIntersectionCheck(v0, v1, new_pos) ||
             facetIntersectionCheck(v0, v2, new_pos) ||
             facetIntersectionCheck(v1, v2, new_pos))
@@ -1556,10 +1548,10 @@ bool Crystallite::tryComputeNewVertPosType1(FrSuFacet* fFacet, Vec& out_pos, int
     Vec v0_to_np = new_pos - v0_pos;
     Vec v1_to_np = new_pos - v1_pos;
     Vec v2_to_np = new_pos - v2_pos;
-    if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
-        segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np) ||
-        segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos + NOT_TOO_CLOSE * v2_to_np) ||
-//        doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * magn_d) ||
+    if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos /*+ NOT_TOO_CLOSE * v0_to_np*/) ||
+        segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos /*+ NOT_TOO_CLOSE * v1_to_np*/) ||
+        segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos /*+ NOT_TOO_CLOSE * v2_to_np*/) ||
+        doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * magn_d) ||
         !vertInsideFrontCheck(new_pos) ||
         facetIntersectionCheck(v0, v1, new_pos) ||
         facetIntersectionCheck(v0, v2, new_pos) ||
@@ -1569,11 +1561,11 @@ bool Crystallite::tryComputeNewVertPosType1(FrSuFacet* fFacet, Vec& out_pos, int
         v0_to_np = new_pos - v0_pos;
         v1_to_np = new_pos - v1_pos;
         v2_to_np = new_pos - v2_pos;
-        if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
-            segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np) ||
-            segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos + NOT_TOO_CLOSE * v2_to_np) ||
-//            doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
-            !vertInsideFrontCheck(new_pos) ||
+        if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos /*+ NOT_TOO_CLOSE * v0_to_np*/) ||
+            segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos /*+ NOT_TOO_CLOSE * v1_to_np*/) ||
+            segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos /*+ NOT_TOO_CLOSE * v2_to_np*/) ||
+            doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
+//            !vertInsideFrontCheck(new_pos) ||
             facetIntersectionCheck(v0, v1, new_pos) ||
             facetIntersectionCheck(v0, v2, new_pos) ||
             facetIntersectionCheck(v1, v2, new_pos))
@@ -1607,11 +1599,11 @@ bool Crystallite::tryComputeNewVertPosType0(FrSuFacet* fFacet, Vec& out_pos)
     Vec v0_to_np = new_pos - v0_pos;
     Vec v1_to_np = new_pos - v1_pos;
     Vec v2_to_np = new_pos - v2_pos;
-    if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
-        segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np) ||
-        segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos + NOT_TOO_CLOSE * v2_to_np) ||
-//        doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * magn_d) ||
-        !vertInsideFrontCheck(new_pos) ||
+    if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos /*+ NOT_TOO_CLOSE * v0_to_np*/) ||
+        segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos /*+ NOT_TOO_CLOSE * v1_to_np*/) ||
+        segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos /*+ NOT_TOO_CLOSE * v2_to_np*/) ||
+        doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * magn_d) ||
+//        !vertInsideFrontCheck(new_pos) ||
         facetIntersectionCheck(v0, v1, new_pos) ||
         facetIntersectionCheck(v0, v2, new_pos) ||
         facetIntersectionCheck(v1, v2, new_pos))
@@ -1620,10 +1612,10 @@ bool Crystallite::tryComputeNewVertPosType0(FrSuFacet* fFacet, Vec& out_pos)
         v0_to_np = new_pos - v0_pos;
         v1_to_np = new_pos - v1_pos;
         v2_to_np = new_pos - v2_pos;
-        if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
-            segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np) ||
-            segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos + NOT_TOO_CLOSE * v2_to_np) ||
-//            doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
+        if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos /*+ NOT_TOO_CLOSE * v0_to_np*/) ||
+            segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos /*+ NOT_TOO_CLOSE * v1_to_np*/) ||
+            segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos /*+ NOT_TOO_CLOSE * v2_to_np*/) ||
+            doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
             !vertInsideFrontCheck(new_pos) ||
             facetIntersectionCheck(v0, v1, new_pos) ||
             facetIntersectionCheck(v0, v2, new_pos) ||
@@ -1903,7 +1895,7 @@ void Crystallite::generateMesh(double preferredLen)
     computeFrontNormals();
     processAngles();
 //    if (globalIntersectionCheck())
-//        throw std::logic_error("Intersection error.\npmg::Crystallite3::globalIntersectionCheck returned true.");
+//        throw std::logic_error("Intersection error.\npmg::Crystallite::globalIntersectionCheck returned true.");
     smoothMesh(20);
 }
 
