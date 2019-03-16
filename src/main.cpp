@@ -8,12 +8,13 @@
 
 int main()
 {
-    double preferredEdgeLength = 0.28;
+    double preferredEdgeLength = 0.3;
 //    std::cout << "Enter preferred shell::Edge length: ";
 //    std::cin >> preferredEdgeLength;
     
     std::cout << "Generating polycrystal...";
-    size_t n = 1;
+    size_t n = 4;    // Note: try remove EPS calculation in spatalgs::distancePointToSegment
+                     //       and spatalgs::closestSegmentPointToPoint
     polygen::PolyStruct polystr = polygen::generateCuboidsPolycrystal(n, n, n);
     std::cout << " done.\n";
 

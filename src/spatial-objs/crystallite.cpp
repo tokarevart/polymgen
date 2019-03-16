@@ -339,7 +339,7 @@ bool Crystallite::edgeIntersectionCheck(FrSuEdge* frontEdge) const
             else
                 vert_buf = f_edge->edge->verts[0];
 
-            if (vert_buf->pos().distanceToSegment(opp_verts_poses[0], opp_verts_poses[1]) < EDGES_INTERS_DIST_COEF * m_preferredLength)
+            if (tva::spatalgs::distancePointToSegment(vert_buf->pos(), opp_verts_poses[0], opp_verts_poses[1]) < EDGES_INTERS_DIST_COEF * m_preferredLength)
                 return true;
         }
         else if (contains[1])
@@ -349,7 +349,7 @@ bool Crystallite::edgeIntersectionCheck(FrSuEdge* frontEdge) const
             else
                 vert_buf = f_edge->edge->verts[0];
 
-            if (vert_buf->pos().distanceToSegment(opp_verts_poses[0], opp_verts_poses[1]) < EDGES_INTERS_DIST_COEF * m_preferredLength)
+            if (tva::spatalgs::distancePointToSegment(vert_buf->pos(), opp_verts_poses[0], opp_verts_poses[1]) < EDGES_INTERS_DIST_COEF * m_preferredLength)
                 return true;
         }
         else

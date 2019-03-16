@@ -16,12 +16,6 @@ using tva::Point;
              BETWEEN(corner0.coors[1], corner1.coors[1], point.coors[1]) && \
              BETWEEN(corner0.coors[2], corner1.coors[2], point.coors[2]))
 
-#define PROJECT_POINT_ON_LINE(point, line_p0, line_p1) \
-            (line_p0 + (point - line_p0).project(line_p1 - line_p0))
-
-
-#define PI_180 0.017453292519943295
-
 
 
 
@@ -86,38 +80,21 @@ Vec& Vec::project(const Vec& vec)
 }
 
 
+Vec Vec::project(const Vec& vec) const
+{
+    return Vec(*this).project(vec);
+}
+
+
 Vec& Vec::project(const Vec& plane_v0, const Vec& plane_v1)
 {
-    return *this -= Vec(*this).project(cross(plane_v0, plane_v1));;
+    return *this -= Vec(*this).project(cross(plane_v0, plane_v1));
 }
 
 
-
-
-double Vec::distanceToLine(const Point& p0, const Point& p1) const
+Vec Vec::project(const Vec& plane_v0, const Vec& plane_v1) const
 {
-    return (PROJECT_POINT_ON_LINE(*this, p0, p1) - *this).magnitude();
-}
-
-
-double Vec::distanceToSegment(const Point& p0, const Point& p1) const
-{
-    Point proj = PROJECT_POINT_ON_LINE(*this, p0, p1);
-
-    const double EPS = (p1 - p0).magnitude() * 1e-6;
-    if (INSIDE_RECTANGLE(p0, p1, proj))
-    {
-        return (proj - *this).magnitude();
-    }
-    else if (double sqr_magns[2] { (p0 - *this).sqrMagnitude(), (p1 - *this).sqrMagnitude() };
-             sqr_magns[0] < sqr_magns[1])
-    {
-        return sqrt(sqr_magns[0]);
-    }
-    else
-    {
-        return sqrt(sqr_magns[1]);
-    }
+    return Vec(*this).project(plane_v0, plane_v1);
 }
 
 

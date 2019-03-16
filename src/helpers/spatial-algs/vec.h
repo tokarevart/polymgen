@@ -26,12 +26,9 @@ struct Vec
 
     Vec& normalize();
     Vec& project( const Vec& vec );
+    Vec  project( const Vec& vec ) const;
     Vec& project( const Vec& plane_v0, const Vec& plane_v1 );
-
-    double distanceToLine    ( const Point& p0, const Point& p1 )                  const;
-    double distanceToSegment ( const Point& p0, const Point& p1 )                  const;
-    double distanceToPlane   ( const Point& p0, const Point& p1, const Point& p2 ) const;
-    double distanceToTriangle( const Point& p0, const Point& p1, const Point& p2 ) const;
+    Vec  project( const Vec& plane_v0, const Vec& plane_v1 ) const;
 
     Vec& operator=( const Vec& right );
     Vec  operator+() const;

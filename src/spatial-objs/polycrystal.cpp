@@ -286,7 +286,7 @@ void Polycrystal::generateMesh(double preferredLength, const std::string& logFil
     tmr.stop();
 
     tmr.start();
-    double min_q = 0.0, av_q = 0.0;
+    double min_q = 1.0, av_q = 0.0;
     size_t n_elems = 0;
     size_t max = m_crystallites.size();
     #pragma omp parallel for
@@ -305,12 +305,12 @@ void Polycrystal::generateMesh(double preferredLength, const std::string& logFil
         auto buf_min_av_q = m_crystallites[i]->analyzeMeshQuality();
         #pragma omp critical
         {
-            min_q += buf_min_av_q.first;
+            if (buf_min_av_q.first < min_q)
+                min_q = buf_min_av_q.first;
             av_q += buf_min_av_q.second;
             n_elems += m_crystallites[i]->innerTetrs().size();
         }
     }
-    min_q /= m_crystallites.size();
     av_q /= m_crystallites.size();
     tmr.stop();
     m_lastLogger.reset(new tva::Logger(generateMesh_generateLogFileName(logFileName)));
