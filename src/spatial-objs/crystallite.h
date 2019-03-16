@@ -105,6 +105,7 @@ private:
     bool insideTetrCheck( const Point& p0, const Point& p1, const Point& p2, const Point& p3, const Point& vert ) const;
     bool anyVertInsidePotentialTetrCheck( FrSuEdge* fEdge ) const;
     bool parallelFacetsCheck( FrSuEdge* fEdge ) const;
+    bool doesFrontIntersectSphere( const Point& center, double radius ) const;
     bool frontSplitCheck(    FrSuEdge* fEdge, FrSuEdge* oppFEdge = nullptr ) const;
     bool frontCollapseCheck( FrSuEdge* fEdge, FrSuEdge* oppFEdge = nullptr ) const;
 

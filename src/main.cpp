@@ -6,6 +6,11 @@
 #include "polygen/polygen.h"
 
 
+// Note:
+//   Try to remove EPS calculation in spatalgs::distancePointToSegment
+//   and spatalgs::closestSegmentPointToPoint.
+//   Try using my new compare functions.
+
 int main()
 {
     double preferredEdgeLength = 0.3;
@@ -13,8 +18,7 @@ int main()
 //    std::cin >> preferredEdgeLength;
     
     std::cout << "Generating polycrystal...";
-    size_t n = 4;    // Note: try remove EPS calculation in spatalgs::distancePointToSegment
-                     //       and spatalgs::closestSegmentPointToPoint
+    size_t n = 4;
     polygen::PolyStruct polystr = polygen::generateCuboidsPolycrystal(n, n, n);
     std::cout << " done.\n";
 
