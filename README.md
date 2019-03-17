@@ -16,4 +16,4 @@ delete mesh;
 # License
 Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 
-Licensed under the [MIT License](./LICENSE).
+Licensed under the [MIT License](/LICENSE).
