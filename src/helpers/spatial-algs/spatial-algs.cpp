@@ -1,3 +1,7 @@
+// Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
+// Contacts: <tokarev28.art@gmail.com>
+// Licensed under the MIT License.
+
 #include "helpers/spatial-algs/spatial-algs.h"
 
 using tva::Vec;
@@ -127,25 +131,24 @@ tva::Point spatalgs::linesClosestPoint(const tva::Point& line0_p0, const tva::Po
     Vec u = line0_p1 - line0_p0;
     Vec v = line1_p1 - line1_p0;
     Vec w = line0_p0 - line1_p0;
-    double a = Vec::dot(u, u); // Always >= 0
+    double a = Vec::dot(u, u); // >= 0
     double b = Vec::dot(u, v);
-    double c = Vec::dot(v, v); // Always >= 0
+    double c = Vec::dot(v, v); // >= 0
     double d = Vec::dot(u, w);
     double e = Vec::dot(v, w);
-    double D = DET(a, b, b, c); // Always >= 0
+    double determ = DET(a, b, b, c); // >= 0
     double sc, tc;
 
-    // Compute the line parameters of the two closest points
-    if (D < 1e-6) // The lines are almost parallel
+    if (determ < 1e-6)
     {
         sc = 0.0;
-        tc = (b > c ? d / b : e / c); // Use the largest denominator
+        tc = b > c ? d / b : e / c;
     }
     else
     {
-        double inv_D = 1.0 / D;
-        sc = DET(b, c, d, e) * inv_D;
-        tc = DET(a, b, d, e) * inv_D;
+        double inv_determ = 1.0 / determ;
+        sc = DET(b, c, d, e) * inv_determ;
+        tc = DET(a, b, d, e) * inv_determ;
     }
 
     return 0.5 * (line0_p0 + sc * u + line1_p0 + tc * v);
@@ -280,31 +283,29 @@ double spatalgs::linesDistance(
     Vec u = line0_p1 - line0_p0;
     Vec v = line1_p1 - line1_p0;
     Vec w = line0_p0 - line1_p0;
-    double a = Vec::dot(u, u); // Always >= 0
+    double a = Vec::dot(u, u); // >= 0
     double b = Vec::dot(u, v);
-    double c = Vec::dot(v, v); // Always >= 0
+    double c = Vec::dot(v, v); // >= 0
     double d = Vec::dot(u, w);
     double e = Vec::dot(v, w);
-    double D = DET(a, b, b, c); // Always >= 0
+    double determ = DET(a, b, b, c); // >= 0
     double sc, tc;
 
-    // Compute the line parameters of the two closest points
-    if (D < 1e-6) // The lines are almost parallel
+    if (determ < 1e-6)
     {
         sc = 0.0;
-        tc = (b > c ? d / b : e / c); // Use the largest denominator
+        tc = b > c ? d / b : e / c;
     }
     else
     {
-        double inv_D = 1.0 / D;
-        sc = DET(b, c, d, e) * inv_D;
-        tc = DET(a, b, d, e) * inv_D;
+        double inv_determ = 1.0 / determ;
+        sc = DET(b, c, d, e) * inv_determ;
+        tc = DET(a, b, d, e) * inv_determ;
     }
 
-    // Get the difference of the two closest points
-    Vec diff_p = w + (sc * u) - (tc * v);  // =  L1(sc) - L2(tc)
+    Vec diff_p = w + (sc * u) - (tc * v);
 
-    return diff_p.magnitude();   // Return the closest distance
+    return diff_p.magnitude();
 }
 
 
@@ -315,89 +316,84 @@ double spatalgs::segmentsDistance(
     Vec u = segm0_p1 - segm0_p0;
     Vec v = segm1_p1 - segm1_p0;
     Vec w = segm0_p0 - segm1_p0;
-    double a = Vec::dot(u, u); // Always >= 0
+    double a = Vec::dot(u, u); // >= 0
     double b = Vec::dot(u, v);
-    double c = Vec::dot(v, v); // Always >= 0
+    double c = Vec::dot(v, v); // >= 0
     double d = Vec::dot(u, w);
     double e = Vec::dot(v, w);
-    double D = DET(a, b, b, c); // Always >= 0
-    double sc, sN, sD = D; // sc = sN / sD, default sD = D >= 0
-    double tc, tN, tD = D; // tc = tN / tD, default tD = D >= 0
+    double determ = DET(a, b, b, c); // >= 0
+    double sc, sn, sd = determ;
+    double tc, tn, td = determ;
 
-                           // Compute the line parameters of the two closest points
-    if (D < 1e-6) // The lines are almost parallel
+    if (determ < 1e-6)
     {
-        sN = 0.0; // Force using point P0 on segment S1
-        sD = 1.0; // to prevent possible division by 0.0 later
-        tN = e;
-        tD = c;
+        sn = 0.0;
+        sd = 1.0;
+        tn = e;
+        td = c;
     }
-    else // Get the closest points on the infinite lines
+    else
     {
-        sN = DET(b, c, d, e);
-        tN = DET(a, b, d, e);
+        sn = DET(b, c, d, e);
+        tn = DET(a, b, d, e);
 
-        if (sN < 0.0) // sc < 0 => the s=0 shell::Edge is visible
+        if (sn < 0.0)
         {
-            sN = 0.0;
-            tN = e;
-            tD = c;
+            sn = 0.0;
+            tn = e;
+            td = c;
         }
-        else if (sN > sD) // sc > 1  => the s=1 shell::Edge is visible
+        else if (sn > sd)
         {
-            sN = sD;
-            tN = e + b;
-            tD = c;
+            sn = sd;
+            tn = e + b;
+            td = c;
         }
     }
 
-    if (tN < 0.0) // tc < 0 => the t=0 shell::Edge is visible
+    if (tn < 0.0)
     {
-        tN = 0.0;
+        tn = 0.0;
 
-        // Recompute sc for this shell::Edge
         if (-d < 0.0)
         {
-            sN = 0.0;
+            sn = 0.0;
         }
         else if (-d > a)
         {
-            sN = sD;
+            sn = sd;
         }
         else
         {
-            sN = -d;
-            sD = a;
+            sn = -d;
+            sd = a;
         }
     }
-    else if (tN > tD) // tc > 1  => the t=1 shell::Edge is visible
+    else if (tn > td)
     {
-        tN = tD;
+        tn = td;
 
-        // Recompute sc for this shell::Edge
         if (b - d < 0.0)
         {
-            sN = 0;
+            sn = 0;
         }
         else if (b - d > a)
         {
-            sN = sD;
+            sn = sd;
         }
         else
         {
-            sN = b - d;
-            sD = a;
+            sn = b - d;
+            sd = a;
         }
     }
 
-    // Finally do the division to get sc and tc
-    sc = (std::abs(sN) < 1e-6 ? 0.0 : sN / sD);
-    tc = (std::abs(tN) < 1e-6 ? 0.0 : tN / tD);
+    sc = std::abs(sn) < 1e-6 ? 0.0 : sn / sd;
+    tc = std::abs(tn) < 1e-6 ? 0.0 : tn / td;
 
-    // Get the difference of the two closest points
-    Vec diff_p = w + (sc * u) - (tc * v); // =  S1(sc) - S2(tc)
+    Vec diff_p = w + (sc * u) - (tc * v);
 
-    return diff_p.magnitude(); // Return the closest distance
+    return diff_p.magnitude();
 }
 
 
@@ -409,7 +405,7 @@ double spatalgs::cpaTime(
 {
     Vec dv = vel0 - vel1;
     double dv2 = Vec::dot(dv, dv);
-    if (dv2 < 1e-6) // The tracks are almost parallel.
+    if (dv2 < 1e-6)
         return 0.0;
 
     Vec w0 = start0 - start1;
@@ -422,8 +418,8 @@ double spatalgs::cpaDistance(
     const Point& start1, const Vec& vel1)
 {
     double cpa_time = cpaTime(start0, vel0, start1, vel1);
-    Vec p0 = start0 + (cpa_time * vel0);
-    Vec p1 = start1 + (cpa_time * vel1);
+    Vec p0 = start0 + cpa_time * vel0;
+    Vec p1 = start1 + cpa_time * vel1;
     return (p1 - p0).magnitude();
 }
 
