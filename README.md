@@ -1,5 +1,5 @@
 # Polymgen
-Polymgen is an Apache 2.0 licensed library for generating tetrahedral mesh of a polycrystal for subsequent use in solving boundary-value problems by the finite element method (FEM).
+Polymgen is an MIT licensed library for generating tetrahedral mesh of a polycrystal for subsequent use in solving boundary-value problems by the finite element method (FEM).
 # Example:
 ```c++
 // Number of cubes along the corresponding axis.
