@@ -13,3 +13,7 @@ pmg::PolycrMesh* mesh = polycr.generateMesh(preferredTetrahedronEdgeLength);
 delete mesh;
 ```
 ![Cube triangulation](https://github.com/Tokarevart/polycr-mesh-generator/blob/master/images/polymesh_1.png)
+# License
+Copyright © 2018-2019 Tokarev Artem. All rights reserved.
+
+Licensed under the [MIT License](./LICENSE).
