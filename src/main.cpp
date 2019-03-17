@@ -13,12 +13,12 @@
 
 int main()
 {
-    double preferredEdgeLength = 0.2;
+    double preferredEdgeLength = 0.45;
 //    std::cout << "Enter preferred shell::Edge length: ";
 //    std::cin >> preferredEdgeLength;
     
     std::cout << "Generating polycrystal...";
-    size_t n = 1;
+    size_t n = 3;
     polygen::PolyStruct polystr = polygen::generateCuboidsPolycrystal(n, n, n);
     std::cout << " done.\n";
 
