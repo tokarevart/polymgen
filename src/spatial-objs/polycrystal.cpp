@@ -47,9 +47,9 @@ void Polycrystal::triangulateShell()
 
 
 
-void Polycrystal::outputObj(const std::string& filename) const
+void Polycrystal::outputObj(std::string_view filename) const
 {
-    std::ofstream file(filename);
+    std::ofstream file(filename.data());
 
     size_t index = 1;
     for (auto& svert : m_shellVerts)
@@ -251,10 +251,10 @@ void Polycrystal::outputLSDynaKeyword(const std::string& filename, unsigned poly
 
 
 
-std::string Polycrystal::generateMesh_generateLogFileName(const std::string& logFileName) const
+std::string Polycrystal::generateLogFileName(std::string_view logFileName) const
 {
     if (logFileName != "_AUTO_")
-        return logFileName;
+        return logFileName.data();
 
     std::stringstream ss;
     ss << "pmg_log_" << m_crystallites.size() << "_nc_";
@@ -268,7 +268,7 @@ std::string Polycrystal::generateMesh_generateLogFileName(const std::string& log
 }
 
 
-void Polycrystal::generateMesh(double preferredLength, const std::string& logFileName)
+void Polycrystal::generateMesh(double preferredLength, std::string_view logFileName)
 {
     m_preferredLength = preferredLength;
 
@@ -313,7 +313,7 @@ void Polycrystal::generateMesh(double preferredLength, const std::string& logFil
     }
     av_q /= m_crystallites.size();
     tmr.stop();
-    m_lastLogger.reset(new tva::Logger(generateMesh_generateLogFileName(logFileName)));
+    m_lastLogger.reset(new tva::Logger(generateLogFileName(logFileName)));
     *m_lastLogger << std::fixed
         << "Minimum quality"          << min_q << ""
         << "Average quality"          << av_q  << ""
@@ -440,9 +440,9 @@ const PolyMesh* Polycrystal::getLastMesh()
 
 
 
-void Polycrystal::input(const std::string& polyStructFileName)
+void Polycrystal::input(std::string_view polyStructFileName)
 {
-    std::ifstream input(polyStructFileName);
+    std::ifstream input(polyStructFileName.data());
 
     size_t nodes_num;
     input >> nodes_num;
@@ -591,10 +591,10 @@ void Polycrystal::input(const polygen::PolyStruct& polyStruct)
 }
 
 
-std::string Polycrystal::output_generateFilename(FileType filetype, const std::string& filename) const
+std::string Polycrystal::generateOutputFilename(FileType filetype, std::string_view filename) const
 {
     if (filename != "_AUTO_")
-        return filename;
+        return filename.data();
 
     std::stringstream ss;
     ss << "plcr_" << m_crystallites.size() << "_nc_";
@@ -615,18 +615,18 @@ std::string Polycrystal::output_generateFilename(FileType filetype, const std::s
 }
 
 
-void Polycrystal::output(FileType filetype, const std::string& filename, unsigned polycrystalId) const
+void Polycrystal::output(FileType filetype, std::string_view filename, unsigned polycrystalId) const
 {
     tva::Timer tmr;
     tmr.start();
     switch (filetype)
     {
     case FileType::Obj:
-        outputObj(output_generateFilename(FileType::Obj, filename));
+        outputObj(generateOutputFilename(FileType::Obj, filename));
         break;
 
     case FileType::LsDynaKeyword:
-        outputLSDynaKeyword(output_generateFilename(FileType::LsDynaKeyword, filename), polycrystalId);
+        outputLSDynaKeyword(generateOutputFilename(FileType::LsDynaKeyword, filename), polycrystalId);
         break;
     }
     tmr.stop();
@@ -644,7 +644,7 @@ void Polycrystal::output(FileType filetype, const std::string& filename, unsigne
 Polycrystal::Polycrystal() {}
 
 
-Polycrystal::Polycrystal(const std::string& polyStructFileName)
+Polycrystal::Polycrystal(std::string_view polyStructFileName)
 {
     input(polyStructFileName);
 }

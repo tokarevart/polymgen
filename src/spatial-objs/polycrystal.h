@@ -30,16 +30,16 @@ public:
         LsDynaKeyword
     };
 
-    void generateMesh(double preferredLength, const std::string& logFileName = "_AUTO_");
+    void generateMesh(double preferredLength, std::string_view logFileName = "_AUTO_");
     const PolyMesh* structurizeMesh();
     const PolyMesh* getLastMesh();
 
-    void input(const std::string& polyStructFileName);
+    void input(std::string_view polyStructFileName);
     void input(const polygen::PolyStruct& polyStruct);
-    void output(FileType filetype = FileType::Obj, const std::string& filename = "_AUTO_", unsigned polycrystalId = 1u) const;
+    void output(FileType filetype = FileType::Obj, std::string_view filename = "_AUTO_", unsigned polycrystalId = 1u) const;
 
     Polycrystal();
-    Polycrystal(const std::string& polyStructFileName);
+    Polycrystal(std::string_view polyStructFileName);
     Polycrystal(const polygen::PolyStruct& polyStruct);
     ~Polycrystal();
 
@@ -60,14 +60,14 @@ private:
 
     void triangulateShell();
 
-    void outputObj(const std::string& filename) const;
+    void outputObj(std::string_view filename) const;
     void outputLSDynaKeyword_PART(std::ofstream& file) const;
     void outputLSDynaKeyword_NODE(std::ofstream& file) const;
     void outputLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, unsigned polycrystalId = 1u) const;
     void outputLSDynaKeyword(const std::string& filename, unsigned polycrystalId = 1u) const;
 
-    std::string generateMesh_generateLogFileName(const std::string& logFileName) const;
-    std::string output_generateFilename(FileType filetype, const std::string& filename) const;
+    std::string generateLogFileName(std::string_view logFileName) const;
+    std::string generateOutputFilename(FileType filetype, std::string_view filename) const;
 };
 
 } // namespace pmg
