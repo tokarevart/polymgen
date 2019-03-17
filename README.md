@@ -3,13 +3,13 @@ Polymgen is an Apache 2.0 licensed library for generating tetrahedral mesh of a 
 # Example:
 ```c++
 // Number of cubes along the corresponding axis.
-size_t nX = 2, nY = 5, nZ = 9;
+size_t nX = 3, nY = 3, nZ = 3;
 polygen::PolyStruct polyStruct = generateCuboidsPolycrystal(nX, nY, nZ);
 pmg::Polycrystal polycr(polyStruct);
 
-double preferredTetrahedronEdgeLength = 0.2;
+double preferredTetrahedronEdgeLength = 0.45;
 pmg::PolycrMesh* mesh = polycr.generateMesh(preferredTetrahedronEdgeLength);
 ...
 delete mesh;
 ```
-![Cube triangulation](https://github.com/Tokarevart/polycr-mesh-generator/blob/master/images/shell_triang_3d_7.png)
+![Cube triangulation](https://github.com/Tokarevart/polycr-mesh-generator/blob/master/images/polymesh_1.png)
