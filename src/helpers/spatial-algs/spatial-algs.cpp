@@ -1,5 +1,4 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
-// Contacts: <tokarev28.art@gmail.com>
 // Licensed under the MIT License.
 
 #include "helpers/spatial-algs/spatial-algs.h"
@@ -41,6 +40,7 @@ bool spatalgs::project(
 {
     Vec res = segm_p0 + (point - segm_p0).project(segm_p1 - segm_p0);
 
+    // Try to remove later.
     const double EPS = (segm_p1 - segm_p0).magnitude() * 1e-6;
     if (INSIDE_RECTANGLE(
             segm_p0,
