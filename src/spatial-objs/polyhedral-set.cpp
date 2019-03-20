@@ -260,12 +260,12 @@ std::string PolyhedralSet::generateLogFileName(std::string_view logFileName) con
         return logFileName.data();
 
     std::stringstream ss;
-    ss << "pmg_log_" << m_polyhedrons.size() << "_nc_";
+    ss << "pmg_log_" << m_polyhedrons.size() << "_nph_";
     size_t av_nfe = 0;
     for (auto& polyhedr : m_polyhedrons)
         av_nfe += polyhedr->innerTetrs().size();
     av_nfe /= m_polyhedrons.size();
-    ss << av_nfe << "_cfe.log";
+    ss << av_nfe << "_phfe.log";
 
     return ss.str();
 }
@@ -600,12 +600,12 @@ std::string PolyhedralSet::generateOutputFilename(FileType filetype, std::string
         return filename.data();
 
     std::stringstream ss;
-    ss << "plcr_" << m_polyhedrons.size() << "_nc_";
+    ss << "phset_" << m_polyhedrons.size() << "_nph_";
     size_t av_nfe = 0;
     for (auto& polyhedr : m_polyhedrons)
         av_nfe += polyhedr->innerTetrs().size();
     av_nfe /= m_polyhedrons.size();
-    ss << av_nfe << "_cfe";
+    ss << av_nfe << "_phfe";
     switch (filetype)
     {
     case FileType::Obj:
