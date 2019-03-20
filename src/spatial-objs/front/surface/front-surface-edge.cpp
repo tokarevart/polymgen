@@ -11,10 +11,10 @@
 #define K_ALPHA static_cast<real_t>(4.0)
 
 
-using FrSuFacet = pmg::front::surface::Facet;
+using FrSuFace = pmg::front::surface::Face;
 using FrSuEdge  = pmg::front::surface::Edge;
 using pair_vv = std::pair<pmg::Vertex*, pmg::Vertex*>;
-using pair_ff = std::pair<FrSuFacet*, FrSuFacet*>;
+using pair_ff = std::pair<FrSuFace*, FrSuFace*>;
 
 
 
@@ -47,20 +47,20 @@ real_t FrSuEdge::angleExCos()
 real_t FrSuEdge::computeComplexity()
 {
     m_needComplexityProcessing = false;
-    return m_complexity = m_relatedCrys->preferredLength() / edge->magnitude() + K_ALPHA * PI / computeAngle();
+    return m_complexity = m_relatedPolyhedron->preferredLength() / edge->magnitude() + K_ALPHA * PI / computeAngle();
 }
 
 
 real_t FrSuEdge::computeAngleExCos()
 {
-    auto adj_facets = getAdjFFacets();
+    auto adj_faces = getAdjFFaces();
 
-    real_t normals_cos = Vec::dot(std::get<0>(adj_facets)->normal, std::get<1>(adj_facets)->normal);
+    real_t normals_cos = Vec::dot(std::get<0>(adj_faces)->normal, std::get<1>(adj_faces)->normal);
 
     m_needExCosProcessing = false;
     return m_exCos = spatalgs::cpaTime(
-            std::get<0>(adj_facets)->computeCenter(), std::get<0>(adj_facets)->normal,
-            std::get<1>(adj_facets)->computeCenter(), std::get<1>(adj_facets)->normal) < static_cast<real_t>(1e-6) ?
+            std::get<0>(adj_faces)->computeCenter(), std::get<0>(adj_faces)->normal,
+            std::get<1>(adj_faces)->computeCenter(), std::get<1>(adj_faces)->normal) < static_cast<real_t>(1e-6) ?
         static_cast<real_t>(-2.0) + normals_cos :
         -normals_cos;
 }
@@ -78,10 +78,10 @@ real_t FrSuEdge::computeAngle()
 
 pair_vv FrSuEdge::findOppVerts()
 {
-    auto adj_facets = getAdjFFacets();
+    auto adj_faces = getAdjFFaces();
 
-    return { std::get<0>(adj_facets)->facet->findVertNot(edge),
-             std::get<1>(adj_facets)->facet->findVertNot(edge) };
+    return { std::get<0>(adj_faces)->face->findVertNot(edge),
+             std::get<1>(adj_faces)->face->findVertNot(edge) };
 }
 
 
@@ -89,7 +89,7 @@ FrSuEdge* FrSuEdge::findOppEdge()
 {
     auto opp_verts = findOppVerts();
     std::vector<FrSuEdge*> opp_fedges;
-    for (auto& f_edge : m_relatedCrys->frontEdges())
+    for (auto& f_edge : m_relatedPolyhedron->frontEdges())
     {
         if (((f_edge->edge->verts[0] == std::get<0>(opp_verts) &&
               f_edge->edge->verts[1] == std::get<1>(opp_verts)) ||
@@ -103,10 +103,10 @@ FrSuEdge* FrSuEdge::findOppEdge()
     if (opp_fedges.size() == 1)
         return opp_fedges.front();
 
-    std::vector<pair_ff> adj_ffacets_vec;
-    adj_ffacets_vec.reserve(opp_fedges.size());
+    std::vector<pair_ff> adj_ffaces_vec;
+    adj_ffaces_vec.reserve(opp_fedges.size());
     for (auto& fedge : opp_fedges)
-        adj_ffacets_vec.push_back(fedge->getAdjFFacets());
+        adj_ffaces_vec.push_back(fedge->getAdjFFaces());
 
     Vec main_vert_pos = edge->verts[0]->pos();
     Vec main_vert_proj = spatalgs::project(main_vert_pos, opp_verts.first->pos(), opp_verts.second->pos());
@@ -114,10 +114,10 @@ FrSuEdge* FrSuEdge::findOppEdge()
 
     FrSuEdge* max_cos_fedge = nullptr;
     real_t max_cos = -1.0;
-    for (size_t i = 0; i < adj_ffacets_vec.size(); i++)
+    for (size_t i = 0; i < adj_ffaces_vec.size(); i++)
     {
-        Vec adj_opp_pos0 = adj_ffacets_vec[i].first->facet->findVertNot(opp_fedges.front()->edge)->pos();
-        Vec adj_opp_pos1 = adj_ffacets_vec[i].second->facet->findVertNot(opp_fedges.front()->edge)->pos();
+        Vec adj_opp_pos0 = adj_ffaces_vec[i].first->face->findVertNot(opp_fedges.front()->edge)->pos();
+        Vec adj_opp_pos1 = adj_ffaces_vec[i].second->face->findVertNot(opp_fedges.front()->edge)->pos();
         Vec adj_opp_proj0 = spatalgs::project(adj_opp_pos0, opp_verts.first->pos(), opp_verts.second->pos());
         Vec adj_opp_proj1 = spatalgs::project(adj_opp_pos1, opp_verts.first->pos(), opp_verts.second->pos());
         Vec adj_vec0 = adj_opp_pos0 - adj_opp_proj0;
@@ -138,23 +138,23 @@ FrSuEdge* FrSuEdge::findOppEdge()
 
 
 
-pair_ff FrSuEdge::getAdjFFacets()
+pair_ff FrSuEdge::getAdjFFaces()
 {
-    if (!isAdjFacetsFull())
-        fillAdjFFacets();
+    if (!isAdjFacesFull())
+        fillAdjFFaces();
 
-    return m_adjFFacets;
+    return m_adjFFaces;
 }
 
 
 
 
-bool FrSuEdge::addAdjFFacet(const FrSuFacet* fFacet)
+bool FrSuEdge::addAdjFFace(const FrSuFace* fFace)
 {
-    if (!std::get<0>(m_adjFFacets))
-        std::get<0>(m_adjFFacets)  = const_cast<FrSuFacet*>(fFacet);
-    else if (!std::get<1>(m_adjFFacets))
-        std::get<1>(m_adjFFacets) = const_cast<FrSuFacet*>(fFacet);
+    if (!std::get<0>(m_adjFFaces))
+        std::get<0>(m_adjFFaces)  = const_cast<FrSuFace*>(fFace);
+    else if (!std::get<1>(m_adjFFaces))
+        std::get<1>(m_adjFFaces) = const_cast<FrSuFace*>(fFace);
     else
         return false;
 
@@ -162,12 +162,12 @@ bool FrSuEdge::addAdjFFacet(const FrSuFacet* fFacet)
 }
 
 
-bool FrSuEdge::removeAdjFFacet(const FrSuFacet* fFacet)
+bool FrSuEdge::removeAdjFFace(const FrSuFace* fFace)
 {
-    if (std::get<0>(m_adjFFacets) == const_cast<FrSuFacet*>(fFacet))
-        std::get<0>(m_adjFFacets) = nullptr;
-    else if (std::get<1>(m_adjFFacets) == const_cast<FrSuFacet*>(fFacet))
-        std::get<1>(m_adjFFacets) = nullptr;
+    if (std::get<0>(m_adjFFaces) == const_cast<FrSuFace*>(fFace))
+        std::get<0>(m_adjFFaces) = nullptr;
+    else if (std::get<1>(m_adjFFaces) == const_cast<FrSuFace*>(fFace))
+        std::get<1>(m_adjFFaces) = nullptr;
     else
         return false;
 
@@ -175,51 +175,51 @@ bool FrSuEdge::removeAdjFFacet(const FrSuFacet* fFacet)
 }
 
 
-bool FrSuEdge::adjFFacetsContains(const FrSuFacet* fFacet) const
+bool FrSuEdge::adjFFacesContains(const FrSuFace* fFace) const
 {
-    return std::get<0>(m_adjFFacets) == const_cast<FrSuFacet*>(fFacet) ||
-            std::get<1>(m_adjFFacets) == const_cast<FrSuFacet*>(fFacet);
+    return std::get<0>(m_adjFFaces) == const_cast<FrSuFace*>(fFace) ||
+           std::get<1>(m_adjFFaces) == const_cast<FrSuFace*>(fFace);
 }
 
 
-void FrSuEdge::fillAdjFFacets(const FrSuFacet* fFacet0, const FrSuFacet* fFacet1)
+void FrSuEdge::fillAdjFFaces(const FrSuFace* fFace0, const FrSuFace* fFace1)
 {
-    m_adjFFacets.first  = const_cast<FrSuFacet*>(fFacet0);
-    m_adjFFacets.second = const_cast<FrSuFacet*>(fFacet1);
+    m_adjFFaces.first  = const_cast<FrSuFace*>(fFace0);
+    m_adjFFaces.second = const_cast<FrSuFace*>(fFace1);
 }
 
 
 
 
-FrSuEdge::Edge(const Crystallite* relatedCrys, const pmg::Edge* edge)
-    : edge(const_cast<pmg::Edge*>(edge)), m_relatedCrys(const_cast<Crystallite*>(relatedCrys)) {}
+FrSuEdge::Edge(const Polyhedron* relatedPolyhedron, const pmg::Edge* edge)
+    : edge(const_cast<pmg::Edge*>(edge)), m_relatedPolyhedron(const_cast<Polyhedron*>(relatedPolyhedron)) {}
 
 
 
 
-bool FrSuEdge::isAdjFacetsFull()
+bool FrSuEdge::isAdjFacesFull()
 {
-    return std::get<0>(m_adjFFacets) && std::get<1>(m_adjFFacets);
+    return std::get<0>(m_adjFFaces) && std::get<1>(m_adjFFaces);
 }
 
 
-pair_ff FrSuEdge::fillAdjFFacets()
+pair_ff FrSuEdge::fillAdjFFaces()
 {
-    for (auto& f_facet : m_relatedCrys->frontFacets())
+    for (auto& fface : m_relatedPolyhedron->frontFaces())
     {
-        if (f_facet->contains(this))
+        if (fface->contains(this))
         {
-            if (adjFFacetsContains(f_facet))
+            if (adjFFacesContains(fface))
                 continue;
 
-            addAdjFFacet(f_facet);
-            if (isAdjFacetsFull())
+            addAdjFFace(fface);
+            if (isAdjFacesFull())
                 break;
         }
     }
 
-    if (!isAdjFacetsFull())
-        throw std::logic_error("pmg::front::surface::Edge::fillAdjFFacets didn't find 2 adjacent front facets.");
+    if (!isAdjFacesFull())
+        throw std::logic_error("pmg::front::surface::Edge::fillAdjFFaces didn't find 2 adjacent front Faces.");
 
-    return m_adjFFacets;
+    return m_adjFFaces;
 }

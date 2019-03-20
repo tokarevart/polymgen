@@ -1,7 +1,7 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "polycrystal.h"
+#include "polyhedral-set.h"
 #include <stddef.h>
 #include <algorithm>
 #include <sstream>
@@ -18,7 +18,7 @@ using namespace pmg;
 
 
 
-shell::Edge* Polycrystal::findShellEdge(const shell::Vertex* v0, const shell::Vertex* v1) const
+shell::Edge* PolyhedralSet::findShellEdge(const shell::Vertex* v0, const shell::Vertex* v1) const
 {
     for (auto& s_edge : m_shellEdges)
     {
@@ -33,7 +33,7 @@ shell::Edge* Polycrystal::findShellEdge(const shell::Vertex* v0, const shell::Ve
 }
 
 
-void Polycrystal::triangulateShell()
+void PolyhedralSet::triangulateShell()
 {
     for (auto& svert : m_shellVerts)
         svert->attachedVert = new pmg::Vertex(svert->pos());
@@ -41,16 +41,16 @@ void Polycrystal::triangulateShell()
     for (auto& sedge : m_shellEdges)
         sedge->segmentize(m_preferredLength);
 
-    size_t n_shell_facets = m_shellFacets.size();
+    size_t n_shell_faces = m_shellFaces.size();
     #pragma omp parallel for
-    for (size_t i = 0; i < n_shell_facets; i++)
-        m_shellFacets[i]->triangulate(m_preferredLength);
+    for (size_t i = 0; i < n_shell_faces; i++)
+        m_shellFaces[i]->triangulate(m_preferredLength);
 }
 
 
 
 
-void Polycrystal::outputObj(std::string_view filename) const
+void PolyhedralSet::outputObj(std::string_view filename) const
 {
     std::ofstream file(filename.data());
 
@@ -68,18 +68,18 @@ void Polycrystal::outputObj(std::string_view filename) const
             vert->globalNum = index++;
         }
     }
-    for (auto& sfacet : m_shellFacets)
+    for (auto& sface : m_shellFaces)
     {
-        for (auto& vert : sfacet->innerVerts())
+        for (auto& vert : sface->innerVerts())
         {
             file << "v " << (*vert)[0] << ' ' << (*vert)[1] << ' ' << (*vert)[2] << '\n';
             vert->globalNum = index++;
         }
     }
 
-    for (auto& crys : m_crystallites)
+    for (auto& polyhed : m_polyhedrons)
     {
-        for (auto& vert : crys->innerVerts())
+        for (auto& vert : polyhed->innerVerts())
         {
             file << "v " << (*vert)[0] << ' ' << (*vert)[1] << ' ' << (*vert)[2] << '\n';
             vert->globalNum = index++;
@@ -87,14 +87,14 @@ void Polycrystal::outputObj(std::string_view filename) const
     }
 
     #ifdef DEV_DEBUG
-    for (auto& crys : m_crystallites)
+    for (auto& polyhed : m_polyhedrons)
     {
-        for (auto& f_facet : crys->frontFacets())
+        for (auto& f_face : polyhed->frontFaces())
         {
-            auto facet = f_facet->facet;
+            auto face = f_face->face;
 
             std::vector<size_t> gl_nums;
-            for (auto& edge : facet->edges)
+            for (auto& edge : face->edges)
                 for (auto& vert : edge->verts)
                     if (std::find(gl_nums.begin(), gl_nums.end(), vert->globalNum) == gl_nums.end())
                         gl_nums.push_back(vert->globalNum);
@@ -103,12 +103,12 @@ void Polycrystal::outputObj(std::string_view filename) const
         }
     }
     #else
-    for (auto& sfacet : m_shellFacets)
+    for (auto& sface : m_shellFaces)
     {
-        for (auto& facet : sfacet->innerFacets())
+        for (auto& face : sface->innerFaces())
         {
             std::vector<size_t> gl_nums;
-            for (auto& edge : facet->edges)
+            for (auto& edge : face->edges)
                 for (auto& vert : edge->verts)
                     if (std::find(gl_nums.begin(), gl_nums.end(), vert->globalNum) == gl_nums.end())
                         gl_nums.push_back(vert->globalNum);
@@ -117,12 +117,12 @@ void Polycrystal::outputObj(std::string_view filename) const
         }
     }
 
-    for (auto& crys : m_crystallites)
+    for (auto& polyhed : m_polyhedrons)
     {
-        for (auto& facet : crys->innerFacets())
+        for (auto& face : polyhed->innerFaces())
         {
             std::vector<size_t> gl_nums;
-            for (auto& edge : facet->edges)
+            for (auto& edge : face->edges)
                 for (auto& vert : edge->verts)
                     if (std::find(gl_nums.begin(), gl_nums.end(), vert->globalNum) == gl_nums.end())
                         gl_nums.push_back(vert->globalNum);
@@ -136,9 +136,9 @@ void Polycrystal::outputObj(std::string_view filename) const
 }
 
 
-void Polycrystal::outputLSDynaKeyword_PART(std::ofstream& file) const
+void PolyhedralSet::outputLSDynaKeyword_PART(std::ofstream& file) const
 {
-    for (size_t id = 1; id < m_crystallites.size() + 1; id++)
+    for (size_t id = 1; id < m_polyhedrons.size() + 1; id++)
     {
         file << "*PART\n"
             "$#     pid     secid       mid     eosid      hgid      grav    adpopt      tmid\n";
@@ -150,7 +150,7 @@ void Polycrystal::outputLSDynaKeyword_PART(std::ofstream& file) const
 }
 
 
-void Polycrystal::outputLSDynaKeyword_NODE(std::ofstream& file) const
+void PolyhedralSet::outputLSDynaKeyword_NODE(std::ofstream& file) const
 {
     file << "*NODE\n"
         "$#   nid               x               y               z      tc      rc\n";
@@ -176,9 +176,9 @@ void Polycrystal::outputLSDynaKeyword_NODE(std::ofstream& file) const
             file << "       0       0\n";
         }
     }
-    for (auto& sfacet : m_shellFacets)
+    for (auto& sface : m_shellFaces)
     {
-        for (auto& vert : sfacet->innerVerts())
+        for (auto& vert : sface->innerVerts())
         {
             vert->globalNum = index++;
             file << std::setw(8)  << vert->globalNum;
@@ -189,9 +189,9 @@ void Polycrystal::outputLSDynaKeyword_NODE(std::ofstream& file) const
         }
     }
 
-    for (auto& crys : m_crystallites)
+    for (auto& polyhed : m_polyhedrons)
     {
-        for (auto& vert : crys->innerVerts())
+        for (auto& vert : polyhed->innerVerts())
         {
             vert->globalNum = index++;
             file << std::setw(8) << vert->globalNum;
@@ -204,15 +204,15 @@ void Polycrystal::outputLSDynaKeyword_NODE(std::ofstream& file) const
 }
 
 
-void Polycrystal::outputLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, unsigned polycrystalId) const
+void PolyhedralSet::outputLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, unsigned PolyhedralSetId) const
 {
     file << "*ELEMENT_SOLID\n"
         "$#   eid     pid      n1      n2      n3      n4      n5      n6      n7      n8\n";
     size_t pid = 1;
-    size_t eid = 10000000 * polycrystalId + 1;
-    for (auto& crys : m_crystallites)
+    size_t eid = 10000000 * PolyhedralSetId + 1;
+    for (auto& polyhed : m_polyhedrons)
     {
-        for (auto& tetr : crys->innerTetrs())
+        for (auto& tetr : polyhed->innerTetrs())
         {
             file << std::setw(8) << eid++;
             file << std::setw(8) << pid;
@@ -238,14 +238,14 @@ void Polycrystal::outputLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, unsigne
 }
 
 
-void Polycrystal::outputLSDynaKeyword(const std::string& filename, unsigned polycrystalId) const
+void PolyhedralSet::outputLSDynaKeyword(const std::string& filename, unsigned PolyhedralSetId) const
 {
     std::ofstream file(filename);
     file.setf(std::ios::right | std::ios::fixed);
 
     outputLSDynaKeyword_PART(file);
     outputLSDynaKeyword_NODE(file);
-    outputLSDynaKeyword_ELEMENT_SOLID(file, polycrystalId);
+    outputLSDynaKeyword_ELEMENT_SOLID(file, PolyhedralSetId);
     file << "*END";
 
     file.close();
@@ -254,24 +254,24 @@ void Polycrystal::outputLSDynaKeyword(const std::string& filename, unsigned poly
 
 
 
-std::string Polycrystal::generateLogFileName(std::string_view logFileName) const
+std::string PolyhedralSet::generateLogFileName(std::string_view logFileName) const
 {
     if (logFileName != "_AUTO_")
         return logFileName.data();
 
     std::stringstream ss;
-    ss << "pmg_log_" << m_crystallites.size() << "_nc_";
+    ss << "pmg_log_" << m_polyhedrons.size() << "_nc_";
     size_t av_nfe = 0;
-    for (auto& crys : m_crystallites)
-        av_nfe += crys->innerTetrs().size();
-    av_nfe /= m_crystallites.size();
+    for (auto& polyhed : m_polyhedrons)
+        av_nfe += polyhed->innerTetrs().size();
+    av_nfe /= m_polyhedrons.size();
     ss << av_nfe << "_cfe.log";
 
     return ss.str();
 }
 
 
-void Polycrystal::generateMesh(real_t preferredLength, std::string_view logFileName)
+void PolyhedralSet::generateMesh(real_t preferredLength, std::string_view logFileName)
 {
     m_preferredLength = preferredLength;
 
@@ -291,13 +291,13 @@ void Polycrystal::generateMesh(real_t preferredLength, std::string_view logFileN
     tmr.start();
     real_t min_q = 1.0, av_q = 0.0;
     size_t n_elems = 0;
-    size_t max = m_crystallites.size();
+    size_t max = m_polyhedrons.size();
     #pragma omp parallel for
     for (size_t i = 0; i < max; i++)
     {
         try
         {
-            m_crystallites[i]->generateMesh(m_preferredLength);
+            m_polyhedrons[i]->generateMesh(m_preferredLength);
         }
         catch (std::logic_error error)
         {
@@ -305,22 +305,22 @@ void Polycrystal::generateMesh(real_t preferredLength, std::string_view logFileN
             throw error;
         }
 
-        auto buf_min_av_q = m_crystallites[i]->analyzeMeshQuality();
+        auto buf_min_av_q = m_polyhedrons[i]->analyzeMeshQuality();
         #pragma omp critical
         {
             if (buf_min_av_q.first < min_q)
                 min_q = buf_min_av_q.first;
             av_q += buf_min_av_q.second;
-            n_elems += m_crystallites[i]->innerTetrs().size();
+            n_elems += m_polyhedrons[i]->innerTetrs().size();
         }
     }
-    av_q /= m_crystallites.size();
+    av_q /= m_polyhedrons.size();
     tmr.stop();
     m_lastLogger.reset(new Logger(generateLogFileName(logFileName)));
     *m_lastLogger << std::fixed
         << "Minimum quality"          << min_q << ""
         << "Average quality"          << av_q  << ""
-        << "Crystallites number"      << m_crystallites.size() << ""
+        << "Polyhedrons number"       << m_polyhedrons.size()  << ""
         << "Elements number"          << n_elems               << ""
         << "Preferred edge length"    << m_preferredLength     << ""
         << "Shell triangulation time" << tmr.getDuration(0,  Timer::TimeScale::Microseconds) * 1e-6 << "s"
@@ -328,23 +328,23 @@ void Polycrystal::generateMesh(real_t preferredLength, std::string_view logFileN
 }
 
 
-const PolyMesh* Polycrystal::structurizeMesh()
+const PolyMesh* PolyhedralSet::structurizeMesh()
 {
     m_lastMesh = new PolyMesh;
 
-    m_lastMesh->nCryses = m_crystallites.size();
+    m_lastMesh->nCryses = m_polyhedrons.size();
     m_lastMesh->nCrysesTetrs = new size_t[m_lastMesh->nCryses];
 
     size_t nodes_num = m_shellVerts.size();
     for (auto& sedge : m_shellEdges)
         nodes_num += sedge->innerVerts().size();
-    for (auto& sfacet : m_shellFacets)
-        nodes_num += sfacet->innerVerts().size();
+    for (auto& sface : m_shellFaces)
+        nodes_num += sface->innerVerts().size();
 
-    for (auto& crys : m_crystallites)
+    for (auto& polyhed : m_polyhedrons)
         nodes_num += static_cast<size_t>(std::count_if(
-            crys->innerVerts().begin(),
-            crys->innerVerts().end(),
+            polyhed->innerVerts().begin(),
+            polyhed->innerVerts().end(),
             [](auto vert) { return static_cast<bool>(vert); }));
 
     m_lastMesh->nNodes = nodes_num;
@@ -381,9 +381,9 @@ const PolyMesh* Polycrystal::structurizeMesh()
             vert_ind++;
         }
     }
-    for (auto& sfacet : m_shellFacets)
+    for (auto& sface : m_shellFaces)
     {
-        for (auto& vert : sfacet->innerVerts())
+        for (auto& vert : sface->innerVerts())
         {
             verts_ptrs[vert_ind] = vert;
             m_lastMesh->nodesPositions[3 * vert_ind]     = (*vert)[0];
@@ -392,9 +392,9 @@ const PolyMesh* Polycrystal::structurizeMesh()
             vert_ind++;
         }
     }
-    for (auto& crys : m_crystallites)
+    for (auto& polyhed : m_polyhedrons)
     {
-        for (auto& vert : crys->innerVerts())
+        for (auto& vert : polyhed->innerVerts())
         {
             verts_ptrs[vert_ind] = vert;
             m_lastMesh->nodesPositions[3 * vert_ind]     = (*vert)[0];
@@ -408,8 +408,8 @@ const PolyMesh* Polycrystal::structurizeMesh()
     for (size_t i = 0; i < m_lastMesh->nCryses; i++)
     {
         m_lastMesh->nCrysesTetrs[i] = static_cast<size_t>(std::count_if(
-            m_crystallites[i]->innerTetrs().begin(),
-            m_crystallites[i]->innerTetrs().end(),
+            m_polyhedrons[i]->innerTetrs().begin(),
+            m_polyhedrons[i]->innerTetrs().end(),
             [](auto tetr) { return static_cast<bool>(tetr); }));
 
         tetrs_num += m_lastMesh->nCrysesTetrs[i];
@@ -421,7 +421,7 @@ const PolyMesh* Polycrystal::structurizeMesh()
     size_t tetr_ind = 0;
     for (size_t i = 0; i < m_lastMesh->nCryses; i++)
     {
-        for (auto& tetr : m_crystallites[i]->innerTetrs())
+        for (auto& tetr : m_polyhedrons[i]->innerTetrs())
         {
             m_lastMesh->tetrs[4 * tetr_ind]     = FindNodeIndex(tetr->verts[0]);
             m_lastMesh->tetrs[4 * tetr_ind + 1] = FindNodeIndex(tetr->verts[1]);
@@ -435,7 +435,7 @@ const PolyMesh* Polycrystal::structurizeMesh()
 }
 
 
-const PolyMesh* Polycrystal::getLastMesh()
+const PolyMesh* PolyhedralSet::getLastMesh()
 {
     return m_lastMesh;
 }
@@ -443,7 +443,7 @@ const PolyMesh* Polycrystal::getLastMesh()
 
 
 
-void Polycrystal::input(std::string_view polyStructFileName)
+void PolyhedralSet::input(std::string_view polyStructFileName)
 {
     std::ifstream input(polyStructFileName.data());
 
@@ -460,151 +460,151 @@ void Polycrystal::input(std::string_view polyStructFileName)
         m_shellVerts.push_back(new shell::Vertex(coors[0], coors[1], coors[2]));
     }
 
-    size_t facets_num;
-    input >> facets_num;
+    size_t faces_num;
+    input >> faces_num;
 
-    for (size_t i = 0; i < facets_num; i++)
+    for (size_t i = 0; i < faces_num; i++)
     {
-        size_t facet_nodes_inds[3];
-        input >> facet_nodes_inds[0];
-        input >> facet_nodes_inds[1];
-        input >> facet_nodes_inds[2];
+        size_t face_nodes_inds[3];
+        input >> face_nodes_inds[0];
+        input >> face_nodes_inds[1];
+        input >> face_nodes_inds[2];
 
-        if (!findShellEdge(m_shellVerts[facet_nodes_inds[0]], m_shellVerts[facet_nodes_inds[1]]))
+        if (!findShellEdge(m_shellVerts[face_nodes_inds[0]], m_shellVerts[face_nodes_inds[1]]))
         {
-            m_shellEdges.push_back(new shell::Edge(m_shellVerts[facet_nodes_inds[0]], m_shellVerts[facet_nodes_inds[1]]));
+            m_shellEdges.push_back(new shell::Edge(m_shellVerts[face_nodes_inds[0]], m_shellVerts[face_nodes_inds[1]]));
         }
 
-        if (!findShellEdge(m_shellVerts[facet_nodes_inds[1]], m_shellVerts[facet_nodes_inds[2]]))
+        if (!findShellEdge(m_shellVerts[face_nodes_inds[1]], m_shellVerts[face_nodes_inds[2]]))
         {
-            m_shellEdges.push_back(new shell::Edge(m_shellVerts[facet_nodes_inds[1]], m_shellVerts[facet_nodes_inds[2]]));
+            m_shellEdges.push_back(new shell::Edge(m_shellVerts[face_nodes_inds[1]], m_shellVerts[face_nodes_inds[2]]));
         }
 
-        if (!findShellEdge(m_shellVerts[facet_nodes_inds[2]], m_shellVerts[facet_nodes_inds[0]]))
+        if (!findShellEdge(m_shellVerts[face_nodes_inds[2]], m_shellVerts[face_nodes_inds[0]]))
         {
-            m_shellEdges.push_back(new shell::Edge(m_shellVerts[facet_nodes_inds[2]], m_shellVerts[facet_nodes_inds[0]]));
+            m_shellEdges.push_back(new shell::Edge(m_shellVerts[face_nodes_inds[2]], m_shellVerts[face_nodes_inds[0]]));
         }
 
-        m_shellFacets.push_back(new shell::Facet(
-            findShellEdge(m_shellVerts[facet_nodes_inds[0]], m_shellVerts[facet_nodes_inds[1]]),
-            findShellEdge(m_shellVerts[facet_nodes_inds[1]], m_shellVerts[facet_nodes_inds[2]]),
-            findShellEdge(m_shellVerts[facet_nodes_inds[2]], m_shellVerts[facet_nodes_inds[0]])));
+        m_shellFaces.push_back(new shell::Face(
+            findShellEdge(m_shellVerts[face_nodes_inds[0]], m_shellVerts[face_nodes_inds[1]]),
+            findShellEdge(m_shellVerts[face_nodes_inds[1]], m_shellVerts[face_nodes_inds[2]]),
+            findShellEdge(m_shellVerts[face_nodes_inds[2]], m_shellVerts[face_nodes_inds[0]])));
     }
 
-    size_t cryses_num;
-    input >> cryses_num;
-    m_crystallites.insert(m_crystallites.end(), cryses_num, new Crystallite);
+    size_t polyhedrons_num;
+    input >> polyhedrons_num;
+    m_polyhedrons.insert(m_polyhedrons.end(), polyhedrons_num, new Polyhedron);
 
-    size_t* cryses_facets_nums = new size_t[cryses_num];
-    for (size_t i = 0; i < cryses_num; i++)
-        input >> cryses_facets_nums[i];
+    size_t* polyhedrons_faces_nums = new size_t[polyhedrons_num];
+    for (size_t i = 0; i < polyhedrons_num; i++)
+        input >> polyhedrons_faces_nums[i];
 
-    for (size_t i = 0; i < cryses_num; i++)
+    for (size_t i = 0; i < polyhedrons_num; i++)
     {
-        for (size_t j = 0; j < cryses_facets_nums[i]; j++)
+        for (size_t j = 0; j < polyhedrons_faces_nums[i]; j++)
         {
-            size_t facet_ind;
-            input >> facet_ind;
+            size_t face_ind;
+            input >> face_ind;
 
             for (int k = 0; k < 3; ++k)
             {
-                if (!m_crystallites[i]->shellContains(m_shellFacets[facet_ind]->edges[k]))
+                if (!m_polyhedrons[i]->shellContains(m_shellFaces[face_ind]->edges[k]))
                 {
-                    m_crystallites[i]->addToShell(m_shellFacets[facet_ind]->edges[k]);
+                    m_polyhedrons[i]->addToShell(m_shellFaces[face_ind]->edges[k]);
 
-                    if (!m_crystallites[i]->shellContains(m_shellFacets[facet_ind]->edges[k]->verts[0]))
-                        m_crystallites[i]->addToShell(m_shellFacets[facet_ind]->edges[k]->verts[0]);
+                    if (!m_polyhedrons[i]->shellContains(m_shellFaces[face_ind]->edges[k]->verts[0]))
+                        m_polyhedrons[i]->addToShell(m_shellFaces[face_ind]->edges[k]->verts[0]);
 
-                    if (!m_crystallites[i]->shellContains(m_shellFacets[facet_ind]->edges[k]->verts[1]))
-                        m_crystallites[i]->addToShell(m_shellFacets[facet_ind]->edges[k]->verts[1]);
+                    if (!m_polyhedrons[i]->shellContains(m_shellFaces[face_ind]->edges[k]->verts[1]))
+                        m_polyhedrons[i]->addToShell(m_shellFaces[face_ind]->edges[k]->verts[1]);
                 }
             }
 
-            m_crystallites[i]->addToShell(m_shellFacets[facet_ind]);
+            m_polyhedrons[i]->addToShell(m_shellFaces[face_ind]);
         }
     }
 
     input.close();
-    delete[] cryses_facets_nums;
+    delete[] polyhedrons_faces_nums;
 }
 
 
-void Polycrystal::input(const polygen::PolyStruct& polyStruct)
+void PolyhedralSet::input(const polygen::PolyStruct& polyStruct)
 {
-    for (size_t i = 0; i < polyStruct.nodes.size(); i++)
+    for (size_t i = 0; i < polyStruct.verts.size(); i++)
     {
         real_t coors[3];
-        coors[0] = polyStruct.nodes[i][0];
-        coors[1] = polyStruct.nodes[i][1];
-        coors[2] = polyStruct.nodes[i][2];
+        coors[0] = polyStruct.verts[i][0];
+        coors[1] = polyStruct.verts[i][1];
+        coors[2] = polyStruct.verts[i][2];
 
         m_shellVerts.push_back(new shell::Vertex(coors[0], coors[1], coors[2]));
     }
 
-    for (const auto& facet : polyStruct.facets)
+    for (const auto& face : polyStruct.faces)
     {
-        if (!findShellEdge(m_shellVerts[facet[0]], m_shellVerts[facet[1]]))
+        if (!findShellEdge(m_shellVerts[face[0]], m_shellVerts[face[1]]))
         {
-            m_shellEdges.push_back(new shell::Edge(m_shellVerts[facet[0]], m_shellVerts[facet[1]]));
+            m_shellEdges.push_back(new shell::Edge(m_shellVerts[face[0]], m_shellVerts[face[1]]));
         }
 
-        if (!findShellEdge(m_shellVerts[facet[1]], m_shellVerts[facet[2]]))
+        if (!findShellEdge(m_shellVerts[face[1]], m_shellVerts[face[2]]))
         {
-            m_shellEdges.push_back(new shell::Edge(m_shellVerts[facet[1]], m_shellVerts[facet[2]]));
+            m_shellEdges.push_back(new shell::Edge(m_shellVerts[face[1]], m_shellVerts[face[2]]));
         }
 
-        if (!findShellEdge(m_shellVerts[facet[2]], m_shellVerts[facet[0]]))
+        if (!findShellEdge(m_shellVerts[face[2]], m_shellVerts[face[0]]))
         {
-            m_shellEdges.push_back(new shell::Edge(m_shellVerts[facet[2]], m_shellVerts[facet[0]]));
+            m_shellEdges.push_back(new shell::Edge(m_shellVerts[face[2]], m_shellVerts[face[0]]));
         }
 
-        m_shellFacets.push_back(new shell::Facet(
-            findShellEdge(m_shellVerts[facet[0]], m_shellVerts[facet[1]]),
-            findShellEdge(m_shellVerts[facet[1]], m_shellVerts[facet[2]]),
-            findShellEdge(m_shellVerts[facet[2]], m_shellVerts[facet[0]])));
+        m_shellFaces.push_back(new shell::Face(
+            findShellEdge(m_shellVerts[face[0]], m_shellVerts[face[1]]),
+            findShellEdge(m_shellVerts[face[1]], m_shellVerts[face[2]]),
+            findShellEdge(m_shellVerts[face[2]], m_shellVerts[face[0]])));
     }
 
-    m_crystallites.reserve(polyStruct.cryses.size());
-    for (size_t i = 0; i < polyStruct.cryses.size(); ++i)
-        m_crystallites.push_back(new Crystallite(this));
+    m_polyhedrons.reserve(polyStruct.polyhedrons.size());
+    for (size_t i = 0; i < polyStruct.polyhedrons.size(); ++i)
+        m_polyhedrons.push_back(new Polyhedron(this));
 
-    for (size_t i = 0; i < polyStruct.cryses.size(); ++i)
+    for (size_t i = 0; i < polyStruct.polyhedrons.size(); ++i)
     {
-        for (size_t j = 0; j < polyStruct.cryses[i].size(); ++j)
+        for (size_t j = 0; j < polyStruct.polyhedrons[i].size(); ++j)
         {
-            size_t facet_ind = polyStruct.cryses[i][j];
+            size_t face_ind = polyStruct.polyhedrons[i][j];
 
             for (int k = 0; k < 3; ++k)
             {
-                if (!m_crystallites[i]->shellContains(m_shellFacets[facet_ind]->edges[k]))
+                if (!m_polyhedrons[i]->shellContains(m_shellFaces[face_ind]->edges[k]))
                 {
-                    m_crystallites[i]->addToShell(m_shellFacets[facet_ind]->edges[k]);
+                    m_polyhedrons[i]->addToShell(m_shellFaces[face_ind]->edges[k]);
 
-                    if (!m_crystallites[i]->shellContains(m_shellFacets[facet_ind]->edges[k]->verts[0]))
-                        m_crystallites[i]->addToShell(m_shellFacets[facet_ind]->edges[k]->verts[0]);
+                    if (!m_polyhedrons[i]->shellContains(m_shellFaces[face_ind]->edges[k]->verts[0]))
+                        m_polyhedrons[i]->addToShell(m_shellFaces[face_ind]->edges[k]->verts[0]);
 
-                    if (!m_crystallites[i]->shellContains(m_shellFacets[facet_ind]->edges[k]->verts[1]))
-                        m_crystallites[i]->addToShell(m_shellFacets[facet_ind]->edges[k]->verts[1]);
+                    if (!m_polyhedrons[i]->shellContains(m_shellFaces[face_ind]->edges[k]->verts[1]))
+                        m_polyhedrons[i]->addToShell(m_shellFaces[face_ind]->edges[k]->verts[1]);
                 }
             }
 
-            m_crystallites[i]->addToShell(m_shellFacets[facet_ind]);
+            m_polyhedrons[i]->addToShell(m_shellFaces[face_ind]);
         }
     }
 }
 
 
-std::string Polycrystal::generateOutputFilename(FileType filetype, std::string_view filename) const
+std::string PolyhedralSet::generateOutputFilename(FileType filetype, std::string_view filename) const
 {
     if (filename != "_AUTO_")
         return filename.data();
 
     std::stringstream ss;
-    ss << "plcr_" << m_crystallites.size() << "_nc_";
+    ss << "plcr_" << m_polyhedrons.size() << "_nc_";
     size_t av_nfe = 0;
-    for (auto& crys : m_crystallites)
-        av_nfe += crys->innerTetrs().size();
-    av_nfe /= m_crystallites.size();
+    for (auto& polyhed : m_polyhedrons)
+        av_nfe += polyhed->innerTetrs().size();
+    av_nfe /= m_polyhedrons.size();
     ss << av_nfe << "_cfe";
     switch (filetype)
     {
@@ -618,7 +618,7 @@ std::string Polycrystal::generateOutputFilename(FileType filetype, std::string_v
 }
 
 
-void Polycrystal::output(FileType filetype, std::string_view filename, unsigned polycrystalId) const
+void PolyhedralSet::output(FileType filetype, std::string_view filename, unsigned PolyhedralSetId) const
 {
     Timer tmr;
     tmr.start();
@@ -629,7 +629,7 @@ void Polycrystal::output(FileType filetype, std::string_view filename, unsigned 
         break;
 
     case FileType::LsDynaKeyword:
-        outputLSDynaKeyword(generateOutputFilename(FileType::LsDynaKeyword, filename), polycrystalId);
+        outputLSDynaKeyword(generateOutputFilename(FileType::LsDynaKeyword, filename), PolyhedralSetId);
         break;
     }
     tmr.stop();
@@ -644,28 +644,28 @@ void Polycrystal::output(FileType filetype, std::string_view filename, unsigned 
 
 
 
-Polycrystal::Polycrystal() {}
+PolyhedralSet::PolyhedralSet() {}
 
 
-Polycrystal::Polycrystal(std::string_view polyStructFileName)
+PolyhedralSet::PolyhedralSet(std::string_view polyStructFileName)
 {
     input(polyStructFileName);
 }
 
 
-Polycrystal::Polycrystal(const polygen::PolyStruct& polyStruct)
+PolyhedralSet::PolyhedralSet(const polygen::PolyStruct& polyStruct)
 {
     input(polyStruct);
 }
 
 
-Polycrystal::~Polycrystal()
+PolyhedralSet::~PolyhedralSet()
 {
-    for (auto& crys : m_crystallites)
-        delete crys;
+    for (auto& polyhed : m_polyhedrons)
+        delete polyhed;
 
-    for (auto& facet : m_shellFacets)
-        delete facet;
+    for (auto& face : m_shellFaces)
+        delete face;
     for (auto& edge : m_shellEdges)
         delete edge;
     for (auto& vert : m_shellVerts)

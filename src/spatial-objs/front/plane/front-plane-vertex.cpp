@@ -49,7 +49,7 @@ real_t FrPlVertex::computeComplexity()
     auto adj_edges = findAdjEdges();
     real_t adj_edges_av_len = static_cast<real_t>(0.5) * (  std::get<0>(adj_edges)->edge->magnitude()
                                      + std::get<1>(adj_edges)->edge->magnitude());
-    return m_complexity = m_relatedShellFacet->preferredLength() / adj_edges_av_len + K_ALPHA * PI / computeAngle();
+    return m_complexity = m_relatedShellFace->preferredLength() / adj_edges_av_len + K_ALPHA * PI / computeAngle();
 }
 
 
@@ -82,7 +82,7 @@ pair_ee FrPlVertex::findAdjEdges() const
 {
     pair_ee res(nullptr, nullptr);
     int i = 0;
-    for (auto& fedge : m_relatedShellFacet->frontEdges())
+    for (auto& fedge : m_relatedShellFace->frontEdges())
     {
         if (fedge->edge->contains(vert))
         {
@@ -105,5 +105,5 @@ pair_vv FrPlVertex::findOppVerts() const
 
 
 
-FrPlVertex::Vertex(const shell::Facet* relatedShellFacet, const pmg::Vertex* vert)
-    : vert(const_cast<pmg::Vertex*>(vert)), m_relatedShellFacet(const_cast<shell::Facet*>(relatedShellFacet)) {}
+FrPlVertex::Vertex(const shell::Face* relatedShellFace, const pmg::Vertex* vert)
+    : vert(const_cast<pmg::Vertex*>(vert)), m_relatedShellFace(const_cast<shell::Face*>(relatedShellFace)) {}

@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 #pragma once
-#include "spatial-objs/shell/shell-facet.h"
+#include "spatial-objs/shell/shell-face.h"
 #include "helpers/spatial-algs/vec.h"
 #include "real-type.h"
 
@@ -34,11 +34,11 @@ public:
     pair_ee findAdjEdges() const;
     pair_vv findOppVerts() const;
 
-    Vertex(const shell::Facet* relatedShellFacet, const pmg::Vertex* vert);
+    Vertex(const shell::Face* relatedShellFace, const pmg::Vertex* vert);
 
 
 private:
-    shell::Facet* m_relatedShellFacet;
+    shell::Face* m_relatedShellFace;
 
     real_t m_exCos;
     real_t m_complexity;

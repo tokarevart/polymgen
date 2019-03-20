@@ -1,7 +1,7 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "spatial-objs/shell/shell-facet.h"
+#include "spatial-objs/shell/shell-face.h"
 #include "algorithm"
 #include "helpers/spatial-algs/spatial-algs.h"
 
@@ -9,7 +9,7 @@
 
 using namespace pmg;
 using pair_dd = std::pair<real_t, real_t>;
-using pair_ff = std::pair<pmg::Facet*, pmg::Facet*>;
+using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
 using pair_ee = std::pair<pmg::Edge*, pmg::Edge*>;
 
 
@@ -44,7 +44,7 @@ using FrPlVertex = front::plane::Vertex;
 
 
 
-real_t shell::Facet::preferredLength() const
+real_t shell::Face::preferredLength() const
 {
     return m_preferredLength;
 }
@@ -52,40 +52,40 @@ real_t shell::Facet::preferredLength() const
 
 
 
-const std::list<pmg::Facet*>& shell::Facet::innerFacets() const
+const std::list<pmg::Face*>& shell::Face::innerFaces() const
 {
-    return m_innerFacets;
+    return m_innerFaces;
 }
 
 
-const std::list<pmg::Edge*>& shell::Facet::innerEdges() const
+const std::list<pmg::Edge*>& shell::Face::innerEdges() const
 {
     return m_innerEdges;
 }
 
 
-const std::vector<Vertex*>& shell::Facet::innerVerts() const
+const std::vector<Vertex*>& shell::Face::innerVerts() const
 {
     return m_innerVerts;
 }
 
 
-const std::list<FrPlEdge*>& shell::Facet::frontEdges() const
+const std::list<FrPlEdge*>& shell::Face::frontEdges() const
 {
     return m_frontEdges;
 }
 
 
-shell::Vertex* shell::Facet::findVertNot(const shell::Edge* edge) const
+shell::Vertex* shell::Face::findVertNot(const shell::Edge* edge) const
 {
-    for (auto& facet_edge : edges)
+    for (auto& face_edge : edges)
     {
-        if (edge != facet_edge)
+        if (edge != face_edge)
         {
-            if (!edge->contains(facet_edge->verts[0]))
-                return facet_edge->verts[0];
+            if (!edge->contains(face_edge->verts[0]))
+                return face_edge->verts[0];
             else
-                return facet_edge->verts[1];
+                return face_edge->verts[1];
         }
     }
 
@@ -93,7 +93,7 @@ shell::Vertex* shell::Facet::findVertNot(const shell::Edge* edge) const
 }
 
 
-shell::Edge* shell::Facet::findShellEdgeContaining(const pmg::Edge* edge) const
+shell::Edge* shell::Face::findShellEdgeContaining(const pmg::Edge* edge) const
 {
     for (auto& sedge : edges)
         if (sedge->contains(edge))
@@ -105,14 +105,14 @@ shell::Edge* shell::Facet::findShellEdgeContaining(const pmg::Edge* edge) const
 
 
 
-void shell::Facet::triangulate(real_t preferredLen)
+void shell::Face::triangulate(real_t preferredLen)
 {
     m_preferredLength = preferredLen;
     initializeFront();
     computeFrontNormals();
     processAngles();
 //    if (globalIntersectionCheck())
-//        throw std::logic_error("Intersection error.\npmg::shell::Facet::globalIntersectionCheck returned true.");
+//        throw std::logic_error("Intersection error.\npmg::shell::Face::globalIntersectionCheck returned true.");
 
     smoothMesh(20);
     for (int i = 0; i < 3; i++)
@@ -125,7 +125,7 @@ void shell::Facet::triangulate(real_t preferredLen)
 
 
 
-bool shell::Facet::contains(const shell::Edge* edge) const
+bool shell::Face::contains(const shell::Edge* edge) const
 {
     for (auto& edge_ : edges)
         if (edge_ == edge)
@@ -135,7 +135,7 @@ bool shell::Facet::contains(const shell::Edge* edge) const
 }
 
 
-bool shell::Facet::contains(const shell::Vertex* vert) const
+bool shell::Face::contains(const shell::Vertex* vert) const
 {
     for (auto& edge : edges)
         if (edge->contains(vert))
@@ -147,7 +147,7 @@ bool shell::Facet::contains(const shell::Vertex* vert) const
 
 
 
-shell::Facet::Facet(
+shell::Face::Face(
     const shell::Edge* edge0,
     const shell::Edge* edge1,
     const shell::Edge* edge2)
@@ -160,7 +160,7 @@ shell::Facet::Facet(
 
 
 
-FrPlVertex* shell::Facet::findFrontVert(const pmg::Vertex* vert) const
+FrPlVertex* shell::Face::findFrontVert(const pmg::Vertex* vert) const
 {
     for (auto& fvert : m_frontVerts)
         if (fvert->vert == vert)
@@ -172,7 +172,7 @@ FrPlVertex* shell::Facet::findFrontVert(const pmg::Vertex* vert) const
 
 
 
-FrPlEdge* shell::Facet::addToFront(const pmg::Edge* edge)
+FrPlEdge* shell::Face::addToFront(const pmg::Edge* edge)
 {
     FrPlEdge* new_f_edge = new FrPlEdge(this, edge);
     m_frontEdges.push_back(new_f_edge);
@@ -181,7 +181,7 @@ FrPlEdge* shell::Facet::addToFront(const pmg::Edge* edge)
 }
 
 
-FrPlVertex* shell::Facet::addToFront(const pmg::Vertex* vert)
+FrPlVertex* shell::Face::addToFront(const pmg::Vertex* vert)
 {
     FrPlVertex* new_f_vert = new FrPlVertex(this, vert);
     m_frontVerts.push_back(new_f_vert);
@@ -192,14 +192,14 @@ FrPlVertex* shell::Facet::addToFront(const pmg::Vertex* vert)
 
 
 
-void shell::Facet::removeFromFront(FrPlEdge* fEdge)
+void shell::Face::removeFromFront(FrPlEdge* fEdge)
 {
     m_frontEdges.erase(std::find(m_frontEdges.begin(), m_frontEdges.end(), fEdge));
     delete fEdge;
 }
 
 
-void shell::Facet::removeFromFront(FrPlVertex* fVert)
+void shell::Face::removeFromFront(FrPlVertex* fVert)
 {
     m_frontVerts.erase(std::find(m_frontVerts.begin(), m_frontVerts.end(), fVert));
     delete fVert;
@@ -208,7 +208,7 @@ void shell::Facet::removeFromFront(FrPlVertex* fVert)
 
 
 
-bool shell::Facet::anyVertInsidePotentialTriangCheck(FrPlVertex* fVert) const
+bool shell::Face::anyVertInsidePotentialTriangCheck(FrPlVertex* fVert) const
 {
     auto opp_verts = fVert->findOppVerts();
     pmg::Vertex* tr[3]
@@ -227,7 +227,7 @@ bool shell::Facet::anyVertInsidePotentialTriangCheck(FrPlVertex* fVert) const
 }
 
 
-bool shell::Facet::doesSegmentIntersectsWithFront(const Vec& p0, const Vec& p1) const
+bool shell::Face::doesSegmentIntersectsWithFront(const Vec& p0, const Vec& p1) const
 {
     for (auto& fedge : m_frontEdges)
         if (spatalgs::segmentsDistance(
@@ -241,7 +241,7 @@ bool shell::Facet::doesSegmentIntersectsWithFront(const Vec& p0, const Vec& p1) 
 
 
 
-Vec shell::Facet::computeNormalInTriang(FrPlEdge* fEdge, const Vec& oppVertPos)
+Vec shell::Face::computeNormalInTriang(FrPlEdge* fEdge, const Vec& oppVertPos)
 {
     Vec p0 = fEdge->edge->verts[0]->pos();
     Vec p1 = fEdge->edge->verts[1]->pos();
@@ -251,7 +251,7 @@ Vec shell::Facet::computeNormalInTriang(FrPlEdge* fEdge, const Vec& oppVertPos)
 
 
 
-bool shell::Facet::tryComputeNewVertPosType2(FrPlEdge* fEdge, Vec& out_pos)
+bool shell::Face::tryComputeNewVertPosType2(FrPlEdge* fEdge, Vec& out_pos)
 {
     FrPlVertex* main_f_verts[2];
     main_f_verts[0] = findFrontVert(fEdge->edge->verts[0]);
@@ -284,7 +284,7 @@ bool shell::Facet::tryComputeNewVertPosType2(FrPlEdge* fEdge, Vec& out_pos)
 }
 
 
-bool shell::Facet::tryComputeNewVertPosType1(FrPlEdge* fEdge, Vec& out_pos, int smallAngleIndex)
+bool shell::Face::tryComputeNewVertPosType1(FrPlEdge* fEdge, Vec& out_pos, int smallAngleIndex)
 {
     auto main_vert = fEdge->edge->verts[smallAngleIndex];
     auto sec_vert  = fEdge->edge->findNot(main_vert);
@@ -315,7 +315,7 @@ bool shell::Facet::tryComputeNewVertPosType1(FrPlEdge* fEdge, Vec& out_pos, int 
 }
 
 
-bool shell::Facet::tryComputeNewVertPosType0(FrPlEdge* fEdge, Vec& out_pos)
+bool shell::Face::tryComputeNewVertPosType0(FrPlEdge* fEdge, Vec& out_pos)
 {
     real_t magn = fEdge->edge->magnitude();
     real_t raw_deform = K_D * (m_preferredLength - magn);
@@ -338,7 +338,7 @@ bool shell::Facet::tryComputeNewVertPosType0(FrPlEdge* fEdge, Vec& out_pos)
 }
 
 
-bool shell::Facet::tryComputeNewVertPos(FrPlEdge* fEdge, Vec& out_pos)
+bool shell::Face::tryComputeNewVertPos(FrPlEdge* fEdge, Vec& out_pos)
 {
     real_t angs_coses[2]
     {
@@ -363,7 +363,7 @@ bool shell::Facet::tryComputeNewVertPos(FrPlEdge* fEdge, Vec& out_pos)
 
 
 
-pair_dd shell::Facet::computeMinMaxEdgesLengths(const Vec& p0, const Vec& p1, const Vec& p2)
+pair_dd shell::Face::computeMinMaxEdgesLengths(const Vec& p0, const Vec& p1, const Vec& p2)
 {
     auto min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2);
     min_max.first  = sqrtReal(min_max.first);
@@ -372,7 +372,7 @@ pair_dd shell::Facet::computeMinMaxEdgesLengths(const Vec& p0, const Vec& p1, co
 }
 
 
-pair_dd shell::Facet::computeMinMaxEdgesSqrLengths(const Vec& p0, const Vec& p1, const Vec& p2)
+pair_dd shell::Face::computeMinMaxEdgesSqrLengths(const Vec& p0, const Vec& p1, const Vec& p2)
 {
     real_t sqr_magns[3];
     sqr_magns[0] = (p1 - p0).sqrMagnitude();
@@ -382,14 +382,14 @@ pair_dd shell::Facet::computeMinMaxEdgesSqrLengths(const Vec& p0, const Vec& p1,
 }
 
 
-real_t shell::Facet::computeTriangSimpleQuality(const Vec& p0, const Vec& p1, const Vec& p2)
+real_t shell::Face::computeTriangSimpleQuality(const Vec& p0, const Vec& p1, const Vec& p2)
 {
     auto sqr_min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2);
     return sqrtReal(sqr_min_max.first / sqr_min_max.second);
 }
 
 
-real_t shell::Facet::computeTriangSimpleSqrQuality(const Vec& p0, const Vec& p1, const Vec& p2)
+real_t shell::Face::computeTriangSimpleSqrQuality(const Vec& p0, const Vec& p1, const Vec& p2)
 {
     auto sqr_min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2);
     return sqr_min_max.first / sqr_min_max.second;
@@ -398,7 +398,7 @@ real_t shell::Facet::computeTriangSimpleSqrQuality(const Vec& p0, const Vec& p1,
 
 
 
-FrPlEdge* shell::Facet::chooseEdgeForExhaustionWithNewVert(FrPlVertex* fVert)
+FrPlEdge* shell::Face::chooseEdgeForExhaustionWithNewVert(FrPlVertex* fVert)
 {
     auto adj_edges = fVert->findAdjEdges();
     return std::get<0>(adj_edges)->edge->sqrMagnitude() < std::get<1>(adj_edges)->edge->sqrMagnitude() ?
@@ -406,7 +406,7 @@ FrPlEdge* shell::Facet::chooseEdgeForExhaustionWithNewVert(FrPlVertex* fVert)
 }
 
 
-void shell::Facet::exhaustWithNewVert(FrPlEdge* fEdge, const Vec& vertPos)
+void shell::Face::exhaustWithNewVert(FrPlEdge* fEdge, const Vec& vertPos)
 {
     pmg::Vertex* main_verts[2] { fEdge->edge->verts[0], fEdge->edge->verts[1] };
 
@@ -416,7 +416,7 @@ void shell::Facet::exhaustWithNewVert(FrPlEdge* fEdge, const Vec& vertPos)
     new_f_edge0->normal = computeNormalInTriang(new_f_edge0, fEdge->edge->findNot(new_f_edge0->edge)->pos());
     new_f_edge1->normal = computeNormalInTriang(new_f_edge1, fEdge->edge->findNot(new_f_edge1->edge)->pos());
 
-    m_innerFacets.push_back(new pmg::Facet(fEdge->edge, new_f_edge0->edge, new_f_edge1->edge));
+    m_innerFaces.push_back(new pmg::Face(fEdge->edge, new_f_edge0->edge, new_f_edge1->edge));
 
     findFrontVert(main_verts[0])->refreshAngleData();
     findFrontVert(main_verts[1])->refreshAngleData();
@@ -425,7 +425,7 @@ void shell::Facet::exhaustWithNewVert(FrPlEdge* fEdge, const Vec& vertPos)
 }
 
 
-void shell::Facet::exhaustWithoutNewVert(FrPlVertex* fVert)
+void shell::Face::exhaustWithoutNewVert(FrPlVertex* fVert)
 {
     auto adj_edges = fVert->findAdjEdges();
     std::pair<pmg::Vertex*, pmg::Vertex*> opp_verts =
@@ -437,7 +437,7 @@ void shell::Facet::exhaustWithoutNewVert(FrPlVertex* fVert)
     auto new_f_edge = addToFront(new pmg::Edge(opp_verts.first, opp_verts.second));
     new_f_edge->normal = computeNormalInTriang(new_f_edge, fVert->vert->pos());
 
-    m_innerFacets.push_back(new pmg::Facet(adj_edges.first->edge, adj_edges.second->edge, new_f_edge->edge));
+    m_innerFaces.push_back(new pmg::Face(adj_edges.first->edge, adj_edges.second->edge, new_f_edge->edge));
 
     findFrontVert(opp_verts.first)->refreshAngleData();
     findFrontVert(opp_verts.second)->refreshAngleData();
@@ -450,7 +450,7 @@ void shell::Facet::exhaustWithoutNewVert(FrPlVertex* fVert)
 
 
 
-bool shell::Facet::tryExhaustWithoutNewVert(FrPlVertex* fVert)
+bool shell::Face::tryExhaustWithoutNewVert(FrPlVertex* fVert)
 {
     if (anyVertInsidePotentialTriangCheck(fVert))
         return false;
@@ -460,7 +460,7 @@ bool shell::Facet::tryExhaustWithoutNewVert(FrPlVertex* fVert)
 }
 
 
-bool shell::Facet::tryExhaustWithNewVert(FrPlVertex* fVert)
+bool shell::Face::tryExhaustWithNewVert(FrPlVertex* fVert)
 {
     auto exhaust_f_edge = chooseEdgeForExhaustionWithNewVert(fVert);
     Vec new_vert_pos;
@@ -474,7 +474,7 @@ bool shell::Facet::tryExhaustWithNewVert(FrPlVertex* fVert)
 
 
 
-FrPlVertex* shell::Facet::currentFrontVert(real_t maxCompl) const
+FrPlVertex* shell::Face::currentFrontVert(real_t maxCompl) const
 {
     real_t cur_max_compl = 0.0;
     FrPlVertex* cur_max_f_edge = nullptr;
@@ -493,7 +493,7 @@ FrPlVertex* shell::Facet::currentFrontVert(real_t maxCompl) const
 }
 
 
-bool shell::Facet::exhaustWithoutNewVertPriorityPredicate(FrPlVertex* fEdge)
+bool shell::Face::exhaustWithoutNewVertPriorityPredicate(FrPlVertex* fEdge)
 {
     if (fEdge->angleExCos() > static_cast<real_t>(0.5))
         return true;
@@ -510,7 +510,7 @@ bool shell::Facet::exhaustWithoutNewVertPriorityPredicate(FrPlVertex* fEdge)
 }
 
 
-bool shell::Facet::exhaustWithNewVertPriorityPredicate(FrPlVertex* fEdge)
+bool shell::Face::exhaustWithNewVertPriorityPredicate(FrPlVertex* fEdge)
 {
     if (fEdge->angleExCos() > degToRad(110))
         return true;
@@ -519,7 +519,7 @@ bool shell::Facet::exhaustWithNewVertPriorityPredicate(FrPlVertex* fEdge)
 }
 
 
-shell::Facet::ExhaustType shell::Facet::computeExhaustionTypeQualityPriority(
+shell::Face::ExhaustType shell::Face::computeExhaustionTypeQualityPriority(
         FrPlVertex* fVert, FrPlEdge*& out_withNWFrontEdge, Vec*& out_withNWNewVertPos)
 {
     if (anyVertInsidePotentialTriangCheck(fVert))
@@ -552,14 +552,14 @@ shell::Facet::ExhaustType shell::Facet::computeExhaustionTypeQualityPriority(
 
 
 
-void shell::Facet::processLastFacet()
+void shell::Face::processLastFace()
 {
     pmg::Edge* edges[3];
     int i = 0;
     for (auto& f_edge : m_frontEdges)
         edges[i++] = f_edge->edge;
 
-    m_innerFacets.push_back(new pmg::Facet(edges[0], edges[1], edges[2]));
+    m_innerFaces.push_back(new pmg::Face(edges[0], edges[1], edges[2]));
 
     for (auto& f_edge : m_frontEdges)
         delete f_edge;
@@ -571,14 +571,14 @@ void shell::Facet::processLastFacet()
 }
 
 
-void shell::Facet::processAngles()
+void shell::Face::processAngles()
 {
     if (m_frontEdges.size() < 3)
-        throw std::logic_error("Wrong input data.\nError in function: pmg::shell::Facet::processAngles");
+        throw std::logic_error("Wrong input data.\nError in function: pmg::shell::Face::processAngles");
 
     if (m_frontEdges.size() == 3)
     {
-        processLastFacet();
+        processLastFace();
         return;
     }
 
@@ -586,7 +586,7 @@ void shell::Facet::processAngles()
     for (FrPlVertex* cur_f_vert = currentFrontVert(max_compl);; cur_f_vert = currentFrontVert(max_compl))
     {
         if (!cur_f_vert)
-            throw std::logic_error("pmg::shell::Facet::currentFrontVert returned nullptr");
+            throw std::logic_error("pmg::shell::Face::currentFrontVert returned nullptr");
 
         if (exhaustWithoutNewVertPriorityPredicate(cur_f_vert))
         {
@@ -639,7 +639,7 @@ void shell::Facet::processAngles()
 
         if (m_frontEdges.size() == 3)
         {
-            processLastFacet();
+            processLastFace();
             return;
         }
     }
@@ -648,7 +648,7 @@ void shell::Facet::processAngles()
 
 
 
-void shell::Facet::smoothMesh(unsigned nIterations)
+void shell::Face::smoothMesh(unsigned nIterations)
 {
     for (unsigned i = 0; i < nIterations; i++)
     {
@@ -678,37 +678,37 @@ void shell::Facet::smoothMesh(unsigned nIterations)
 
 
 
-pair_ff shell::Facet::find2AdjFacets(pmg::Edge* edge) const
+pair_ff shell::Face::find2AdjFaces(pmg::Edge* edge) const
 {
     pair_ff res;
     bool not_found_yet = true;
-    for (auto& facet : m_innerFacets)
+    for (auto& face : m_innerFaces)
     {
-        if (facet->contains(edge))
+        if (face->contains(edge))
         {
             if (not_found_yet)
             {
-                res.first = facet;
+                res.first = face;
                 not_found_yet = false;
             }
             else
             {
-                res.second = facet;
+                res.second = face;
                 return res;
             }
         }
     }
 
-    throw std::logic_error("pmg::shell::Facet::find2AdjFacets didn't find 2 adjacent facets.");
+    throw std::logic_error("pmg::shell::Face::find2AdjFaces didn't find 2 adjacent Faces.");
 }
 
 
-bool shell::Facet::flipIfNeeded(pmg::Edge* edge)
+bool shell::Face::flipIfNeeded(pmg::Edge* edge)
 {
     pmg::Vertex* opp_nodes[2];
-    auto around_facets = find2AdjFacets(edge);
-    opp_nodes[0] = std::get<0>(around_facets)->findVertNot(edge);
-    opp_nodes[1] = std::get<1>(around_facets)->findVertNot(edge);
+    auto around_faces = find2AdjFaces(edge);
+    opp_nodes[0] = std::get<0>(around_faces)->findVertNot(edge);
+    opp_nodes[1] = std::get<1>(around_faces)->findVertNot(edge);
 
     real_t alpha = acosReal(Vec::cos(*edge->verts[0] - *opp_nodes[0], *edge->verts[1] - *opp_nodes[0]));
     real_t beta  = acosReal(Vec::cos(*edge->verts[0] - *opp_nodes[1], *edge->verts[1] - *opp_nodes[1]));
@@ -718,32 +718,32 @@ bool shell::Facet::flipIfNeeded(pmg::Edge* edge)
 
 
     auto old_edge   = std::find(m_innerEdges.begin(), m_innerEdges.end(), edge);
-    auto old_facet0 = std::find(m_innerFacets.begin(), m_innerFacets.end(), std::get<0>(around_facets));
-    auto old_facet1 = std::find(m_innerFacets.begin(), m_innerFacets.end(), std::get<1>(around_facets));
+    auto old_face0 = std::find(m_innerFaces.begin(), m_innerFaces.end(), std::get<0>(around_faces));
+    auto old_face1 = std::find(m_innerFaces.begin(), m_innerFaces.end(), std::get<1>(around_faces));
 
     pmg::Edge* new_edge = new pmg::Edge(opp_nodes[0], opp_nodes[1]);
-    pmg::Facet* new_facet0 = new pmg::Facet(
-            std::get<0>(around_facets)->findEdge(opp_nodes[0], edge->verts[0]),
-            std::get<1>(around_facets)->findEdge(opp_nodes[1], edge->verts[0]),
+    pmg::Face* new_face0 = new pmg::Face(
+            std::get<0>(around_faces)->findEdge(opp_nodes[0], edge->verts[0]),
+            std::get<1>(around_faces)->findEdge(opp_nodes[1], edge->verts[0]),
             new_edge);
-    pmg::Facet* new_facet1 = new pmg::Facet(
-            std::get<0>(around_facets)->findEdge(opp_nodes[0], edge->verts[1]),
-            std::get<1>(around_facets)->findEdge(opp_nodes[1], edge->verts[1]),
+    pmg::Face* new_face1 = new pmg::Face(
+            std::get<0>(around_faces)->findEdge(opp_nodes[0], edge->verts[1]),
+            std::get<1>(around_faces)->findEdge(opp_nodes[1], edge->verts[1]),
             new_edge);
 
     delete *old_edge;
-    delete *old_facet0;
-    delete *old_facet1;
+    delete *old_face0;
+    delete *old_face1;
 
     *old_edge = new_edge;
-    *old_facet0 = new_facet0;
-    *old_facet1 = new_facet1;
+    *old_face0 = new_face0;
+    *old_face1 = new_face1;
 
     return true;
 }
 
 
-void shell::Facet::delaunayPostproc()
+void shell::Face::delaunayPostproc()
 {
     for (auto& edge : m_innerEdges)
         flipIfNeeded(edge);
@@ -752,14 +752,14 @@ void shell::Facet::delaunayPostproc()
 
 
 
-void shell::Facet::computeFrontNormals() const
+void shell::Face::computeFrontNormals() const
 {
     for (auto& f_edge : m_frontEdges)
         f_edge->computeNormal();
 }
 
 
-void shell::Facet::initializeFront()
+void shell::Face::initializeFront()
 {
     std::vector<shell::Vertex*> sverts;
     for (auto& this_edge : edges)

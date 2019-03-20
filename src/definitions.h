@@ -6,10 +6,10 @@
 struct Vec;
 
 namespace pmg {
-class Polycrystal;
-class Crystallite;
+class PolyhedralSet;
+class Polyhedron;
 class Tetr;
-class Facet;
+class Face;
 class Edge;
 class Vertex;
 
@@ -20,13 +20,13 @@ class Vertex;
 } // namespace plane
 
 namespace surface {
-class Facet;
+class Face;
 class Edge;
 } // namespace surface
 } // namespace front
 
 namespace shell {
-class Facet;
+class Face;
 class Edge;
 class Vertex;
 } // namespace shell

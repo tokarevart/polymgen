@@ -4,7 +4,7 @@
 #pragma once
 #include <stddef.h>
 #include <memory>
-#include "spatial-objs/shell/shell-facet.h"
+#include "spatial-objs/shell/shell-face.h"
 #include "spatial-objs/shell/shell-edge.h"
 #include "spatial-objs/shell/shell-vertex.h"
 #include "helpers/spatial-algs/vec.h"
@@ -20,7 +20,7 @@ class Vertex
 public:
     size_t globalNum;
 
-    shell::Facet*  belongsToShellFacet  = nullptr;
+    shell::Face*  belongsToShellFace  = nullptr;
     shell::Edge*   belongsToShellEdge   = nullptr;
     shell::Vertex* belongsToShellVertex = nullptr;
 

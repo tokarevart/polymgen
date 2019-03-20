@@ -9,7 +9,7 @@
 
 namespace polygen {
 
-PolyStruct generateCuboidsPolycrystal(
+PolyStruct generateCuboidsPolyhedralSet(
     size_t nX, size_t nY, size_t nZ,
     real_t dX = 1.0, real_t dY = 1.0, real_t dZ = 1.0) noexcept;
 

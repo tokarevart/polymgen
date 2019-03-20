@@ -12,7 +12,7 @@
 
 namespace pmg {
 
-class Facet
+class Face
 {
 public:
     Edge* edges[3];
@@ -21,7 +21,7 @@ public:
     real_t computeQuality() const;
     real_t computeArea()    const;
 
-    static Edge* intersectAlongEdge( const Facet* facet0, const Facet* facet1 );
+    static Edge* intersectAlongEdge( const Face* facet0, const Face* facet1 );
 
     bool intersectsBy( const Vec& origin, const Vec& dir )     const;
     Vertex* findVertNot( const Edge* edge )        const;
@@ -33,8 +33,8 @@ public:
     bool contains( const Edge*   edge ) const;
     bool contains( const Vertex* vert ) const;
 
-    Facet( const Edge*   edge0, const Edge*   edge1, const Edge*   edge2 );
-    Facet( const Vertex* vert0, const Vertex* vert1, const Vertex* vert2 );
+    Face( const Edge*   edge0, const Edge*   edge1, const Edge*   edge2 );
+    Face( const Vertex* vert0, const Vertex* vert1, const Vertex* vert2 );
 };
 
 } // namespace pmg

@@ -7,12 +7,12 @@
 #include <list>
 #include <vector>
 #include <memory>
-#include "spatial-objs/crystallite.h"
-#include "spatial-objs/shell/shell-facet.h"
+#include "spatial-objs/polyhedron.h"
+#include "spatial-objs/shell/shell-face.h"
 #include "spatial-objs/shell/shell-edge.h"
 #include "spatial-objs/shell/shell-vertex.h"
 #include "spatial-objs/tetr.h"
-#include "spatial-objs/facet.h"
+#include "spatial-objs/face.h"
 #include "spatial-objs/edge.h"
 #include "spatial-objs/vertex.h"
 #include "data-structures/polymesh.h"
@@ -25,7 +25,7 @@
 
 namespace pmg {
 
-class Polycrystal
+class PolyhedralSet
 {
 public:
     enum class FileType
@@ -40,12 +40,12 @@ public:
 
     void input(std::string_view polyStructFileName);
     void input(const polygen::PolyStruct& polyStruct);
-    void output(FileType filetype = FileType::Obj, std::string_view filename = "_AUTO_", unsigned polycrystalId = 1u) const;
+    void output(FileType filetype = FileType::Obj, std::string_view filename = "_AUTO_", unsigned PolyhedralSetId = 1u) const;
 
-    Polycrystal();
-    Polycrystal(std::string_view polyStructFileName);
-    Polycrystal(const polygen::PolyStruct& polyStruct);
-    ~Polycrystal();
+    PolyhedralSet();
+    PolyhedralSet(std::string_view polyStructFileName);
+    PolyhedralSet(const polygen::PolyStruct& polyStruct);
+    ~PolyhedralSet();
 
 
 private:
@@ -54,9 +54,9 @@ private:
     PolyMesh* m_lastMesh = nullptr;
     std::unique_ptr<Logger> m_lastLogger;
 
-    std::vector<Crystallite*> m_crystallites;
+    std::vector<Polyhedron*> m_polyhedrons;
 
-    std::vector<shell::Facet*>  m_shellFacets;
+    std::vector<shell::Face*>  m_shellFaces;
     std::vector<shell::Edge*>   m_shellEdges;
     std::vector<shell::Vertex*> m_shellVerts;
 
@@ -67,8 +67,8 @@ private:
     void outputObj(std::string_view filename) const;
     void outputLSDynaKeyword_PART(std::ofstream& file) const;
     void outputLSDynaKeyword_NODE(std::ofstream& file) const;
-    void outputLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, unsigned polycrystalId = 1u) const;
-    void outputLSDynaKeyword(const std::string& filename, unsigned polycrystalId = 1u) const;
+    void outputLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, unsigned PolyhedralSetId = 1u) const;
+    void outputLSDynaKeyword(const std::string& filename, unsigned PolyhedralSetId = 1u) const;
 
     std::string generateLogFileName(std::string_view logFileName) const;
     std::string generateOutputFilename(FileType filetype, std::string_view filename) const;

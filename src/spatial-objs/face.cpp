@@ -1,13 +1,13 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "spatial-objs/facet.h"
+#include "spatial-objs/face.h"
 #include "helpers/spatial-algs/spatial-algs.h"
 
 #define ONE_3 static_cast<real_t>(0.3333333333333333)
 
 
-Vec pmg::Facet::computeCenter() const
+Vec pmg::Face::computeCenter() const
 {
     return ONE_3 * (
         edges[0]->verts[0]->pos() +
@@ -16,13 +16,13 @@ Vec pmg::Facet::computeCenter() const
 }
 
 
-real_t pmg::Facet::computeQuality() const
+real_t pmg::Face::computeQuality() const
 {
     return findShortestEdge()->sqrMagnitude() / findLongestEdge()->sqrMagnitude();
 }
 
 
-real_t pmg::Facet::computeArea() const
+real_t pmg::Face::computeArea() const
 {
     Vec vec0 = edges[0]->verts[1]->pos() - edges[0]->verts[0]->pos();
     Vec vec1 = edges[1]->verts[1]->pos() - edges[1]->verts[0]->pos();
@@ -32,12 +32,12 @@ real_t pmg::Facet::computeArea() const
 
 
 
-pmg::Edge* pmg::Facet::intersectAlongEdge(const pmg::Facet* facet0, const pmg::Facet* facet1)
+pmg::Edge* pmg::Face::intersectAlongEdge(const pmg::Face* face0, const pmg::Face* face1)
 {
     int inters = 0;
     pmg::Edge* res = nullptr;
-    for (auto& edge0 : facet0->edges)
-        for (auto& edge1 : facet1->edges)
+    for (auto& edge0 : face0->edges)
+        for (auto& edge1 : face1->edges)
             if (edge0 == edge1)
             {
                 inters++;
@@ -51,7 +51,7 @@ pmg::Edge* pmg::Facet::intersectAlongEdge(const pmg::Facet* facet0, const pmg::F
 
 
 
-bool pmg::Facet::intersectsBy(const Vec& origin, const Vec& dir) const
+bool pmg::Face::intersectsBy(const Vec& origin, const Vec& dir) const
 {
     return spatalgs::doesRayIntersectTriangle(
         origin, dir,
@@ -61,16 +61,16 @@ bool pmg::Facet::intersectsBy(const Vec& origin, const Vec& dir) const
 }
 
 
-pmg::Vertex* pmg::Facet::findVertNot(const pmg::Edge* edge) const
+pmg::Vertex* pmg::Face::findVertNot(const pmg::Edge* edge) const
 {
-    for (auto& facet_edge : edges)
+    for (auto& face_edge : edges)
     {
-        if (edge != facet_edge)
+        if (edge != face_edge)
         {
-            if (!edge->contains(facet_edge->verts[0]))
-                return facet_edge->verts[0];
+            if (!edge->contains(face_edge->verts[0]))
+                return face_edge->verts[0];
             else
-                return facet_edge->verts[1];
+                return face_edge->verts[1];
         }
     }
 
@@ -78,7 +78,7 @@ pmg::Vertex* pmg::Facet::findVertNot(const pmg::Edge* edge) const
 }
 
 
-pmg::Edge* pmg::Facet::findEdgeNot(const pmg::Vertex* vert) const
+pmg::Edge* pmg::Face::findEdgeNot(const pmg::Vertex* vert) const
 {
     for (auto& edge : edges)
     {
@@ -90,7 +90,7 @@ pmg::Edge* pmg::Facet::findEdgeNot(const pmg::Vertex* vert) const
 }
 
 
-pmg::Edge* pmg::Facet::findEdge(const pmg::Vertex* vert0, const pmg::Vertex* vert1) const
+pmg::Edge* pmg::Face::findEdge(const pmg::Vertex* vert0, const pmg::Vertex* vert1) const
 {
     for (auto& edge : edges)
     {
@@ -105,7 +105,7 @@ pmg::Edge* pmg::Facet::findEdge(const pmg::Vertex* vert0, const pmg::Vertex* ver
 }
 
 
-pmg::Edge* pmg::Facet::findShortestEdge() const
+pmg::Edge* pmg::Face::findShortestEdge() const
 {
     if (edges[0]->sqrMagnitude() < edges[1]->sqrMagnitude())
     {
@@ -124,7 +124,7 @@ pmg::Edge* pmg::Facet::findShortestEdge() const
 }
 
 
-pmg::Edge* pmg::Facet::findLongestEdge() const
+pmg::Edge* pmg::Face::findLongestEdge() const
 {
     if (edges[0]->sqrMagnitude() > edges[1]->sqrMagnitude())
     {
@@ -145,7 +145,7 @@ pmg::Edge* pmg::Facet::findLongestEdge() const
 
 
 
-bool pmg::Facet::contains(const pmg::Edge* edge) const
+bool pmg::Face::contains(const pmg::Edge* edge) const
 {
     for (auto& edge0 : edges)
         if (edge0 == edge)
@@ -155,7 +155,7 @@ bool pmg::Facet::contains(const pmg::Edge* edge) const
 }
 
 
-bool pmg::Facet::contains(const pmg::Vertex* vert) const
+bool pmg::Face::contains(const pmg::Vertex* vert) const
 {
     for (auto& edge : edges)
         if (edge->contains(vert))
@@ -167,7 +167,7 @@ bool pmg::Facet::contains(const pmg::Vertex* vert) const
 
 
 
-pmg::Facet::Facet(const pmg::Edge* edge0, const pmg::Edge* edge1, const pmg::Edge* edge2)
+pmg::Face::Face(const pmg::Edge* edge0, const pmg::Edge* edge1, const pmg::Edge* edge2)
 {
     edges[0] = const_cast<pmg::Edge*>(edge0);
     edges[1] = const_cast<pmg::Edge*>(edge1);
@@ -175,7 +175,7 @@ pmg::Facet::Facet(const pmg::Edge* edge0, const pmg::Edge* edge1, const pmg::Edg
 }
 
 
-pmg::Facet::Facet(const pmg::Vertex* vert0, const pmg::Vertex* vert1, const pmg::Vertex* vert2)
+pmg::Face::Face(const pmg::Vertex* vert0, const pmg::Vertex* vert1, const pmg::Vertex* vert2)
 {
     edges[0] = new pmg::Edge(vert0, vert1);
     edges[1] = new pmg::Edge(vert1, vert2);

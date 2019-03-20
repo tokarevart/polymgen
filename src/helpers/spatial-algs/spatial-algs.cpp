@@ -6,7 +6,7 @@
 #include "helpers/spatial-algs/spatial-algs.h"
 
 
-
+#define EPS static_cast<real_t>(1e-6)
 
 #define DET(a, b, c, d) \
         ((a) * (d) - (b) * (c))
@@ -38,8 +38,6 @@ bool spatalgs::project(
 {
     Vec res = segm_p0 + (point - segm_p0).project(segm_p1 - segm_p0);
 
-    // Try to remove later.
-    const real_t EPS = (segm_p1 - segm_p0).magnitude() * static_cast<real_t>(1e-6);
     if (INSIDE_RECTANGLE(
             segm_p0,
             segm_p1,
@@ -435,8 +433,6 @@ real_t spatalgs::distancePointToSegment(const Vec& point, const Vec& segm_p0, co
 {
     Vec proj = project(point, segm_p0, segm_p1);
 
-    // Try to remove later.
-    const real_t EPS = (segm_p1 - segm_p0).magnitude() * static_cast<real_t>(1e-6);
     if (INSIDE_RECTANGLE(segm_p0, segm_p1, proj))
     {
         return (proj - point).magnitude();
@@ -503,8 +499,6 @@ Vec spatalgs::closestSegmentPointToPoint(const Vec& point, const Vec& segm_p0, c
 {
     Vec proj = project(point, segm_p0, segm_p1);
 
-    // Try to remove later.
-    const real_t EPS = (segm_p1 - segm_p0).magnitude() * static_cast<real_t>(1e-6);
     if (INSIDE_RECTANGLE(segm_p0, segm_p1, proj))
     {
         return proj;

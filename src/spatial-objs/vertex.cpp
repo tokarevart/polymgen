@@ -63,11 +63,11 @@ pmg::Vertex& pmg::Vertex::operator+=(const Vec& other)
         (*m_pos) += Vec(other).project(*belongsToShellEdge->verts[0] - *belongsToShellEdge->verts[1]);
         return *this;
     }
-    else if (belongsToShellFacet)
+    else if (belongsToShellFace)
     {
         (*m_pos) += Vec(other).project(
-            *belongsToShellFacet->edges[0]->verts[1] - *belongsToShellFacet->edges[0]->verts[0],
-            *belongsToShellFacet->edges[1]->verts[1] - *belongsToShellFacet->edges[1]->verts[0]);
+            *belongsToShellFace->edges[0]->verts[1] - *belongsToShellFace->edges[0]->verts[0],
+            *belongsToShellFace->edges[1]->verts[1] - *belongsToShellFace->edges[1]->verts[0]);
         return *this;
     }
     else

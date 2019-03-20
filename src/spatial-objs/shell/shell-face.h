@@ -16,14 +16,14 @@
 namespace pmg {
 namespace shell {
 
-class Facet
+class Face
 {
 public:
     shell::Edge* edges[3];
 
     real_t preferredLength() const;
 
-    const std::list<pmg::Facet*>&  innerFacets() const;
+    const std::list<pmg::Face*>&  innerFaces() const;
     const std::list<pmg::Edge*>&   innerEdges()  const;
     const std::vector<pmg::Vertex*>& innerVerts()  const;
 
@@ -38,7 +38,7 @@ public:
     bool contains( const shell::Edge*   sEdge ) const;
     bool contains( const shell::Vertex* sVert ) const;
 
-    Facet( const shell::Edge* sEdge0, const shell::Edge* sEdge1, const shell::Edge* sEdge2 );
+    Face( const shell::Edge* sEdge0, const shell::Edge* sEdge1, const shell::Edge* sEdge2 );
 
 
 private:
@@ -52,12 +52,12 @@ private:
     using FrPlEdge   = front::plane::Edge;
     using FrPlVertex = front::plane::Vertex;
     using pair_dd = std::pair<real_t, real_t>;
-    using pair_ff = std::pair<pmg::Facet*, pmg::Facet*>;
+    using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
     using pair_ee = std::pair<pmg::Edge*, pmg::Edge*>;
 
     real_t m_preferredLength;
 
-    std::list<pmg::Facet*>  m_innerFacets;
+    std::list<pmg::Face*>  m_innerFaces;
     std::list<pmg::Edge*>   m_innerEdges;
     std::vector<pmg::Vertex*> m_innerVerts;
 
@@ -104,12 +104,12 @@ private:
         FrPlVertex* fVert,
         FrPlEdge*& out_withNWFrontEdge, Vec*& out_withNWNewVertPos );
 
-    void processLastFacet();
+    void processLastFace();
     void processAngles();
 
     void smoothMesh( unsigned nIterations );
 
-    pair_ff find2AdjFacets( pmg::Edge* edge ) const;
+    pair_ff find2AdjFaces( pmg::Edge* edge ) const;
     bool flipIfNeeded( pmg::Edge* edge );
     void delaunayPostproc();
 

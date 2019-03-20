@@ -4,8 +4,8 @@
 #pragma once
 #include <list>
 #include <vector>
-#include "spatial-objs/crystallite.h"
-#include "spatial-objs/front/surface/front-surface-facet.h"
+#include "spatial-objs/polyhedron.h"
+#include "spatial-objs/front/surface/front-surface-face.h"
 #include "spatial-objs/vertex.h"
 #include "real-type.h"
 
@@ -18,10 +18,10 @@ namespace surface {
 
 class Edge
 {
-    using FrSuFacet = front::surface::Facet;
+    using FrSuFace = front::surface::Face;
     using FrSuEdge  = front::surface::Edge;
     using pair_vv = std::pair<pmg::Vertex*, pmg::Vertex*>;
-    using pair_ff = std::pair<FrSuFacet*, FrSuFacet*>;
+    using pair_ff = std::pair<FrSuFace*, FrSuFace*>;
 
 public:
     pmg::Edge* edge;
@@ -39,19 +39,19 @@ public:
     FrSuEdge* findOppEdge();
 
     // Adj means adjacent.
-    pair_ff getAdjFFacets();
+    pair_ff getAdjFFaces();
 
-    bool addAdjFFacet(       const FrSuFacet* fFacet );
-    bool removeAdjFFacet(    const FrSuFacet* fFacet );
-    bool adjFFacetsContains( const FrSuFacet* fFacet ) const;
-    void fillAdjFFacets( const FrSuFacet* fFacet0, const FrSuFacet* fFacet1 );
+    bool addAdjFFace(       const FrSuFace* fFace );
+    bool removeAdjFFace(    const FrSuFace* fFace );
+    bool adjFFacesContains( const FrSuFace* fFace ) const;
+    void fillAdjFFaces( const FrSuFace* fFace0, const FrSuFace* fFace1 );
 
-    Edge( const Crystallite* relatedCrys, const pmg::Edge* edge );
+    Edge( const Polyhedron* relatedPolyhedron, const pmg::Edge* edge );
 
 
 private:
-    Crystallite* m_relatedCrys;
-    pair_ff m_adjFFacets{ nullptr, nullptr };
+    Polyhedron* m_relatedPolyhedron;
+    pair_ff m_adjFFaces{ nullptr, nullptr };
 
     real_t m_exCos;
     real_t m_complexity;
@@ -59,8 +59,8 @@ private:
     bool m_needExCosProcessing      = true;
     bool m_needComplexityProcessing = true;
 
-    bool isAdjFacetsFull();
-    pair_ff fillAdjFFacets();
+    bool isAdjFacesFull();
+    pair_ff fillAdjFFaces();
 };
 
 } // namespace surface

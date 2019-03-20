@@ -11,7 +11,7 @@ namespace polygen {
 
 struct PolyStruct
 {
-    struct NodePos
+    struct VertPos
     {
         real_t x;
         real_t y;
@@ -21,22 +21,22 @@ struct PolyStruct
         real_t  operator[](unsigned i) const;
     };
 
-    struct Facet
+    struct Face
     {
-        size_t node0;
-        size_t node1;
-        size_t node2;
+        size_t vert0;
+        size_t vert1;
+        size_t vert2;
 
         size_t& operator[](unsigned i);
         size_t  operator[](unsigned i) const;
     };
 
     typedef size_t FaceIdx;
-    typedef std::vector<FaceIdx> Crys;
+    typedef std::vector<FaceIdx> Polyhedron;
 
-    std::vector<NodePos>  nodes;
-    std::vector<Facet>    facets;
-    std::vector<Crys>     cryses;
+    std::vector<VertPos>    verts;
+    std::vector<Face>       faces;
+    std::vector<Polyhedron> polyhedrons;
 
     void clear();
 

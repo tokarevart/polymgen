@@ -4,7 +4,7 @@
 #pragma once
 #include <list>
 #include <vector>
-#include "spatial-objs/facet.h"
+#include "spatial-objs/face.h"
 #include "spatial-objs/vertex.h"
 #include "real-type.h"
 
@@ -15,7 +15,7 @@ namespace pmg {
 
 class Edge
 {
-    using pair_ff = std::pair<pmg::Facet*, pmg::Facet*>;
+    using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
 
 public:
     Vertex* verts[2];
@@ -26,17 +26,17 @@ public:
     Vertex* findNot( const Edge*   edge ) const;
     Vertex* findNot( const Vertex* vert ) const;
 
-    void flip( std::list<Edge*>& edgesList, std::list<Facet*>& facetsList );
-    bool flipIfNeeded( std::list<Edge*>& edgesList, std::list<Facet*>& facetsList );
+    void flip( std::list<Edge*>& edgesList, std::list<Face*>& facesList );
+    bool flipIfNeeded( std::list<Edge*>& edgesList, std::list<Face*>& facesList );
     // Adj means adjacent.
-    void findAdjFacets( const std::list<Facet*>& facetsList, std::list<Facet*>& adjFacets ) const;
-    pair_ff find2AdjFacets( const std::list<Facet*>& facetsList ) const;
+    void findAdjFaces( const std::list<Face*>& facesList, std::list<Face*>& adjFaces ) const;
+    pair_ff find2AdjFaces( const std::list<Face*>& facesList ) const;
 
     bool contains( const Vertex* vert ) const;
 
     bool belongsToShell();
 
-    bool needToFlip( const std::list<Facet*>& facetsList );
+    bool needToFlip( const std::list<Face*>& facesList );
 
     Edge( const Vertex* vert0, const Vertex* vert1 );
 };

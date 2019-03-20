@@ -22,7 +22,7 @@ struct PolyMesh
     // Number of tetrahedrons in each crystalline.
     size_t* nCrysesTetrs;
 
-    // c - crystallite,
+    // c - Polyhedron,
     // t - tetrahedron,
     // n - node.
     // { ... c[i]_t[0]_n[0..3] ... c[i]_t[nCrysesTetrs[i]]_n[0..3] }

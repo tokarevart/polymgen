@@ -11,8 +11,8 @@ using FrPlEdge = pmg::front::plane::Edge;
 
 Vec FrPlEdge::computeNormal()
 {
-    shell::Edge* related_sedge = m_relatedShellFacet->findShellEdgeContaining(edge);
-    Vec opp_v_pos = m_relatedShellFacet->findVertNot(related_sedge)->pos();
+    shell::Edge* related_sedge = m_relatedShellFace->findShellEdgeContaining(edge);
+    Vec opp_v_pos = m_relatedShellFace->findVertNot(related_sedge)->pos();
     Vec p0 = related_sedge->verts[0]->pos();
     Vec p1 = related_sedge->verts[1]->pos();
 
@@ -42,5 +42,5 @@ bool FrPlEdge::isAdj(const FrPlEdge* edge0, const FrPlEdge* edge1)
 
 
 
-FrPlEdge::Edge(const shell::Facet* relatedShellFacet, const pmg::Edge* edge)
-    : edge(const_cast<pmg::Edge*>(edge)), m_relatedShellFacet(const_cast<shell::Facet*>(relatedShellFacet)) {}
+FrPlEdge::Edge(const shell::Face* relatedShellFace, const pmg::Edge* edge)
+    : edge(const_cast<pmg::Edge*>(edge)), m_relatedShellFace(const_cast<shell::Face*>(relatedShellFace)) {}

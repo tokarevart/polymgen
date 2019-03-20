@@ -8,7 +8,7 @@ using namespace polygen;
 
 
 
-real_t& PolyStruct::NodePos::operator[](unsigned i)
+real_t& PolyStruct::VertPos::operator[](unsigned i)
 {
     switch (i)
     {
@@ -20,7 +20,7 @@ real_t& PolyStruct::NodePos::operator[](unsigned i)
 }
 
 
-real_t PolyStruct::NodePos::operator[](unsigned i) const
+real_t PolyStruct::VertPos::operator[](unsigned i) const
 {
     switch (i)
     {
@@ -34,26 +34,26 @@ real_t PolyStruct::NodePos::operator[](unsigned i) const
 
 
 
-size_t& PolyStruct::Facet::operator[](unsigned i)
+size_t& PolyStruct::Face::operator[](unsigned i)
 {
     switch (i)
     {
-    case 0: return node0;
-    case 1: return node1;
-    case 2: return node2;
-    default: return node2;
+    case 0: return vert0;
+    case 1: return vert1;
+    case 2: return vert2;
+    default: return vert2;
     }
 }
 
 
-size_t PolyStruct::Facet::operator[](unsigned i) const
+size_t PolyStruct::Face::operator[](unsigned i) const
 {
     switch (i)
     {
-    case 0: return node0;
-    case 1: return node1;
-    case 2: return node2;
-    default: return node2;
+    case 0: return vert0;
+    case 1: return vert1;
+    case 2: return vert2;
+    default: return vert2;
     }
 }
 
@@ -62,9 +62,9 @@ size_t PolyStruct::Facet::operator[](unsigned i) const
 
 void PolyStruct::PolyStruct::clear()
 {
-    nodes.clear();
-    facets.clear();
-    cryses.clear();
+    verts.clear();
+    faces.clear();
+    polyhedrons.clear();
 }
 
 
@@ -72,18 +72,18 @@ void PolyStruct::PolyStruct::clear()
 
 PolyStruct& PolyStruct::PolyStruct::operator=(PolyStruct&& other) noexcept
 {
-    nodes  = std::move(other.nodes);
-    facets = std::move(other.facets);
-    cryses = std::move(other.cryses);
+    verts  = std::move(other.verts);
+    faces  = std::move(other.faces);
+    polyhedrons = std::move(other.polyhedrons);
     return *this;
 }
 
 
 PolyStruct& PolyStruct::PolyStruct::operator=(const PolyStruct& other)
 {
-    nodes  = other.nodes;
-    facets = other.facets;
-    cryses = other.cryses;
+    verts       = other.verts;
+    faces       = other.faces;
+    polyhedrons = other.polyhedrons;
     return *this;
 }
 
@@ -91,14 +91,14 @@ PolyStruct& PolyStruct::PolyStruct::operator=(const PolyStruct& other)
 
 
 PolyStruct::PolyStruct::PolyStruct(PolyStruct&& other) noexcept
-    : nodes(std::move(other.nodes)), facets(std::move(other.facets)), cryses(std::move(other.cryses)) {}
+    : verts(std::move(other.verts)), faces(std::move(other.faces)), polyhedrons(std::move(other.polyhedrons)) {}
 
 
 PolyStruct::PolyStruct::PolyStruct(const PolyStruct& other)
 {
-    nodes  = other.nodes;
-    facets = other.facets;
-    cryses = other.cryses;
+    verts       = other.verts;
+    faces       = other.faces;
+    polyhedrons = other.polyhedrons;
 }
 
 

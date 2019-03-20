@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 #pragma once
-#include "spatial-objs/crystallite.h"
+#include "spatial-objs/polyhedron.h"
 #include "helpers/spatial-algs/vec.h"
 #include "real-type.h"
 
@@ -13,12 +13,12 @@ namespace pmg {
 namespace front {
 namespace surface {
 
-class Facet
+class Face
 {
     using FrSuEdge = front::surface::Edge;
 
 public:
-    pmg::Facet* facet;
+    pmg::Face* face;
     FrSuEdge* fEdges[3] { nullptr, nullptr, nullptr };
     Vec normal;
 
@@ -35,11 +35,11 @@ public:
 
     bool contains( const FrSuEdge* fEdge ) const;
 
-    Facet(const Crystallite* relatedCrys, const pmg::Facet* facet);
+    Face(const Polyhedron* relatedPolyhedron, const pmg::Face* face);
 
 
 private:
-    Crystallite* m_relatedCrys;
+    Polyhedron* m_relatedPolyhedron;
 };
 
 } // namespace surface
