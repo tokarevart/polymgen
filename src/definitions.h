@@ -3,10 +3,7 @@
 
 #pragma once
 
-namespace tva {
 struct Vec;
-typedef Vec Point;
-} // namespace tva
 
 namespace pmg {
 class Polycrystal;

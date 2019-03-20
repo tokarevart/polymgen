@@ -8,6 +8,9 @@ using pmg::PolyMesh;
 
 
 
+PolyMesh::PolyMesh() {}
+
+
 PolyMesh::~PolyMesh()
 {
     delete[] nodesPositions;

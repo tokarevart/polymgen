@@ -7,7 +7,7 @@
 #include "helpers/spatial-algs/vec.h"
 
 using namespace pmg;
-using tva::Vec;
+
 
 
 
@@ -23,9 +23,9 @@ const std::vector<Vertex*>&shell::Edge::innerVerts() const
 }
 
 
-void shell::Edge::segmentize(double preferredLen)
+void shell::Edge::segmentize(real_t preferredLen)
 {
-    size_t n_inner_verts = static_cast<size_t>(round(magnitude() / preferredLen)) - 1;
+    size_t n_inner_verts = static_cast<size_t>(roundReal(magnitude() / preferredLen)) - 1;
     if (n_inner_verts == 0) return;
 
     Vec dir = (*verts[1] - *verts[0]) / (n_inner_verts + 1);
@@ -48,13 +48,13 @@ void shell::Edge::segmentize(double preferredLen)
 
 
 
-double shell::Edge::magnitude() const
+real_t shell::Edge::magnitude() const
 {
     return std::sqrt(sqrMagnitude());
 }
 
 
-double shell::Edge::sqrMagnitude() const
+real_t shell::Edge::sqrMagnitude() const
 {
     Vec buf = *verts[1] - *verts[0];
     return Vec::dot(buf, buf);

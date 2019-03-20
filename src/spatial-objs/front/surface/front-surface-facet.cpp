@@ -7,7 +7,6 @@
 
 using FrSuFacet = pmg::front::surface::Facet;
 using FrSuEdge  = pmg::front::surface::Edge;
-using tva::Vec;
 
 
 
@@ -21,7 +20,10 @@ Vec FrSuFacet::computeNormal()
         facet->edges[0]->verts[1]->pos() - third_pos).normalize();
 
     // I don't know why it led to better(correct) result.
-    Vec test_normal_correct_intersect = loc_normal + Vec(2.1632737147, 1.488313178, -0.71123534278) * 1e-3;
+    Vec test_normal_correct_intersect = loc_normal + Vec(static_cast<real_t>(2.1632737147),
+                                                         static_cast<real_t>(1.488313178),
+                                                         static_cast<real_t>(-0.71123534278))
+                                                     * static_cast<real_t>(1e-3);
 
     int intersects_num = 0;
     for (auto& f_facet : m_relatedCrys->frontFacets())
@@ -33,7 +35,7 @@ Vec FrSuFacet::computeNormal()
             intersects_num++;
     }
 
-    if (loc_normal.sqrMagnitude() < 1e-6)
+    if (loc_normal.sqrMagnitude() < static_cast<real_t>(1e-6))
         throw std::exception();
 
     return normal = intersects_num % 2 == 1 ? loc_normal : -loc_normal;
@@ -48,7 +50,7 @@ Vec FrSuFacet::computeCenter()
 }
 
 
-double FrSuFacet::computeQuality()
+real_t FrSuFacet::computeQuality()
 {
     return facet->computeQuality();
 }

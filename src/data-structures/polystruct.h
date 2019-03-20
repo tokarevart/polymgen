@@ -4,6 +4,7 @@
 #pragma once
 #include <stddef.h>
 #include <vector>
+#include "real-type.h"
 
 
 namespace polygen {
@@ -12,12 +13,12 @@ struct PolyStruct
 {
     struct NodePos
     {
-        double x;
-        double y;
-        double z;
+        real_t x;
+        real_t y;
+        real_t z;
 
-        double& operator[](unsigned i);
-        const double& operator[](unsigned i) const;
+        real_t& operator[](unsigned i);
+        real_t  operator[](unsigned i) const;
     };
 
     struct Facet
@@ -27,11 +28,11 @@ struct PolyStruct
         size_t node2;
 
         size_t& operator[](unsigned i);
-        const size_t& operator[](unsigned i) const;
+        size_t  operator[](unsigned i) const;
     };
 
-    typedef size_t FacetIndex;
-    typedef std::vector<FacetIndex> Crys;
+    typedef size_t FaceIdx;
+    typedef std::vector<FaceIdx> Crys;
 
     std::vector<NodePos>  nodes;
     std::vector<Facet>    facets;

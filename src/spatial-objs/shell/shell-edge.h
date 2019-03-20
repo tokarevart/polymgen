@@ -4,6 +4,7 @@
 #pragma once
 #include <vector>
 #include "spatial-objs/shell/shell-vertex.h"
+#include "real-type.h"
 
 #include "definitions.h"
 
@@ -19,10 +20,10 @@ public:
     const std::vector<pmg::Edge*>&   innerEdges() const;
     const std::vector<pmg::Vertex*>& innerVerts() const;
 
-    void segmentize(double preferredLen);
+    void segmentize(real_t preferredLen);
 
-    double magnitude()    const;
-    double sqrMagnitude() const;
+    real_t magnitude()    const;
+    real_t sqrMagnitude() const;
 
     bool contains(const shell::Vertex* sVert) const;
     bool contains(const   pmg::Edge*    edge) const;

@@ -4,6 +4,7 @@
 #pragma once
 #include "spatial-objs/shell/shell-facet.h"
 #include "helpers/spatial-algs/vec.h"
+#include "real-type.h"
 
 #include "definitions.h"
 
@@ -24,11 +25,11 @@ public:
 
     void refreshAngleData();
 
-    double complexity();
-    double angleExCos();
-    double computeComplexity();
-    double computeAngleExCos();
-    double computeAngle();
+    real_t complexity();
+    real_t angleExCos();
+    real_t computeComplexity();
+    real_t computeAngleExCos();
+    real_t computeAngle();
 
     pair_ee findAdjEdges() const;
     pair_vv findOppVerts() const;
@@ -39,8 +40,8 @@ public:
 private:
     shell::Facet* m_relatedShellFacet;
 
-    double m_exCos;
-    double m_complexity;
+    real_t m_exCos;
+    real_t m_complexity;
 
     bool m_needExCosProcessing      = true;
     bool m_needComplexityProcessing = true;

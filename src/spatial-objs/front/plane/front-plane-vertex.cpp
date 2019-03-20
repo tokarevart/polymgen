@@ -5,8 +5,9 @@
 #include <stdexcept>
 #include "helpers/spatial-algs/spatial-algs.h"
 
+#define PI static_cast<real_t>(M_PI)
 
-#define K_ALPHA 4.0
+#define K_ALPHA static_cast<real_t>(4.0)
 
 
 using FrPlEdge   = pmg::front::plane::Edge;
@@ -24,7 +25,7 @@ void FrPlVertex::refreshAngleData()
 }
 
 
-double FrPlVertex::complexity()
+real_t FrPlVertex::complexity()
 {
     if (!m_needComplexityProcessing)
         return m_complexity;
@@ -33,7 +34,7 @@ double FrPlVertex::complexity()
 }
 
 
-double FrPlVertex::angleExCos()
+real_t FrPlVertex::angleExCos()
 {
     if (!m_needExCosProcessing)
         return m_exCos;
@@ -42,36 +43,36 @@ double FrPlVertex::angleExCos()
 }
 
 
-double FrPlVertex::computeComplexity()
+real_t FrPlVertex::computeComplexity()
 {
     m_needComplexityProcessing = false;
     auto adj_edges = findAdjEdges();
-    double adj_edges_av_len = 0.5 * (  std::get<0>(adj_edges)->edge->magnitude()
+    real_t adj_edges_av_len = static_cast<real_t>(0.5) * (  std::get<0>(adj_edges)->edge->magnitude()
                                      + std::get<1>(adj_edges)->edge->magnitude());
-    return m_complexity = m_relatedShellFacet->preferredLength() / adj_edges_av_len + K_ALPHA * M_PI / computeAngle();
+    return m_complexity = m_relatedShellFacet->preferredLength() / adj_edges_av_len + K_ALPHA * PI / computeAngle();
 }
 
 
-double FrPlVertex::computeAngleExCos()
+real_t FrPlVertex::computeAngleExCos()
 {
     auto adj_edges = findAdjEdges();
 
-    double normals_cos = tva::Vec::dot(std::get<0>(adj_edges)->normal, std::get<1>(adj_edges)->normal);
+    real_t normals_cos = Vec::dot(std::get<0>(adj_edges)->normal, std::get<1>(adj_edges)->normal);
 
     m_needExCosProcessing = false;
-    return m_exCos = tva::spatalgs::cpaTime(
+    return m_exCos = spatalgs::cpaTime(
             std::get<0>(adj_edges)->computeCenter(), std::get<0>(adj_edges)->normal,
-            std::get<1>(adj_edges)->computeCenter(), std::get<1>(adj_edges)->normal) < 1e-6 ?
-        -2.0 + normals_cos :
+            std::get<1>(adj_edges)->computeCenter(), std::get<1>(adj_edges)->normal) < static_cast<real_t>(1e-6) ?
+        static_cast<real_t>(-2.0) + normals_cos :
         -normals_cos;
 }
 
 
-double FrPlVertex::computeAngle()
+real_t FrPlVertex::computeAngle()
 {
-    return angleExCos() < -1.0 ?
-        acos(m_exCos + 2.0) + M_PI :
-                acos(m_exCos);
+    return angleExCos() < static_cast<real_t>(-1.0) ?
+        acosReal(m_exCos + static_cast<real_t>(2.0)) + PI :
+                acosReal(m_exCos);
 }
 
 

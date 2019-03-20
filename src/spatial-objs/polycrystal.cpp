@@ -217,10 +217,10 @@ void Polycrystal::outputLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, unsigne
             file << std::setw(8) << eid++;
             file << std::setw(8) << pid;
             file << std::setw(8) << tetr->verts[0]->globalNum;
-            tva::Vec v0 = tetr->verts[1]->pos() - tetr->verts[0]->pos();
-            tva::Vec v1 = tetr->verts[2]->pos() - tetr->verts[0]->pos();
-            tva::Vec v2 = tetr->verts[3]->pos() - tetr->verts[0]->pos();
-            if (tva::Vec::dot(v2, tva::Vec::cross(v0, v1)) > 0.0)
+            Vec v0 = tetr->verts[1]->pos() - tetr->verts[0]->pos();
+            Vec v1 = tetr->verts[2]->pos() - tetr->verts[0]->pos();
+            Vec v2 = tetr->verts[3]->pos() - tetr->verts[0]->pos();
+            if (Vec::dot(v2, Vec::cross(v0, v1)) > static_cast<real_t>(0.0))
             {
                 file << std::setw(8) << tetr->verts[1]->globalNum;
                 file << std::setw(8) << tetr->verts[2]->globalNum;
@@ -271,11 +271,11 @@ std::string Polycrystal::generateLogFileName(std::string_view logFileName) const
 }
 
 
-void Polycrystal::generateMesh(double preferredLength, std::string_view logFileName)
+void Polycrystal::generateMesh(real_t preferredLength, std::string_view logFileName)
 {
     m_preferredLength = preferredLength;
 
-    tva::Timer tmr;
+    Timer tmr;
     tmr.start();
     try
     {
@@ -289,7 +289,7 @@ void Polycrystal::generateMesh(double preferredLength, std::string_view logFileN
     tmr.stop();
 
     tmr.start();
-    double min_q = 1.0, av_q = 0.0;
+    real_t min_q = 1.0, av_q = 0.0;
     size_t n_elems = 0;
     size_t max = m_crystallites.size();
     #pragma omp parallel for
@@ -316,15 +316,15 @@ void Polycrystal::generateMesh(double preferredLength, std::string_view logFileN
     }
     av_q /= m_crystallites.size();
     tmr.stop();
-    m_lastLogger.reset(new tva::Logger(generateLogFileName(logFileName)));
+    m_lastLogger.reset(new Logger(generateLogFileName(logFileName)));
     *m_lastLogger << std::fixed
         << "Minimum quality"          << min_q << ""
         << "Average quality"          << av_q  << ""
         << "Crystallites number"      << m_crystallites.size() << ""
         << "Elements number"          << n_elems               << ""
         << "Preferred edge length"    << m_preferredLength     << ""
-        << "Shell triangulation time" << tmr.getDuration(0,  tva::Timer::TimeScale::Microseconds) * 1e-6 << "s"
-        << "Volume exhaustion time"   << tmr.getLastDuration(tva::Timer::TimeScale::Microseconds) * 1e-6 << "s";
+        << "Shell triangulation time" << tmr.getDuration(0,  Timer::TimeScale::Microseconds) * 1e-6 << "s"
+        << "Volume exhaustion time"   << tmr.getLastDuration(Timer::TimeScale::Microseconds) * 1e-6 << "s";
 }
 
 
@@ -348,7 +348,7 @@ const PolyMesh* Polycrystal::structurizeMesh()
             [](auto vert) { return static_cast<bool>(vert); }));
 
     m_lastMesh->nNodes = nodes_num;
-    m_lastMesh->nodesPositions = new double[3 * m_lastMesh->nNodes];
+    m_lastMesh->nodesPositions = new real_t[3 * m_lastMesh->nNodes];
     Vertex** verts_ptrs = new Vertex*[m_lastMesh->nNodes];
 
     auto lastMesh_buf = m_lastMesh;
@@ -452,7 +452,7 @@ void Polycrystal::input(std::string_view polyStructFileName)
 
     for (size_t i = 0; i < nodes_num; i++)
     {
-        double coors[3];
+        real_t coors[3];
         input >> coors[0];
         input >> coors[1];
         input >> coors[2];
@@ -533,7 +533,7 @@ void Polycrystal::input(const polygen::PolyStruct& polyStruct)
 {
     for (size_t i = 0; i < polyStruct.nodes.size(); i++)
     {
-        double coors[3];
+        real_t coors[3];
         coors[0] = polyStruct.nodes[i][0];
         coors[1] = polyStruct.nodes[i][1];
         coors[2] = polyStruct.nodes[i][2];
@@ -620,7 +620,7 @@ std::string Polycrystal::generateOutputFilename(FileType filetype, std::string_v
 
 void Polycrystal::output(FileType filetype, std::string_view filename, unsigned polycrystalId) const
 {
-    tva::Timer tmr;
+    Timer tmr;
     tmr.start();
     switch (filetype)
     {
@@ -636,7 +636,7 @@ void Polycrystal::output(FileType filetype, std::string_view filename, unsigned 
 
     if (m_lastLogger && m_lastLogger->isOpen())
     {
-        *m_lastLogger << "Mesh file writing time" << tmr.getLastDuration(tva::Timer::TimeScale::Microseconds) * 1e-6 << "s";
+        *m_lastLogger << "Mesh file writing time" << tmr.getLastDuration(Timer::TimeScale::Microseconds) * 1e-6 << "s";
         m_lastLogger->close();
     }
 }

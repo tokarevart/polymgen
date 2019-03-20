@@ -4,15 +4,11 @@
 #include "data-structures/polystruct.h"
 
 using namespace polygen;
-typedef PolyStruct::NodePos NodePos;
-typedef PolyStruct::Facet Facet;
-typedef PolyStruct::Crys Crys;
-typedef PolyStruct::FacetIndex FacetIndex;
 
 
 
 
-double& NodePos::operator[](unsigned i)
+real_t& PolyStruct::NodePos::operator[](unsigned i)
 {
     switch (i)
     {
@@ -23,15 +19,22 @@ double& NodePos::operator[](unsigned i)
     }
 }
 
-const double& NodePos::operator[](unsigned i) const
+
+real_t PolyStruct::NodePos::operator[](unsigned i) const
 {
-    return const_cast<NodePos&>(*this)[i];
+    switch (i)
+    {
+    case 0: return x;
+    case 1: return y;
+    case 2: return z;
+    default: return z;
+    }
 }
 
 
 
 
-size_t& Facet::operator[](unsigned i)
+size_t& PolyStruct::Facet::operator[](unsigned i)
 {
     switch (i)
     {
@@ -42,15 +45,22 @@ size_t& Facet::operator[](unsigned i)
     }
 }
 
-const size_t& Facet::operator[](unsigned i) const
+
+size_t PolyStruct::Facet::operator[](unsigned i) const
 {
-    return const_cast<Facet&>(*this)[i];
+    switch (i)
+    {
+    case 0: return node0;
+    case 1: return node1;
+    case 2: return node2;
+    default: return node2;
+    }
 }
 
 
 
 
-void PolyStruct::clear()
+void PolyStruct::PolyStruct::clear()
 {
     nodes.clear();
     facets.clear();
@@ -60,7 +70,7 @@ void PolyStruct::clear()
 
 
 
-PolyStruct& PolyStruct::operator=(PolyStruct&& other) noexcept
+PolyStruct& PolyStruct::PolyStruct::operator=(PolyStruct&& other) noexcept
 {
     nodes  = std::move(other.nodes);
     facets = std::move(other.facets);
@@ -69,7 +79,7 @@ PolyStruct& PolyStruct::operator=(PolyStruct&& other) noexcept
 }
 
 
-PolyStruct& PolyStruct::operator=(const PolyStruct& other)
+PolyStruct& PolyStruct::PolyStruct::operator=(const PolyStruct& other)
 {
     nodes  = other.nodes;
     facets = other.facets;
@@ -80,18 +90,16 @@ PolyStruct& PolyStruct::operator=(const PolyStruct& other)
 
 
 
-PolyStruct::PolyStruct(PolyStruct&& other) noexcept
-    : nodes(std::move(other.nodes)), facets(std::move(other.facets)), cryses(std::move(other.cryses))
-{
-    int a = 24;
-    a = a + 23;
-}
+PolyStruct::PolyStruct::PolyStruct(PolyStruct&& other) noexcept
+    : nodes(std::move(other.nodes)), facets(std::move(other.facets)), cryses(std::move(other.cryses)) {}
 
-PolyStruct::PolyStruct(const PolyStruct& other)
+
+PolyStruct::PolyStruct::PolyStruct(const PolyStruct& other)
 {
     nodes  = other.nodes;
     facets = other.facets;
     cryses = other.cryses;
 }
 
-PolyStruct::PolyStruct() {}
+
+PolyStruct::PolyStruct::PolyStruct() {}

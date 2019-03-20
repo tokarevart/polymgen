@@ -10,8 +10,6 @@
 #include "helpers/cosd-values.h"
 
 using namespace pmg;
-using tva::Vec;
-using tva::Point;
 
 using FrSuFacet = front::surface::Facet;
 using FrSuEdge  = front::surface::Edge;
@@ -28,23 +26,24 @@ using pair_ff   = std::pair<FrSuFacet*, FrSuFacet*>;
         (BETWEEN(corner0[0], corner1[0], point[0]) && \
          BETWEEN(corner0[1], corner1[1], point[1]))
 
-#define ALPHA_P      70.52877936550931
-#define DEG_1_IN_RAD  0.0174532925199432957
+#define ALPHA_P      static_cast<real_t>(70.52877936550931)
+#define DEG_1_IN_RAD static_cast<real_t>( 0.0174532925199432957)
 
-#define SQRT3_2              0.8660254037844386
-#define SQRT_2_3             0.8164965809277260
-#define ONE_PLUS_SQRT2_SQRT3 1.3938468501173517
+#define ONE_3                static_cast<real_t>(0.3333333333333333)
+#define SQRT3_2              static_cast<real_t>(0.8660254037844386)
+#define SQRT_2_3             static_cast<real_t>(0.8164965809277260)
+#define ONE_PLUS_SQRT2_SQRT3 static_cast<real_t>(1.3938468501173517)
 
-#define NOT_TOO_CLOSE          2e-1
-#define FROM_VERT_COEF         1e-2
-#define EDGES_INTERS_DIST_COEF 4e-3
+#define NOT_TOO_CLOSE          static_cast<real_t>(2e-1)
+#define FROM_VERT_COEF         static_cast<real_t>(1e-2)
+#define EDGES_INTERS_DIST_COEF static_cast<real_t>(4e-3)
 
-#define K_MAXD 0.3
-#define K_D    0.4
+#define K_MAXD static_cast<real_t>(0.3)
+#define K_D    static_cast<real_t>(0.4)
 
 
 template <typename T>
-constexpr double degToRad(T value)
+constexpr real_t degToRad( T value )
 {
     return value * DEG_1_IN_RAD;
 }
@@ -231,11 +230,11 @@ void Crystallite::removeFromFront(FrSuEdge* fEdge)
 bool Crystallite::vertInsideFrontCheck(const Vec& v) const
 {
     int inters_num = 0;
-    Vec dir = 0.3333333333333333 * (m_frontFacets.front()->computeCenter() - 3.0 * v);
+    Vec dir = ONE_3 * (m_frontFacets.front()->computeCenter() - static_cast<real_t>(3.0) * v);
 
     for (auto& f_facet : m_frontFacets)
     {
-        if (tva::spatalgs::doesRayIntersectTriangle(
+        if (spatalgs::doesRayIntersectTriangle(
                 v, dir,
                 f_facet->facet->edges[0]->verts[0]->pos(),
                 f_facet->facet->edges[0]->verts[1]->pos(),
@@ -253,7 +252,7 @@ bool Crystallite::segmentGlobalIntersectionCheck(const Vec& v0, const Vec& v1) c
 {
     for (auto& facet : m_innerFacets)
     {
-        if (tva::spatalgs::doesSegmentIntersectTriangle(
+        if (spatalgs::doesSegmentIntersectTriangle(
                 v0, v1,
                 facet->edges[0]->verts[0]->pos(),
                 facet->edges[0]->verts[1]->pos(),
@@ -269,7 +268,7 @@ bool Crystallite::segmentFrontIntersectionCheck(const Vec& v0, const Vec& v1) co
 {
     for (auto& f_facet : m_frontFacets)
     {
-        if (tva::spatalgs::doesSegmentIntersectTriangle(
+        if (spatalgs::doesSegmentIntersectTriangle(
                 v0, v1,
                 f_facet->facet->edges[0]->verts[0]->pos(),
                 f_facet->facet->edges[0]->verts[1]->pos(),
@@ -283,7 +282,7 @@ bool Crystallite::segmentFrontIntersectionCheck(const Vec& v0, const Vec& v1) co
 
 bool Crystallite::edgeGlobalIntersectionCheck(const Edge* edge) const
 {
-    Vec delta = 8.0 * FROM_VERT_COEF * (*edge->verts[1] - *edge->verts[0]);
+    Vec delta = static_cast<real_t>(8.0) * FROM_VERT_COEF * (*edge->verts[1] - *edge->verts[0]);
     Vec segment[2];
     segment[0] = edge->verts[0]->pos() + delta;
     segment[1] = edge->verts[1]->pos() - delta;
@@ -291,7 +290,7 @@ bool Crystallite::edgeGlobalIntersectionCheck(const Edge* edge) const
     for (auto& facet : m_innerFacets)
     {
         if (!facet->contains(edge) &&
-            tva::spatalgs::doesSegmentIntersectTriangle(
+            spatalgs::doesSegmentIntersectTriangle(
                 segment[0], segment[1],
                 facet->edges[0]->verts[0]->pos(),
                 facet->edges[0]->verts[1]->pos(),
@@ -342,7 +341,7 @@ bool Crystallite::edgeIntersectionCheck(FrSuEdge* frontEdge) const
             else
                 vert_buf = f_edge->edge->verts[0];
 
-            if (tva::spatalgs::distancePointToSegment(vert_buf->pos(), opp_verts_poses[0], opp_verts_poses[1]) < EDGES_INTERS_DIST_COEF * m_preferredLength)
+            if (spatalgs::distancePointToSegment(vert_buf->pos(), opp_verts_poses[0], opp_verts_poses[1]) < EDGES_INTERS_DIST_COEF * m_preferredLength)
                 return true;
         }
         else if (contains[1])
@@ -352,12 +351,12 @@ bool Crystallite::edgeIntersectionCheck(FrSuEdge* frontEdge) const
             else
                 vert_buf = f_edge->edge->verts[0];
 
-            if (tva::spatalgs::distancePointToSegment(vert_buf->pos(), opp_verts_poses[0], opp_verts_poses[1]) < EDGES_INTERS_DIST_COEF * m_preferredLength)
+            if (spatalgs::distancePointToSegment(vert_buf->pos(), opp_verts_poses[0], opp_verts_poses[1]) < EDGES_INTERS_DIST_COEF * m_preferredLength)
                 return true;
         }
         else
         {
-            if (tva::spatalgs::segmentsDistance(
+            if (spatalgs::segmentsDistance(
                     opp_verts_poses[0], opp_verts_poses[1],
                     f_edge->edge->verts[0]->pos(), f_edge->edge->verts[1]->pos()) < EDGES_INTERS_DIST_COEF * m_preferredLength)
                 return true;
@@ -384,7 +383,7 @@ bool Crystallite::facetIntersectionCheck(const Vertex* v0, const Vertex* v1, con
         f_edge_verts_poses[0] = f_edge->edge->verts[0]->pos() - first_to_second_delta;
         f_edge_verts_poses[1] = f_edge->edge->verts[1]->pos() + first_to_second_delta;
 
-        if (tva::spatalgs::doesSegmentIntersectTriangle(
+        if (spatalgs::doesSegmentIntersectTriangle(
             f_edge_verts_poses[0], f_edge_verts_poses[1],
             v0->pos(), v1->pos(), v2))
             return true;
@@ -460,7 +459,7 @@ bool Crystallite::facetIntersectionCheck(const Vertex* v0, const Vertex* v1, con
             f_edge_verts_poses[1] = f_edge->edge->verts[1]->pos();
         }
 
-        if (tva::spatalgs::doesSegmentIntersectTriangle(
+        if (spatalgs::doesSegmentIntersectTriangle(
                 f_edge_verts_poses[0], f_edge_verts_poses[1],
                 verts_poses[0], verts_poses[1], verts_poses[2]))
             return true;
@@ -489,7 +488,7 @@ bool Crystallite::insideTetrCheck(const Vec& p0, const Vec& p1, const Vec& p2, c
     Vec vert_to_p2 = p2 - vert;
     Vec vert_to_p3 = p3 - vert;
 
-    double abs_mixed_prods[5];
+    real_t abs_mixed_prods[5];
     abs_mixed_prods[0] = std::abs(Vec::mixed(vert_to_p0, vert_to_p2, vert_to_p3));
     abs_mixed_prods[1] = std::abs(Vec::mixed(vert_to_p0, vert_to_p1, vert_to_p2));
     abs_mixed_prods[2] = std::abs(Vec::mixed(vert_to_p0, vert_to_p1, vert_to_p3));
@@ -599,8 +598,8 @@ bool Crystallite::parallelFacetsCheck(FrSuEdge* fEdge) const
             f_plane[1] = *f_facet_to_verts[1] - *f_facet_from_vert;
             Vec f_normal = Vec::cross(f_plane[0], f_plane[1]).normalize();
 
-            if (std::abs(std::abs(Vec::dot(f_normal, normal0)) - 1.0) < 1e-6 ||
-                std::abs(std::abs(Vec::dot(f_normal, normal1)) - 1.0) < 1e-6)
+            if (std::abs(std::abs(Vec::dot(f_normal, normal0)) - static_cast<real_t>(1.0)) < static_cast<real_t>(1e-6) ||
+                std::abs(std::abs(Vec::dot(f_normal, normal1)) - static_cast<real_t>(1.0)) < static_cast<real_t>(1e-6))
             {
                 int i = inters_reses[0] ? 0 : 1;
 
@@ -618,7 +617,7 @@ bool Crystallite::parallelFacetsCheck(FrSuEdge* fEdge) const
 
                 Vec main_facet_cross = Vec::cross(main_facet_3rd_vert - border_verts[0], main_facet_3rd_vert - border_verts[1]);
                 Vec curr_facet_cross = Vec::cross(curr_facet_3rd_vert - border_verts[0], curr_facet_3rd_vert - border_verts[1]);
-                if (Vec::dot(main_facet_cross, curr_facet_cross) > 0.0)
+                if (Vec::dot(main_facet_cross, curr_facet_cross) > static_cast<real_t>(0.0))
                     return true;
             }
         }
@@ -628,15 +627,15 @@ bool Crystallite::parallelFacetsCheck(FrSuEdge* fEdge) const
 }
 
 
-bool Crystallite::doesFrontIntersectSphere(const Point& center, double radius) const
+bool Crystallite::doesFrontIntersectSphere(const Vec& center, real_t radius) const
 {
     for (auto& ffacet : m_frontFacets)
     {
-        Point triangle[3];
+        Vec triangle[3];
         triangle[0] = ffacet->facet->edges[0]->verts[0]->pos();
         triangle[1] = ffacet->facet->edges[0]->verts[1]->pos();
         triangle[2] = ffacet->facet->findVertNot(ffacet->facet->edges[0])->pos();
-        if (tva::spatalgs::doesTriangleIntersectSphere(triangle[0], triangle[1], triangle[2], center, radius))
+        if (spatalgs::doesTriangleIntersectSphere(triangle[0], triangle[1], triangle[2], center, radius))
             return true;
     }
 
@@ -646,18 +645,18 @@ bool Crystallite::doesFrontIntersectSphere(const Point& center, double radius) c
 
 
 
-std::pair<double, double> Crystallite::computeMinMaxEdgesLengths(const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3)
+std::pair<real_t, real_t> Crystallite::computeMinMaxEdgesLengths(const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3)
 {
     auto min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2, p3);
-    min_max.first = sqrt(min_max.first);
-    min_max.second = sqrt(min_max.second);
+    min_max.first  = sqrtReal(min_max.first);
+    min_max.second = sqrtReal(min_max.second);
     return min_max;
 }
 
 
-std::pair<double, double> Crystallite::computeMinMaxEdgesSqrLengths(const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3)
+std::pair<real_t, real_t> Crystallite::computeMinMaxEdgesSqrLengths(const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3)
 {
-    double sqr_magns[6];
+    real_t sqr_magns[6];
     sqr_magns[0] = (p1 - p0).sqrMagnitude();
     sqr_magns[1] = (p2 - p0).sqrMagnitude();
     sqr_magns[2] = (p3 - p0).sqrMagnitude();
@@ -668,14 +667,14 @@ std::pair<double, double> Crystallite::computeMinMaxEdgesSqrLengths(const Vec& p
 }
 
 
-double Crystallite::computeTetrSimpleQuality(const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3)
+real_t Crystallite::computeTetrSimpleQuality(const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3)
 {
     auto sqr_min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2, p3);
-    return sqrt(sqr_min_max.first / sqr_min_max.second);
+    return sqrtReal(sqr_min_max.first / sqr_min_max.second);
 }
 
 
-double Crystallite::computeTetrSimpleSqrQuality(const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3)
+real_t Crystallite::computeTetrSimpleSqrQuality(const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3)
 {
     auto sqr_min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2, p3);
     return sqr_min_max.first / sqr_min_max.second;
@@ -684,13 +683,13 @@ double Crystallite::computeTetrSimpleSqrQuality(const Vec& p0, const Vec& p1, co
 
 
 
-FrSuEdge* Crystallite::currentFrontEdge(double maxCompl) const
+FrSuEdge* Crystallite::currentFrontEdge(real_t maxCompl) const
 {
-    double cur_max_compl = 0.0;
+    real_t cur_max_compl = static_cast<real_t>(0.0);
     FrSuEdge* cur_max_f_edge = nullptr;
     for (auto& f_edge : m_frontEdges)
     {
-        double cur_compl = f_edge->complexity();
+        real_t cur_compl = f_edge->complexity();
         if (cur_compl > cur_max_compl &&
             cur_compl < maxCompl)
         {
@@ -705,13 +704,13 @@ FrSuEdge* Crystallite::currentFrontEdge(double maxCompl) const
 
 bool Crystallite::exhaustWithoutNewVertPriorityPredicate(FrSuEdge* curFEdge)
 {
-    if (curFEdge->angleExCos() > cosDeg<70>)
+    if (curFEdge->angleExCos() > cosDeg<70, real_t>)
         return true;
 
     auto opp_verts = curFEdge->findOppVerts();
     if (curFEdge->findOppEdge() ||
-        (curFEdge->angleExCos() < cosDeg<70> &&
-         curFEdge->angleExCos() > cosDeg<100> &&
+        (curFEdge->angleExCos() < cosDeg<70, real_t> &&
+         curFEdge->angleExCos() > cosDeg<100, real_t> &&
          (*std::get<1>(opp_verts) - *std::get<0>(opp_verts)).sqrMagnitude() <= m_preferredLength * m_preferredLength))
         return true;
 
@@ -724,7 +723,7 @@ bool Crystallite::exhaustWithoutNewVertPriorityPredicate(FrSuEdge* curFEdge)
 
 bool Crystallite::exhaustWithNewVertPriorityPredicate(FrSuEdge* currentFrontEdge)
 {
-    if (currentFrontEdge->angleExCos() < cosDeg<120>)
+    if (currentFrontEdge->angleExCos() < cosDeg<120, real_t>)
         return true;
 
     return false;
@@ -747,7 +746,7 @@ Crystallite::ExhaustType Crystallite::computeExhaustionTypeQualityPriority(
     }
 
     auto opp_verts = currentFrontEdge->findOppVerts();
-    double without_nv_quality = computeTetrSimpleSqrQuality(
+    real_t without_nv_quality = computeTetrSimpleSqrQuality(
         currentFrontEdge->edge->verts[0]->pos(),
         currentFrontEdge->edge->verts[1]->pos(),
         std::get<0>(opp_verts)->pos(),
@@ -758,7 +757,7 @@ Crystallite::ExhaustType Crystallite::computeExhaustionTypeQualityPriority(
     if (!tryComputeNewVertPos(f_facet, new_vert_pos))
         return ExhaustType::DontExhaust;
 
-    double with_nv_quality = computeTetrSimpleSqrQuality(
+    real_t with_nv_quality = computeTetrSimpleSqrQuality(
         f_facet->facet->edges[0]->verts[0]->pos(),
         f_facet->facet->edges[0]->verts[1]->pos(),
         f_facet->facet->findVertNot(f_facet->facet->edges[0])->pos(),
@@ -794,13 +793,13 @@ Vec Crystallite::computeNormalInTetr(const FrSuFacet* fFacet, const pmg::Edge* o
 }
 
 
-Vec Crystallite::computeNormalInTetr(const Point& fFacetPos0, const Point& fFacetPos1, const Point& fFacetPos2, const Point& oppVertPos) const
+Vec Crystallite::computeNormalInTetr(const Vec& fFacetPos0, const Vec& fFacetPos1, const Vec& fFacetPos2, const Vec& oppVertPos) const
 {
     Vec normal = Vec::cross(
         fFacetPos0 - fFacetPos2,
         fFacetPos1 - fFacetPos2).normalize();
-    if (Vec::dot(normal, oppVertPos - fFacetPos2) > 0.0)
-        normal *= -1.0;
+    if (Vec::dot(normal, oppVertPos - fFacetPos2) > static_cast<real_t>(0.0))
+        normal *= static_cast<real_t>(-1.0);
 
     return normal;
 }
@@ -810,7 +809,7 @@ Vec Crystallite::computeNormalInTetr(const Point& fFacetPos0, const Point& fFace
 
 void Crystallite::setFEdgesInFrontSplit(const FrSuEdge* fEdge, FrSuEdge* newOppFEdges[2], FrSuFacet* newFFacets[2], pair_ff oppFFacets) const
 {
-//    double cpa_times[2][2];
+//    real_t cpa_times[2][2];
 //    cpa_times[0][0] = tva::spatalgs::cpaTime(newFFacets[0]->computeCenter(), newFFacets[0]->normal,
 //                                             oppFFacets.first->computeCenter(), oppFFacets.first->normal);
 //    cpa_times[0][1] = tva::spatalgs::cpaTime(newFFacets[0]->computeCenter(), newFFacets[0]->normal,
@@ -852,26 +851,26 @@ void Crystallite::setFEdgesInFrontSplit(const FrSuEdge* fEdge, FrSuEdge* newOppF
 //    std::cin.get();
 
     pmg::Edge* opp_edge = newOppFEdges[0]->edge;
-    Point opp_verts_poses[2];
+    Vec opp_verts_poses[2];
     opp_verts_poses[0] = opp_edge->verts[0]->pos();
     opp_verts_poses[1] = opp_edge->verts[1]->pos();
-    Point main_vert0_pos  = newFFacets[0]->facet->contains(fEdge->edge->verts[0]) ?
+    Vec main_vert0_pos  = newFFacets[0]->facet->contains(fEdge->edge->verts[0]) ?
                 fEdge->edge->verts[0]->pos() : fEdge->edge->verts[1]->pos();
-    Point main_vert1_pos  = newFFacets[1]->facet->contains(fEdge->edge->verts[0]) ?
+    Vec main_vert1_pos  = newFFacets[1]->facet->contains(fEdge->edge->verts[0]) ?
                 fEdge->edge->verts[0]->pos() : fEdge->edge->verts[1]->pos();
-    Point main_vert0_proj = tva::spatalgs::project(main_vert0_pos, opp_verts_poses[0], opp_verts_poses[1]);
-    Point main_vert1_proj = tva::spatalgs::project(main_vert1_pos, opp_verts_poses[0], opp_verts_poses[1]);
+    Vec main_vert0_proj = spatalgs::project(main_vert0_pos, opp_verts_poses[0], opp_verts_poses[1]);
+    Vec main_vert1_proj = spatalgs::project(main_vert1_pos, opp_verts_poses[0], opp_verts_poses[1]);
     Vec main_vec0 = main_vert0_pos - main_vert0_proj;
     Vec main_vec1 = main_vert1_pos - main_vert1_proj;
 
-    Point adj_opp_pos0 = oppFFacets.first->facet->findVertNot(opp_edge)->pos();
-    Point adj_opp_pos1 = oppFFacets.second->facet->findVertNot(opp_edge)->pos();
-    Point adj_opp_proj0 = tva::spatalgs::project(adj_opp_pos0, opp_verts_poses[0], opp_verts_poses[1]);
-    Point adj_opp_proj1 = tva::spatalgs::project(adj_opp_pos1, opp_verts_poses[0], opp_verts_poses[1]);
+    Vec adj_opp_pos0 = oppFFacets.first->facet->findVertNot(opp_edge)->pos();
+    Vec adj_opp_pos1 = oppFFacets.second->facet->findVertNot(opp_edge)->pos();
+    Vec adj_opp_proj0 = spatalgs::project(adj_opp_pos0, opp_verts_poses[0], opp_verts_poses[1]);
+    Vec adj_opp_proj1 = spatalgs::project(adj_opp_pos1, opp_verts_poses[0], opp_verts_poses[1]);
     Vec adj_vec0 = adj_opp_pos0 - adj_opp_proj0;
     Vec adj_vec1 = adj_opp_pos1 - adj_opp_proj1;
 
-    double coses[2][2];
+    real_t coses[2][2];
     coses[0][0] = Vec::cos(main_vec0, adj_vec0);
     coses[0][1] = Vec::cos(main_vec0, adj_vec1);
     coses[1][0] = Vec::cos(main_vec1, adj_vec0);
@@ -1377,18 +1376,18 @@ bool Crystallite::tryComputeNewVertPosType3(FrSuFacet* fFacet, Vec& out_pos)
 
     Vec e = Vec::cross(np_mn0, np_mn1);
 
-    Vec new_pos = tva::spatalgs::lineIntersectPlane(v2_pos, e, v0_pos, v1_pos, v0_pos + e_mn2);
+    Vec new_pos = spatalgs::lineIntersectPlane(v2_pos, e, v0_pos, v1_pos, v0_pos + e_mn2);
 
     Vec v0_to_np = new_pos - v0_pos;
     Vec v1_to_np = new_pos - v1_pos;
     Vec v2_to_np = new_pos - v2_pos;
-    double sum_magns[4];
+    real_t sum_magns[4];
     int i = 0;
     for (auto& ffacet : { fn0, fn1, fn2, fFacet })
         sum_magns[i++] =  ffacet->facet->edges[0]->magnitude()
                         + ffacet->facet->edges[1]->magnitude()
                         + ffacet->facet->edges[2]->magnitude();
-    double av_magn = (sum_magns[0] + sum_magns[1] + sum_magns[2] + sum_magns[3]) / 12.0;
+    real_t av_magn = (sum_magns[0] + sum_magns[1] + sum_magns[2] + sum_magns[3]) / static_cast<real_t>(12.0);
     if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos /*+ NOT_TOO_CLOSE * v0_to_np*/) ||
         segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos /*+ NOT_TOO_CLOSE * v1_to_np*/) ||
         segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos /*+ NOT_TOO_CLOSE * v2_to_np*/) ||
@@ -1431,11 +1430,11 @@ bool Crystallite::tryComputeNewVertPosType2(FrSuFacet* fFacet, Vec& out_pos, int
     auto fn1 = std::get<0>(adj_f_facets) == fFacet ? std::get<1>(adj_f_facets) : std::get<0>(adj_f_facets);
     auto vn1 = fn1->facet->findVertNot(main_fedges[1]->edge);
 
-    Point v0_pos = v0->pos();
-    Point v1_pos = v1->pos();
-    Point v2_pos = v2->pos();
-    Point vn0_pos = vn0->pos();
-    Point vn1_pos = vn1->pos();
+    Vec v0_pos = v0->pos();
+    Vec v1_pos = v1->pos();
+    Vec v2_pos = v2->pos();
+    Vec vn0_pos = vn0->pos();
+    Vec vn1_pos = vn1->pos();
 
     Vec n_m = fFacet->normal;
     Vec n_n0 = fn0->normal;
@@ -1448,30 +1447,32 @@ bool Crystallite::tryComputeNewVertPosType2(FrSuFacet* fFacet, Vec& out_pos, int
     Vec np_mn1 = Vec::cross(v2_pos - v1_pos, e_mn1);
 
     Vec e = Vec::cross(np_mn0, np_mn1).normalize();
-    if (Vec::dot(e, n_m) < 0.0) e *= -1.0;
+    if (Vec::dot(e, n_m) < static_cast<real_t>(0.0)) e *= static_cast<real_t>(-1.0);
 
-//    double f_facet_area = fFacet->facet->computeArea();
-//    double sp = SQRT3_2 * 0.5 * m_preferredLength * m_preferredLength;
-//    double sf0 = 0.5 * (f_facet_area + fn0->facet->computeArea());
-//    double sf1 = 0.5 * (f_facet_area + fn1->facet->computeArea());
-//    double raw_deform0 = K_D * (sp - sf0);
-//    double raw_deform1 = K_D * (sp - sf1);
-//    double deform0 = raw_deform0 < sf0 * K_MAXD ? raw_deform0 : sf0 * K_MAXD;
-//    double deform1 = raw_deform1 < sf1 * K_MAXD ? raw_deform1 : sf1 * K_MAXD;
-//    double sc0 = sf0 + deform0;
-//    double sc1 = sf1 + deform1;
-//    double x0_2 = sc0 / Vec::cross(v2->pos() - v0->pos(), e).magnitude();
-//    double x1_2 = sc1 / Vec::cross(v2->pos() - v1->pos(), e).magnitude();
+//    real_t f_facet_area = fFacet->facet->computeArea();
+//    real_t sp = SQRT3_2 * 0.5 * m_preferredLength * m_preferredLength;
+//    real_t sf0 = 0.5 * (f_facet_area + fn0->facet->computeArea());
+//    real_t sf1 = 0.5 * (f_facet_area + fn1->facet->computeArea());
+//    real_t raw_deform0 = K_D * (sp - sf0);
+//    real_t raw_deform1 = K_D * (sp - sf1);
+//    real_t deform0 = raw_deform0 < sf0 * K_MAXD ? raw_deform0 : sf0 * K_MAXD;
+//    real_t deform1 = raw_deform1 < sf1 * K_MAXD ? raw_deform1 : sf1 * K_MAXD;
+//    real_t sc0 = sf0 + deform0;
+//    real_t sc1 = sf1 + deform1;
+//    real_t x0_2 = sc0 / Vec::cross(v2->pos() - v0->pos(), e).magnitude();
+//    real_t x1_2 = sc1 / Vec::cross(v2->pos() - v1->pos(), e).magnitude();
 //    Vec new_pos = v2_pos + (x0_2 + x1_2) * e;
-    double l0 = (v1_pos - v0_pos).magnitude();
-    double l1 = (vn0_pos - v0_pos).magnitude();
-    double l2 = (vn0_pos - v2_pos).magnitude();
-    double l3 = (vn1_pos - v1_pos).magnitude();
-    double l4 = (vn1_pos - v2_pos).magnitude();
-    double av_magn = (main_edges[0]->magnitude() + main_edges[1]->magnitude() + l0 + l1 + l2 + l3 + l4) / 7.0;
-    double raw_deform = K_D * (m_preferredLength - av_magn);
-    double deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
-    double magn_d = av_magn + deform;
+    real_t lm0 = main_edges[0]->magnitude();
+    real_t lm1 = main_edges[1]->magnitude();
+    real_t l0 = (v1_pos - v0_pos).magnitude();
+    real_t l1 = (vn0_pos - v0_pos).magnitude();
+    real_t l2 = (vn0_pos - v2_pos).magnitude();
+    real_t l3 = (vn1_pos - v1_pos).magnitude();
+    real_t l4 = (vn1_pos - v2_pos).magnitude();
+    real_t av_magn = (lm0 + lm1 + l0 + l1 + l2 + l3 + l4) / static_cast<real_t>(7.0);
+    real_t raw_deform = K_D * (m_preferredLength - av_magn);
+    real_t deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
+    real_t magn_d = av_magn + deform;
     Vec new_pos = v2_pos + magn_d * e;
 
     Vec v0_to_np = new_pos - v0_pos;
@@ -1526,27 +1527,27 @@ bool Crystallite::tryComputeNewVertPosType1(FrSuFacet* fFacet, Vec& out_pos, int
     auto fn = std::get<0>(adj_f_facets) == fFacet ? std::get<1>(adj_f_facets) : std::get<0>(adj_f_facets);
     auto vn = fn->facet->findVertNot(main_edge);
 
-    Point v0_pos = v0->pos();
-    Point v1_pos = v1->pos();
-    Point v2_pos = v2->pos();
-    Point vn_pos = vn->pos();
+    Vec v0_pos = v0->pos();
+    Vec v1_pos = v1->pos();
+    Vec v2_pos = v2->pos();
+    Vec vn_pos = vn->pos();
 
-    Point v2pr = tva::spatalgs::project(v2_pos, v0_pos, v1_pos);
-    Point vnpr = tva::spatalgs::project(vn_pos, v0_pos, v1_pos);
+    Vec v2pr = spatalgs::project(v2_pos, v0_pos, v1_pos);
+    Vec vnpr = spatalgs::project(vn_pos, v0_pos, v1_pos);
 
-    Point c = 0.25 * (v0_pos + v1_pos + v2pr + vnpr);
-    Vec   e = (fFacet->normal + fn->normal).normalize();
-    double me_magn = main_edge->magnitude();
-    double l0 = (v2_pos - v0_pos).magnitude();
-    double l1 = (v2_pos - v1_pos).magnitude();
-    double l2 = (vn_pos - v0_pos).magnitude();
-    double l3 = (vn_pos - v1_pos).magnitude();
-    double av_magn = 0.2 * (me_magn + l0 + l1 + l2 + l3);
-    double v0_c_dist = (c - v0_pos).magnitude();
-    double raw_deform = K_D * (m_preferredLength - av_magn);
-    double deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
-    double magn_d = av_magn + deform;
-    Point new_pos = c + sqrt(magn_d * magn_d - v0_c_dist * v0_c_dist) * e;
+    Vec c = static_cast<real_t>(0.25) * (v0_pos + v1_pos + v2pr + vnpr);
+    Vec e = (fFacet->normal + fn->normal).normalize();
+    real_t me_magn = main_edge->magnitude();
+    real_t l0 = (v2_pos - v0_pos).magnitude();
+    real_t l1 = (v2_pos - v1_pos).magnitude();
+    real_t l2 = (vn_pos - v0_pos).magnitude();
+    real_t l3 = (vn_pos - v1_pos).magnitude();
+    real_t av_magn = static_cast<real_t>(0.2) * (me_magn + l0 + l1 + l2 + l3);
+    real_t v0_c_dist = (c - v0_pos).magnitude();
+    real_t raw_deform = K_D * (m_preferredLength - av_magn);
+    real_t deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
+    real_t magn_d = av_magn + deform;
+    Vec new_pos = c + sqrtReal(magn_d * magn_d - v0_c_dist * v0_c_dist) * e;
 
     Vec v0_to_np = new_pos - v0_pos;
     Vec v1_to_np = new_pos - v1_pos;
@@ -1560,7 +1561,7 @@ bool Crystallite::tryComputeNewVertPosType1(FrSuFacet* fFacet, Vec& out_pos, int
         facetIntersectionCheck(v0, v2, new_pos) ||
         facetIntersectionCheck(v1, v2, new_pos))
     {
-        new_pos = c + sqrt(av_magn * av_magn - v0_c_dist * v0_c_dist) * e;
+        new_pos = c + sqrtReal(av_magn * av_magn - v0_c_dist * v0_c_dist) * e;
         v0_to_np = new_pos - v0_pos;
         v1_to_np = new_pos - v1_pos;
         v2_to_np = new_pos - v2_pos;
@@ -1584,14 +1585,14 @@ bool Crystallite::tryComputeNewVertPosType1(FrSuFacet* fFacet, Vec& out_pos, int
 
 bool Crystallite::tryComputeNewVertPosType0(FrSuFacet* fFacet, Vec& out_pos)
 {
-    double av_magn = 0.3333333333333 * (
+    real_t av_magn = ONE_3 * (
           fFacet->facet->edges[0]->magnitude()
         + fFacet->facet->edges[1]->magnitude()
         + fFacet->facet->edges[2]->magnitude());
-    double raw_deform = K_D * (m_preferredLength - av_magn);
-    double deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
-    double magn_d = av_magn + deform;
-    Vec new_pos = fFacet->computeCenter() + sqrt(magn_d * magn_d - 0.33333333333 * av_magn * av_magn) * fFacet->normal;
+    real_t raw_deform = K_D * (m_preferredLength - av_magn);
+    real_t deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
+    real_t magn_d = av_magn + deform;
+    Vec new_pos = fFacet->computeCenter() + sqrtReal(magn_d * magn_d - ONE_3 * av_magn * av_magn) * fFacet->normal;
 
     auto v0 = fFacet->facet->edges[0]->verts[0];
     auto v1 = fFacet->facet->edges[0]->verts[1];
@@ -1611,7 +1612,7 @@ bool Crystallite::tryComputeNewVertPosType0(FrSuFacet* fFacet, Vec& out_pos)
         facetIntersectionCheck(v0, v2, new_pos) ||
         facetIntersectionCheck(v1, v2, new_pos))
     {
-        new_pos = fFacet->computeCenter() + sqrt(av_magn * av_magn - 0.33333333333 * av_magn * av_magn) * fFacet->normal;
+        new_pos = fFacet->computeCenter() + sqrtReal(av_magn * av_magn - ONE_3 * av_magn * av_magn) * fFacet->normal;
         v0_to_np = new_pos - v0_pos;
         v1_to_np = new_pos - v1_pos;
         v2_to_np = new_pos - v2_pos;
@@ -1635,7 +1636,7 @@ bool Crystallite::tryComputeNewVertPosType0(FrSuFacet* fFacet, Vec& out_pos)
 
 bool Crystallite::tryComputeNewVertPos(FrSuFacet* fFacet, Vec& out_pos)
 {
-    double angs_coses[3]
+    real_t angs_coses[3]
     { 
         fFacet->fEdges[0]->angleExCos(),
         fFacet->fEdges[1]->angleExCos(),
@@ -1643,9 +1644,9 @@ bool Crystallite::tryComputeNewVertPos(FrSuFacet* fFacet, Vec& out_pos)
     };
     int indexes[3];
     int small_angs_num = 0;
-    if (angs_coses[0] > cosDeg<140>) indexes[small_angs_num++] = 0;
-    if (angs_coses[1] > cosDeg<140>) indexes[small_angs_num++] = 1;
-    if (angs_coses[2] > cosDeg<140>) indexes[small_angs_num++] = 2;
+    if (angs_coses[0] > cosDeg<140, real_t>) indexes[small_angs_num++] = 0;
+    if (angs_coses[1] > cosDeg<140, real_t>) indexes[small_angs_num++] = 1;
+    if (angs_coses[2] > cosDeg<140, real_t>) indexes[small_angs_num++] = 2;
 
     switch (small_angs_num)
     {
@@ -1661,7 +1662,7 @@ bool Crystallite::tryComputeNewVertPos(FrSuFacet* fFacet, Vec& out_pos)
 
 
 
-double Crystallite::sqr4FacetArea(const FrSuFacet* fFacet) const
+real_t Crystallite::sqr4FacetArea(const FrSuFacet* fFacet) const
 {
     Vec vec0 = *fFacet->facet->edges[0]->verts[1] - *fFacet->facet->edges[0]->verts[0];
     Vec vec1 = *fFacet->facet->edges[1]->verts[1] - *fFacet->facet->edges[1]->verts[0];
@@ -1795,7 +1796,7 @@ void Crystallite::processAngles()
 #ifdef DEV_DEBUG
     int debug_i = 0;
 #endif
-    double max_compl = std::numeric_limits<double>::max();
+    real_t max_compl = std::numeric_limits<real_t>::max();
     for (FrSuEdge* cur_fedge = currentFrontEdge(max_compl);; cur_fedge = currentFrontEdge(max_compl))
     {
         if (!cur_fedge)
@@ -1851,7 +1852,7 @@ void Crystallite::processAngles()
                 continue;
             }
         }
-        max_compl = std::numeric_limits<double>::max();
+        max_compl = std::numeric_limits<real_t>::max();
 
 #ifdef DEV_DEBUG
 //        if (debug_i++ >= 1200)
@@ -1891,7 +1892,7 @@ void Crystallite::debug()
 
 
 
-void Crystallite::generateMesh(double preferredLen)
+void Crystallite::generateMesh(real_t preferredLen)
 {
     m_preferredLength = preferredLen;
     initializeFront();
@@ -1987,14 +1988,14 @@ void Crystallite::smoothAroundFrontVert(Vertex* fVert)
 }
 
 
-std::pair<double, double> Crystallite::analyzeMeshQuality()
+std::pair<real_t, real_t> Crystallite::analyzeMeshQuality()
 {
     size_t simps_num = 0;
-    double av_q = 0.0;
-    double min_q = 1.0;
+    real_t av_q = 0.0;
+    real_t min_q = 1.0;
     for (auto &tetr : m_innerTetrs)
     {
-        double q = tetr->computeQuality();
+        real_t q = tetr->computeQuality();
         av_q += q;
         simps_num++;
         if (q < min_q)
@@ -2032,7 +2033,7 @@ Crystallite::~Crystallite()
 
 
 
-double Crystallite::preferredLength() const
+real_t Crystallite::preferredLength() const
 {
     return m_preferredLength;
 }

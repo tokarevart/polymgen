@@ -7,127 +7,126 @@
 #include "helpers/spatial-algs/vec.h"
 
 
-namespace tva {
 namespace spatalgs {
 
-Point project( const Point& point,
-               const Point& line_p0, const Point& line_p1 );
+Vec  project( const Vec& point,
+              const Vec& line_p0, const Vec& line_p1 );
 
-bool  project( Point& out,
-               const Point& point,
-               const Point& segm_p0, const Point& segm_p1 );
+bool project( Vec& out,
+              const Vec& point,
+              const Vec& segm_p0, const Vec& segm_p1 );
 
-Point project( const Point& point,
-               const Point& plane_p0, const Point& plane_p1, const Point& plane_p2 );
+Vec  project( const Vec& point,
+                   const Vec& plane_p0, const Vec& plane_p1, const Vec& plane_p2 );
 
-bool  project( Point& out,
-               const Point& point,
-               const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2 );
+bool project( Vec& out,
+              const Vec& point,
+              const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2 );
 
 
 bool doesRayIntersectPlane( const Vec& dir,
-                            const Point& plane_p0, const Point& plane_p1, const Point& plane_p2 );
+                            const Vec& plane_p0, const Vec& plane_p1, const Vec& plane_p2 );
 
-bool rayIntersectPlane( Point& out_intersectPoint,
-                        const Point& origin, const Vec& dir,
-                        const Point& plane_p0, const Point& plane_p1, const Point& plane_p2 );
-
-
-bool doesRayIntersectTriangle( const Point& origin, const Vec& dir,
-                               const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2 );
-
-bool rayIntersectTriangle( Point& out_intersectPoint,
-                           const Point& origin, const Vec& dir,
-                           const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2 );
+bool rayIntersectPlane( Vec& out_intersectPoint,
+                        const Vec& origin,   const Vec& dir,
+                        const Vec& plane_p0, const Vec& plane_p1, const Vec& plane_p2 );
 
 
-bool doesLineIntersectPlane( const Point& line_point, const Point& line_dir,
-                             const Point& plane_p0, const Point& plane_p1, const Point& plane_p2 );
+bool doesRayIntersectTriangle( const Vec& origin,   const Vec& dir,
+                               const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2 );
 
-bool lineIntersectPlane( Point& out_intersectPoint,
-                         const Point& line_point, const Point& line_dir,
-                         const Point& plane_p0, const Point& plane_p1, const Point& plane_p2 );
-
-Point lineIntersectPlane( const Point& line_point, const Point& line_dir,
-                          const Point& plane_p0, const Point& plane_p1, const Point& plane_p2 );
+bool rayIntersectTriangle( Vec& out_intersectPoint,
+                           const Vec& origin, const Vec& dir,
+                           const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2 );
 
 
-bool doesSegmentIntersectTriangle( const Point& segm_p0, const Point& segm_p1,
-                                   const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2 );
+bool doesLineIntersectPlane( const Vec& line_point, const Vec& line_dir,
+                             const Vec& plane_p0, const Vec& plane_p1, const Vec& plane_p2 );
 
-bool segmentIntersectTriangle( Point& out_intersectPoint,
-                               const Point& segm_p0, const Point& segm_p1,
-                               const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2 );
+bool lineIntersectPlane( Vec& out_intersectPoint,
+                         const Vec& line_point, const Vec& line_dir,
+                         const Vec& plane_p0, const Vec& plane_p1, const Vec& plane_p2 );
 
-
-bool doesSegmentIntersectPlane( const Point& segm_p0, const Point& segm_p1,
-                                const Point& plane_p0, const Point& plane_p1, const Point& plane_p2 );
-
-bool segmentIntersectPlane( Point& out_intersectPoint,
-                            const Point& segm_p0, const Point& segm_p1,
-                            const Point& plane_p0, const Point& plane_p1, const Point& plane_p2 );
-
-Point segmentIntersectPlane( const Point& segm_p0, const Point& segm_p1,
-                             const Point& plane_p0, const Point& plane_p1, const Point& plane_p2 );
+Vec  lineIntersectPlane( const Vec& line_point, const Vec& line_dir,
+                               const Vec& plane_p0, const Vec& plane_p1, const Vec& plane_p2 );
 
 
-bool doesTriangleIntersectSphere( const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2,
-                                  const Point& center,   double radius );
+bool doesSegmentIntersectTriangle( const Vec& segm_p0, const Vec& segm_p1,
+                                   const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2 );
+
+bool segmentIntersectTriangle( Vec& out_intersectPoint,
+                               const Vec& segm_p0,  const Vec& segm_p1,
+                               const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2 );
 
 
-double computeSqrsSum( const Point& point,
-                       const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2 );
+bool doesSegmentIntersectPlane( const Vec& segm_p0,  const Vec& segm_p1,
+                                const Vec& plane_p0, const Vec& plane_p1, const Vec& plane_p2 );
 
-double computeMaxSqrsSum( const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2 );
+bool segmentIntersectPlane( Vec& out_intersectPoint,
+                            const Vec& segm_p0,  const Vec& segm_p1,
+                            const Vec& plane_p0, const Vec& plane_p1, const Vec& plane_p2 );
 
-bool isPointOnPlane(    const Point& point,
-                        const Point& plane_p0, const Point& plane_p1, const Point& plane_p2 );
-
-bool isPointOnTriangle( const Point& point,
-                        const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2 );
-
-bool isPointOnTriangle( const Point& point,
-                        const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2,
-                        double max_sqrs_sum );
+Vec segmentIntersectPlane( const Vec& segm_p0,  const Vec& segm_p1,
+                                 const Vec& plane_p0, const Vec& plane_p1, const Vec& plane_p2 );
 
 
-Point closestSegmentPointToPoint( const Point& point,
-                                  const Point& segm_p0, const Point& segm_p1 );
-
-Point closestTrianglePointToPointOnPlane( const Point& point,
-                                          const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2 );
-
-double distancePointToLine(     const Point& point,
-                                const Point& line_p0, const Point& line_p1 );
-
-double distancePointToSegment(  const Point& point,
-                                const Point& segm_p0, const Point& segm_p1 );
-
-double distancePointToPlane(    const Point& point,
-                                const Point& plane_p0, const Point& plane_p1, const Point& plane_p2 );
-
-double distancePointToTriangle( const Point& point,
-                                const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2 );
-
-double distancePointToTriangleOnPlane( const Point& point,
-                                       const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2 );
-
-Point  linesClosestPoint( const Point& line0_p0, const Point& line0_p1,
-                          const Point& line1_p0, const Point& line1_p1 );
-
-double linesDistance(    const Point& line0_p0, const Point& line0_p1,
-                         const Point& line1_p0, const Point& line1_p1 );
-
-double segmentsDistance( const Point& segm0_p0, const Point& segm0_p1,
-                         const Point& segm1_p0, const Point& segm1_p1 );
+bool doesTriangleIntersectSphere( const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2,
+                                  const Vec& center,   real_t radius );
 
 
-// CPA - Closest Point of Approach.
-double cpaTime(     const Point& start0, const Vec& vel0,
-                    const Point& start1, const Vec& vel1 );
+real_t computeSqrsSum( const Vec& point,
+                       const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2 );
 
-double cpaDistance( const Point& start0, const Vec& vel0,
-                    const Point& start1, const Vec& vel1 );
+real_t computeMaxSqrsSum( const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2 );
+
+bool isPointOnPlane(    const Vec& point,
+                        const Vec& plane_p0, const Vec& plane_p1, const Vec& plane_p2 );
+
+bool isPointOnTriangle( const Vec& point,
+                        const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2 );
+
+bool isPointOnTriangle( const Vec& point,
+                        const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2,
+                        real_t max_sqrs_sum );
+
+
+Vec closestSegmentPointToPoint( const Vec& point,
+                                const Vec& segm_p0, const Vec& segm_p1 );
+
+Vec closestTrianglePointToPointOnPlane( const Vec& point,
+                                        const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2 );
+
+real_t distancePointToLine(     const Vec& point,
+                              const Vec& line_p0,  const Vec& line_p1 );
+
+real_t distancePointToSegment( const Vec& point,
+                               const Vec& segm_p0,  const Vec& segm_p1 );
+
+real_t distancePointToPlane( const Vec& point,
+                             const Vec& plane_p0, const Vec& plane_p1, const Vec& plane_p2 );
+
+real_t distancePointToTriangle( const Vec& point,
+                                const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2 );
+
+real_t distancePointToTriangleOnPlane( const Vec& point,
+                                       const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2 );
+
+
+Vec linesClosestPoint( const Vec& line0_p0, const Vec& line0_p1,
+                       const Vec& line1_p0, const Vec& line1_p1 );
+
+real_t linesDistance( const Vec& line0_p0, const Vec& line0_p1,
+                      const Vec& line1_p0, const Vec& line1_p1 );
+
+real_t segmentsDistance( const Vec& segm0_p0, const Vec& segm0_p1,
+                         const Vec& segm1_p0, const Vec& segm1_p1 );
+
+
+// CPA - Closest Vec of Approach.
+real_t cpaTime( const Vec& start0, const Vec& vel0,
+                const Vec& start1, const Vec& vel1 );
+
+real_t cpaDistance( const Vec& start0, const Vec& vel0,
+                    const Vec& start1, const Vec& vel1 );
 
 } // namespace spatalgs
-} // namespace tva

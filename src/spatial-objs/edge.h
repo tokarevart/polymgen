@@ -6,6 +6,7 @@
 #include <vector>
 #include "spatial-objs/facet.h"
 #include "spatial-objs/vertex.h"
+#include "real-type.h"
 
 #include "definitions.h"
 
@@ -19,8 +20,8 @@ class Edge
 public:
     Vertex* verts[2];
 
-    double magnitude()    const;
-    double sqrMagnitude() const;
+    real_t magnitude()    const;
+    real_t sqrMagnitude() const;
 
     Vertex* findNot( const Edge*   edge ) const;
     Vertex* findNot( const Vertex* vert ) const;

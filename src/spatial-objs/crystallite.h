@@ -14,6 +14,7 @@
 #include "spatial-objs/edge.h"
 #include "spatial-objs/vertex.h"
 #include "helpers/spatial-algs/vec.h"
+#include "real-type.h"
 
 #include "spatial-objs/polycrystal.h"
 
@@ -26,10 +27,10 @@ class Crystallite
 {
     using FrSuFacet = front::surface::Facet;
     using FrSuEdge  = front::surface::Edge;
-    using pair_dd = std::pair<double, double>;
+    using pair_dd = std::pair<real_t, real_t>;
 
 public:
-    double preferredLength() const;
+    real_t preferredLength() const;
 
     void addToShell(const shell::Facet*  shellFacet);
     void addToShell(const shell::Edge*   shellEdge);
@@ -48,7 +49,7 @@ public:
 
     // Returns minimum and average tetrahedrons qualitys.
     pair_dd analyzeMeshQuality();
-    void    generateMesh(double preferredLength);
+    void    generateMesh(real_t preferredLength);
 
     Crystallite();
     Crystallite(Polycrystal* polycr);
@@ -64,10 +65,8 @@ private:
     };
 
     using pair_ff = std::pair<FrSuFacet*, FrSuFacet*>;
-    using Vec   = tva::Vec;
-    using Point = tva::Point;
 
-    double m_preferredLength;
+    real_t m_preferredLength;
 
     Polycrystal* m_polycr = nullptr;
 
@@ -97,36 +96,36 @@ private:
     void removeFromFront( FrSuFacet* fFacet );
     void removeFromFront( FrSuEdge* fEdge );
 
-    bool vertInsideFrontCheck( const Point& v ) const;
-    bool segmentGlobalIntersectionCheck( const Point& v0, const Point& v1 ) const;
-    bool segmentFrontIntersectionCheck( const Point& v0, const Point& v1 ) const;
+    bool vertInsideFrontCheck( const Vec& v ) const;
+    bool segmentGlobalIntersectionCheck( const Vec& v0, const Vec& v1 ) const;
+    bool segmentFrontIntersectionCheck( const Vec& v0, const Vec& v1 ) const;
     bool edgeGlobalIntersectionCheck( const Edge* edge ) const;
     bool edgeIntersectionCheck( FrSuEdge* fEdge ) const;
     bool facetIntersectionCheck( const Vertex* v0, const Vertex* v1, const Vec&    v2 ) const;
     bool facetIntersectionCheck( const Vertex* v0, const Vertex* v1, const Vertex* v2 ) const;
     bool facetsIntersectionCheck( FrSuEdge* fEdge ) const;
-    bool insideTetrCheck( const Point& p0, const Point& p1, const Point& p2, const Point& p3, const Point& vert ) const;
+    bool insideTetrCheck( const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3, const Vec& vert ) const;
     bool anyVertInsidePotentialTetrCheck( FrSuEdge* fEdge ) const;
     bool parallelFacetsCheck( FrSuEdge* fEdge ) const;
-    bool doesFrontIntersectSphere( const Point& center, double radius ) const;
+    bool doesFrontIntersectSphere( const Vec& center, real_t radius ) const;
     bool frontSplitCheck(    FrSuEdge* fEdge, FrSuEdge* oppFEdge = nullptr ) const;
     bool frontCollapseCheck( FrSuEdge* fEdge, FrSuEdge* oppFEdge = nullptr ) const;
 
-    static pair_dd computeMinMaxEdgesLengths(    const Point& p0, const Point& p1, const Point& p2, const Point& p3 );
-    static pair_dd computeMinMaxEdgesSqrLengths( const Point& p0, const Point& p1, const Point& p2, const Point& p3 );
-    static double  computeTetrSimpleQuality(     const Point& p0, const Point& p1, const Point& p2, const Point& p3 );
-    static double  computeTetrSimpleSqrQuality(  const Point& p0, const Point& p1, const Point& p2, const Point& p3 );
+    static pair_dd computeMinMaxEdgesLengths(    const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3 );
+    static pair_dd computeMinMaxEdgesSqrLengths( const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3 );
+    static real_t  computeTetrSimpleQuality(     const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3 );
+    static real_t  computeTetrSimpleSqrQuality(  const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3 );
 
-    FrSuEdge* currentFrontEdge( double maxCompl ) const;
+    FrSuEdge* currentFrontEdge( real_t maxCompl ) const;
     bool exhaustWithoutNewVertPriorityPredicate( FrSuEdge* fEdge );
     bool exhaustWithNewVertPriorityPredicate(    FrSuEdge* fEdge );
     ExhaustType computeExhaustionTypeQualityPriority(
         FrSuEdge* fEdge,
         FrSuFacet*& out_withNWFFacet, Vec*& out_withNWNewVertPos );
 
-    Vec computeNormalInTetr( const FrSuFacet* fFacet, const Point& oppVertPos ) const;
+    Vec computeNormalInTetr( const FrSuFacet* fFacet, const Vec& oppVertPos ) const;
     Vec computeNormalInTetr( const FrSuFacet* fFacet, const pmg::Edge* oneOfRemainingEdges ) const;
-    Vec computeNormalInTetr( const Point& fFacetPos0, const Point& fFacetPos1, const Point& fFacetPos2, const Point& oppVertPos ) const;
+    Vec computeNormalInTetr( const Vec& fFacetPos0, const Vec& fFacetPos1, const Vec& fFacetPos2, const Vec& oppVertPos ) const;
 
     void setFEdgesInFrontSplit( const FrSuEdge* fEdge, FrSuEdge* newOppFEdges[2], FrSuFacet* newFFacets[2], pair_ff oppFFacets ) const;
     void exhaustFrontCollapse( FrSuEdge* fEdge, FrSuEdge* oppFEdge );
@@ -148,7 +147,7 @@ private:
             FrSuFacet* fFacet, Vec& out_pos );
     bool tryComputeNewVertPos( FrSuFacet* fFacet, Vec& out_pos );
 
-    double sqr4FacetArea( const FrSuFacet* fFacet ) const;
+    real_t sqr4FacetArea( const FrSuFacet* fFacet ) const;
     // Сurrently i don't know which method of choice is better
     FrSuFacet* chooseFacetForExhaustionWithNewVert( FrSuEdge* fEdge );
     void       exhaustWithNewVert( FrSuFacet* fFacet, const Vec& vertPos );

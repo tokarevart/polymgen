@@ -1,11 +1,9 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "helpers/spatial-algs/spatial-algs.h"
+// With help of GeomAlgorithms.com website.
 
-using tva::Vec;
-using tva::Point;
-namespace spatalgs = tva::spatalgs;
+#include "helpers/spatial-algs/spatial-algs.h"
 
 
 
@@ -25,23 +23,23 @@ namespace spatalgs = tva::spatalgs;
 
 
 
-Point spatalgs::project(
-        const Point& point,
-        const Point& line_p0, const Point& line_p1)
+Vec spatalgs::project(
+        const Vec& point,
+        const Vec& line_p0, const Vec& line_p1)
 {
     return line_p0 + (point - line_p0).project(line_p1 - line_p0);
 }
 
 
 bool spatalgs::project(
-    Point& out,
-    const Point& point,
-    const Point& segm_p0, const Point& segm_p1)
+    Vec& out,
+    const Vec& point,
+    const Vec& segm_p0, const Vec& segm_p1)
 {
     Vec res = segm_p0 + (point - segm_p0).project(segm_p1 - segm_p0);
 
     // Try to remove later.
-    const double EPS = (segm_p1 - segm_p0).magnitude() * 1e-6;
+    const real_t EPS = (segm_p1 - segm_p0).magnitude() * static_cast<real_t>(1e-6);
     if (INSIDE_RECTANGLE(
             segm_p0,
             segm_p1,
@@ -55,9 +53,9 @@ bool spatalgs::project(
 }
 
 
-Point spatalgs::project(
-        const Point& point,
-        const Point& plane_p0, const Point& plane_p1, const Point& plane_p2)
+Vec spatalgs::project(
+        const Vec& point,
+        const Vec& plane_p0, const Vec& plane_p1, const Vec& plane_p2)
 {
     return plane_p0 + (point - plane_p0).project(plane_p1 - plane_p0, plane_p2 - plane_p0);
 }
@@ -67,118 +65,118 @@ Point spatalgs::project(
 
 bool spatalgs::doesRayIntersectPlane(
         const Vec& dir,
-        const Point& pl_p0, const Point& pl_p1, const Point& pl_p2)
+        const Vec& pl_p0, const Vec& pl_p1, const Vec& pl_p2)
 {
     Vec edges[2]{ pl_p1 - pl_p0, pl_p2 - pl_p0 };
 
     Vec pvec = Vec::cross(dir, edges[1]);
-    double det = Vec::dot(edges[0], pvec);
-    return det > 1e-6 || det < -1e-6;
+    real_t det = Vec::dot(edges[0], pvec);
+    return det > static_cast<real_t>(1e-6) || det < static_cast<real_t>(-1e-6);
 }
 
 
 bool spatalgs::rayIntersectPlane(
-    Point& out_intersectPoint,
-    const Point& origin, const Vec& dir,
-    const Point& pl_p0, const Point& pl_p1, const Point& pl_p2)
+    Vec& out_intersectPoint,
+    const Vec& origin, const Vec& dir,
+    const Vec& pl_p0, const Vec& pl_p1, const Vec& pl_p2)
 {
     Vec edges[2]{ pl_p1 - pl_p0, pl_p2 - pl_p0 };
 
     Vec pvec = Vec::cross(dir, edges[1]);
-    double det = Vec::dot(edges[0], pvec);
-    if (det < 1e-6 && det > -1e-6)
+    real_t det = Vec::dot(edges[0], pvec);
+    if (det < static_cast<real_t>(1e-6) && det > static_cast<real_t>(-1e-6))
         return false;
 
     Vec tvec = origin - pl_p0;
     Vec qvec = Vec::cross(tvec, edges[0]);
 
-    double t = Vec::dot(edges[1], qvec) / det;
+    real_t t = Vec::dot(edges[1], qvec) / det;
     out_intersectPoint = origin + t * dir;
-    return t > 0.0;
+    return t > static_cast<real_t>(0.0);
 }
 
 
 bool spatalgs::doesRayIntersectTriangle(
-    const Point& origin, const Vec& dir,
-    const Point& tr_p0, const Point& tr_p1, const Point& tr_p2)
+    const Vec& origin, const Vec& dir,
+    const Vec& tr_p0, const Vec& tr_p1, const Vec& tr_p2)
 {
     Vec edges[2]{ tr_p1 - tr_p0, tr_p2 - tr_p0 };
 
     Vec pvec = Vec::cross(dir, edges[1]);
-    double det = Vec::dot(edges[0], pvec);
-    if (det < 1e-6 && det > -1e-6)
+    real_t det = Vec::dot(edges[0], pvec);
+    if (det < static_cast<real_t>(1e-6) && det > static_cast<real_t>(-1e-6))
         return false;
 
-    double inv_det = 1.0 / det;
+    real_t inv_det = static_cast<real_t>(1.0) / det;
 
     Vec tvec = origin - tr_p0;
-    double u = Vec::dot(tvec, pvec) * inv_det;
-    if (u < 0.0 || u > 1.0)
+    real_t u = Vec::dot(tvec, pvec) * inv_det;
+    if (u < static_cast<real_t>(0.0) || u > static_cast<real_t>(1.0))
         return false;
 
     Vec qvec = Vec::cross(tvec, edges[0]);
-    double v = Vec::dot(dir, qvec) * inv_det;
-    if (v < 0.0 || u + v > 1.0)
+    real_t v = Vec::dot(dir, qvec) * inv_det;
+    if (v < static_cast<real_t>(0.0) || u + v > static_cast<real_t>(1.0))
         return false;
 
-    double t = Vec::dot(edges[1], qvec) * inv_det;
-    return t > 0.0;
+    real_t t = Vec::dot(edges[1], qvec) * inv_det;
+    return t > static_cast<real_t>(0.0);
 }
 
 
-tva::Point spatalgs::linesClosestPoint(const tva::Point& line0_p0, const tva::Point& line0_p1, const tva::Point& line1_p0, const tva::Point& line1_p1)
+Vec spatalgs::linesClosestPoint(const Vec& line0_p0, const Vec& line0_p1, const Vec& line1_p0, const Vec& line1_p1)
 {
     Vec u = line0_p1 - line0_p0;
     Vec v = line1_p1 - line1_p0;
     Vec w = line0_p0 - line1_p0;
-    double a = Vec::dot(u, u); // >= 0
-    double b = Vec::dot(u, v);
-    double c = Vec::dot(v, v); // >= 0
-    double d = Vec::dot(u, w);
-    double e = Vec::dot(v, w);
-    double determ = DET(a, b, b, c); // >= 0
-    double sc, tc;
+    real_t a = Vec::dot(u, u); // >= 0
+    real_t b = Vec::dot(u, v);
+    real_t c = Vec::dot(v, v); // >= 0
+    real_t d = Vec::dot(u, w);
+    real_t e = Vec::dot(v, w);
+    real_t determ = DET(a, b, b, c); // >= 0
+    real_t sc, tc;
 
-    if (determ < 1e-6)
+    if (determ < static_cast<real_t>(1e-6))
     {
-        sc = 0.0;
+        sc = static_cast<real_t>(0.0);
         tc = b > c ? d / b : e / c;
     }
     else
     {
-        double inv_determ = 1.0 / determ;
+        real_t inv_determ = static_cast<real_t>(1.0) / determ;
         sc = DET(b, c, d, e) * inv_determ;
         tc = DET(a, b, d, e) * inv_determ;
     }
 
-    return 0.5 * (line0_p0 + sc * u + line1_p0 + tc * v);
+    return static_cast<real_t>(0.5) * (line0_p0 + sc * u + line1_p0 + tc * v);
 }
 
 
 bool spatalgs::lineIntersectPlane(
-    Point& out_intersectPoint,
-    const Point& line_point, const Point& line_dir,
-    const Point& plane_p0, const Point& plane_p1, const Point& plane_p2)
+    Vec& out_intersectPoint,
+    const Vec& line_point, const Vec& line_dir,
+    const Vec& plane_p0, const Vec& plane_p1, const Vec& plane_p2)
 {
     Vec edges[2]{ plane_p1 - plane_p0, plane_p2 - plane_p0 };
 
     Vec pvec = Vec::cross(line_dir, edges[1]);
-    double det = Vec::dot(edges[0], pvec);
-    if (det < 1e-6 && det > -1e-6)
+    real_t det = Vec::dot(edges[0], pvec);
+    if (det < static_cast<real_t>(1e-6) && det > static_cast<real_t>(-1e-6))
         return false;
 
     Vec tvec = line_point - plane_p0;
     Vec qvec = Vec::cross(tvec, edges[0]);
 
-    double t = Vec::dot(edges[1], qvec) / det;
+    real_t t = Vec::dot(edges[1], qvec) / det;
     out_intersectPoint = line_point + t * line_dir;
     return true;
 }
 
 
-Point spatalgs::lineIntersectPlane(
-    const Point& line_point, const Point& line_dir,
-    const Point& plane_p0, const Point& plane_p1, const Point& plane_p2)
+Vec spatalgs::lineIntersectPlane(
+    const Vec& line_point, const Vec& line_dir,
+    const Vec& plane_p0, const Vec& plane_p1, const Vec& plane_p2)
 {
     Vec edges[2]{ plane_p1 - plane_p0, plane_p2 - plane_p0 };
 
@@ -186,14 +184,14 @@ Point spatalgs::lineIntersectPlane(
     Vec tvec = line_point - plane_p0;
     Vec qvec = Vec::cross(tvec, edges[0]);
 
-    double t = Vec::dot(edges[1], qvec) / Vec::dot(edges[0], pvec);
+    real_t t = Vec::dot(edges[1], qvec) / Vec::dot(edges[0], pvec);
     return line_point + t * line_dir;
 }
 
 
 bool spatalgs::doesSegmentIntersectTriangle(
-    const Point& segm_p0, const Point& segm_p1,
-    const Point& tr_p0, const Point& tr_p1, const Point& tr_p2)
+    const Vec& segm_p0, const Vec& segm_p1,
+    const Vec& tr_p0, const Vec& tr_p1, const Vec& tr_p2)
 {
     const Vec dir = segm_p1 - segm_p0;
 
@@ -202,70 +200,70 @@ bool spatalgs::doesSegmentIntersectTriangle(
         tr_p2 - tr_p0 };
 
     Vec pvec = Vec::cross(dir, edges[1]);
-    double det = Vec::dot(edges[0], pvec);
-    if (det < 1e-6 && det > -1e-6)
+    real_t det = Vec::dot(edges[0], pvec);
+    if (det < static_cast<real_t>(1e-6) && det > static_cast<real_t>(-1e-6))
         return false;
 
-    double inv_det = 1.0 / det;
+    real_t inv_det = static_cast<real_t>(1.0) / det;
 
     Vec tvec = segm_p0 - tr_p0;
-    double u = Vec::dot(tvec, pvec) * inv_det;
-    if (u < 0.0 || u > 1.0)
+    real_t u = Vec::dot(tvec, pvec) * inv_det;
+    if (u < static_cast<real_t>(0.0) || u > static_cast<real_t>(1.0))
         return false;
 
     Vec qvec = Vec::cross(tvec, edges[0]);
-    double v = Vec::dot(dir, qvec) * inv_det;
-    if (v < 0.0 || u + v > 1.0)
+    real_t v = Vec::dot(dir, qvec) * inv_det;
+    if (v < static_cast<real_t>(0.0) || u + v > static_cast<real_t>(1.0))
         return false;
 
-    double t = Vec::dot(edges[1], qvec) * inv_det;
-    return t < 1.0 && t > 0.0;
+    real_t t = Vec::dot(edges[1], qvec) * inv_det;
+    return t < static_cast<real_t>(1.0) && t > static_cast<real_t>(0.0);
 }
 
 
 bool spatalgs::segmentIntersectPlane(
-    Point& out_intersectPoint,
-    const Point& p0, const Point& p1,
-    const Point& pl_p0, const Point& pl_p1, const Point& pl_p2)
+    Vec& out_intersectPoint,
+    const Vec& p0, const Vec& p1,
+    const Vec& pl_p0, const Vec& pl_p1, const Vec& pl_p2)
 {
     const Vec dir = p1 - p0;
 
     Vec edges[2]{ pl_p1 - pl_p0, pl_p2 - pl_p0 };
 
     Vec pvec = Vec::cross(dir, edges[1]);
-    double det = Vec::dot(edges[0], pvec);
-    if (det < 1e-6 && det > -1e-6)
+    real_t det = Vec::dot(edges[0], pvec);
+    if (det < static_cast<real_t>(1e-6) && det > static_cast<real_t>(-1e-6))
         return false;
 
     Vec tvec = p0 - pl_p0;
     Vec qvec = Vec::cross(tvec, edges[0]);
 
-    double t = Vec::dot(edges[1], qvec) / det;
+    real_t t = Vec::dot(edges[1], qvec) / det;
     out_intersectPoint = p0 + t * dir;
-    return t < 1.0 && t > 0.0;
+    return t < static_cast<real_t>(1.0) && t > static_cast<real_t>(0.0);
 }
 
 
 
 
 bool spatalgs::isPointOnTriangle(
-        const Point& point,
-        const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2)
+        const Vec& point,
+        const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2)
 {
-    double s0 = Vec::cross(trngl_p0 - point,    trngl_p1 - point   ).magnitude();
-    double s1 = Vec::cross(trngl_p0 - point,    trngl_p2 - point   ).magnitude();
-    double s2 = Vec::cross(trngl_p1 - point,    trngl_p2 - point   ).magnitude();
-    double s  = Vec::cross(trngl_p0 - trngl_p2, trngl_p1 - trngl_p2).magnitude();
+    real_t s0 = Vec::cross(trngl_p0 - point,    trngl_p1 - point   ).magnitude();
+    real_t s1 = Vec::cross(trngl_p0 - point,    trngl_p2 - point   ).magnitude();
+    real_t s2 = Vec::cross(trngl_p1 - point,    trngl_p2 - point   ).magnitude();
+    real_t s  = Vec::cross(trngl_p0 - trngl_p2, trngl_p1 - trngl_p2).magnitude();
 
-    double expr = s - s0 - s1 - s2;
-    return expr > -1e-6 && expr < 1e-6;
+    real_t expr = s - s0 - s1 - s2;
+    return expr > static_cast<real_t>(-1e-6) && expr < static_cast<real_t>(1e-6);
 }
 
 
 bool spatalgs::isPointOnTriangle(
-        const Point& point,
-        const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2,
-        double max_sqrs_sum)
+        const Vec& point,
+        const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2,
+        real_t max_sqrs_sum)
 {
     if (computeSqrsSum(point, trngl_p0, trngl_p1, trngl_p2) > max_sqrs_sum)
         return false;
@@ -276,29 +274,29 @@ bool spatalgs::isPointOnTriangle(
 
 
 
-double spatalgs::linesDistance(
-        const Point& line0_p0, const Point& line0_p1,
-        const Point& line1_p0, const Point& line1_p1)
+real_t spatalgs::linesDistance(
+        const Vec& line0_p0, const Vec& line0_p1,
+        const Vec& line1_p0, const Vec& line1_p1)
 {
     Vec u = line0_p1 - line0_p0;
     Vec v = line1_p1 - line1_p0;
     Vec w = line0_p0 - line1_p0;
-    double a = Vec::dot(u, u); // >= 0
-    double b = Vec::dot(u, v);
-    double c = Vec::dot(v, v); // >= 0
-    double d = Vec::dot(u, w);
-    double e = Vec::dot(v, w);
-    double determ = DET(a, b, b, c); // >= 0
-    double sc, tc;
+    real_t a = Vec::dot(u, u); // >= 0
+    real_t b = Vec::dot(u, v);
+    real_t c = Vec::dot(v, v); // >= 0
+    real_t d = Vec::dot(u, w);
+    real_t e = Vec::dot(v, w);
+    real_t determ = DET(a, b, b, c); // >= 0
+    real_t sc, tc;
 
-    if (determ < 1e-6)
+    if (determ < static_cast<real_t>(1e-6))
     {
         sc = 0.0;
         tc = b > c ? d / b : e / c;
     }
     else
     {
-        double inv_determ = 1.0 / determ;
+        real_t inv_determ = static_cast<real_t>(1.0) / determ;
         sc = DET(b, c, d, e) * inv_determ;
         tc = DET(a, b, d, e) * inv_determ;
     }
@@ -309,26 +307,26 @@ double spatalgs::linesDistance(
 }
 
 
-double spatalgs::segmentsDistance(
-    const Point& segm0_p0, const Point& segm0_p1,
-    const Point& segm1_p0, const Point& segm1_p1)
+real_t spatalgs::segmentsDistance(
+    const Vec& segm0_p0, const Vec& segm0_p1,
+    const Vec& segm1_p0, const Vec& segm1_p1)
 {
     Vec u = segm0_p1 - segm0_p0;
     Vec v = segm1_p1 - segm1_p0;
     Vec w = segm0_p0 - segm1_p0;
-    double a = Vec::dot(u, u); // >= 0
-    double b = Vec::dot(u, v);
-    double c = Vec::dot(v, v); // >= 0
-    double d = Vec::dot(u, w);
-    double e = Vec::dot(v, w);
-    double determ = DET(a, b, b, c); // >= 0
-    double sc, sn, sd = determ;
-    double tc, tn, td = determ;
+    real_t a = Vec::dot(u, u); // >= 0
+    real_t b = Vec::dot(u, v);
+    real_t c = Vec::dot(v, v); // >= 0
+    real_t d = Vec::dot(u, w);
+    real_t e = Vec::dot(v, w);
+    real_t determ = DET(a, b, b, c); // >= 0
+    real_t sc, sn, sd = determ;
+    real_t tc, tn, td = determ;
 
-    if (determ < 1e-6)
+    if (determ < static_cast<real_t>(1e-6))
     {
-        sn = 0.0;
-        sd = 1.0;
+        sn = static_cast<real_t>(0.0);
+        sd = static_cast<real_t>(1.0);
         tn = e;
         td = c;
     }
@@ -337,7 +335,7 @@ double spatalgs::segmentsDistance(
         sn = DET(b, c, d, e);
         tn = DET(a, b, d, e);
 
-        if (sn < 0.0)
+        if (sn < static_cast<real_t>(0.0))
         {
             sn = 0.0;
             tn = e;
@@ -351,13 +349,13 @@ double spatalgs::segmentsDistance(
         }
     }
 
-    if (tn < 0.0)
+    if (tn < static_cast<real_t>(0.0))
     {
-        tn = 0.0;
+        tn = static_cast<real_t>(0.0);
 
-        if (-d < 0.0)
+        if (-d < static_cast<real_t>(0.0))
         {
-            sn = 0.0;
+            sn = static_cast<real_t>(0.0);
         }
         else if (-d > a)
         {
@@ -373,9 +371,9 @@ double spatalgs::segmentsDistance(
     {
         tn = td;
 
-        if (b - d < 0.0)
+        if (b - d < static_cast<real_t>(0.0))
         {
-            sn = 0;
+            sn = static_cast<real_t>(0.0);
         }
         else if (b - d > a)
         {
@@ -388,8 +386,8 @@ double spatalgs::segmentsDistance(
         }
     }
 
-    sc = std::abs(sn) < 1e-6 ? 0.0 : sn / sd;
-    tc = std::abs(tn) < 1e-6 ? 0.0 : tn / td;
+    sc = std::abs(sn) < static_cast<real_t>(1e-6) ? static_cast<real_t>(0.0) : sn / sd;
+    tc = std::abs(tn) < static_cast<real_t>(1e-6) ? static_cast<real_t>(0.0) : tn / td;
 
     Vec diff_p = w + (sc * u) - (tc * v);
 
@@ -399,25 +397,26 @@ double spatalgs::segmentsDistance(
 
 
 
-double spatalgs::cpaTime(
-    const Point& start0, const Vec& vel0,
-    const Point& start1, const Vec& vel1)
+real_t spatalgs::cpaTime(
+    const Vec& start0, const Vec& vel0,
+    const Vec& start1, const Vec& vel1)
 {
     Vec dv = vel0 - vel1;
-    double dv2 = Vec::dot(dv, dv);
-    if (dv2 < 1e-6)
-        return 0.0;
+    real_t dv2 = Vec::dot(dv, dv);
+    if (dv2 < static_cast<real_t>(1e-6))
+        return static_cast<real_t>(0.0);
 
     Vec w0 = start0 - start1;
     return -Vec::dot(w0, dv) / dv2;
 }
 
 
-double spatalgs::cpaDistance(
-    const Point& start0, const Vec& vel0,
-    const Point& start1, const Vec& vel1)
+
+real_t spatalgs::cpaDistance(
+    const Vec& start0, const Vec& vel0,
+    const Vec& start1, const Vec& vel1)
 {
-    double cpa_time = cpaTime(start0, vel0, start1, vel1);
+    real_t cpa_time = cpaTime(start0, vel0, start1, vel1);
     Vec p0 = start0 + cpa_time * vel0;
     Vec p1 = start1 + cpa_time * vel1;
     return (p1 - p0).magnitude();
@@ -426,43 +425,57 @@ double spatalgs::cpaDistance(
 
 
 
-double spatalgs::distancePointToLine(const Point& point, const Point& line_p0, const Point& line_p1)
+real_t spatalgs::distancePointToLine(const Vec& point, const Vec& line_p0, const Vec& line_p1)
 {
     return (project(point, line_p0, line_p1) - point).magnitude();
 }
 
 
-double spatalgs::distancePointToSegment(const Point& point, const Point& segm_p0, const Point& segm_p1)
+real_t spatalgs::distancePointToSegment(const Vec& point, const Vec& segm_p0, const Vec& segm_p1)
 {
-    Point proj = project(point, segm_p0, segm_p1);
+    Vec proj = project(point, segm_p0, segm_p1);
 
     // Try to remove later.
-    const double EPS = (segm_p1 - segm_p0).magnitude() * 1e-6;
+    const real_t EPS = (segm_p1 - segm_p0).magnitude() * static_cast<real_t>(1e-6);
     if (INSIDE_RECTANGLE(segm_p0, segm_p1, proj))
     {
         return (proj - point).magnitude();
     }
-    else if (double sqr_magns[2] { (segm_p0 - point).sqrMagnitude(), (segm_p1 - point).sqrMagnitude() };
+    else if (real_t sqr_magns[2] { (segm_p0 - point).sqrMagnitude(), (segm_p1 - point).sqrMagnitude() };
              sqr_magns[0] < sqr_magns[1])
     {
-        return sqrt(sqr_magns[0]);
+        if constexpr (std::is_same<real_t, float>())
+        {
+            return sqrtf(sqr_magns[0]);
+        }
+        else
+        {
+            return sqrt(sqr_magns[0]);
+        }
     }
     else
     {
-        return sqrt(sqr_magns[1]);
+        if constexpr (std::is_same<real_t, float>())
+        {
+            return sqrtf(sqr_magns[1]);
+        }
+        else
+        {
+            return sqrt(sqr_magns[1]);
+        }
     }
 }
 
 
-double spatalgs::distancePointToTriangleOnPlane(
-        const Point& point, const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2)
+real_t spatalgs::distancePointToTriangleOnPlane(
+        const Vec& point, const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2)
 {
-    Point closest_points[3];
+    Vec closest_points[3];
     closest_points[0] = closestSegmentPointToPoint(point, trngl_p0, trngl_p1);
     closest_points[1] = closestSegmentPointToPoint(point, trngl_p1, trngl_p2);
     closest_points[2] = closestSegmentPointToPoint(point, trngl_p2, trngl_p0);
 
-    double sqrs[3];
+    real_t sqrs[3];
     sqrs[0] = (closest_points[0] - point).sqrMagnitude();
     sqrs[1] = (closest_points[1] - point).sqrMagnitude();
     sqrs[2] = (closest_points[2] - point).sqrMagnitude();
@@ -471,32 +484,32 @@ double spatalgs::distancePointToTriangleOnPlane(
 }
 
 
-bool spatalgs::doesTriangleIntersectSphere(const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2,
-                                           const Point& center,   double radius)
+bool spatalgs::doesTriangleIntersectSphere(const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2,
+                                           const Vec& center,   real_t radius)
 {
-    Point proj = project(center, trngl_p0, trngl_p1, trngl_p2);
+    Vec proj = project(center, trngl_p0, trngl_p1, trngl_p2);
     if ((proj - center).sqrMagnitude() > radius * radius)
         return false;
 
     if (isPointOnTriangle(proj, trngl_p0, trngl_p1, trngl_p2, computeMaxSqrsSum(trngl_p0, trngl_p1, trngl_p2)))
         return true;
 
-    Point closest = closestTrianglePointToPointOnPlane(proj, trngl_p0, trngl_p1, trngl_p2);
+    Vec closest = closestTrianglePointToPointOnPlane(proj, trngl_p0, trngl_p1, trngl_p2);
     return (closest - center).sqrMagnitude() <= radius * radius;
 }
 
 
-Point spatalgs::closestSegmentPointToPoint(const Point& point, const Point& segm_p0, const Point& segm_p1)
+Vec spatalgs::closestSegmentPointToPoint(const Vec& point, const Vec& segm_p0, const Vec& segm_p1)
 {
-    Point proj = project(point, segm_p0, segm_p1);
+    Vec proj = project(point, segm_p0, segm_p1);
 
     // Try to remove later.
-    const double EPS = (segm_p1 - segm_p0).magnitude() * 1e-6;
+    const real_t EPS = (segm_p1 - segm_p0).magnitude() * static_cast<real_t>(1e-6);
     if (INSIDE_RECTANGLE(segm_p0, segm_p1, proj))
     {
         return proj;
     }
-    else if (double sqr_magns[2] { (segm_p0 - point).sqrMagnitude(), (segm_p1 - point).sqrMagnitude() };
+    else if (real_t sqr_magns[2] { (segm_p0 - point).sqrMagnitude(), (segm_p1 - point).sqrMagnitude() };
              sqr_magns[0] < sqr_magns[1])
     {
         return segm_p0;
@@ -508,9 +521,9 @@ Point spatalgs::closestSegmentPointToPoint(const Point& point, const Point& segm
 }
 
 
-double spatalgs::computeMaxSqrsSum(const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2)
+real_t spatalgs::computeMaxSqrsSum(const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2)
 {
-    double sqrs[3];
+    real_t sqrs[3];
     sqrs[0] = (trngl_p1 - trngl_p0).sqrMagnitude();
     sqrs[1] = (trngl_p2 - trngl_p1).sqrMagnitude();
     sqrs[2] = (trngl_p0 - trngl_p2).sqrMagnitude();
@@ -537,9 +550,9 @@ double spatalgs::computeMaxSqrsSum(const Point& trngl_p0, const Point& trngl_p1,
 }
 
 
-double spatalgs::computeSqrsSum(const Point& point, const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2)
+real_t spatalgs::computeSqrsSum(const Vec& point, const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2)
 {
-    double sqrs[3];
+    real_t sqrs[3];
     sqrs[0] = (trngl_p0 - point).sqrMagnitude();
     sqrs[1] = (trngl_p1 - point).sqrMagnitude();
     sqrs[2] = (trngl_p2 - point).sqrMagnitude();
@@ -547,15 +560,15 @@ double spatalgs::computeSqrsSum(const Point& point, const Point& trngl_p0, const
 }
 
 
-Point spatalgs::closestTrianglePointToPointOnPlane(
-        const Point& point, const Point& trngl_p0, const Point& trngl_p1, const Point& trngl_p2)
+Vec spatalgs::closestTrianglePointToPointOnPlane(
+        const Vec& point, const Vec& trngl_p0, const Vec& trngl_p1, const Vec& trngl_p2)
 {
-    Point closest_points[3];
+    Vec closest_points[3];
     closest_points[0] = closestSegmentPointToPoint(point, trngl_p0, trngl_p1);
     closest_points[1] = closestSegmentPointToPoint(point, trngl_p1, trngl_p2);
     closest_points[2] = closestSegmentPointToPoint(point, trngl_p2, trngl_p0);
 
-    double sqrs[3];
+    real_t sqrs[3];
     sqrs[0] = (closest_points[0] - point).sqrMagnitude();
     sqrs[1] = (closest_points[1] - point).sqrMagnitude();
     sqrs[2] = (closest_points[2] - point).sqrMagnitude();

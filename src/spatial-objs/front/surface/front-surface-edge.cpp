@@ -6,15 +6,15 @@
 #include "helpers/spatial-algs/spatial-algs.h"
 
 
-#define K_ALPHA 4.0
+#define PI static_cast<real_t>(M_PI)
+
+#define K_ALPHA static_cast<real_t>(4.0)
 
 
 using FrSuFacet = pmg::front::surface::Facet;
 using FrSuEdge  = pmg::front::surface::Edge;
 using pair_vv = std::pair<pmg::Vertex*, pmg::Vertex*>;
 using pair_ff = std::pair<FrSuFacet*, FrSuFacet*>;
-using Vec   = tva::Vec;
-using Point = tva::Point;
 
 
 
@@ -26,7 +26,7 @@ void FrSuEdge::refreshAngleData()
 }
 
 
-double FrSuEdge::complexity()
+real_t FrSuEdge::complexity()
 {
     if (!m_needComplexityProcessing)
         return m_complexity;
@@ -35,7 +35,7 @@ double FrSuEdge::complexity()
 }
 
 
-double FrSuEdge::angleExCos()
+real_t FrSuEdge::angleExCos()
 {
     if (!m_needExCosProcessing)
         return m_exCos;
@@ -44,33 +44,33 @@ double FrSuEdge::angleExCos()
 }
 
 
-double FrSuEdge::computeComplexity()
+real_t FrSuEdge::computeComplexity()
 {
     m_needComplexityProcessing = false;
-    return m_complexity = m_relatedCrys->preferredLength() / edge->magnitude() + K_ALPHA * M_PI / computeAngle();
+    return m_complexity = m_relatedCrys->preferredLength() / edge->magnitude() + K_ALPHA * PI / computeAngle();
 }
 
 
-double FrSuEdge::computeAngleExCos()
+real_t FrSuEdge::computeAngleExCos()
 {
     auto adj_facets = getAdjFFacets();
 
-    double normals_cos = tva::Vec::dot(std::get<0>(adj_facets)->normal, std::get<1>(adj_facets)->normal);
+    real_t normals_cos = Vec::dot(std::get<0>(adj_facets)->normal, std::get<1>(adj_facets)->normal);
 
     m_needExCosProcessing = false;
-    return m_exCos = tva::spatalgs::cpaTime(
+    return m_exCos = spatalgs::cpaTime(
             std::get<0>(adj_facets)->computeCenter(), std::get<0>(adj_facets)->normal,
-            std::get<1>(adj_facets)->computeCenter(), std::get<1>(adj_facets)->normal) < 1e-6 ?
-        -2.0 + normals_cos :
+            std::get<1>(adj_facets)->computeCenter(), std::get<1>(adj_facets)->normal) < static_cast<real_t>(1e-6) ?
+        static_cast<real_t>(-2.0) + normals_cos :
         -normals_cos;
 }
 
 
-double FrSuEdge::computeAngle()
+real_t FrSuEdge::computeAngle()
 {
-    return angleExCos() < -1.0 ?
-        acos(m_exCos + 2.0) + M_PI :
-        acos(m_exCos);
+    return angleExCos() < static_cast<real_t>(-1.0) ?
+        acosReal(m_exCos + static_cast<real_t>(2.0)) + PI :
+        acosReal(m_exCos);
 }
 
 
@@ -108,23 +108,23 @@ FrSuEdge* FrSuEdge::findOppEdge()
     for (auto& fedge : opp_fedges)
         adj_ffacets_vec.push_back(fedge->getAdjFFacets());
 
-    Point main_vert_pos = edge->verts[0]->pos();
-    Point main_vert_proj = tva::spatalgs::project(main_vert_pos, opp_verts.first->pos(), opp_verts.second->pos());
+    Vec main_vert_pos = edge->verts[0]->pos();
+    Vec main_vert_proj = spatalgs::project(main_vert_pos, opp_verts.first->pos(), opp_verts.second->pos());
     Vec main_vec = main_vert_pos - main_vert_proj;
 
     FrSuEdge* max_cos_fedge = nullptr;
-    double max_cos = -1.0;
+    real_t max_cos = -1.0;
     for (size_t i = 0; i < adj_ffacets_vec.size(); i++)
     {
-        Point adj_opp_pos0 = adj_ffacets_vec[i].first->facet->findVertNot(opp_fedges.front()->edge)->pos();
-        Point adj_opp_pos1 = adj_ffacets_vec[i].second->facet->findVertNot(opp_fedges.front()->edge)->pos();
-        Point adj_opp_proj0 = tva::spatalgs::project(adj_opp_pos0, opp_verts.first->pos(), opp_verts.second->pos());
-        Point adj_opp_proj1 = tva::spatalgs::project(adj_opp_pos1, opp_verts.first->pos(), opp_verts.second->pos());
+        Vec adj_opp_pos0 = adj_ffacets_vec[i].first->facet->findVertNot(opp_fedges.front()->edge)->pos();
+        Vec adj_opp_pos1 = adj_ffacets_vec[i].second->facet->findVertNot(opp_fedges.front()->edge)->pos();
+        Vec adj_opp_proj0 = spatalgs::project(adj_opp_pos0, opp_verts.first->pos(), opp_verts.second->pos());
+        Vec adj_opp_proj1 = spatalgs::project(adj_opp_pos1, opp_verts.first->pos(), opp_verts.second->pos());
         Vec adj_vec0 = adj_opp_pos0 - adj_opp_proj0;
         Vec adj_vec1 = adj_opp_pos1 - adj_opp_proj1;
-        double cos0 = Vec::cos(adj_vec0, main_vec);
-        double cos1 = Vec::cos(adj_vec1, main_vec);
-        double max_cur_cos = std::max(cos0, cos1);
+        real_t cos0 = Vec::cos(adj_vec0, main_vec);
+        real_t cos1 = Vec::cos(adj_vec1, main_vec);
+        real_t max_cur_cos = std::max(cos0, cos1);
         if (max_cur_cos > max_cos)
         {
             max_cos = max_cur_cos;

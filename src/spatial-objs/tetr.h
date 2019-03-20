@@ -4,6 +4,7 @@
 #pragma once
 #include <algorithm>
 #include "spatial-objs/vertex.h"
+#include "real-type.h"
 
 #include "definitions.h"
 
@@ -15,8 +16,8 @@ class Tetr
 public:
     Vertex* verts[4];
 
-    double computeVolume()  const;
-    double computeQuality() const;
+    real_t computeVolume()  const;
+    real_t computeQuality() const;
 
     Tetr( const Vertex* vert0,
           const Vertex* vert1,

@@ -4,6 +4,7 @@
 #pragma once
 #include "spatial-objs/shell/shell-facet.h"
 #include "helpers/spatial-algs/vec.h"
+#include "real-type.h"
 
 #include "definitions.h"
 
@@ -14,15 +15,12 @@ namespace plane {
 
 class Edge
 {
-    typedef tva::Vec   Vec;
-    typedef tva::Point Point;
-
 public:
     pmg::Edge* edge;
     Vec normal;
 
-    Vec   computeNormal();
-    Point computeCenter();
+    Vec computeNormal();
+    Vec computeCenter();
 
     static bool isAdj( const Edge* edge0, const Edge* edge1 );
 

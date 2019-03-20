@@ -7,10 +7,9 @@
 #include "helpers/spatial-algs/spatial-algs.h"
 
 using pair_ff = std::pair<pmg::Facet*, pmg::Facet*>;
-using tva::Vec;
 
 
-#define EPS 1e-10
+#define EPS static_cast<real_t>(1e-10)
 #define BETWEEN(p0_coor, p1_coor, p) \
         (std::min(p0_coor, p1_coor) - EPS < p && p < std::max(p0_coor, p1_coor) + EPS)
 
@@ -18,19 +17,20 @@ using tva::Vec;
         (BETWEEN(corner0[0], corner1[0], point[0]) && \
          BETWEEN(corner0[1], corner1[1], point[1]))
 
+#define PI static_cast<real_t>(M_PI)
 
-#define K_ALPHA 2.5
+#define K_ALPHA static_cast<real_t>(2.5)
 
 
 
 
-double pmg::Edge::magnitude() const
+real_t pmg::Edge::magnitude() const
 {
     return (*verts[1] - *verts[0]).magnitude();
 }
 
 
-double pmg::Edge::sqrMagnitude() const
+real_t pmg::Edge::sqrMagnitude() const
 {
     return (*verts[1] - *verts[0]).sqrMagnitude();
 }
@@ -96,10 +96,10 @@ bool pmg::Edge::flipIfNeeded(std::list<pmg::Edge*>& edgesList, std::list<pmg::Fa
     opp_nodes[0] = std::get<0>(around_facets)->findVertNot(this);
     opp_nodes[1] = std::get<1>(around_facets)->findVertNot(this);
 
-    double alpha = acos(Vec::cos(*verts[0] - *opp_nodes[0], *verts[1] - *opp_nodes[0]));
-    double beta  = acos(Vec::cos(*verts[0] - *opp_nodes[1], *verts[1] - *opp_nodes[1]));
+    real_t alpha = acosReal(Vec::cos(*verts[0] - *opp_nodes[0], *verts[1] - *opp_nodes[0]));
+    real_t beta  = acosReal(Vec::cos(*verts[0] - *opp_nodes[1], *verts[1] - *opp_nodes[1]));
 
-    if (alpha + beta <= M_PI)
+    if (alpha + beta <= PI)
         return false;
 
 
@@ -201,10 +201,10 @@ bool pmg::Edge::needToFlip(const std::list<pmg::Facet*>& facetsList)
     opp_nodes[0] = std::get<0>(around_facets)->findVertNot(this);
     opp_nodes[1] = std::get<1>(around_facets)->findVertNot(this);
 
-    double alpha = acos(Vec::cos(*verts[0] - *opp_nodes[0], *verts[1] - *opp_nodes[0]));
-    double beta  = acos(Vec::cos(*verts[0] - *opp_nodes[1], *verts[1] - *opp_nodes[1]));
+    real_t alpha = acosReal(Vec::cos(*verts[0] - *opp_nodes[0], *verts[1] - *opp_nodes[0]));
+    real_t beta  = acosReal(Vec::cos(*verts[0] - *opp_nodes[1], *verts[1] - *opp_nodes[1]));
 
-    if (alpha + beta <= M_PI)
+    if (alpha + beta <= PI)
         return true;
 
     return false;

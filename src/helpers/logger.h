@@ -9,8 +9,6 @@
 #include <memory>
 
 
-namespace tva
-{
 class Logger
 {
     enum class IomanipType
@@ -83,4 +81,3 @@ private:
 
     void istreamTypeOperatorHelper();
 };
-}

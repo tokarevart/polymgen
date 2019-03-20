@@ -4,8 +4,6 @@
 #include "helpers/timer.h"
 #include <stdexcept>
 
-using namespace tva;
-
 
 
 

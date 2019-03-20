@@ -4,6 +4,7 @@
 #pragma once
 #include "spatial-objs/crystallite.h"
 #include "helpers/spatial-algs/vec.h"
+#include "real-type.h"
 
 #include "definitions.h"
 
@@ -15,7 +16,6 @@ namespace surface {
 class Facet
 {
     using FrSuEdge = front::surface::Edge;
-    using Vec = tva::Vec;
 
 public:
     pmg::Facet* facet;
@@ -24,7 +24,7 @@ public:
 
     Vec    computeNormal();
     Vec    computeCenter();
-    double computeQuality();
+    real_t computeQuality();
 
     FrSuEdge* findFEdge( const pmg::Edge* edge ) const;
     FrSuEdge* findFEdge( const pmg::Vertex* v0, const pmg::Vertex* v1 ) const;

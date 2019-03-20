@@ -18,6 +18,7 @@
 #include "data-structures/polymesh.h"
 #include "data-structures/polystruct.h"
 #include "helpers/logger.h"
+#include "real-type.h"
 
 #include "definitions.h"
 
@@ -33,7 +34,7 @@ public:
         LsDynaKeyword
     };
 
-    void generateMesh(double preferredLength, std::string_view logFileName = "_AUTO_");
+    void generateMesh(real_t preferredLength, std::string_view logFileName = "_AUTO_");
     const PolyMesh* structurizeMesh();
     const PolyMesh* getLastMesh();
 
@@ -48,10 +49,10 @@ public:
 
 
 private:
-    double m_preferredLength;
+    real_t m_preferredLength;
 
     PolyMesh* m_lastMesh = nullptr;
-    std::unique_ptr<tva::Logger> m_lastLogger;
+    std::unique_ptr<Logger> m_lastLogger;
 
     std::vector<Crystallite*> m_crystallites;
 

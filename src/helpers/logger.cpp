@@ -3,8 +3,6 @@
 
 #include "helpers/logger.h"
 
-using tva::Logger;
-
 
 
 

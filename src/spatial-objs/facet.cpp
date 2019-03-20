@@ -4,28 +4,29 @@
 #include "spatial-objs/facet.h"
 #include "helpers/spatial-algs/spatial-algs.h"
 
+#define ONE_3 static_cast<real_t>(0.3333333333333333)
 
 
-tva::Vec pmg::Facet::computeCenter() const
+Vec pmg::Facet::computeCenter() const
 {
-    return 0.3333333333333333 * (
+    return ONE_3 * (
         edges[0]->verts[0]->pos() +
         edges[0]->verts[1]->pos() +
         findVertNot(edges[0])->pos());
 }
 
 
-double pmg::Facet::computeQuality() const
+real_t pmg::Facet::computeQuality() const
 {
     return findShortestEdge()->sqrMagnitude() / findLongestEdge()->sqrMagnitude();
 }
 
 
-double pmg::Facet::computeArea() const
+real_t pmg::Facet::computeArea() const
 {
     Vec vec0 = edges[0]->verts[1]->pos() - edges[0]->verts[0]->pos();
     Vec vec1 = edges[1]->verts[1]->pos() - edges[1]->verts[0]->pos();
-    return 0.5 * Vec::cross(vec0, vec1).magnitude();
+    return static_cast<real_t>(0.5) * Vec::cross(vec0, vec1).magnitude();
 }
 
 
@@ -50,9 +51,9 @@ pmg::Edge* pmg::Facet::intersectAlongEdge(const pmg::Facet* facet0, const pmg::F
 
 
 
-bool pmg::Facet::intersectsBy(const tva::Point& origin, const tva::Vec& dir) const
+bool pmg::Facet::intersectsBy(const Vec& origin, const Vec& dir) const
 {
-    return tva::spatalgs::doesRayIntersectTriangle(
+    return spatalgs::doesRayIntersectTriangle(
         origin, dir,
         edges[0]->verts[0]->pos(),
         edges[0]->verts[1]->pos(),

@@ -3,12 +3,10 @@
 
 #include "polygen/polygen.h"
 
-using polygen::PolyStruct;
 
 
 
-
-PolyStruct polygen::generateCuboidsPolycrystal(size_t nX, size_t nY, size_t nZ, double dX, double dY, double dZ) noexcept
+polygen::PolyStruct polygen::generateCuboidsPolycrystal(size_t nX, size_t nY, size_t nZ, real_t dX, real_t dY, real_t dZ) noexcept
 {
     const size_t w = nX;
     const size_t t = nY;
@@ -43,7 +41,7 @@ PolyStruct polygen::generateCuboidsPolycrystal(size_t nX, size_t nY, size_t nZ, 
     }
     for (size_t j = 0, j0 = 2 * t * h * (w + 1); j < 2 * w * h * (t + 1); j += 2)
     {
-        shell.facets[j0 + j][0]     = j / 2 + (j / 2) / w;
+        shell.facets[j0 + j][0] = j / 2 + (j / 2) / w;
         shell.facets[j0 + j][1] = shell.facets[j0 + j][0] + 1;
         shell.facets[j0 + j][2] = shell.facets[j0 + j][1] + (w + 1) * (t + 1);
 

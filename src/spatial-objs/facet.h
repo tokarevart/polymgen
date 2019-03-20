@@ -5,6 +5,7 @@
 #include "spatial-objs/edge.h"
 #include "spatial-objs/vertex.h"
 #include "helpers/spatial-algs/vec.h"
+#include "real-type.h"
 
 #include "definitions.h"
 
@@ -13,19 +14,16 @@ namespace pmg {
 
 class Facet
 {
-    typedef tva::Vec Vec;
-    typedef tva::Point Point;
-
 public:
     Edge* edges[3];
 
     Vec    computeCenter()  const;
-    double computeQuality() const;
-    double computeArea()    const;
+    real_t computeQuality() const;
+    real_t computeArea()    const;
 
     static Edge* intersectAlongEdge( const Facet* facet0, const Facet* facet1 );
 
-    bool intersectsBy( const Point& origin, const Vec& dir )     const;
+    bool intersectsBy( const Vec& origin, const Vec& dir )     const;
     Vertex* findVertNot( const Edge* edge )        const;
     Edge*   findEdgeNot( const Vertex* vert )      const;
     Edge*   findEdge( const Vertex* vert0, const Vertex* vert1 ) const;

@@ -4,8 +4,6 @@
 #include "spatial-objs/shell/shell-vertex.h"
 
 using namespace pmg;
-using tva::Vec;
-using tva::Point;
 
 
 
@@ -16,19 +14,19 @@ Vec shell::Vertex::operator-(const shell::Vertex& other) const
 }
 
 
-const Point& shell::Vertex::pos() const
+const Vec& shell::Vertex::pos() const
 {
     return *m_pos;
 }
 
 
-double& shell::Vertex::operator[](unsigned axis)
+real_t& shell::Vertex::operator[](unsigned axis)
 {
     return m_pos->coors[axis];
 }
 
 
-const double& shell::Vertex::operator[](unsigned axis) const
+const real_t& shell::Vertex::operator[](unsigned axis) const
 {
     return m_pos->coors[axis];
 }
@@ -44,17 +42,17 @@ Vec shell::Vertex::operator-(const pmg::Vertex& other) const
 
 shell::Vertex::Vertex()
 {
-    m_pos.reset(new Point());
+    m_pos.reset(new Vec());
 }
 
 
-shell::Vertex::Vertex(double coor0, double coor1, double coor2)
+shell::Vertex::Vertex(real_t coor0, real_t coor1, real_t coor2)
 {
     m_pos.reset(new Vec(coor0, coor1, coor2));
 }
 
 
-shell::Vertex::Vertex(const Point& position)
+shell::Vertex::Vertex(const Vec& position)
 {
-    m_pos.reset(new Point(position));
+    m_pos.reset(new Vec(position));
 }

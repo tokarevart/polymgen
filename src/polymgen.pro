@@ -24,7 +24,8 @@ SOURCES += \
     spatial-objs/polycrystal.cpp \
     spatial-objs/tetr.cpp \
     spatial-objs/vertex.cpp \
-    main.cpp
+    main.cpp \
+    real-type.cpp
 
 
 HEADERS += \
@@ -49,5 +50,6 @@ HEADERS += \
     spatial-objs/tetr.h \
     spatial-objs/vertex.h \
     definitions.h \
-    helpers/cosd-values.h
+    helpers/cosd-values.h \
+    real-type.h
 

@@ -11,6 +11,6 @@ namespace polygen {
 
 PolyStruct generateCuboidsPolycrystal(
     size_t nX, size_t nY, size_t nZ,
-    double dX = 1.0, double dY = 1.0, double dZ = 1.0) noexcept;
+    real_t dX = 1.0, real_t dY = 1.0, real_t dZ = 1.0) noexcept;
 
 } // namespace polygen

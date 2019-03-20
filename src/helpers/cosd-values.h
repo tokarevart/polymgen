@@ -3,12 +3,14 @@
 
 #pragma once
 
-template <int Deg>
-constexpr double cosDeg = 2.0;
+template <int Deg, typename Real = double>
+constexpr Real cosDeg = static_cast<Real>(2.0);
 
 #define SPEC_COSDEG(deg, value) \
     template<> \
-    constexpr double cosDeg<deg> = value
+    constexpr float  cosDeg<deg, float> = value ## f; \
+    template<> \
+    constexpr double cosDeg<deg, double> = value
 
 // cosDeg specializations
 SPEC_COSDEG(60,   0.5);

@@ -3,25 +3,22 @@
 
 #include "spatial-objs/vertex.h"
 
-using tva::Vec;
-using tva::Point;
 
 
 
-
-const Point& pmg::Vertex::pos() const
+const Vec& pmg::Vertex::pos() const
 {
     return *m_pos;
 }
 
 
-void pmg::Vertex::setPos(const Point& newPos)
+void pmg::Vertex::setPos(const Vec& newPos)
 {
     *m_pos = newPos;
 }
 
 
-void pmg::Vertex::setPos(double coor0, double coor1, double coor2)
+void pmg::Vertex::setPos(real_t coor0, real_t coor1, real_t coor2)
 {
     m_pos->coors[0] = coor0;
     m_pos->coors[1] = coor1;
@@ -31,13 +28,13 @@ void pmg::Vertex::setPos(double coor0, double coor1, double coor2)
 
 
 
-double& pmg::Vertex::operator[](short axis)
+real_t& pmg::Vertex::operator[](short axis)
 {
     return m_pos->coors[axis];
 }
 
 
-const double& pmg::Vertex::operator[](short axis) const
+const real_t& pmg::Vertex::operator[](short axis) const
 {
     return m_pos->coors[axis];
 }
@@ -103,17 +100,17 @@ pmg::Vertex& pmg::Vertex::operator-=(const Vec& other)
 
 pmg::Vertex::Vertex()
 {
-    m_pos.reset(new Point());
+    m_pos.reset(new Vec());
 }
 
 
-pmg::Vertex::Vertex(double coor0, double coor1, double coor2)
+pmg::Vertex::Vertex(real_t coor0, real_t coor1, real_t coor2)
 {
-    m_pos.reset(new Point(coor0, coor1, coor2));
+    m_pos.reset(new Vec(coor0, coor1, coor2));
 }
 
 
-pmg::Vertex::Vertex(const Point& position)
+pmg::Vertex::Vertex(const Vec& position)
 {
-    m_pos.reset(new Point(position));
+    m_pos.reset(new Vec(position));
 }

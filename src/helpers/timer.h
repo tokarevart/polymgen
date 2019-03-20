@@ -7,8 +7,6 @@
 #include <vector>
 
 
-namespace tva
-{
 class Timer
 {
     using hi_res_clock = std::chrono::high_resolution_clock;
@@ -51,4 +49,3 @@ private:
 
     size_t durationCast( hi_res_clock::duration duration, TimeScale timeScale ) const;
 };
-}

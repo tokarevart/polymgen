@@ -3,19 +3,19 @@
 
 #pragma once
 #include <stddef.h>
+#include "real-type.h"
 
 // Note:
 // Make memory leak safe later.
 
-namespace pmg
-{
+namespace pmg {
 
 struct PolyMesh
 {
     size_t  nNodes;
 
     // { x0, y0, z0, x1, y1, z1 ... }
-    double* nodesPositions;
+    real_t* nodesPositions;
     size_t  nTetrs;
     size_t  nCryses;
 
@@ -28,7 +28,7 @@ struct PolyMesh
     // { ... c[i]_t[0]_n[0..3] ... c[i]_t[nCrysesTetrs[i]]_n[0..3] }
     size_t* tetrs;
 
-    PolyMesh() {}
+    PolyMesh();
     ~PolyMesh();
 };
 
