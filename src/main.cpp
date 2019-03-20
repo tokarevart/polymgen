@@ -12,8 +12,6 @@
 int main()
 {
     real_t preferredEdgeLength = static_cast<real_t>(0.45);
-//    std::cout << "Enter preferred shell::Edge length: ";
-//    std::cin >> preferredEdgeLength;
     
     std::cout << "Generating PolyhedralSet...";
     size_t n = 4;
