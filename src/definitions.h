@@ -11,12 +11,12 @@ class Polyhedron;
 class Tetr;
 class Face;
 class Edge;
-class Vertex;
+class Vert;
 
 namespace front {
 namespace plane {
 class Edge;
-class Vertex;
+class Vert;
 } // namespace plane
 
 namespace surface {
@@ -28,6 +28,6 @@ class Edge;
 namespace shell {
 class Face;
 class Edge;
-class Vertex;
+class Vert;
 } // namespace shell
 } // namespace pmg

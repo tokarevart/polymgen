@@ -68,7 +68,7 @@ FrSuEdge* FrSuFace::findFEdge(const pmg::Edge* edge) const
 }
 
 
-FrSuEdge* FrSuFace::findFEdge(const pmg::Vertex* v0, const pmg::Vertex* v1) const
+FrSuEdge* FrSuFace::findFEdge(const pmg::Vert* v0, const pmg::Vert* v1) const
 {
     for (auto& fedge : fEdges)
         if ((fedge->edge->verts[0] == v0 && fedge->edge->verts[1] == v1) ||
@@ -79,7 +79,7 @@ FrSuEdge* FrSuFace::findFEdge(const pmg::Vertex* v0, const pmg::Vertex* v1) cons
 }
 
 
-FrSuEdge* FrSuFace::findFEdgeNot(const pmg::Vertex* vert) const
+FrSuEdge* FrSuFace::findFEdgeNot(const pmg::Vert* vert) const
 {
     for (auto& fedge : fEdges)
         if (!fedge->edge->contains(vert))

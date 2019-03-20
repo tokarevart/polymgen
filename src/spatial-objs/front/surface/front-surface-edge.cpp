@@ -13,7 +13,7 @@
 
 using FrSuFace = pmg::front::surface::Face;
 using FrSuEdge  = pmg::front::surface::Edge;
-using pair_vv = std::pair<pmg::Vertex*, pmg::Vertex*>;
+using pair_vv = std::pair<pmg::Vert*, pmg::Vert*>;
 using pair_ff = std::pair<FrSuFace*, FrSuFace*>;
 
 

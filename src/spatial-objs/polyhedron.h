@@ -12,7 +12,7 @@
 #include "spatial-objs/tetr.h"
 #include "spatial-objs/face.h"
 #include "spatial-objs/edge.h"
-#include "spatial-objs/vertex.h"
+#include "spatial-objs/vert.h"
 #include "helpers/spatial-algs/vec.h"
 #include "real-type.h"
 
@@ -32,20 +32,20 @@ class Polyhedron
 public:
     real_t preferredLength() const;
 
-    void addToShell(const shell::Face*  shellFace);
-    void addToShell(const shell::Edge*   shellEdge);
-    void addToShell(const shell::Vertex* shellVert);
+    void addToShell(const shell::Face* shellFace);
+    void addToShell(const shell::Edge* shellEdge);
+    void addToShell(const shell::Vert* shellVert);
 
-    bool shellContains(const shell::Face*  shellFace) const;
-    bool shellContains(const shell::Edge*   shellEdge)  const;
-    bool shellContains(const shell::Vertex* shellVert)  const;
+    bool shellContains(const shell::Face* shellFace) const;
+    bool shellContains(const shell::Edge* shellEdge)  const;
+    bool shellContains(const shell::Vert* shellVert)  const;
 
-    const std::vector<Tetr*>&   innerTetrs()  const;
-    const std::vector<Face*>&  innerFaces() const;
-    const std::vector<Vertex*>& innerVerts()  const;
+    const std::vector<Tetr*>& innerTetrs()  const;
+    const std::vector<Face*>& innerFaces() const;
+    const std::vector<Vert*>& innerVerts()  const;
 
     const std::list<FrSuFace*>& frontFaces() const;
-    const std::list<FrSuEdge*>&  frontEdges()  const;
+    const std::list<FrSuEdge*>& frontEdges()  const;
 
     // Returns minimum and average tetrahedrons qualitys.
     pair_dd analyzeMeshQuality();
@@ -70,24 +70,24 @@ private:
 
     PolyhedralSet* m_polycr = nullptr;
 
-    std::vector<shell::Face*>  m_shellFaces;
-    std::vector<shell::Edge*>   m_shellEdges;
-    std::vector<shell::Vertex*> m_shellVerts;
+    std::vector<shell::Face*> m_shellFaces;
+    std::vector<shell::Edge*> m_shellEdges;
+    std::vector<shell::Vert*> m_shellVerts;
 
-    std::vector<Tetr*>    m_innerTetrs;
-    std::vector<Face*>   m_innerFaces;
-    std::vector<Edge*>    m_innerEdges;
-    std::vector<Vertex*>  m_innerVerts;
+    std::vector<Tetr*> m_innerTetrs;
+    std::vector<Face*> m_innerFaces;
+    std::vector<Edge*> m_innerEdges;
+    std::vector<Vert*> m_innerVerts;
 
     std::list<FrSuFace*> m_frontFaces;
-    std::list<FrSuEdge*>  m_frontEdges;
+    std::list<FrSuEdge*> m_frontEdges;
 
-    bool shellContains( const Vertex* vert ) const;
+    bool shellContains( const Vert* vert ) const;
 
-    shell::Edge* findShellEdge( const shell::Vertex* v0, const shell::Vertex* v1 ) const;
+    shell::Edge* findShellEdge( const shell::Vert* v0, const shell::Vert* v1 ) const;
     FrSuFace* findFrontFace( const Face* face ) const;
-    std::vector<FrSuEdge*>  findFEdge( const Vertex* v0, const Vertex* v1 ) const;
-    std::vector<FrSuEdge*>  findFEdge( const Edge* edge ) const;
+    std::vector<FrSuEdge*> findFEdge( const Vert* v0, const Vert* v1 ) const;
+    std::vector<FrSuEdge*> findFEdge( const Edge* edge ) const;
 
     // Adds new front Face and corresponding Face.
     FrSuFace* addToFront( const Face* face, bool addInner = true );
@@ -101,8 +101,8 @@ private:
     bool segmentFrontIntersectionCheck( const Vec& v0, const Vec& v1 ) const;
     bool edgeGlobalIntersectionCheck( const Edge* edge ) const;
     bool edgeIntersectionCheck( FrSuEdge* fEdge ) const;
-    bool faceIntersectionCheck( const Vertex* v0, const Vertex* v1, const Vec&    v2 ) const;
-    bool faceIntersectionCheck( const Vertex* v0, const Vertex* v1, const Vertex* v2 ) const;
+    bool faceIntersectionCheck( const Vert* v0, const Vert* v1, const Vec&    v2 ) const;
+    bool faceIntersectionCheck( const Vert* v0, const Vert* v1, const Vert* v2 ) const;
     bool facesIntersectionCheck( FrSuEdge* fEdge ) const;
     bool insideTetrCheck( const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3, const Vec& vert ) const;
     bool anyVertInsidePotentialTetrCheck( FrSuEdge* fEdge ) const;
@@ -165,7 +165,7 @@ private:
     void smoothMesh(           unsigned nIterations );
     void smoothNotFinisedMesh( unsigned nIterations );
     void smoothFront(          unsigned nIterations );
-    void smoothAroundFrontVert( Vertex* frontVert );
+    void smoothAroundFrontVert( Vert* frontVert );
 
     void computeFrontNormals();
     void initializeFFaceFEdges( FrSuFace* fFace ) const;

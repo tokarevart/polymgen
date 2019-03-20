@@ -4,7 +4,7 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "spatial-objs/vertex.h"
+#include "spatial-objs/vert.h"
 #include "helpers/spatial-algs/vec.h"
 #include "real-type.h"
 
@@ -14,21 +14,21 @@
 namespace pmg {
 namespace shell {
 
-class Vertex
+class Vert
 {
 public:
-    pmg::Vertex* attachedVert = nullptr;
+    pmg::Vert* attachedVert = nullptr;
 
     const Vec& pos() const;
 
           real_t& operator[](unsigned axis);
     const real_t& operator[](unsigned axis)   const;
-    Vec operator-(const shell::Vertex& other) const;
-    Vec operator-(const   pmg::Vertex& other) const;
+    Vec operator-(const shell::Vert& other) const;
+    Vec operator-(const   pmg::Vert& other) const;
 
-    Vertex();
-    Vertex(real_t coor0, real_t coor1, real_t coor2);
-    Vertex(const Vec& position);
+    Vert();
+    Vert(real_t coor0, real_t coor1, real_t coor2);
+    Vert(const Vec& position);
 
 
 private:

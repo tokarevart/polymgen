@@ -14,7 +14,7 @@
 #include "spatial-objs/tetr.h"
 #include "spatial-objs/face.h"
 #include "spatial-objs/edge.h"
-#include "spatial-objs/vertex.h"
+#include "spatial-objs/vert.h"
 #include "data-structures/polymesh.h"
 #include "data-structures/polystruct.h"
 #include "helpers/logger.h"
@@ -34,17 +34,17 @@ public:
         LsDynaKeyword
     };
 
-    void generateMesh(real_t preferredLength, std::string_view logFileName = "_AUTO_");
+    void generateMesh( real_t preferredLength, std::string_view logFileName = "_AUTO_" );
     const PolyMesh* structurizeMesh();
     const PolyMesh* getLastMesh();
 
-    void input(std::string_view polyStructFileName);
-    void input(const polygen::PolyStruct& polyStruct);
-    void output(FileType filetype = FileType::Obj, std::string_view filename = "_AUTO_", unsigned PolyhedralSetId = 1u) const;
+    void input( std::string_view polyStructFileName );
+    void input( const polygen::PolyStruct& polyStruct );
+    void output( FileType filetype = FileType::Obj, std::string_view filename = "_AUTO_", unsigned PolyhedralSetId = 1u ) const;
 
     PolyhedralSet();
-    PolyhedralSet(std::string_view polyStructFileName);
-    PolyhedralSet(const polygen::PolyStruct& polyStruct);
+    PolyhedralSet( std::string_view polyStructFileName );
+    PolyhedralSet( const polygen::PolyStruct& polyStruct );
     ~PolyhedralSet();
 
 
@@ -56,22 +56,22 @@ private:
 
     std::vector<Polyhedron*> m_polyhedrons;
 
-    std::vector<shell::Face*>  m_shellFaces;
-    std::vector<shell::Edge*>   m_shellEdges;
-    std::vector<shell::Vertex*> m_shellVerts;
+    std::vector<shell::Face*> m_shellFaces;
+    std::vector<shell::Edge*> m_shellEdges;
+    std::vector<shell::Vert*> m_shellVerts;
 
-    shell::Edge* findShellEdge(const shell::Vertex* v0, const shell::Vertex* v1) const;
+    shell::Edge* findShellEdge( const shell::Vert* v0, const shell::Vert* v1 ) const;
 
     void triangulateShell();
 
-    void outputObj(std::string_view filename) const;
-    void outputLSDynaKeyword_PART(std::ofstream& file) const;
-    void outputLSDynaKeyword_NODE(std::ofstream& file) const;
-    void outputLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, unsigned PolyhedralSetId = 1u) const;
-    void outputLSDynaKeyword(const std::string& filename, unsigned PolyhedralSetId = 1u) const;
+    void outputObj( std::string_view filename ) const;
+    void outputLSDynaKeyword_PART( std::ofstream& file ) const;
+    void outputLSDynaKeyword_NODE( std::ofstream& file ) const;
+    void outputLSDynaKeyword_ELEMENT_SOLID( std::ofstream& file, unsigned PolyhedralSetId = 1u ) const;
+    void outputLSDynaKeyword( const std::string& filename, unsigned PolyhedralSetId = 1u ) const;
 
-    std::string generateLogFileName(std::string_view logFileName) const;
-    std::string generateOutputFilename(FileType filetype, std::string_view filename) const;
+    std::string generateLogFileName( std::string_view logFileName ) const;
+    std::string generateOutputFilename( FileType filetype, std::string_view filename ) const;
 };
 
 } // namespace pmg

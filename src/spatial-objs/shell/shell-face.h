@@ -5,9 +5,9 @@
 #include <list>
 #include <vector>
 #include "spatial-objs/edge.h"
-#include "spatial-objs/vertex.h"
+#include "spatial-objs/vert.h"
 #include "spatial-objs/front/plane/front-plane-edge.h"
-#include "spatial-objs/front/plane/front-plane-vertex.h"
+#include "spatial-objs/front/plane/front-plane-vert.h"
 #include "real-type.h"
 
 #include "definitions.h"
@@ -25,18 +25,18 @@ public:
 
     const std::list<pmg::Face*>&  innerFaces() const;
     const std::list<pmg::Edge*>&   innerEdges()  const;
-    const std::vector<pmg::Vertex*>& innerVerts()  const;
+    const std::vector<pmg::Vert*>& innerVerts()  const;
 
     const std::list<front::plane::Edge*>& frontEdges() const;
 
-    shell::Vertex* findVertNot( const shell::Edge* sEdge ) const;
+    shell::Vert* findVertNot( const shell::Edge* sEdge ) const;
     shell::Edge*   findShellEdgeContaining(   const   pmg::Edge*  edge ) const;
 
     // Needs shell edges to be already segmentized.
     void triangulate( real_t preferredLen );
 
     bool contains( const shell::Edge*   sEdge ) const;
-    bool contains( const shell::Vertex* sVert ) const;
+    bool contains( const shell::Vert* sVert ) const;
 
     Face( const shell::Edge* sEdge0, const shell::Edge* sEdge1, const shell::Edge* sEdge2 );
 
@@ -50,7 +50,7 @@ private:
     };
 
     using FrPlEdge   = front::plane::Edge;
-    using FrPlVertex = front::plane::Vertex;
+    using FrPlVert = front::plane::Vert;
     using pair_dd = std::pair<real_t, real_t>;
     using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
     using pair_ee = std::pair<pmg::Edge*, pmg::Edge*>;
@@ -59,20 +59,20 @@ private:
 
     std::list<pmg::Face*>  m_innerFaces;
     std::list<pmg::Edge*>   m_innerEdges;
-    std::vector<pmg::Vertex*> m_innerVerts;
+    std::vector<pmg::Vert*> m_innerVerts;
 
     std::list<FrPlEdge*>   m_frontEdges;
-    std::list<FrPlVertex*> m_frontVerts;
+    std::list<FrPlVert*> m_frontVerts;
 
-    FrPlVertex* findFrontVert( const pmg::Vertex* vert ) const;
+    FrPlVert* findFrontVert( const pmg::Vert* vert ) const;
 
     FrPlEdge*   addToFront( const pmg::Edge* edge );
-    FrPlVertex* addToFront( const pmg::Vertex* vert );
+    FrPlVert* addToFront( const pmg::Vert* vert );
 
     void removeFromFront( FrPlEdge* fEdge );
-    void removeFromFront( FrPlVertex* fVert );
+    void removeFromFront( FrPlVert* fVert );
 
-    bool anyVertInsidePotentialTriangCheck( FrPlVertex* fVert ) const;
+    bool anyVertInsidePotentialTriangCheck( FrPlVert* fVert ) const;
     bool doesSegmentIntersectsWithFront( const Vec& p0, const Vec& p1 ) const;
 
     Vec computeNormalInTriang( FrPlEdge* fEdge, const Vec& oppVertPos );
@@ -88,20 +88,20 @@ private:
     static real_t  computeTriangSimpleQuality(     const Vec& p0, const Vec& p1, const Vec& p2 );
     static real_t  computeTriangSimpleSqrQuality(  const Vec& p0, const Vec& p1, const Vec& p2 );
 
-    FrPlEdge* chooseEdgeForExhaustionWithNewVert( FrPlVertex* fVert );
+    FrPlEdge* chooseEdgeForExhaustionWithNewVert( FrPlVert* fVert );
     void      exhaustWithNewVert( FrPlEdge* fEdge, const Vec& vertPos );
-    void      exhaustWithoutNewVert( FrPlVertex* fVert );
+    void      exhaustWithoutNewVert( FrPlVert* fVert );
 
-    bool tryExhaustWithoutNewVert( FrPlVertex* fVert );
-    bool tryExhaustWithNewVert(    FrPlVertex* fVert );
+    bool tryExhaustWithoutNewVert( FrPlVert* fVert );
+    bool tryExhaustWithNewVert(    FrPlVert* fVert );
 
     bool globalIntersectionCheck() const;
 
-    FrPlVertex* currentFrontVert( real_t maxCompl ) const;
-    bool exhaustWithoutNewVertPriorityPredicate( FrPlVertex* fEdge );
-    bool exhaustWithNewVertPriorityPredicate(    FrPlVertex* fEdge );
+    FrPlVert* currentFrontVert( real_t maxCompl ) const;
+    bool exhaustWithoutNewVertPriorityPredicate( FrPlVert* fEdge );
+    bool exhaustWithNewVertPriorityPredicate(    FrPlVert* fEdge );
     ExhaustType computeExhaustionTypeQualityPriority(
-        FrPlVertex* fVert,
+        FrPlVert* fVert,
         FrPlEdge*& out_withNWFrontEdge, Vec*& out_withNWNewVertPos );
 
     void processLastFace();

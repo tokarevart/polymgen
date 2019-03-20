@@ -33,10 +33,10 @@ real_t pmg::Tetr::computeQuality() const
 }
 
 
-pmg::Tetr::Tetr(const Vertex* vert0, const Vertex* vert1, const Vertex* vert2, const Vertex* vert3)
+pmg::Tetr::Tetr(const Vert* vert0, const Vert* vert1, const Vert* vert2, const Vert* vert3)
 {
-    verts[0] = const_cast<Vertex*>(vert0);
-    verts[1] = const_cast<Vertex*>(vert1);
-    verts[2] = const_cast<Vertex*>(vert2);
-    verts[3] = const_cast<Vertex*>(vert3);
+    verts[0] = const_cast<Vert*>(vert0);
+    verts[1] = const_cast<Vert*>(vert1);
+    verts[2] = const_cast<Vert*>(vert2);
+    verts[3] = const_cast<Vert*>(vert3);
 }

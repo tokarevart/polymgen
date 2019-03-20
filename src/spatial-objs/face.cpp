@@ -61,7 +61,7 @@ bool pmg::Face::intersectsBy(const Vec& origin, const Vec& dir) const
 }
 
 
-pmg::Vertex* pmg::Face::findVertNot(const pmg::Edge* edge) const
+pmg::Vert* pmg::Face::findVertNot(const pmg::Edge* edge) const
 {
     for (auto& face_edge : edges)
     {
@@ -78,7 +78,7 @@ pmg::Vertex* pmg::Face::findVertNot(const pmg::Edge* edge) const
 }
 
 
-pmg::Edge* pmg::Face::findEdgeNot(const pmg::Vertex* vert) const
+pmg::Edge* pmg::Face::findEdgeNot(const pmg::Vert* vert) const
 {
     for (auto& edge : edges)
     {
@@ -90,7 +90,7 @@ pmg::Edge* pmg::Face::findEdgeNot(const pmg::Vertex* vert) const
 }
 
 
-pmg::Edge* pmg::Face::findEdge(const pmg::Vertex* vert0, const pmg::Vertex* vert1) const
+pmg::Edge* pmg::Face::findEdge(const pmg::Vert* vert0, const pmg::Vert* vert1) const
 {
     for (auto& edge : edges)
     {
@@ -155,7 +155,7 @@ bool pmg::Face::contains(const pmg::Edge* edge) const
 }
 
 
-bool pmg::Face::contains(const pmg::Vertex* vert) const
+bool pmg::Face::contains(const pmg::Vert* vert) const
 {
     for (auto& edge : edges)
         if (edge->contains(vert))
@@ -175,7 +175,7 @@ pmg::Face::Face(const pmg::Edge* edge0, const pmg::Edge* edge1, const pmg::Edge*
 }
 
 
-pmg::Face::Face(const pmg::Vertex* vert0, const pmg::Vertex* vert1, const pmg::Vertex* vert2)
+pmg::Face::Face(const pmg::Vert* vert0, const pmg::Vert* vert1, const pmg::Vert* vert2)
 {
     edges[0] = new pmg::Edge(vert0, vert1);
     edges[1] = new pmg::Edge(vert1, vert2);

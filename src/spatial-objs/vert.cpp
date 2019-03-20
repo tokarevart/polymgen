@@ -1,24 +1,24 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "spatial-objs/vertex.h"
+#include "spatial-objs/vert.h"
 
 
 
 
-const Vec& pmg::Vertex::pos() const
+const Vec& pmg::Vert::pos() const
 {
     return *m_pos;
 }
 
 
-void pmg::Vertex::setPos(const Vec& newPos)
+void pmg::Vert::setPos(const Vec& newPos)
 {
     *m_pos = newPos;
 }
 
 
-void pmg::Vertex::setPos(real_t coor0, real_t coor1, real_t coor2)
+void pmg::Vert::setPos(real_t coor0, real_t coor1, real_t coor2)
 {
     m_pos->coors[0] = coor0;
     m_pos->coors[1] = coor1;
@@ -28,33 +28,33 @@ void pmg::Vertex::setPos(real_t coor0, real_t coor1, real_t coor2)
 
 
 
-real_t& pmg::Vertex::operator[](short axis)
+real_t& pmg::Vert::operator[](short axis)
 {
     return m_pos->coors[axis];
 }
 
 
-const real_t& pmg::Vertex::operator[](short axis) const
+const real_t& pmg::Vert::operator[](short axis) const
 {
     return m_pos->coors[axis];
 }
 
 
-Vec pmg::Vertex::operator-(const pmg::Vertex& other) const
+Vec pmg::Vert::operator-(const pmg::Vert& other) const
 {
     return *m_pos - *other.m_pos;
 }
 
 
-Vec pmg::Vertex::operator-(const shell::Vertex& other) const
+Vec pmg::Vert::operator-(const shell::Vert& other) const
 {
     return *m_pos - other.pos();
 }
 
 
-pmg::Vertex& pmg::Vertex::operator+=(const Vec& other)
+pmg::Vert& pmg::Vert::operator+=(const Vec& other)
 {
-    if (belongsToShellVertex)
+    if (belongsToShellVert)
     {
         return *this;
     }
@@ -77,9 +77,9 @@ pmg::Vertex& pmg::Vertex::operator+=(const Vec& other)
 }
 
 
-pmg::Vertex& pmg::Vertex::operator-=(const Vec& other)
+pmg::Vert& pmg::Vert::operator-=(const Vec& other)
 {
-    if (belongsToShellVertex)
+    if (belongsToShellVert)
     {
         return *this;
     }
@@ -98,19 +98,19 @@ pmg::Vertex& pmg::Vertex::operator-=(const Vec& other)
 
 
 
-pmg::Vertex::Vertex()
+pmg::Vert::Vert()
 {
     m_pos.reset(new Vec());
 }
 
 
-pmg::Vertex::Vertex(real_t coor0, real_t coor1, real_t coor2)
+pmg::Vert::Vert(real_t coor0, real_t coor1, real_t coor2)
 {
     m_pos.reset(new Vec(coor0, coor1, coor2));
 }
 
 
-pmg::Vertex::Vertex(const Vec& position)
+pmg::Vert::Vert(const Vec& position)
 {
     m_pos.reset(new Vec(position));
 }

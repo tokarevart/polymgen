@@ -13,15 +13,15 @@ namespace pmg {
 namespace front {
 namespace plane {
 
-class Vertex
+class Vert
 {
-    using FrPlEdge   = front::plane::Edge;
-    using FrPlVertex = front::plane::Vertex;
-    using pair_ee  = std::pair<FrPlEdge*, FrPlEdge*>;
-    using pair_vv  = std::pair<pmg::Vertex*, pmg::Vertex*>;
+    using FrPlEdge = front::plane::Edge;
+    using FrPlVert = front::plane::Vert;
+    using pair_ee  = std::pair<FrPlEdge*,  FrPlEdge*>;
+    using pair_vv  = std::pair<pmg::Vert*, pmg::Vert*>;
 
 public:
-    pmg::Vertex* vert;
+    pmg::Vert* vert;
 
     void refreshAngleData();
 
@@ -34,7 +34,7 @@ public:
     pair_ee findAdjEdges() const;
     pair_vv findOppVerts() const;
 
-    Vertex(const shell::Face* relatedShellFace, const pmg::Vertex* vert);
+    Vert(const shell::Face* relatedShellFace, const pmg::Vert* vert);
 
 
 private:

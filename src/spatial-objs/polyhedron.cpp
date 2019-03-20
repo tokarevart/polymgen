@@ -54,7 +54,7 @@ constexpr real_t degToRad( T value )
 
 
 
-bool Polyhedron::shellContains(const Vertex* vert) const
+bool Polyhedron::shellContains(const Vert* vert) const
 {
     if (vert->belongsToShellFace)
     {
@@ -68,11 +68,11 @@ bool Polyhedron::shellContains(const Vertex* vert) const
             if (sedge == vert->belongsToShellEdge)
                 return true;
     }
-    else if (vert->belongsToShellVertex)
+    else if (vert->belongsToShellVert)
     {
         for (auto& sedge : m_shellEdges)
-            if (sedge->verts[0] == vert->belongsToShellVertex ||
-                sedge->verts[1] == vert->belongsToShellVertex)
+            if (sedge->verts[0] == vert->belongsToShellVert ||
+                sedge->verts[1] == vert->belongsToShellVert)
                 return true;
     }
 
@@ -127,7 +127,7 @@ void Polyhedron::computeFrontNormals()
 
 
 
-shell::Edge* Polyhedron::findShellEdge(const shell::Vertex* v0, const shell::Vertex* v1) const
+shell::Edge* Polyhedron::findShellEdge(const shell::Vert* v0, const shell::Vert* v1) const
 {
     for (auto& sedge : m_shellEdges)
     {
@@ -154,7 +154,7 @@ FrSuFace* Polyhedron::findFrontFace(const Face* face) const
 }
 
 
-std::vector<FrSuEdge*> Polyhedron::findFEdge(const Vertex* v0, const Vertex* v1) const
+std::vector<FrSuEdge*> Polyhedron::findFEdge(const Vert* v0, const Vert* v1) const
 {
     std::vector<FrSuEdge*> res;
     for (auto& f_edge : m_frontEdges)
@@ -331,7 +331,7 @@ bool Polyhedron::edgeIntersectionCheck(FrSuEdge* frontEdge) const
 
     for (auto& f_edge : m_frontEdges)
     {
-        Vertex* vert_buf;
+        Vert* vert_buf;
         if (bool contains[2] { f_edge->edge->contains(std::get<0>(opp_verts)),
                                f_edge->edge->contains(std::get<1>(opp_verts)) };
             contains[0])
@@ -367,7 +367,7 @@ bool Polyhedron::edgeIntersectionCheck(FrSuEdge* frontEdge) const
 }
 
 
-bool Polyhedron::faceIntersectionCheck(const Vertex* v0, const Vertex* v1, const Vec& v2) const
+bool Polyhedron::faceIntersectionCheck(const Vert* v0, const Vert* v1, const Vec& v2) const
 {
     for (auto& f_edge : m_frontEdges)
     {
@@ -393,7 +393,7 @@ bool Polyhedron::faceIntersectionCheck(const Vertex* v0, const Vertex* v1, const
 }
 
 
-bool Polyhedron::faceIntersectionCheck(const Vertex* v0, const Vertex* v1, const Vertex* v2) const
+bool Polyhedron::faceIntersectionCheck(const Vert* v0, const Vert* v1, const Vert* v2) const
 {
     Vec verts_poses[3];
     verts_poses[0] = v0->pos();
@@ -564,7 +564,7 @@ bool Polyhedron::parallelFacesCheck(FrSuEdge* fEdge) const
 {
     auto adj_ffaces = fEdge->getAdjFFaces();
 
-    Vertex* opp_verts[2];
+    Vert* opp_verts[2];
     opp_verts[0] = std::get<0>(adj_ffaces)->face->findVertNot(fEdge->edge);
     opp_verts[1] = std::get<1>(adj_ffaces)->face->findVertNot(fEdge->edge);
 
@@ -588,10 +588,10 @@ bool Polyhedron::parallelFacesCheck(FrSuEdge* fEdge) const
             if (!XOR(static_cast<bool>(inters_reses[0]), static_cast<bool>(inters_reses[1])))
                 continue;
 
-            Vertex* fface_to_verts[2];
+            Vert* fface_to_verts[2];
             fface_to_verts[0] = fface->face->edges[0]->verts[0];
             fface_to_verts[1] = fface->face->edges[0]->verts[1];
-            Vertex* fface_from_vert = fface->face->findVertNot(fface->face->edges[0]);
+            Vert* fface_from_vert = fface->face->findVertNot(fface->face->edges[0]);
 
             Vec f_plane[2];
             f_plane[0] = *fface_to_verts[0] - *fface_from_vert;
@@ -979,7 +979,7 @@ void Polyhedron::exhaustFrontSplit(FrSuEdge* fEdge, FrSuEdge* oppFEdge)
     // This volatile helps to avoid computational error.
     volatile auto adj_ffaces = fEdge->getAdjFFaces();
 
-    Vertex* opp_verts[2];
+    Vert* opp_verts[2];
     opp_verts[0] = adj_ffaces.first->face->findVertNot(fEdge->edge);
     opp_verts[1] = adj_ffaces.second->face->findVertNot(fEdge->edge);
 
@@ -1105,7 +1105,7 @@ void Polyhedron::exhaustWithoutNewVertOppEdgeExists(FrSuEdge* fEdge, FrSuEdge* o
     auto opp_ffaces = oppFEdge->getAdjFFaces();
 
     FrSuFace* main_ffaces[3];
-    Vertex* main_vert;
+    Vert* main_vert;
     auto fedge_adj_faces = fEdge->getAdjFFaces();
     main_ffaces[0] = std::get<0>(fedge_adj_faces);
     main_ffaces[1] = std::get<1>(fedge_adj_faces);
@@ -1191,7 +1191,7 @@ void Polyhedron::exhaustWithoutNewVertOppEdgeDontExists(FrSuEdge* fEdge)
     // This volatile helps to avoid computational error.
     volatile auto adj_ffaces = fEdge->getAdjFFaces();
 
-    Vertex* opp_verts[2];
+    Vert* opp_verts[2];
     opp_verts[0] = adj_ffaces.first->face->findVertNot(fEdge->edge);
     opp_verts[1] = adj_ffaces.second->face->findVertNot(fEdge->edge);
     
@@ -1683,7 +1683,7 @@ FrSuFace* Polyhedron::chooseFaceForExhaustionWithNewVert(FrSuEdge* fEdge)
 
 void Polyhedron::exhaustWithNewVert(FrSuFace* fFace, const Vec& vertPos)
 {
-    Vertex* new_vert = new Vertex(vertPos);
+    Vert* new_vert = new Vert(vertPos);
     m_innerVerts.push_back(new_vert);
 
     FrSuEdge* new_tetr_fedges[6];
@@ -1960,11 +1960,11 @@ void Polyhedron::smoothFront(unsigned iterationsNum)
 }
 
 
-void Polyhedron::smoothAroundFrontVert(Vertex* fVert)
+void Polyhedron::smoothAroundFrontVert(Vert* fVert)
 {
     if (fVert->belongsToShellFace ||
         fVert->belongsToShellEdge ||
-        fVert->belongsToShellVertex)
+        fVert->belongsToShellVert)
         return;
 
     Vec shift;
@@ -2051,9 +2051,9 @@ void Polyhedron::addToShell(const shell::Edge* shellEdge)
 }
 
 
-void Polyhedron::addToShell(const shell::Vertex* shellVert)
+void Polyhedron::addToShell(const shell::Vert* shellVert)
 {
-    m_shellVerts.push_back(const_cast<shell::Vertex*>(shellVert));
+    m_shellVerts.push_back(const_cast<shell::Vert*>(shellVert));
 }
 
 
@@ -2071,7 +2071,7 @@ bool Polyhedron::shellContains(const shell::Edge* shellEdge) const
 }
 
 
-bool Polyhedron::shellContains(const shell::Vertex* shellVert) const
+bool Polyhedron::shellContains(const shell::Vert* shellVert) const
 {
     return std::find(m_shellVerts.begin(), m_shellVerts.end(), shellVert) != m_shellVerts.end();
 }
@@ -2091,7 +2091,7 @@ const std::vector<Face*>& Polyhedron::innerFaces() const
 }
 
 
-const std::vector<Vertex*>& Polyhedron::innerVerts() const
+const std::vector<Vert*>& Polyhedron::innerVerts() const
 {
     return m_innerVerts;
 }

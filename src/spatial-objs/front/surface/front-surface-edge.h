@@ -6,7 +6,7 @@
 #include <vector>
 #include "spatial-objs/polyhedron.h"
 #include "spatial-objs/front/surface/front-surface-face.h"
-#include "spatial-objs/vertex.h"
+#include "spatial-objs/vert.h"
 #include "real-type.h"
 
 #include "definitions.h"
@@ -20,7 +20,7 @@ class Edge
 {
     using FrSuFace = front::surface::Face;
     using FrSuEdge  = front::surface::Edge;
-    using pair_vv = std::pair<pmg::Vertex*, pmg::Vertex*>;
+    using pair_vv = std::pair<pmg::Vert*, pmg::Vert*>;
     using pair_ff = std::pair<FrSuFace*, FrSuFace*>;
 
 public:

@@ -1,7 +1,7 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "spatial-objs/front/plane/front-plane-vertex.h"
+#include "spatial-objs/front/plane/front-plane-vert.h"
 #include <stdexcept>
 #include "helpers/spatial-algs/spatial-algs.h"
 
@@ -11,21 +11,21 @@
 
 
 using FrPlEdge   = pmg::front::plane::Edge;
-using FrPlVertex = pmg::front::plane::Vertex;
+using FrPlVert = pmg::front::plane::Vert;
 using pair_ee  = std::pair<FrPlEdge*, FrPlEdge*>;
-using pair_vv  = std::pair<pmg::Vertex*, pmg::Vertex*>;
+using pair_vv  = std::pair<pmg::Vert*, pmg::Vert*>;
 
 
 
 
-void FrPlVertex::refreshAngleData()
+void FrPlVert::refreshAngleData()
 {
     m_needExCosProcessing      = true;
     m_needComplexityProcessing = true;
 }
 
 
-real_t FrPlVertex::complexity()
+real_t FrPlVert::complexity()
 {
     if (!m_needComplexityProcessing)
         return m_complexity;
@@ -34,7 +34,7 @@ real_t FrPlVertex::complexity()
 }
 
 
-real_t FrPlVertex::angleExCos()
+real_t FrPlVert::angleExCos()
 {
     if (!m_needExCosProcessing)
         return m_exCos;
@@ -43,7 +43,7 @@ real_t FrPlVertex::angleExCos()
 }
 
 
-real_t FrPlVertex::computeComplexity()
+real_t FrPlVert::computeComplexity()
 {
     m_needComplexityProcessing = false;
     auto adj_edges = findAdjEdges();
@@ -53,7 +53,7 @@ real_t FrPlVertex::computeComplexity()
 }
 
 
-real_t FrPlVertex::computeAngleExCos()
+real_t FrPlVert::computeAngleExCos()
 {
     auto adj_edges = findAdjEdges();
 
@@ -68,7 +68,7 @@ real_t FrPlVertex::computeAngleExCos()
 }
 
 
-real_t FrPlVertex::computeAngle()
+real_t FrPlVert::computeAngle()
 {
     return angleExCos() < static_cast<real_t>(-1.0) ?
         acosReal(m_exCos + static_cast<real_t>(2.0)) + PI :
@@ -78,7 +78,7 @@ real_t FrPlVertex::computeAngle()
 
 
 
-pair_ee FrPlVertex::findAdjEdges() const
+pair_ee FrPlVert::findAdjEdges() const
 {
     pair_ee res(nullptr, nullptr);
     int i = 0;
@@ -91,11 +91,11 @@ pair_ee FrPlVertex::findAdjEdges() const
         }
     }
 
-    throw std::logic_error("Function pmg::front::plane::Vertex::findAdjEdges didn't find 2 adjacent front edges.");
+    throw std::logic_error("Function pmg::front::plane::Vert::findAdjEdges didn't find 2 adjacent front edges.");
 }
 
 
-pair_vv FrPlVertex::findOppVerts() const
+pair_vv FrPlVert::findOppVerts() const
 {
     auto adj_edges = findAdjEdges();
     return pair_vv(adj_edges.first->edge->findNot(vert),
@@ -105,5 +105,5 @@ pair_vv FrPlVertex::findOppVerts() const
 
 
 
-FrPlVertex::Vertex(const shell::Face* relatedShellFace, const pmg::Vertex* vert)
-    : vert(const_cast<pmg::Vertex*>(vert)), m_relatedShellFace(const_cast<shell::Face*>(relatedShellFace)) {}
+FrPlVert::Vert(const shell::Face* relatedShellFace, const pmg::Vert* vert)
+    : vert(const_cast<pmg::Vert*>(vert)), m_relatedShellFace(const_cast<shell::Face*>(relatedShellFace)) {}

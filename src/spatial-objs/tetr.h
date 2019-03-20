@@ -3,7 +3,7 @@
 
 #pragma once
 #include <algorithm>
-#include "spatial-objs/vertex.h"
+#include "spatial-objs/vert.h"
 #include "real-type.h"
 
 #include "definitions.h"
@@ -14,15 +14,15 @@ namespace pmg {
 class Tetr
 {
 public:
-    Vertex* verts[4];
+    Vert* verts[4];
 
     real_t computeVolume()  const;
     real_t computeQuality() const;
 
-    Tetr( const Vertex* vert0,
-          const Vertex* vert1,
-          const Vertex* vert2,
-          const Vertex* vert3 );
+    Tetr( const Vert* vert0,
+          const Vert* vert1,
+          const Vert* vert2,
+          const Vert* vert3 );
 };
 
 } // namespace pmg

@@ -15,14 +15,14 @@
 
 namespace pmg {
 
-class Vertex
+class Vert
 {
 public:
     size_t globalNum;
 
-    shell::Face*  belongsToShellFace  = nullptr;
-    shell::Edge*   belongsToShellEdge   = nullptr;
-    shell::Vertex* belongsToShellVertex = nullptr;
+    shell::Face* belongsToShellFace = nullptr;
+    shell::Edge* belongsToShellEdge = nullptr;
+    shell::Vert* belongsToShellVert = nullptr;
 
     const Vec& pos() const;
           void   setPos( const Vec& newPos );
@@ -30,14 +30,14 @@ public:
 
           real_t& operator[]( short axis );
     const real_t& operator[]( short axis ) const;
-    Vec operator-( const Vertex& other )        const;
-    Vec operator-( const shell::Vertex& other ) const;
-    Vertex& operator+=( const Vec& other );
-    Vertex& operator-=( const Vec& other );
+    Vec operator-( const Vert& other )        const;
+    Vec operator-( const shell::Vert& other ) const;
+    Vert& operator+=( const Vec& other );
+    Vert& operator-=( const Vec& other );
 
-    Vertex();
-    Vertex( real_t coor0, real_t coor1, real_t coor2 );
-    Vertex( const Vec& position );
+    Vert();
+    Vert( real_t coor0, real_t coor1, real_t coor2 );
+    Vert( const Vec& position );
 
 
 private:

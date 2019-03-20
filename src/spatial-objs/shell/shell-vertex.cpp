@@ -8,31 +8,31 @@ using namespace pmg;
 
 
 
-Vec shell::Vertex::operator-(const shell::Vertex& other) const
+Vec shell::Vert::operator-(const shell::Vert& other) const
 {
     return *m_pos - *other.m_pos;
 }
 
 
-const Vec& shell::Vertex::pos() const
+const Vec& shell::Vert::pos() const
 {
     return *m_pos;
 }
 
 
-real_t& shell::Vertex::operator[](unsigned axis)
+real_t& shell::Vert::operator[](unsigned axis)
 {
     return m_pos->coors[axis];
 }
 
 
-const real_t& shell::Vertex::operator[](unsigned axis) const
+const real_t& shell::Vert::operator[](unsigned axis) const
 {
     return m_pos->coors[axis];
 }
 
 
-Vec shell::Vertex::operator-(const pmg::Vertex& other) const
+Vec shell::Vert::operator-(const pmg::Vert& other) const
 {
     return *m_pos - other.pos();
 }
@@ -40,19 +40,19 @@ Vec shell::Vertex::operator-(const pmg::Vertex& other) const
 
 
 
-shell::Vertex::Vertex()
+shell::Vert::Vert()
 {
     m_pos.reset(new Vec());
 }
 
 
-shell::Vertex::Vertex(real_t coor0, real_t coor1, real_t coor2)
+shell::Vert::Vert(real_t coor0, real_t coor1, real_t coor2)
 {
     m_pos.reset(new Vec(coor0, coor1, coor2));
 }
 
 
-shell::Vertex::Vertex(const Vec& position)
+shell::Vert::Vert(const Vec& position)
 {
     m_pos.reset(new Vec(position));
 }

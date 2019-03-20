@@ -18,7 +18,7 @@ using namespace pmg;
 
 
 
-shell::Edge* PolyhedralSet::findShellEdge(const shell::Vertex* v0, const shell::Vertex* v1) const
+shell::Edge* PolyhedralSet::findShellEdge(const shell::Vert* v0, const shell::Vert* v1) const
 {
     for (auto& s_edge : m_shellEdges)
     {
@@ -36,7 +36,7 @@ shell::Edge* PolyhedralSet::findShellEdge(const shell::Vertex* v0, const shell::
 void PolyhedralSet::triangulateShell()
 {
     for (auto& svert : m_shellVerts)
-        svert->attachedVert = new pmg::Vertex(svert->pos());
+        svert->attachedVert = new pmg::Vert(svert->pos());
 
     for (auto& sedge : m_shellEdges)
         sedge->segmentize(m_preferredLength);
@@ -349,10 +349,10 @@ const PolyMesh* PolyhedralSet::structurizeMesh()
 
     m_lastMesh->nNodes = nodes_num;
     m_lastMesh->nodesPositions = new real_t[3 * m_lastMesh->nNodes];
-    Vertex** verts_ptrs = new Vertex*[m_lastMesh->nNodes];
+    Vert** verts_ptrs = new Vert*[m_lastMesh->nNodes];
 
     auto lastMesh_buf = m_lastMesh;
-    auto FindNodeIndex = [lastMesh_buf, verts_ptrs](Vertex* node_ptr)-> size_t
+    auto FindNodeIndex = [lastMesh_buf, verts_ptrs](Vert* node_ptr)-> size_t
     {
         for (size_t i = 0; i < lastMesh_buf->nNodes; i++)
             if (verts_ptrs[i] == node_ptr)
@@ -457,7 +457,7 @@ void PolyhedralSet::input(std::string_view polyStructFileName)
         input >> coors[1];
         input >> coors[2];
 
-        m_shellVerts.push_back(new shell::Vertex(coors[0], coors[1], coors[2]));
+        m_shellVerts.push_back(new shell::Vert(coors[0], coors[1], coors[2]));
     }
 
     size_t faces_num;
@@ -538,7 +538,7 @@ void PolyhedralSet::input(const polygen::PolyStruct& polyStruct)
         coors[1] = polyStruct.verts[i][1];
         coors[2] = polyStruct.verts[i][2];
 
-        m_shellVerts.push_back(new shell::Vertex(coors[0], coors[1], coors[2]));
+        m_shellVerts.push_back(new shell::Vert(coors[0], coors[1], coors[2]));
     }
 
     for (const auto& face : polyStruct.faces)

@@ -3,7 +3,7 @@
 
 #pragma once
 #include "spatial-objs/edge.h"
-#include "spatial-objs/vertex.h"
+#include "spatial-objs/vert.h"
 #include "helpers/spatial-algs/vec.h"
 #include "real-type.h"
 
@@ -23,18 +23,18 @@ public:
 
     static Edge* intersectAlongEdge( const Face* facet0, const Face* facet1 );
 
-    bool intersectsBy( const Vec& origin, const Vec& dir )     const;
-    Vertex* findVertNot( const Edge* edge )        const;
-    Edge*   findEdgeNot( const Vertex* vert )      const;
-    Edge*   findEdge( const Vertex* vert0, const Vertex* vert1 ) const;
+    bool intersectsBy( const Vec& origin, const Vec& dir ) const;
+    Vert* findVertNot( const Edge* edge ) const;
+    Edge* findEdgeNot( const Vert* vert ) const;
+    Edge* findEdge( const Vert* vert0, const Vert* vert1 ) const;
     Edge* findShortestEdge() const;
     Edge* findLongestEdge()  const;
 
     bool contains( const Edge*   edge ) const;
-    bool contains( const Vertex* vert ) const;
+    bool contains( const Vert* vert ) const;
 
-    Face( const Edge*   edge0, const Edge*   edge1, const Edge*   edge2 );
-    Face( const Vertex* vert0, const Vertex* vert1, const Vertex* vert2 );
+    Face( const Edge* edge0, const Edge* edge1, const Edge* edge2 );
+    Face( const Vert* vert0, const Vert* vert1, const Vert* vert2 );
 };
 
 } // namespace pmg

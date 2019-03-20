@@ -27,8 +27,8 @@ public:
     real_t computeQuality();
 
     FrSuEdge* findFEdge( const pmg::Edge* edge ) const;
-    FrSuEdge* findFEdge( const pmg::Vertex* v0, const pmg::Vertex* v1 ) const;
-    FrSuEdge* findFEdgeNot( const pmg::Vertex* vert ) const;
+    FrSuEdge* findFEdge( const pmg::Vert* v0, const pmg::Vert* v1 ) const;
+    FrSuEdge* findFEdgeNot( const pmg::Vert* vert ) const;
     void addFEdge(    const FrSuEdge* fEdge );
     void removeFEdge( const FrSuEdge* fEdge );
     bool isFEdgesFull() const;

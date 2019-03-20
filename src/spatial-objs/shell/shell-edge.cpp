@@ -17,7 +17,7 @@ const std::vector<Edge*>&shell::Edge::innerEdges() const
 }
 
 
-const std::vector<Vertex*>&shell::Edge::innerVerts() const
+const std::vector<Vert*>&shell::Edge::innerVerts() const
 {
     return m_innerVerts;
 }
@@ -34,7 +34,7 @@ void shell::Edge::segmentize(real_t preferredLen)
     for (size_t i = 0; i < n_inner_verts; i++)
     {
         cur_pos += dir;
-        m_innerVerts.push_back(new pmg::Vertex(cur_pos));
+        m_innerVerts.push_back(new pmg::Vert(cur_pos));
     }
 
     m_innerEdges.push_back(new pmg::Edge(verts[0]->attachedVert, m_innerVerts.front()));
@@ -63,7 +63,7 @@ real_t shell::Edge::sqrMagnitude() const
 
 
 
-bool shell::Edge::contains(const shell::Vertex* sVert) const
+bool shell::Edge::contains(const shell::Vert* sVert) const
 {
     if (verts[0] == sVert ||
         verts[1] == sVert)
@@ -82,7 +82,7 @@ bool shell::Edge::contains(const pmg::Edge* edge) const
 }
 
 
-bool shell::Edge::contains(const pmg::Vertex* vert) const
+bool shell::Edge::contains(const pmg::Vert* vert) const
 {
     if (verts[0]->attachedVert == vert ||
         verts[1]->attachedVert == vert ||
@@ -95,8 +95,8 @@ bool shell::Edge::contains(const pmg::Vertex* vert) const
 
 
 
-shell::Edge::Edge(const shell::Vertex* vert0, const shell::Vertex* vert1)
+shell::Edge::Edge(const shell::Vert* vert0, const shell::Vert* vert1)
 {
-    verts[0] = const_cast<shell::Vertex*>(vert0);
-    verts[1] = const_cast<shell::Vertex*>(vert1);
+    verts[0] = const_cast<shell::Vert*>(vert0);
+    verts[1] = const_cast<shell::Vert*>(vert1);
 }

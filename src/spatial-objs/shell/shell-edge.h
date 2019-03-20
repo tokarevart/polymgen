@@ -15,26 +15,26 @@ namespace shell {
 class Edge
 {
 public:
-    shell::Vertex* verts[2];
+    shell::Vert* verts[2];
 
     const std::vector<pmg::Edge*>&   innerEdges() const;
-    const std::vector<pmg::Vertex*>& innerVerts() const;
+    const std::vector<pmg::Vert*>& innerVerts() const;
 
     void segmentize(real_t preferredLen);
 
     real_t magnitude()    const;
     real_t sqrMagnitude() const;
 
-    bool contains(const shell::Vertex* sVert) const;
+    bool contains(const shell::Vert* sVert) const;
     bool contains(const   pmg::Edge*    edge) const;
-    bool contains(const   pmg::Vertex*  vert) const;
+    bool contains(const   pmg::Vert*  vert) const;
 
-    Edge(const shell::Vertex* vert0, const shell::Vertex* vert1);
+    Edge(const shell::Vert* vert0, const shell::Vert* vert1);
 
 
 private:
     std::vector<pmg::Edge*>   m_innerEdges;
-    std::vector<pmg::Vertex*> m_innerVerts;
+    std::vector<pmg::Vert*> m_innerVerts;
 };
 
 } // namespace shell
