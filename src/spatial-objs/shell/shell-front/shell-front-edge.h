@@ -10,8 +10,8 @@
 
 
 namespace pmg {
+namespace shell {
 namespace front {
-namespace plane {
 
 class Edge
 {
@@ -31,6 +31,6 @@ private:
     shell::Face* m_relatedShellFace;
 };
 
-} // namespace plane
 } // namespace front
+} // namespace shell
 } // namespace pmg

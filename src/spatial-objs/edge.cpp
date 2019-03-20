@@ -121,7 +121,7 @@ bool pmg::Edge::flipIfNeeded(std::list<pmg::Edge*>& edgesList, std::list<pmg::Fa
     delete *old_face0;
     delete *old_face1;
 
-    *old_edge = new_edge;
+    *old_edge  = new_edge;
     *old_face0 = new_face0;
     *old_face1 = new_face1;
 
@@ -132,10 +132,8 @@ bool pmg::Edge::flipIfNeeded(std::list<pmg::Edge*>& edgesList, std::list<pmg::Fa
 void pmg::Edge::findAdjFaces(const std::list<pmg::Face*>& facesList, std::list<pmg::Face*>& adjFaces) const
 {
     for (auto& face : facesList)
-    {
         if (face->contains(this))
             adjFaces.push_back(face);
-    }
 }
 
 

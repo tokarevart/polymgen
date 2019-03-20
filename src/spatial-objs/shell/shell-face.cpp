@@ -8,6 +8,7 @@
 #include "helpers/cosd-values.h"
 
 using namespace pmg;
+namespace sfront = shell::front;
 using pair_dd = std::pair<real_t, real_t>;
 using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
 using pair_ee = std::pair<pmg::Edge*, pmg::Edge*>;
@@ -38,12 +39,6 @@ constexpr real_t degToRad(T value)
 
 
 
-using FrPlEdge   = front::plane::Edge;
-using FrPlVert = front::plane::Vert;
-
-
-
-
 real_t shell::Face::preferredLength() const
 {
     return m_preferredLength;
@@ -64,13 +59,13 @@ const std::list<pmg::Edge*>& shell::Face::innerEdges() const
 }
 
 
-const std::vector<Vert*>& shell::Face::innerVerts() const
+const std::vector<pmg::Vert*>& shell::Face::innerVerts() const
 {
     return m_innerVerts;
 }
 
 
-const std::list<FrPlEdge*>& shell::Face::frontEdges() const
+const std::list<sfront::Edge*>& shell::Face::frontEdges() const
 {
     return m_frontEdges;
 }
@@ -160,7 +155,7 @@ shell::Face::Face(
 
 
 
-FrPlVert* shell::Face::findFrontVert(const pmg::Vert* vert) const
+sfront::Vert* shell::Face::findFrontVert(const pmg::Vert* vert) const
 {
     for (auto& fvert : m_frontVerts)
         if (fvert->vert == vert)
@@ -172,18 +167,18 @@ FrPlVert* shell::Face::findFrontVert(const pmg::Vert* vert) const
 
 
 
-FrPlEdge* shell::Face::addToFront(const pmg::Edge* edge)
+sfront::Edge* shell::Face::addToFront(const pmg::Edge* edge)
 {
-    FrPlEdge* new_f_edge = new FrPlEdge(this, edge);
+    sfront::Edge* new_f_edge = new sfront::Edge(this, edge);
     m_frontEdges.push_back(new_f_edge);
     m_innerEdges.push_back(new_f_edge->edge);
     return new_f_edge;
 }
 
 
-FrPlVert* shell::Face::addToFront(const pmg::Vert* vert)
+sfront::Vert* shell::Face::addToFront(const pmg::Vert* vert)
 {
-    FrPlVert* new_f_vert = new FrPlVert(this, vert);
+    sfront::Vert* new_f_vert = new sfront::Vert(this, vert);
     m_frontVerts.push_back(new_f_vert);
     m_innerVerts.push_back(new_f_vert->vert);
     return new_f_vert;
@@ -192,14 +187,14 @@ FrPlVert* shell::Face::addToFront(const pmg::Vert* vert)
 
 
 
-void shell::Face::removeFromFront(FrPlEdge* fEdge)
+void shell::Face::removeFromFront(sfront::Edge* fEdge)
 {
     m_frontEdges.erase(std::find(m_frontEdges.begin(), m_frontEdges.end(), fEdge));
     delete fEdge;
 }
 
 
-void shell::Face::removeFromFront(FrPlVert* fVert)
+void shell::Face::removeFromFront(sfront::Vert* fVert)
 {
     m_frontVerts.erase(std::find(m_frontVerts.begin(), m_frontVerts.end(), fVert));
     delete fVert;
@@ -208,7 +203,7 @@ void shell::Face::removeFromFront(FrPlVert* fVert)
 
 
 
-bool shell::Face::anyVertInsidePotentialTriangCheck(FrPlVert* fVert) const
+bool shell::Face::anyVertInsidePotentialTriangCheck(sfront::Vert* fVert) const
 {
     auto opp_verts = fVert->findOppVerts();
     pmg::Vert* tr[3]
@@ -241,7 +236,7 @@ bool shell::Face::doesSegmentIntersectsWithFront(const Vec& p0, const Vec& p1) c
 
 
 
-Vec shell::Face::computeNormalInTriang(FrPlEdge* fEdge, const Vec& oppVertPos)
+Vec shell::Face::computeNormalInTriang(sfront::Edge* fEdge, const Vec& oppVertPos)
 {
     Vec p0 = fEdge->edge->verts[0]->pos();
     Vec p1 = fEdge->edge->verts[1]->pos();
@@ -251,9 +246,9 @@ Vec shell::Face::computeNormalInTriang(FrPlEdge* fEdge, const Vec& oppVertPos)
 
 
 
-bool shell::Face::tryComputeNewVertPosType2(FrPlEdge* fEdge, Vec& out_pos)
+bool shell::Face::tryComputeNewVertPosType2(sfront::Edge* fEdge, Vec& out_pos)
 {
-    FrPlVert* main_f_verts[2];
+    sfront::Vert* main_f_verts[2];
     main_f_verts[0] = findFrontVert(fEdge->edge->verts[0]);
     main_f_verts[1] = findFrontVert(fEdge->edge->verts[1]);
 
@@ -284,7 +279,7 @@ bool shell::Face::tryComputeNewVertPosType2(FrPlEdge* fEdge, Vec& out_pos)
 }
 
 
-bool shell::Face::tryComputeNewVertPosType1(FrPlEdge* fEdge, Vec& out_pos, int smallAngleIndex)
+bool shell::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, Vec& out_pos, int smallAngleIndex)
 {
     auto main_vert = fEdge->edge->verts[smallAngleIndex];
     auto sec_vert  = fEdge->edge->findNot(main_vert);
@@ -315,7 +310,7 @@ bool shell::Face::tryComputeNewVertPosType1(FrPlEdge* fEdge, Vec& out_pos, int s
 }
 
 
-bool shell::Face::tryComputeNewVertPosType0(FrPlEdge* fEdge, Vec& out_pos)
+bool shell::Face::tryComputeNewVertPosType0(sfront::Edge* fEdge, Vec& out_pos)
 {
     real_t magn = fEdge->edge->magnitude();
     real_t raw_deform = K_D * (m_preferredLength - magn);
@@ -338,7 +333,7 @@ bool shell::Face::tryComputeNewVertPosType0(FrPlEdge* fEdge, Vec& out_pos)
 }
 
 
-bool shell::Face::tryComputeNewVertPos(FrPlEdge* fEdge, Vec& out_pos)
+bool shell::Face::tryComputeNewVertPos(sfront::Edge* fEdge, Vec& out_pos)
 {
     real_t angs_coses[2]
     {
@@ -398,7 +393,7 @@ real_t shell::Face::computeTriangSimpleSqrQuality(const Vec& p0, const Vec& p1, 
 
 
 
-FrPlEdge* shell::Face::chooseEdgeForExhaustionWithNewVert(FrPlVert* fVert)
+sfront::Edge* shell::Face::chooseEdgeForExhaustionWithNewVert(sfront::Vert* fVert)
 {
     auto adj_edges = fVert->findAdjEdges();
     return std::get<0>(adj_edges)->edge->sqrMagnitude() < std::get<1>(adj_edges)->edge->sqrMagnitude() ?
@@ -406,7 +401,7 @@ FrPlEdge* shell::Face::chooseEdgeForExhaustionWithNewVert(FrPlVert* fVert)
 }
 
 
-void shell::Face::exhaustWithNewVert(FrPlEdge* fEdge, const Vec& vertPos)
+void shell::Face::exhaustWithNewVert(sfront::Edge* fEdge, const Vec& vertPos)
 {
     pmg::Vert* main_verts[2] { fEdge->edge->verts[0], fEdge->edge->verts[1] };
 
@@ -425,7 +420,7 @@ void shell::Face::exhaustWithNewVert(FrPlEdge* fEdge, const Vec& vertPos)
 }
 
 
-void shell::Face::exhaustWithoutNewVert(FrPlVert* fVert)
+void shell::Face::exhaustWithoutNewVert(sfront::Vert* fVert)
 {
     auto adj_edges = fVert->findAdjEdges();
     std::pair<pmg::Vert*, pmg::Vert*> opp_verts =
@@ -450,7 +445,7 @@ void shell::Face::exhaustWithoutNewVert(FrPlVert* fVert)
 
 
 
-bool shell::Face::tryExhaustWithoutNewVert(FrPlVert* fVert)
+bool shell::Face::tryExhaustWithoutNewVert(sfront::Vert* fVert)
 {
     if (anyVertInsidePotentialTriangCheck(fVert))
         return false;
@@ -460,7 +455,7 @@ bool shell::Face::tryExhaustWithoutNewVert(FrPlVert* fVert)
 }
 
 
-bool shell::Face::tryExhaustWithNewVert(FrPlVert* fVert)
+bool shell::Face::tryExhaustWithNewVert(sfront::Vert* fVert)
 {
     auto exhaust_f_edge = chooseEdgeForExhaustionWithNewVert(fVert);
     Vec new_vert_pos;
@@ -474,10 +469,10 @@ bool shell::Face::tryExhaustWithNewVert(FrPlVert* fVert)
 
 
 
-FrPlVert* shell::Face::currentFrontVert(real_t maxCompl) const
+sfront::Vert* shell::Face::currentFrontVert(real_t maxCompl) const
 {
     real_t cur_max_compl = 0.0;
-    FrPlVert* cur_max_f_edge = nullptr;
+    sfront::Vert* cur_max_f_edge = nullptr;
     for (auto& f_vert : m_frontVerts)
     {
         real_t cur_compl = f_vert->complexity();
@@ -493,7 +488,7 @@ FrPlVert* shell::Face::currentFrontVert(real_t maxCompl) const
 }
 
 
-bool shell::Face::exhaustWithoutNewVertPriorityPredicate(FrPlVert* fEdge)
+bool shell::Face::exhaustWithoutNewVertPriorityPredicate(sfront::Vert* fEdge)
 {
     if (fEdge->angleExCos() > static_cast<real_t>(0.5))
         return true;
@@ -510,7 +505,7 @@ bool shell::Face::exhaustWithoutNewVertPriorityPredicate(FrPlVert* fEdge)
 }
 
 
-bool shell::Face::exhaustWithNewVertPriorityPredicate(FrPlVert* fEdge)
+bool shell::Face::exhaustWithNewVertPriorityPredicate(sfront::Vert* fEdge)
 {
     if (fEdge->angleExCos() > degToRad(110))
         return true;
@@ -520,7 +515,7 @@ bool shell::Face::exhaustWithNewVertPriorityPredicate(FrPlVert* fEdge)
 
 
 shell::Face::ExhaustType shell::Face::computeExhaustionTypeQualityPriority(
-        FrPlVert* fVert, FrPlEdge*& out_withNWFrontEdge, Vec*& out_withNWNewVertPos)
+        sfront::Vert* fVert, sfront::Edge*& out_withNWFrontEdge, Vec*& out_withNWNewVertPos)
 {
     if (anyVertInsidePotentialTriangCheck(fVert))
         return ExhaustType::WithNewVert;
@@ -531,7 +526,7 @@ shell::Face::ExhaustType shell::Face::computeExhaustionTypeQualityPriority(
         std::get<0>(opp_verts)->pos(),
         std::get<1>(opp_verts)->pos());
 
-    FrPlEdge* f_edge = chooseEdgeForExhaustionWithNewVert(fVert);
+    sfront::Edge* f_edge = chooseEdgeForExhaustionWithNewVert(fVert);
     Vec new_vert_pos;
     if (!tryComputeNewVertPos(f_edge, new_vert_pos))
         return ExhaustType::DontExhaust;
@@ -583,7 +578,7 @@ void shell::Face::processAngles()
     }
 
     real_t max_compl = std::numeric_limits<real_t>::max();
-    for (FrPlVert* cur_f_vert = currentFrontVert(max_compl);; cur_f_vert = currentFrontVert(max_compl))
+    for (sfront::Vert* cur_f_vert = currentFrontVert(max_compl);; cur_f_vert = currentFrontVert(max_compl))
     {
         if (!cur_f_vert)
             throw std::logic_error("pmg::shell::Face::currentFrontVert returned nullptr");
@@ -606,7 +601,7 @@ void shell::Face::processAngles()
         }
         else
         {
-            FrPlEdge* exhaust_from_f_edge = nullptr;
+            sfront::Edge* exhaust_from_f_edge = nullptr;
             Vec* new_vert_pos = nullptr;
             switch (computeExhaustionTypeQualityPriority(cur_f_vert, exhaust_from_f_edge, new_vert_pos))
             {
@@ -768,14 +763,14 @@ void shell::Face::initializeFront()
                 sverts.push_back(svert);
 
     for (auto& svert : sverts)
-        m_frontVerts.push_back(new FrPlVert(this, svert->attachedVert));
+        m_frontVerts.push_back(new sfront::Vert(this, svert->attachedVert));
     sverts.clear();
 
     for (auto& this_edge : edges)
         for (auto& vert : this_edge->innerVerts())
-            m_frontVerts.push_back(new FrPlVert(this, vert));
+            m_frontVerts.push_back(new sfront::Vert(this, vert));
 
     for (auto& this_edge : edges)
         for (auto& edge : this_edge->innerEdges())
-            m_frontEdges.push_back(new FrPlEdge(this, edge));
+            m_frontEdges.push_back(new sfront::Edge(this, edge));
 }

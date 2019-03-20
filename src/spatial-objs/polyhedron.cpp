@@ -11,9 +11,7 @@
 
 using namespace pmg;
 
-using FrSuFace = front::surface::Face;
-using FrSuEdge  = front::surface::Edge;
-using pair_ff   = std::pair<FrSuFace*, FrSuFace*>;
+using pair_ff = std::pair<front::Face*, front::Face*>;
 
 
 #define DET(a, b, c, d) \
@@ -82,7 +80,7 @@ bool Polyhedron::shellContains(const Vert* vert) const
 
 
 
-void Polyhedron::initializeFFaceFEdges(FrSuFace* fFace) const
+void Polyhedron::initializeFFaceFEdges(front::Face* fFace) const
 {
     int n_added = 0;
     for (auto& fedge : m_frontEdges)
@@ -103,15 +101,15 @@ void Polyhedron::initializeFront()
 {
     for (auto& sedge : m_shellEdges)
         for (auto& edge : sedge->innerEdges())
-            m_frontEdges.push_back(new FrSuEdge(this, edge));
+            m_frontEdges.push_back(new front::Edge(this, edge));
 
     for (auto& sface : m_shellFaces)
         for (auto& edge : sface->innerEdges())
-            m_frontEdges.push_back(new FrSuEdge(this, edge));
+            m_frontEdges.push_back(new front::Edge(this, edge));
 
     for (auto& sface : m_shellFaces)
         for (auto& face : sface->innerFaces())
-            m_frontFaces.push_back(new FrSuFace(this, face));
+            m_frontFaces.push_back(new front::Face(this, face));
 
     for (auto& fface : m_frontFaces)
         initializeFFaceFEdges(fface);
@@ -142,7 +140,7 @@ shell::Edge* Polyhedron::findShellEdge(const shell::Vert* v0, const shell::Vert*
 }
 
 
-FrSuFace* Polyhedron::findFrontFace(const Face* face) const
+front::Face* Polyhedron::findFrontFace(const Face* face) const
 {
     for (auto& fface : m_frontFaces)
     {
@@ -154,9 +152,9 @@ FrSuFace* Polyhedron::findFrontFace(const Face* face) const
 }
 
 
-std::vector<FrSuEdge*> Polyhedron::findFEdge(const Vert* v0, const Vert* v1) const
+std::vector<front::Edge*> Polyhedron::findFEdge(const Vert* v0, const Vert* v1) const
 {
-    std::vector<FrSuEdge*> res;
+    std::vector<front::Edge*> res;
     for (auto& f_edge : m_frontEdges)
     {
         if (((f_edge->edge->verts[0] == v0 &&
@@ -172,9 +170,9 @@ std::vector<FrSuEdge*> Polyhedron::findFEdge(const Vert* v0, const Vert* v1) con
 }
 
 
-std::vector<FrSuEdge*> Polyhedron::findFEdge(const Edge* edge) const
+std::vector<front::Edge*> Polyhedron::findFEdge(const Edge* edge) const
 {
-    std::vector<FrSuEdge*> res;
+    std::vector<front::Edge*> res;
     for (auto& f_edge : m_frontEdges)
     {
         if (f_edge->edge == edge)
@@ -189,9 +187,9 @@ std::vector<FrSuEdge*> Polyhedron::findFEdge(const Edge* edge) const
 
 
 
-FrSuFace* Polyhedron::addToFront(const Face* face, bool addInner)
+front::Face* Polyhedron::addToFront(const Face* face, bool addInner)
 {
-    FrSuFace* new_fface = new FrSuFace(this, face);
+    front::Face* new_fface = new front::Face(this, face);
     m_frontFaces.push_back(new_fface);
     if (addInner)
         m_innerFaces.push_back(new_fface->face);
@@ -199,9 +197,9 @@ FrSuFace* Polyhedron::addToFront(const Face* face, bool addInner)
 }
 
 
-FrSuEdge* Polyhedron::addToFront(const pmg::Edge* edge, bool addInner)
+front::Edge* Polyhedron::addToFront(const pmg::Edge* edge, bool addInner)
 {
-    FrSuEdge* new_f_edge = new FrSuEdge(this, edge);
+    front::Edge* new_f_edge = new front::Edge(this, edge);
     m_frontEdges.push_back(new_f_edge);
     if (addInner)
         m_innerEdges.push_back(new_f_edge->edge);
@@ -211,14 +209,14 @@ FrSuEdge* Polyhedron::addToFront(const pmg::Edge* edge, bool addInner)
 
 
 
-void Polyhedron::removeFromFront(FrSuFace* fFace)
+void Polyhedron::removeFromFront(front::Face* fFace)
 {
     m_frontFaces.erase(std::find(m_frontFaces.begin(), m_frontFaces.end(), fFace));
     delete fFace;
 }
 
 
-void Polyhedron::removeFromFront(FrSuEdge* fEdge)
+void Polyhedron::removeFromFront(front::Edge* fEdge)
 {
     m_frontEdges.erase(std::find(m_frontEdges.begin(), m_frontEdges.end(), fEdge));
     delete fEdge;
@@ -308,7 +306,7 @@ bool XOR(bool b0, bool b1)
 }
 
 
-bool Polyhedron::edgeIntersectionCheck(FrSuEdge* frontEdge) const
+bool Polyhedron::edgeIntersectionCheck(front::Edge* frontEdge) const
 {
     auto opp_verts = frontEdge->findOppVerts();
     Vec opp_verts_poses[2];
@@ -469,7 +467,7 @@ bool Polyhedron::faceIntersectionCheck(const Vert* v0, const Vert* v1, const Ver
 }
 
 
-bool Polyhedron::facesIntersectionCheck(FrSuEdge* frontEdge) const
+bool Polyhedron::facesIntersectionCheck(front::Edge* frontEdge) const
 {
     auto opp_verts = frontEdge->findOppVerts();
         
@@ -499,7 +497,7 @@ bool Polyhedron::insideTetrCheck(const Vec& p0, const Vec& p1, const Vec& p2, co
 }
 
 
-bool Polyhedron::anyVertInsidePotentialTetrCheck(FrSuEdge* fEdge) const
+bool Polyhedron::anyVertInsidePotentialTetrCheck(front::Edge* fEdge) const
 {
     auto opp_verts = fEdge->findOppVerts();
 
@@ -522,7 +520,7 @@ bool Polyhedron::anyVertInsidePotentialTetrCheck(FrSuEdge* fEdge) const
 }
 
 
-bool Polyhedron::frontSplitCheck(FrSuEdge* fEdge, FrSuEdge* oppFEdge) const
+bool Polyhedron::frontSplitCheck(front::Edge* fEdge, front::Edge* oppFEdge) const
 {
     auto opp_fedge = oppFEdge;
     if (!opp_fedge)
@@ -542,7 +540,7 @@ bool Polyhedron::frontSplitCheck(FrSuEdge* fEdge, FrSuEdge* oppFEdge) const
 }
 
 
-bool Polyhedron::frontCollapseCheck(FrSuEdge* fEdge, FrSuEdge* oppFEdge) const
+bool Polyhedron::frontCollapseCheck(front::Edge* fEdge, front::Edge* oppFEdge) const
 {
     auto opp_fedge = oppFEdge;
     if (!opp_fedge)
@@ -560,7 +558,7 @@ bool Polyhedron::frontCollapseCheck(FrSuEdge* fEdge, FrSuEdge* oppFEdge) const
 }
 
 
-bool Polyhedron::parallelFacesCheck(FrSuEdge* fEdge) const
+bool Polyhedron::parallelFacesCheck(front::Edge* fEdge) const
 {
     auto adj_ffaces = fEdge->getAdjFFaces();
 
@@ -683,10 +681,10 @@ real_t Polyhedron::computeTetrSimpleSqrQuality(const Vec& p0, const Vec& p1, con
 
 
 
-FrSuEdge* Polyhedron::currentFrontEdge(real_t maxCompl) const
+front::Edge* Polyhedron::currentFrontEdge(real_t maxCompl) const
 {
     real_t cur_max_compl = static_cast<real_t>(0.0);
-    FrSuEdge* cur_max_f_edge = nullptr;
+    front::Edge* cur_max_f_edge = nullptr;
     for (auto& f_edge : m_frontEdges)
     {
         real_t cur_compl = f_edge->complexity();
@@ -702,7 +700,7 @@ FrSuEdge* Polyhedron::currentFrontEdge(real_t maxCompl) const
 }
 
 
-bool Polyhedron::exhaustWithoutNewVertPriorityPredicate(FrSuEdge* curFEdge)
+bool Polyhedron::exhaustWithoutNewVertPriorityPredicate(front::Edge* curFEdge)
 {
     if (curFEdge->angleExCos() > cosDeg<70, real_t>)
         return true;
@@ -721,7 +719,7 @@ bool Polyhedron::exhaustWithoutNewVertPriorityPredicate(FrSuEdge* curFEdge)
 }
 
 
-bool Polyhedron::exhaustWithNewVertPriorityPredicate(FrSuEdge* currentFrontEdge)
+bool Polyhedron::exhaustWithNewVertPriorityPredicate(front::Edge* currentFrontEdge)
 {
     if (currentFrontEdge->angleExCos() < cosDeg<120, real_t>)
         return true;
@@ -731,8 +729,8 @@ bool Polyhedron::exhaustWithNewVertPriorityPredicate(FrSuEdge* currentFrontEdge)
 
  
 Polyhedron::ExhaustType Polyhedron::computeExhaustionTypeQualityPriority(
-    FrSuEdge* currentFrontEdge,
-    FrSuFace*& out_withNWFrontFace, Vec*& out_withNWNewVertPos)
+    front::Edge* currentFrontEdge,
+    front::Face*& out_withNWFrontFace, Vec*& out_withNWNewVertPos)
 {
     if (frontSplitCheck(currentFrontEdge))
         return ExhaustType::WithoutNewVert;
@@ -752,7 +750,7 @@ Polyhedron::ExhaustType Polyhedron::computeExhaustionTypeQualityPriority(
         std::get<0>(opp_verts)->pos(),
         std::get<1>(opp_verts)->pos());
 
-    FrSuFace* fface = chooseFaceForExhaustionWithNewVert(currentFrontEdge);
+    front::Face* fface = chooseFaceForExhaustionWithNewVert(currentFrontEdge);
     Vec new_vert_pos;
     if (!tryComputeNewVertPos(fface, new_vert_pos))
         return ExhaustType::DontExhaust;
@@ -774,7 +772,7 @@ Polyhedron::ExhaustType Polyhedron::computeExhaustionTypeQualityPriority(
 
 
 
-Vec Polyhedron::computeNormalInTetr(const FrSuFace* fFace, const Vec& oppVertPos) const
+Vec Polyhedron::computeNormalInTetr(const front::Face* fFace, const Vec& oppVertPos) const
 {
     return computeNormalInTetr(fFace->face->edges[0]->verts[0]->pos(),
                                fFace->face->edges[0]->verts[1]->pos(),
@@ -783,7 +781,7 @@ Vec Polyhedron::computeNormalInTetr(const FrSuFace* fFace, const Vec& oppVertPos
 }
 
 
-Vec Polyhedron::computeNormalInTetr(const FrSuFace* fFace, const pmg::Edge* oneOfRemainingEdges) const
+Vec Polyhedron::computeNormalInTetr(const front::Face* fFace, const pmg::Edge* oneOfRemainingEdges) const
 {
     Vec opp_pos = fFace->face->contains(oneOfRemainingEdges->verts[0]) ?
         oneOfRemainingEdges->verts[1]->pos() :
@@ -807,7 +805,7 @@ Vec Polyhedron::computeNormalInTetr(const Vec& fFacePos0, const Vec& fFacePos1, 
 
 
 
-void Polyhedron::setFEdgesInFrontSplit(const FrSuEdge* fEdge, FrSuEdge* newOppFEdges[2], FrSuFace* newFFaces[2], pair_ff oppFFaces) const
+void Polyhedron::setFEdgesInFrontSplit(const front::Edge* fEdge, front::Edge* newOppFEdges[2], front::Face* newFFaces[2], pair_ff oppFFaces) const
 {
 //    real_t cpa_times[2][2];
 //    cpa_times[0][0] = tva::spatalgs::cpaTime(newFFaces[0]->computeCenter(), newFFaces[0]->normal,
@@ -819,8 +817,8 @@ void Polyhedron::setFEdgesInFrontSplit(const FrSuEdge* fEdge, FrSuEdge* newOppFE
 //    cpa_times[1][1] = tva::spatalgs::cpaTime(newFFaces[1]->computeCenter(), newFFaces[1]->normal,
 //                                             oppFFaces.second->computeCenter(), oppFFaces.second->normal);
 
-//    std::pair<FrSuEdge*, FrSuFace*> pair0;
-//    std::pair<FrSuEdge*, FrSuFace*> pair1;
+//    std::pair<front::Edge*, front::Face*> pair0;
+//    std::pair<front::Edge*, front::Face*> pair1;
 //    bool trivial_solution = false;
 
 //    if (cpa_times[0][0] > 1e-6 && cpa_times[1][1] > 1e-6)
@@ -905,7 +903,7 @@ void Polyhedron::setFEdgesInFrontSplit(const FrSuEdge* fEdge, FrSuEdge* newOppFE
 
     int worst_ofi = best_ofi == 0 ? 1 : 0;
 
-    FrSuFace* opp_ffaces[2] = { oppFFaces.first, oppFFaces.second };
+    front::Face* opp_ffaces[2] = { oppFFaces.first, oppFFaces.second };
     if (coses[0][best_ofi] > coses[1][best_ofi])
     {
         newOppFEdges[0]->fillAdjFFaces(newFFaces[0], opp_ffaces[best_ofi]);
@@ -927,7 +925,7 @@ void Polyhedron::setFEdgesInFrontSplit(const FrSuEdge* fEdge, FrSuEdge* newOppFE
 }
 
 
-void Polyhedron::exhaustFrontCollapse(FrSuEdge *fEdge, FrSuEdge *oppFEdge)
+void Polyhedron::exhaustFrontCollapse(front::Edge *fEdge, front::Edge *oppFEdge)
 {
     auto fedge_adj_faces = fEdge->getAdjFFaces();
     auto opp_ffaces   = oppFEdge->getAdjFFaces();
@@ -948,7 +946,7 @@ void Polyhedron::exhaustFrontCollapse(FrSuEdge *fEdge, FrSuEdge *oppFEdge)
 //        m_polycr->output(PolyhedralSet::FileType::Obj, "debug.obj");
 
 
-    std::vector<FrSuEdge*> fedges_to_erase;
+    std::vector<front::Edge*> fedges_to_erase;
     fedges_to_erase.reserve(4);
     for (auto& fedge : opp_ffaces.first->fEdges)
         if (fedge->edge->contains(fEdge->edge->verts[0]) || fedge->edge->contains(fEdge->edge->verts[1]))
@@ -974,7 +972,7 @@ void Polyhedron::exhaustFrontCollapse(FrSuEdge *fEdge, FrSuEdge *oppFEdge)
 }
 
 
-void Polyhedron::exhaustFrontSplit(FrSuEdge* fEdge, FrSuEdge* oppFEdge)
+void Polyhedron::exhaustFrontSplit(front::Edge* fEdge, front::Edge* oppFEdge)
 {
     // This volatile helps to avoid computational error.
     volatile auto adj_ffaces = fEdge->getAdjFFaces();
@@ -989,16 +987,16 @@ void Polyhedron::exhaustFrontSplit(FrSuEdge* fEdge, FrSuEdge* oppFEdge)
     opp_ffaces.first->removeFEdge(oppFEdge);
     opp_ffaces.second->removeFEdge(oppFEdge);
     removeFromFront(oppFEdge);
-    FrSuEdge* new_opp_fedges[2];
+    front::Edge* new_opp_fedges[2];
     new_opp_fedges[0] = addToFront(opp_edge, false);
     new_opp_fedges[1] = addToFront(opp_edge, false);
 
-    FrSuEdge* new_tetr_fedges[3];
+    front::Edge* new_tetr_fedges[3];
     new_tetr_fedges[0] = nullptr;
     new_tetr_fedges[1] = nullptr;
     new_tetr_fedges[2] = new_opp_fedges[0];
 
-    FrSuFace* new_ffaces[2];
+    front::Face* new_ffaces[2];
 
     for (auto& fedge : adj_ffaces.first->fEdges)
     {
@@ -1100,11 +1098,11 @@ void Polyhedron::exhaustFrontSplit(FrSuEdge* fEdge, FrSuEdge* oppFEdge)
 }
 
 
-void Polyhedron::exhaustWithoutNewVertOppEdgeExists(FrSuEdge* fEdge, FrSuEdge* oppFEdge)
+void Polyhedron::exhaustWithoutNewVertOppEdgeExists(front::Edge* fEdge, front::Edge* oppFEdge)
 {
     auto opp_ffaces = oppFEdge->getAdjFFaces();
 
-    FrSuFace* main_ffaces[3];
+    front::Face* main_ffaces[3];
     Vert* main_vert;
     auto fedge_adj_faces = fEdge->getAdjFFaces();
     main_ffaces[0] = std::get<0>(fedge_adj_faces);
@@ -1131,7 +1129,7 @@ void Polyhedron::exhaustWithoutNewVertOppEdgeExists(FrSuEdge* fEdge, FrSuEdge* o
         main_vert = fEdge->edge->verts[1];
     }
 
-    FrSuEdge* new_tetr_fedges[3];
+    front::Edge* new_tetr_fedges[3];
     for (int i = 0; i < 3; i++)
     {
         new_tetr_fedges[i] = main_ffaces[i]->findFEdgeNot(main_vert);
@@ -1162,7 +1160,7 @@ void Polyhedron::exhaustWithoutNewVertOppEdgeExists(FrSuEdge* fEdge, FrSuEdge* o
 //    if (new_tetr->computeQuality() < 1e-2)
 //        m_polycr->output(PolyhedralSet::FileType::Obj, "debug.obj");
 
-    std::vector<FrSuEdge*> erased_fedges;
+    std::vector<front::Edge*> erased_fedges;
     erased_fedges.reserve(3);
     for (auto& fface : main_ffaces)
     {
@@ -1186,7 +1184,7 @@ void Polyhedron::exhaustWithoutNewVertOppEdgeExists(FrSuEdge* fEdge, FrSuEdge* o
 }
 
 
-void Polyhedron::exhaustWithoutNewVertOppEdgeDontExists(FrSuEdge* fEdge)
+void Polyhedron::exhaustWithoutNewVertOppEdgeDontExists(front::Edge* fEdge)
 {
     // This volatile helps to avoid computational error.
     volatile auto adj_ffaces = fEdge->getAdjFFaces();
@@ -1195,9 +1193,9 @@ void Polyhedron::exhaustWithoutNewVertOppEdgeDontExists(FrSuEdge* fEdge)
     opp_verts[0] = adj_ffaces.first->face->findVertNot(fEdge->edge);
     opp_verts[1] = adj_ffaces.second->face->findVertNot(fEdge->edge);
     
-    FrSuEdge* opp_fedge = addToFront(new Edge(opp_verts[0], opp_verts[1]));
+    front::Edge* opp_fedge = addToFront(new Edge(opp_verts[0], opp_verts[1]));
 
-    FrSuEdge* new_tetr_fedges[3];
+    front::Edge* new_tetr_fedges[3];
     new_tetr_fedges[0] = nullptr;
     new_tetr_fedges[1] = nullptr;
     new_tetr_fedges[2] = opp_fedge;
@@ -1297,9 +1295,9 @@ void Polyhedron::exhaustWithoutNewVertOppEdgeDontExists(FrSuEdge* fEdge)
 }
 
 
-void Polyhedron::exhaustWithoutNewVert(FrSuEdge* fEdge, bool oppEdgeExistence, FrSuEdge* oppFEdge)
+void Polyhedron::exhaustWithoutNewVert(front::Edge* fEdge, bool oppEdgeExistence, front::Edge* oppFEdge)
 {
-    FrSuEdge* opp_fedge = nullptr;
+    front::Edge* opp_fedge = nullptr;
     if (oppEdgeExistence && oppFEdge)
         opp_fedge = oppFEdge;
     else if (oppEdgeExistence)
@@ -1330,9 +1328,9 @@ void Polyhedron::exhaustWithoutNewVert(FrSuEdge* fEdge, bool oppEdgeExistence, F
 
 
 
-bool Polyhedron::tryComputeNewVertPosType3(FrSuFace* fFace, Vec& out_pos)
+bool Polyhedron::tryComputeNewVertPosType3(front::Face* fFace, Vec& out_pos)
 {
-    FrSuEdge* main_fedges[2];
+    front::Edge* main_fedges[2];
     main_fedges[0] = fFace->fEdges[0];
     main_fedges[1] = fFace->fEdges[1];
     Edge* main_edges[2];
@@ -1405,9 +1403,9 @@ bool Polyhedron::tryComputeNewVertPosType3(FrSuFace* fFace, Vec& out_pos)
 }
 
 
-bool Polyhedron::tryComputeNewVertPosType2(FrSuFace* fFace, Vec& out_pos, int smallAngleIndex0, int smallAngleIndex1)
+bool Polyhedron::tryComputeNewVertPosType2(front::Face* fFace, Vec& out_pos, int smallAngleIndex0, int smallAngleIndex1)
 {
-    FrSuEdge* main_fedges[2];
+    front::Edge* main_fedges[2];
     main_fedges[0] = fFace->fEdges[smallAngleIndex0];
     main_fedges[1] = fFace->fEdges[smallAngleIndex1];
     Edge* main_edges[2];
@@ -1511,7 +1509,7 @@ bool Polyhedron::tryComputeNewVertPosType2(FrSuFace* fFace, Vec& out_pos, int sm
 }
 
 
-bool Polyhedron::tryComputeNewVertPosType1(FrSuFace* fFace, Vec& out_pos, int smallAngleIndex)
+bool Polyhedron::tryComputeNewVertPosType1(front::Face* fFace, Vec& out_pos, int smallAngleIndex)
 {
     auto main_f_edge = fFace->fEdges[smallAngleIndex];
     auto main_edge   = fFace->fEdges[smallAngleIndex]->edge;
@@ -1583,7 +1581,7 @@ bool Polyhedron::tryComputeNewVertPosType1(FrSuFace* fFace, Vec& out_pos, int sm
 }
 
 
-bool Polyhedron::tryComputeNewVertPosType0(FrSuFace* fFace, Vec& out_pos)
+bool Polyhedron::tryComputeNewVertPosType0(front::Face* fFace, Vec& out_pos)
 {
     real_t av_magn = ONE_3 * (
           fFace->face->edges[0]->magnitude()
@@ -1634,7 +1632,7 @@ bool Polyhedron::tryComputeNewVertPosType0(FrSuFace* fFace, Vec& out_pos)
 }
 
 
-bool Polyhedron::tryComputeNewVertPos(FrSuFace* fFace, Vec& out_pos)
+bool Polyhedron::tryComputeNewVertPos(front::Face* fFace, Vec& out_pos)
 {
     real_t angs_coses[3]
     { 
@@ -1662,7 +1660,7 @@ bool Polyhedron::tryComputeNewVertPos(FrSuFace* fFace, Vec& out_pos)
 
 
 
-real_t Polyhedron::sqr4FaceArea(const FrSuFace* fFace) const
+real_t Polyhedron::sqr4FaceArea(const front::Face* fFace) const
 {
     Vec vec0 = *fFace->face->edges[0]->verts[1] - *fFace->face->edges[0]->verts[0];
     Vec vec1 = *fFace->face->edges[1]->verts[1] - *fFace->face->edges[1]->verts[0];
@@ -1670,7 +1668,7 @@ real_t Polyhedron::sqr4FaceArea(const FrSuFace* fFace) const
 }
 
 
-FrSuFace* Polyhedron::chooseFaceForExhaustionWithNewVert(FrSuEdge* fEdge)
+front::Face* Polyhedron::chooseFaceForExhaustionWithNewVert(front::Edge* fEdge)
 {
     auto adj_ffaces = fEdge->getAdjFFaces();
 
@@ -1681,12 +1679,12 @@ FrSuFace* Polyhedron::chooseFaceForExhaustionWithNewVert(FrSuEdge* fEdge)
 }
 
 
-void Polyhedron::exhaustWithNewVert(FrSuFace* fFace, const Vec& vertPos)
+void Polyhedron::exhaustWithNewVert(front::Face* fFace, const Vec& vertPos)
 {
     Vert* new_vert = new Vert(vertPos);
     m_innerVerts.push_back(new_vert);
 
-    FrSuEdge* new_tetr_fedges[6];
+    front::Edge* new_tetr_fedges[6];
     new_tetr_fedges[0] = fFace->fEdges[0];
     auto far_vert = fFace->face->findVertNot(new_tetr_fedges[0]->edge);
     new_tetr_fedges[1] = fFace->findFEdge(new_tetr_fedges[0]->edge->verts[1], far_vert);
@@ -1747,7 +1745,7 @@ void Polyhedron::exhaustWithNewVert(FrSuFace* fFace, const Vec& vertPos)
 
 
 
-bool Polyhedron::tryExhaustWithoutNewVert(FrSuEdge* fEdge, bool oppEdgeExistence, FrSuEdge* oppEdge)
+bool Polyhedron::tryExhaustWithoutNewVert(front::Edge* fEdge, bool oppEdgeExistence, front::Edge* oppEdge)
 {
     if (parallelFacesCheck(fEdge) ||
         edgeIntersectionCheck(fEdge) ||
@@ -1760,7 +1758,7 @@ bool Polyhedron::tryExhaustWithoutNewVert(FrSuEdge* fEdge, bool oppEdgeExistence
 }
 
 
-bool Polyhedron::tryExhaustWithNewVert(FrSuEdge* frontEdge)
+bool Polyhedron::tryExhaustWithNewVert(front::Edge* frontEdge)
 {
     if (parallelFacesCheck(frontEdge))
         return false;
@@ -1797,7 +1795,7 @@ void Polyhedron::processAngles()
     int debug_i = 0;
 #endif
     real_t max_compl = std::numeric_limits<real_t>::max();
-    for (FrSuEdge* cur_fedge = currentFrontEdge(max_compl);; cur_fedge = currentFrontEdge(max_compl))
+    for (front::Edge* cur_fedge = currentFrontEdge(max_compl);; cur_fedge = currentFrontEdge(max_compl))
     {
         if (!cur_fedge)
             throw std::logic_error("pmg::Polyhedron::currentFrontEdge returned nullptr");
@@ -1820,7 +1818,7 @@ void Polyhedron::processAngles()
         }
         else
         {
-            FrSuFace* exhaust_from_fface = nullptr;
+            front::Face* exhaust_from_fface = nullptr;
             Vec* new_vert_pos = nullptr;
             switch (computeExhaustionTypeQualityPriority(cur_fedge, exhaust_from_fface, new_vert_pos))
             {
@@ -2012,9 +2010,9 @@ std::pair<real_t, real_t> Polyhedron::analyzeMeshQuality()
 Polyhedron::Polyhedron() {}
 
 
-Polyhedron::Polyhedron(PolyhedralSet* polycr)
+Polyhedron::Polyhedron(PolyhedralSet* polyhedr)
 {
-    m_polycr = polycr;
+    m_polycr = polyhedr;
 }
 
 
@@ -2099,13 +2097,13 @@ const std::vector<Vert*>& Polyhedron::innerVerts() const
 
 
 
-const std::list<FrSuFace*>& Polyhedron::frontFaces() const
+const std::list<front::Face*>& Polyhedron::frontFaces() const
 {
     return m_frontFaces;
 }
 
 
-const std::list<FrSuEdge*>& Polyhedron::frontEdges() const
+const std::list<front::Edge*>& Polyhedron::frontEdges() const
 {
     return m_frontEdges;
 }

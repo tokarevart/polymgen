@@ -14,20 +14,18 @@ class Edge;
 class Vert;
 
 namespace front {
-namespace plane {
-class Edge;
-class Vert;
-} // namespace plane
-
-namespace surface {
 class Face;
 class Edge;
-} // namespace surface
 } // namespace front
 
 namespace shell {
 class Face;
 class Edge;
 class Vert;
+
+namespace front {
+class Edge;
+class Vert;
+} // namespace front
 } // namespace shell
 } // namespace pmg

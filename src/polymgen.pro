@@ -11,8 +11,6 @@ SOURCES += \
     helpers/logger.cpp \
     helpers/timer.cpp \
     polygen/polygen.cpp \
-    spatial-objs/front/plane/front-plane-edge.cpp \
-    spatial-objs/front/surface/front-surface-edge.cpp \
     spatial-objs/shell/shell-edge.cpp \
     spatial-objs/shell/shell-vertex.cpp \
     spatial-objs/edge.cpp \
@@ -23,9 +21,11 @@ SOURCES += \
     spatial-objs/polyhedron.cpp \
     spatial-objs/face.cpp \
     spatial-objs/shell/shell-face.cpp \
-    spatial-objs/front/surface/front-surface-face.cpp \
     spatial-objs/vert.cpp \
-    spatial-objs/front/plane/front-plane-vert.cpp
+    spatial-objs/polyhedron-front/polyhedron-front-edge.cpp \
+    spatial-objs/polyhedron-front/polyhedron-front-face.cpp \
+    spatial-objs/shell/shell-front/shell-front-edge.cpp \
+    spatial-objs/shell/shell-front/shell-front-vert.cpp
 
 
 HEADERS += \
@@ -36,8 +36,6 @@ HEADERS += \
     helpers/logger.h \
     helpers/timer.h \
     polygen/polygen.h \
-    spatial-objs/front/plane/front-plane-edge.h \
-    spatial-objs/front/surface/front-surface-edge.h \
     spatial-objs/shell/shell-edge.h \
     spatial-objs/shell/shell-vertex.h \
     spatial-objs/edge.h \
@@ -49,7 +47,9 @@ HEADERS += \
     spatial-objs/polyhedron.h \
     spatial-objs/face.h \
     spatial-objs/shell/shell-face.h \
-    spatial-objs/front/surface/front-surface-face.h \
     spatial-objs/vert.h \
-    spatial-objs/front/plane/front-plane-vert.h
+    spatial-objs/polyhedron-front/polyhedron-front-edge.h \
+    spatial-objs/polyhedron-front/polyhedron-front-face.h \
+    spatial-objs/shell/shell-front/shell-front-edge.h \
+    spatial-objs/shell/shell-front/shell-front-vert.h
 

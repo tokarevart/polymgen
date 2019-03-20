@@ -77,9 +77,9 @@ void PolyhedralSet::outputObj(std::string_view filename) const
         }
     }
 
-    for (auto& polyhed : m_polyhedrons)
+    for (auto& polyhedr : m_polyhedrons)
     {
-        for (auto& vert : polyhed->innerVerts())
+        for (auto& vert : polyhedr->innerVerts())
         {
             file << "v " << (*vert)[0] << ' ' << (*vert)[1] << ' ' << (*vert)[2] << '\n';
             vert->globalNum = index++;
@@ -87,9 +87,9 @@ void PolyhedralSet::outputObj(std::string_view filename) const
     }
 
     #ifdef DEV_DEBUG
-    for (auto& polyhed : m_polyhedrons)
+    for (auto& polyhedr : m_polyhedrons)
     {
-        for (auto& f_face : polyhed->frontFaces())
+        for (auto& f_face : polyhedr->frontFaces())
         {
             auto face = f_face->face;
 
@@ -117,9 +117,9 @@ void PolyhedralSet::outputObj(std::string_view filename) const
         }
     }
 
-    for (auto& polyhed : m_polyhedrons)
+    for (auto& polyhedr : m_polyhedrons)
     {
-        for (auto& face : polyhed->innerFaces())
+        for (auto& face : polyhedr->innerFaces())
         {
             std::vector<size_t> gl_nums;
             for (auto& edge : face->edges)
@@ -189,9 +189,9 @@ void PolyhedralSet::outputLSDynaKeyword_NODE(std::ofstream& file) const
         }
     }
 
-    for (auto& polyhed : m_polyhedrons)
+    for (auto& polyhedr : m_polyhedrons)
     {
-        for (auto& vert : polyhed->innerVerts())
+        for (auto& vert : polyhedr->innerVerts())
         {
             vert->globalNum = index++;
             file << std::setw(8) << vert->globalNum;
@@ -210,9 +210,9 @@ void PolyhedralSet::outputLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, unsig
         "$#   eid     pid      n1      n2      n3      n4      n5      n6      n7      n8\n";
     size_t pid = 1;
     size_t eid = 10000000 * PolyhedralSetId + 1;
-    for (auto& polyhed : m_polyhedrons)
+    for (auto& polyhedr : m_polyhedrons)
     {
-        for (auto& tetr : polyhed->innerTetrs())
+        for (auto& tetr : polyhedr->innerTetrs())
         {
             file << std::setw(8) << eid++;
             file << std::setw(8) << pid;
@@ -262,8 +262,8 @@ std::string PolyhedralSet::generateLogFileName(std::string_view logFileName) con
     std::stringstream ss;
     ss << "pmg_log_" << m_polyhedrons.size() << "_nc_";
     size_t av_nfe = 0;
-    for (auto& polyhed : m_polyhedrons)
-        av_nfe += polyhed->innerTetrs().size();
+    for (auto& polyhedr : m_polyhedrons)
+        av_nfe += polyhedr->innerTetrs().size();
     av_nfe /= m_polyhedrons.size();
     ss << av_nfe << "_cfe.log";
 
@@ -341,10 +341,10 @@ const PolyMesh* PolyhedralSet::structurizeMesh()
     for (auto& sface : m_shellFaces)
         nodes_num += sface->innerVerts().size();
 
-    for (auto& polyhed : m_polyhedrons)
+    for (auto& polyhedr : m_polyhedrons)
         nodes_num += static_cast<size_t>(std::count_if(
-            polyhed->innerVerts().begin(),
-            polyhed->innerVerts().end(),
+            polyhedr->innerVerts().begin(),
+            polyhedr->innerVerts().end(),
             [](auto vert) { return static_cast<bool>(vert); }));
 
     m_lastMesh->nNodes = nodes_num;
@@ -392,9 +392,9 @@ const PolyMesh* PolyhedralSet::structurizeMesh()
             vert_ind++;
         }
     }
-    for (auto& polyhed : m_polyhedrons)
+    for (auto& polyhedr : m_polyhedrons)
     {
-        for (auto& vert : polyhed->innerVerts())
+        for (auto& vert : polyhedr->innerVerts())
         {
             verts_ptrs[vert_ind] = vert;
             m_lastMesh->nodesPositions[3 * vert_ind]     = (*vert)[0];
@@ -602,8 +602,8 @@ std::string PolyhedralSet::generateOutputFilename(FileType filetype, std::string
     std::stringstream ss;
     ss << "plcr_" << m_polyhedrons.size() << "_nc_";
     size_t av_nfe = 0;
-    for (auto& polyhed : m_polyhedrons)
-        av_nfe += polyhed->innerTetrs().size();
+    for (auto& polyhedr : m_polyhedrons)
+        av_nfe += polyhedr->innerTetrs().size();
     av_nfe /= m_polyhedrons.size();
     ss << av_nfe << "_cfe";
     switch (filetype)
@@ -661,8 +661,8 @@ PolyhedralSet::PolyhedralSet(const polygen::PolyStruct& polyStruct)
 
 PolyhedralSet::~PolyhedralSet()
 {
-    for (auto& polyhed : m_polyhedrons)
-        delete polyhed;
+    for (auto& polyhedr : m_polyhedrons)
+        delete polyhedr;
 
     for (auto& face : m_shellFaces)
         delete face;

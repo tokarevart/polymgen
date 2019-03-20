@@ -1,12 +1,12 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "spatial-objs/front/surface/front-surface-face.h"
+#include "spatial-objs/polyhedron-front/polyhedron-front-face.h"
 #include <stdexcept>
 
 
-using FrSuFace = pmg::front::surface::Face;
-using FrSuEdge = pmg::front::surface::Edge;
+using FrSuFace = pmg::front::Face;
+using FrSuEdge = pmg::front::Edge;
 
 
 
@@ -100,7 +100,7 @@ void FrSuFace::addFEdge(const FrSuEdge* fEdge)
     else if (!fEdges[2])
         fEdges[2] = const_cast<FrSuEdge*>(fEdge);
     else
-        throw std::logic_error("pmg::front::surface::Face::addFEdge can't add fEdge when fEdges already full.");
+        throw std::logic_error("pmg::front::Face::addFEdge can't add fEdge when fEdges already full.");
 }
 
 
@@ -115,7 +115,7 @@ void FrSuFace::removeFEdge(const FrSuEdge* fEdge)
         }
     }
 
-    throw std::logic_error("pmg::front::surface::Face::removeFEdge can't remove fEdge because there is no one.");
+    throw std::logic_error("pmg::front::Face::removeFEdge can't remove fEdge because there is no one.");
 }
 
 

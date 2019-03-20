@@ -1,7 +1,7 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "spatial-objs/front/plane/front-plane-vert.h"
+#include "spatial-objs/shell/shell-front/shell-front-vert.h"
 #include <stdexcept>
 #include "helpers/spatial-algs/spatial-algs.h"
 
@@ -10,8 +10,8 @@
 #define K_ALPHA static_cast<real_t>(4.0)
 
 
-using FrPlEdge   = pmg::front::plane::Edge;
-using FrPlVert = pmg::front::plane::Vert;
+using FrPlEdge   = pmg::shell::front::Edge;
+using FrPlVert = pmg::shell::front::Vert;
 using pair_ee  = std::pair<FrPlEdge*, FrPlEdge*>;
 using pair_vv  = std::pair<pmg::Vert*, pmg::Vert*>;
 
@@ -91,7 +91,7 @@ pair_ee FrPlVert::findAdjEdges() const
         }
     }
 
-    throw std::logic_error("Function pmg::front::plane::Vert::findAdjEdges didn't find 2 adjacent front edges.");
+    throw std::logic_error("Function pmg::shell::front::Vert::findAdjEdges didn't find 2 adjacent front edges.");
 }
 
 

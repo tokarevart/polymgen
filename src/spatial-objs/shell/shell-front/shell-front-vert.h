@@ -10,14 +10,12 @@
 
 
 namespace pmg {
+namespace shell {
 namespace front {
-namespace plane {
 
 class Vert
 {
-    using FrPlEdge = front::plane::Edge;
-    using FrPlVert = front::plane::Vert;
-    using pair_ee  = std::pair<FrPlEdge*,  FrPlEdge*>;
+    using pair_ee  = std::pair<front::Edge*, front::Edge*>;
     using pair_vv  = std::pair<pmg::Vert*, pmg::Vert*>;
 
 public:
@@ -47,6 +45,6 @@ private:
     bool m_needComplexityProcessing = true;
 };
 
-} // namespace plane
 } // namespace front
+} // namespace shell
 } // namespace pmg

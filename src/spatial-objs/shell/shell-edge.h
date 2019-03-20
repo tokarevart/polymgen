@@ -17,7 +17,7 @@ class Edge
 public:
     shell::Vert* verts[2];
 
-    const std::vector<pmg::Edge*>&   innerEdges() const;
+    const std::vector<pmg::Edge*>& innerEdges() const;
     const std::vector<pmg::Vert*>& innerVerts() const;
 
     void segmentize(real_t preferredLen);

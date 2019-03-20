@@ -11,27 +11,27 @@
 
 int main()
 {
-    real_t preferredEdgeLength = static_cast<real_t>(0.16);
+    real_t preferredEdgeLength = static_cast<real_t>(0.45);
 //    std::cout << "Enter preferred shell::Edge length: ";
 //    std::cin >> preferredEdgeLength;
     
     std::cout << "Generating PolyhedralSet...";
-    size_t n = 1;
+    size_t n = 4;
     polygen::PolyStruct polystr = polygen::generateCuboidsPolyhedralSet(n, n, n);
     std::cout << " done.\n";
 
     std::cout << "Initializing PolyhedralSet data...";
-    pmg::PolyhedralSet polycr(polystr);
+    pmg::PolyhedralSet polyhedr(polystr);
     std::cout << " done.\n";
     polystr.clear();
 
     std::cout << "Generating mesh...";
-    polycr.generateMesh(preferredEdgeLength);
+    polyhedr.generateMesh(preferredEdgeLength);
     std::cout << " done.\n";
 
     std::cout << "Outputting data to file...";
-    polycr.output(pmg::PolyhedralSet::FileType::LsDynaKeyword);
-    polycr.output(pmg::PolyhedralSet::FileType::Obj);
+    polyhedr.output(pmg::PolyhedralSet::FileType::LsDynaKeyword);
+    polyhedr.output(pmg::PolyhedralSet::FileType::Obj);
     std::cout << " done.\n";
 
     return 0;

@@ -1,7 +1,7 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "spatial-objs/front/surface/front-surface-edge.h"
+#include "spatial-objs/polyhedron-front/polyhedron-front-edge.h"
 #include <cmath>
 #include "helpers/spatial-algs/spatial-algs.h"
 
@@ -11,8 +11,8 @@
 #define K_ALPHA static_cast<real_t>(4.0)
 
 
-using FrSuFace = pmg::front::surface::Face;
-using FrSuEdge  = pmg::front::surface::Edge;
+using FrSuFace = pmg::front::Face;
+using FrSuEdge  = pmg::front::Edge;
 using pair_vv = std::pair<pmg::Vert*, pmg::Vert*>;
 using pair_ff = std::pair<FrSuFace*, FrSuFace*>;
 
@@ -219,7 +219,7 @@ pair_ff FrSuEdge::fillAdjFFaces()
     }
 
     if (!isAdjFacesFull())
-        throw std::logic_error("pmg::front::surface::Edge::fillAdjFFaces didn't find 2 adjacent front Faces.");
+        throw std::logic_error("pmg::front::Edge::fillAdjFFaces didn't find 2 adjacent front Faces.");
 
     return m_adjFFaces;
 }

@@ -1,10 +1,10 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "spatial-objs/front/plane/front-plane-edge.h"
+#include "spatial-objs/shell/shell-front/shell-front-edge.h"
 #include "helpers/spatial-algs/spatial-algs.h"
 
-using FrPlEdge = pmg::front::plane::Edge;
+using FrPlEdge = pmg::shell::front::Edge;
 
 
 

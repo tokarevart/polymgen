@@ -5,7 +5,7 @@
 #include <list>
 #include <vector>
 #include "spatial-objs/polyhedron.h"
-#include "spatial-objs/front/surface/front-surface-face.h"
+#include "spatial-objs/polyhedron-front/polyhedron-front-face.h"
 #include "spatial-objs/vert.h"
 #include "real-type.h"
 
@@ -14,14 +14,11 @@
 
 namespace pmg {
 namespace front {
-namespace surface {
 
 class Edge
 {
-    using FrSuFace = front::surface::Face;
-    using FrSuEdge  = front::surface::Edge;
     using pair_vv = std::pair<pmg::Vert*, pmg::Vert*>;
-    using pair_ff = std::pair<FrSuFace*, FrSuFace*>;
+    using pair_ff = std::pair<front::Face*, front::Face*>;
 
 public:
     pmg::Edge* edge;
@@ -36,15 +33,15 @@ public:
 
     // Opp means opposite.
     pair_vv   findOppVerts();
-    FrSuEdge* findOppEdge();
+    front::Edge* findOppEdge();
 
     // Adj means adjacent.
     pair_ff getAdjFFaces();
 
-    bool addAdjFFace(       const FrSuFace* fFace );
-    bool removeAdjFFace(    const FrSuFace* fFace );
-    bool adjFFacesContains( const FrSuFace* fFace ) const;
-    void fillAdjFFaces( const FrSuFace* fFace0, const FrSuFace* fFace1 );
+    bool addAdjFFace(       const front::Face* fFace );
+    bool removeAdjFFace(    const front::Face* fFace );
+    bool adjFFacesContains( const front::Face* fFace ) const;
+    void fillAdjFFaces( const front::Face* fFace0, const front::Face* fFace1 );
 
     Edge( const Polyhedron* relatedPolyhedron, const pmg::Edge* edge );
 
@@ -63,6 +60,5 @@ private:
     pair_ff fillAdjFFaces();
 };
 
-} // namespace surface
 } // namespace front
 } // namespace pmg

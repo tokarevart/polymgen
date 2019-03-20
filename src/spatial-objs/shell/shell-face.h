@@ -6,8 +6,8 @@
 #include <vector>
 #include "spatial-objs/edge.h"
 #include "spatial-objs/vert.h"
-#include "spatial-objs/front/plane/front-plane-edge.h"
-#include "spatial-objs/front/plane/front-plane-vert.h"
+#include "spatial-objs/shell/shell-front/shell-front-edge.h"
+#include "spatial-objs/shell/shell-front/shell-front-vert.h"
 #include "real-type.h"
 
 #include "definitions.h"
@@ -23,14 +23,14 @@ public:
 
     real_t preferredLength() const;
 
-    const std::list<pmg::Face*>&  innerFaces() const;
-    const std::list<pmg::Edge*>&   innerEdges()  const;
-    const std::vector<pmg::Vert*>& innerVerts()  const;
+    const std::list<pmg::Face*>&   innerFaces() const;
+    const std::list<pmg::Edge*>&   innerEdges() const;
+    const std::vector<pmg::Vert*>& innerVerts() const;
 
-    const std::list<front::plane::Edge*>& frontEdges() const;
+    const std::list<front::Edge*>& frontEdges() const;
 
     shell::Vert* findVertNot( const shell::Edge* sEdge ) const;
-    shell::Edge*   findShellEdgeContaining(   const   pmg::Edge*  edge ) const;
+    shell::Edge* findShellEdgeContaining( const pmg::Edge* edge ) const;
 
     // Needs shell edges to be already segmentized.
     void triangulate( real_t preferredLen );
@@ -49,8 +49,8 @@ private:
         WithNewVert
     };
 
-    using FrPlEdge   = front::plane::Edge;
-    using FrPlVert = front::plane::Vert;
+    using FrPlEdge = front::Edge;
+    using FrPlVert = front::Vert;
     using pair_dd = std::pair<real_t, real_t>;
     using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
     using pair_ee = std::pair<pmg::Edge*, pmg::Edge*>;
@@ -66,7 +66,7 @@ private:
 
     FrPlVert* findFrontVert( const pmg::Vert* vert ) const;
 
-    FrPlEdge*   addToFront( const pmg::Edge* edge );
+    FrPlEdge* addToFront( const pmg::Edge* edge );
     FrPlVert* addToFront( const pmg::Vert* vert );
 
     void removeFromFront( FrPlEdge* fEdge );
