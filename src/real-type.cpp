@@ -1,3 +1,6 @@
+// Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
+// Licensed under the MIT License.
+
 #include "real-type.h"
 
 real_t sqrtReal( real_t value )
