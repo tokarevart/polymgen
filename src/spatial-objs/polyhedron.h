@@ -146,12 +146,11 @@ private:
     bool tryComputeNewVertPos( front::Face* fFace, Vec& out_pos );
 
     real_t sqr4FaceArea( const front::Face* fFace ) const;
-    // Сurrently i don't know which method of choice is better
     front::Face* chooseFaceForExhaustionWithNewVert( front::Edge* fEdge );
-    void       exhaustWithNewVert( front::Face* fFace, const Vec& vertPos );
+    void         exhaustWithNewVert( front::Face* fFace, const Vec& vertPos );
 
     bool tryExhaustWithoutNewVert( front::Edge* fEdge, bool doesOppEdgeExists = true, front::Edge* oppEdge = nullptr );
-    bool tryExhaustWithNewVert(    front::Edge* fEdge ); // Note: check optimization
+    bool tryExhaustWithNewVert(    front::Edge* fEdge );
 
     bool globalIntersectionCheck();
 
