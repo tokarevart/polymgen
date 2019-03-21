@@ -5,14 +5,12 @@ It is created with the purpose of use in solving boundary-value problems for pol
 ```c++
 // Number of cubes along the corresponding axis.
 size_t nX = 3, nY = 3, nZ = 3;
-polygen::PolyStruct polyStruct = generateCuboidsPolycrystal(nX, nY, nZ);
+psg::PolyStruct polyStruct = psg::generateCuboids(nX, nY, nZ);
 pmg::PolyhedralSet polyhedr(polyStruct);
 
 double preferredTetrahedronEdgeLength = 0.45;
 polyhedr.generateMesh(preferredTetrahedronEdgeLength);
-pmg::PolyMesh* mesh = polyhedr.structurizeMesh();
-...
-delete mesh;
+polyhedr.output(pmg::PolyhedralSet::FileType::LsDynaKeyword);
 ```
 ![Cube mesh](https://github.com/Tokarevart/polycr-mesh-generator/blob/master/images/polymesh_1.png)
 # License
