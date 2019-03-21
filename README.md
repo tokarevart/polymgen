@@ -10,7 +10,7 @@ pmg::PolyhedralSet polyhedr(polyStruct);
 
 double preferredTetrahedronEdgeLength = 0.45;
 polyhedr.generateMesh(preferredTetrahedronEdgeLength);
-polyhedr.output(pmg::PolyhedralSet::FileType::LsDynaKeyword);
+polyhedr.output(pmg::PolyhedralSet::FileType::Obj); // Or ...FileType::LsDynaKeyword
 ```
 ![Cube mesh](https://github.com/Tokarevart/polycr-mesh-generator/blob/master/images/polymesh_1.png)
 # License
