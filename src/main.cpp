@@ -6,7 +6,7 @@
 #include <fstream>
 #include <memory>
 #include "spatial-objs/polyhedral-set.h"
-#include "polygen/polygen.h"
+#include "polysgen/polysgen.h"
 
 
 int main()
