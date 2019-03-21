@@ -7,7 +7,7 @@
 #include "real-type.h"
 
 
-namespace polygen {
+namespace psg {
 
 struct PolyStruct
 {

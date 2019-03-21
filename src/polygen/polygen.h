@@ -7,9 +7,9 @@
 #include "data-structures/polystruct.h"
 
 
-namespace polygen {
+namespace psg {
 
-PolyStruct generateCuboidsPolyhedralSet(
+PolyStruct generateCuboids(
     size_t nX, size_t nY, size_t nZ,
     real_t dX = 1.0, real_t dY = 1.0, real_t dZ = 1.0) noexcept;
 

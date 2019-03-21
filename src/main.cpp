@@ -15,7 +15,7 @@ int main()
     
     std::cout << "Generating PolyhedralSet...";
     size_t n = 4;
-    polygen::PolyStruct polystr = polygen::generateCuboidsPolyhedralSet(n, n, n);
+    psg::PolyStruct polystr = psg::generateCuboids(n, n, n);
     std::cout << " done.\n";
 
     std::cout << "Initializing PolyhedralSet data...";

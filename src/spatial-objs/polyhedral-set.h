@@ -39,12 +39,12 @@ public:
     const PolyMesh* getLastMesh();
 
     void input( std::string_view polyStructFileName );
-    void input( const polygen::PolyStruct& polyStruct );
+    void input( const psg::PolyStruct& polyStruct );
     void output( FileType filetype = FileType::Obj, std::string_view filename = "_AUTO_", unsigned PolyhedralSetId = 1u ) const;
 
     PolyhedralSet();
     PolyhedralSet( std::string_view polyStructFileName );
-    PolyhedralSet( const polygen::PolyStruct& polyStruct );
+    PolyhedralSet( const psg::PolyStruct& polyStruct );
     ~PolyhedralSet();
 
 

@@ -3,7 +3,7 @@
 
 #include "data-structures/polystruct.h"
 
-using namespace polygen;
+using namespace psg;
 
 
 

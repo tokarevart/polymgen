@@ -6,7 +6,7 @@
 
 
 
-polygen::PolyStruct polygen::generateCuboidsPolyhedralSet(size_t nX, size_t nY, size_t nZ, real_t dX, real_t dY, real_t dZ) noexcept
+psg::PolyStruct psg::generateCuboids(size_t nX, size_t nY, size_t nZ, real_t dX, real_t dY, real_t dZ) noexcept
 {
     const size_t w = nX;
     const size_t t = nY;
