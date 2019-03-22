@@ -1,14 +1,14 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "data-structures/polystruct.h"
+#include "data-structures/polyshell.h"
 
 using namespace psg;
 
 
 
 
-real_t& PolyStruct::VertPos::operator[](unsigned i)
+real_t& PolyShell::VertPos::operator[](unsigned i)
 {
     switch (i)
     {
@@ -20,7 +20,7 @@ real_t& PolyStruct::VertPos::operator[](unsigned i)
 }
 
 
-real_t PolyStruct::VertPos::operator[](unsigned i) const
+real_t PolyShell::VertPos::operator[](unsigned i) const
 {
     switch (i)
     {
@@ -34,7 +34,7 @@ real_t PolyStruct::VertPos::operator[](unsigned i) const
 
 
 
-size_t& PolyStruct::Face::operator[](unsigned i)
+size_t& PolyShell::Face::operator[](unsigned i)
 {
     switch (i)
     {
@@ -46,7 +46,7 @@ size_t& PolyStruct::Face::operator[](unsigned i)
 }
 
 
-size_t PolyStruct::Face::operator[](unsigned i) const
+size_t PolyShell::Face::operator[](unsigned i) const
 {
     switch (i)
     {
@@ -60,7 +60,7 @@ size_t PolyStruct::Face::operator[](unsigned i) const
 
 
 
-void PolyStruct::PolyStruct::clear()
+void PolyShell::PolyShell::clear()
 {
     verts.clear();
     faces.clear();
@@ -70,7 +70,7 @@ void PolyStruct::PolyStruct::clear()
 
 
 
-PolyStruct& PolyStruct::PolyStruct::operator=(PolyStruct&& other) noexcept
+PolyShell& PolyShell::PolyShell::operator=(PolyShell&& other) noexcept
 {
     verts  = std::move(other.verts);
     faces  = std::move(other.faces);
@@ -79,7 +79,7 @@ PolyStruct& PolyStruct::PolyStruct::operator=(PolyStruct&& other) noexcept
 }
 
 
-PolyStruct& PolyStruct::PolyStruct::operator=(const PolyStruct& other)
+PolyShell& PolyShell::PolyShell::operator=(const PolyShell& other)
 {
     verts       = other.verts;
     faces       = other.faces;
@@ -90,11 +90,11 @@ PolyStruct& PolyStruct::PolyStruct::operator=(const PolyStruct& other)
 
 
 
-PolyStruct::PolyStruct::PolyStruct(PolyStruct&& other) noexcept
+PolyShell::PolyShell::PolyShell(PolyShell&& other) noexcept
     : verts(std::move(other.verts)), faces(std::move(other.faces)), polyhedrons(std::move(other.polyhedrons)) {}
 
 
-PolyStruct::PolyStruct::PolyStruct(const PolyStruct& other)
+PolyShell::PolyShell::PolyShell(const PolyShell& other)
 {
     verts       = other.verts;
     faces       = other.faces;
@@ -102,4 +102,4 @@ PolyStruct::PolyStruct::PolyStruct(const PolyStruct& other)
 }
 
 
-PolyStruct::PolyStruct::PolyStruct() {}
+PolyShell::PolyShell::PolyShell() {}

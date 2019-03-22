@@ -4,13 +4,12 @@
 #pragma once
 #include <stddef.h>
 #include <memory>
-#include "data-structures/polystruct.h"
+#include "data-structures/polyshell.h"
 
 
 namespace psg {
 
-PolyStruct generateCuboids(
-    size_t nX, size_t nY, size_t nZ,
-    real_t dX = 1.0, real_t dY = 1.0, real_t dZ = 1.0) noexcept;
+PolyShell generateCuboids( size_t nX, size_t nY, size_t nZ,
+                           real_t dX = 1.0, real_t dY = 1.0, real_t dZ = 1.0 );
 
 } // namespace polygen

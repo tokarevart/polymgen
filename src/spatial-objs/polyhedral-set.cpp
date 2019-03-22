@@ -529,7 +529,7 @@ void PolyhedralSet::input(std::string_view polyStructFileName)
 }
 
 
-void PolyhedralSet::input(const psg::PolyStruct& polyStruct)
+void PolyhedralSet::input(const psg::PolyShell& polyStruct)
 {
     for (size_t i = 0; i < polyStruct.verts.size(); i++)
     {
@@ -653,7 +653,7 @@ PolyhedralSet::PolyhedralSet(std::string_view polyStructFileName)
 }
 
 
-PolyhedralSet::PolyhedralSet(const psg::PolyStruct& polyStruct)
+PolyhedralSet::PolyhedralSet(const psg::PolyShell& polyStruct)
 {
     input(polyStruct);
 }

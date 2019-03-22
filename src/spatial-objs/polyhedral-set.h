@@ -16,7 +16,7 @@
 #include "spatial-objs/edge.h"
 #include "spatial-objs/vert.h"
 #include "data-structures/polymesh.h"
-#include "data-structures/polystruct.h"
+#include "data-structures/polyshell.h"
 #include "helpers/logger.h"
 #include "real-type.h"
 
@@ -39,12 +39,12 @@ public:
     const PolyMesh* getLastMesh();
 
     void input( std::string_view polyStructFileName );
-    void input( const psg::PolyStruct& polyStruct );
+    void input( const psg::PolyShell& polyStruct );
     void output( FileType filetype = FileType::Obj, std::string_view filename = "_AUTO_", unsigned PolyhedralSetId = 1u ) const;
 
     PolyhedralSet();
     PolyhedralSet( std::string_view polyStructFileName );
-    PolyhedralSet( const psg::PolyStruct& polyStruct );
+    PolyhedralSet( const psg::PolyShell& polyStruct );
     ~PolyhedralSet();
 
 

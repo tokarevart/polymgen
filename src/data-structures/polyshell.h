@@ -9,7 +9,7 @@
 
 namespace psg {
 
-struct PolyStruct
+struct PolyShell
 {
     struct VertPos
     {
@@ -40,12 +40,12 @@ struct PolyStruct
 
     void clear();
 
-    PolyStruct& operator=(PolyStruct&& other) noexcept;
-    PolyStruct& operator=(const PolyStruct& other);
+    PolyShell& operator=(PolyShell&& other) noexcept;
+    PolyShell& operator=(const PolyShell& other);
 
-    PolyStruct(PolyStruct&& other) noexcept;
-    PolyStruct(const PolyStruct& other);
-    PolyStruct();
+    PolyShell(PolyShell&& other) noexcept;
+    PolyShell(const PolyShell& other);
+    PolyShell();
 };
 
 } // namespace polygen

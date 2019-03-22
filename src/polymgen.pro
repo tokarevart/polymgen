@@ -5,7 +5,6 @@ CONFIG -= qt
 
 SOURCES += \
     data-structures/polymesh.cpp \
-    data-structures/polystruct.cpp \
     helpers/spatial-algs/spatial-algs.cpp \
     helpers/spatial-algs/vec.cpp \
     helpers/logger.cpp \
@@ -25,12 +24,12 @@ SOURCES += \
     spatial-objs/polyhedron-front/polyhedron-front-edge.cpp \
     spatial-objs/polyhedron-front/polyhedron-front-face.cpp \
     spatial-objs/shell/shell-front/shell-front-edge.cpp \
-    spatial-objs/shell/shell-front/shell-front-vert.cpp
+    spatial-objs/shell/shell-front/shell-front-vert.cpp \
+    data-structures/polyshell.cpp
 
 
 HEADERS += \
     data-structures/polymesh.h \
-    data-structures/polystruct.h \
     helpers/spatial-algs/spatial-algs.h \
     helpers/spatial-algs/vec.h \
     helpers/logger.h \
@@ -51,5 +50,6 @@ HEADERS += \
     spatial-objs/polyhedron-front/polyhedron-front-edge.h \
     spatial-objs/polyhedron-front/polyhedron-front-face.h \
     spatial-objs/shell/shell-front/shell-front-edge.h \
-    spatial-objs/shell/shell-front/shell-front-vert.h
+    spatial-objs/shell/shell-front/shell-front-vert.h \
+    data-structures/polyshell.h
 

@@ -6,13 +6,13 @@
 
 
 
-psg::PolyStruct psg::generateCuboids(size_t nX, size_t nY, size_t nZ, real_t dX, real_t dY, real_t dZ) noexcept
+psg::PolyShell psg::generateCuboids(size_t nX, size_t nY, size_t nZ, real_t dX, real_t dY, real_t dZ)
 {
     const size_t w = nX;
     const size_t t = nY;
     const size_t h = nZ;
 
-    PolyStruct shell;
+    PolyShell shell;
     shell.verts.resize((w + 1) * (t + 1) * (h + 1));
     shell.faces.resize(2 * (w * h * (t + 1)
                         + t * h * (w + 1)

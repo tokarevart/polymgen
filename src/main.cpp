@@ -13,15 +13,15 @@ int main()
 {
     real_t preferredEdgeLength = static_cast<real_t>(0.45);
     
-    std::cout << "Generating PolyhedralSet...";
+    std::cout << "Generating PolyShell...";
     size_t n = 4;
-    psg::PolyStruct polystr = psg::generateCuboids(n, n, n);
+    psg::PolyShell polys = psg::generateCuboids(n, n, n);
     std::cout << " done.\n";
 
-    std::cout << "Initializing PolyhedralSet data...";
-    pmg::PolyhedralSet polyhedr(polystr);
+    std::cout << "Initializing PolyhedralSet...";
+    pmg::PolyhedralSet polyhedr(polys);
     std::cout << " done.\n";
-    polystr.clear();
+    polys.clear();
 
     std::cout << "Generating mesh...";
     polyhedr.generateMesh(preferredEdgeLength);
