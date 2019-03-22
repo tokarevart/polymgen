@@ -7,7 +7,7 @@
 #define ONE_3 static_cast<real_t>(0.3333333333333333)
 
 
-Vec pmg::Face::computeCenter() const
+vec3 pmg::Face::computeCenter() const
 {
     return ONE_3 * (
         edges[0]->verts[0]->pos() +
@@ -24,9 +24,9 @@ real_t pmg::Face::computeQuality() const
 
 real_t pmg::Face::computeArea() const
 {
-    Vec vec0 = edges[0]->verts[1]->pos() - edges[0]->verts[0]->pos();
-    Vec vec1 = edges[1]->verts[1]->pos() - edges[1]->verts[0]->pos();
-    return static_cast<real_t>(0.5) * Vec::cross(vec0, vec1).magnitude();
+    vec3 vec0 = edges[0]->verts[1]->pos() - edges[0]->verts[0]->pos();
+    vec3 vec1 = edges[1]->verts[1]->pos() - edges[1]->verts[0]->pos();
+    return static_cast<real_t>(0.5) * vec3::cross(vec0, vec1).magnitude();
 }
 
 
@@ -51,7 +51,7 @@ pmg::Edge* pmg::Face::intersectAlongEdge(const pmg::Face* face0, const pmg::Face
 
 
 
-bool pmg::Face::intersectsBy(const Vec& origin, const Vec& dir) const
+bool pmg::Face::intersectsBy(const vec3& origin, const vec3& dir) const
 {
     return spatalgs::doesRayIntersectTriangle(
         origin, dir,

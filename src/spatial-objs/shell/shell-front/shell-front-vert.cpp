@@ -57,7 +57,7 @@ real_t FrPlVert::computeAngleExCos()
 {
     auto adj_edges = findAdjEdges();
 
-    real_t normals_cos = Vec::dot(std::get<0>(adj_edges)->normal, std::get<1>(adj_edges)->normal);
+    real_t normals_cos = vec3::dot(std::get<0>(adj_edges)->normal, std::get<1>(adj_edges)->normal);
 
     m_needExCosProcessing = false;
     return m_exCos = spatalgs::cpaTime(
@@ -71,8 +71,8 @@ real_t FrPlVert::computeAngleExCos()
 real_t FrPlVert::computeAngle()
 {
     return angleExCos() < static_cast<real_t>(-1.0) ?
-        acosReal(m_exCos + static_cast<real_t>(2.0)) + PI :
-                acosReal(m_exCos);
+        std::acos(m_exCos + static_cast<real_t>(2.0)) + PI :
+        std::acos(m_exCos);
 }
 
 

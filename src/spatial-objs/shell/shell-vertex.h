@@ -19,20 +19,20 @@ class Vert
 public:
     pmg::Vert* attachedVert = nullptr;
 
-    const Vec& pos() const;
+    const vec3& pos() const;
 
           real_t& operator[](unsigned axis);
     const real_t& operator[](unsigned axis)   const;
-    Vec operator-(const shell::Vert& other) const;
-    Vec operator-(const   pmg::Vert& other) const;
+    vec3 operator-(const shell::Vert& other) const;
+    vec3 operator-(const   pmg::Vert& other) const;
 
     Vert();
     Vert(real_t coor0, real_t coor1, real_t coor2);
-    Vert(const Vec& position);
+    Vert(const vec3& position);
 
 
 private:
-    std::unique_ptr<Vec> m_pos;
+    std::unique_ptr<vec3> m_pos;
 };
 
 } // namespace shell

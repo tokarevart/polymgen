@@ -17,10 +17,10 @@ class Edge
 {
 public:
     pmg::Edge* edge;
-    Vec normal;
+    vec3 normal;
 
-    Vec computeNormal();
-    Vec computeCenter();
+    vec3 computeNormal();
+    vec3 computeCenter();
 
     static bool isAdj( const Edge* edge0, const Edge* edge1 );
 

@@ -10,8 +10,8 @@
 
 real_t pmg::Tetr::computeVolume() const
 {
-    Vec v0 = verts[0]->pos();
-    return static_cast<real_t>(0.16666666666666666) * std::abs(Vec::mixed(
+    vec3 v0 = verts[0]->pos();
+    return static_cast<real_t>(0.16666666666666666) * std::abs(vec3::mixed(
         verts[1]->pos() - v0,
         verts[2]->pos() - v0,
         verts[3]->pos() - v0));

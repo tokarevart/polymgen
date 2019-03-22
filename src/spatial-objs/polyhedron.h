@@ -94,36 +94,36 @@ private:
     void removeFromFront( front::Face* fFace );
     void removeFromFront( front::Edge* fEdge );
 
-    bool vertInsideFrontCheck( const Vec& v ) const;
-    bool segmentGlobalIntersectionCheck( const Vec& v0, const Vec& v1 ) const;
-    bool segmentFrontIntersectionCheck( const Vec& v0, const Vec& v1 ) const;
+    bool vertInsideFrontCheck( const vec3& v ) const;
+    bool segmentGlobalIntersectionCheck( const vec3& v0, const vec3& v1 ) const;
+    bool segmentFrontIntersectionCheck( const vec3& v0, const vec3& v1 ) const;
     bool edgeGlobalIntersectionCheck( const Edge* edge ) const;
     bool edgeIntersectionCheck( front::Edge* fEdge ) const;
-    bool faceIntersectionCheck( const Vert* v0, const Vert* v1, const Vec&    v2 ) const;
+    bool faceIntersectionCheck( const Vert* v0, const Vert* v1, const vec3&    v2 ) const;
     bool faceIntersectionCheck( const Vert* v0, const Vert* v1, const Vert* v2 ) const;
     bool facesIntersectionCheck( front::Edge* fEdge ) const;
-    bool insideTetrCheck( const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3, const Vec& vert ) const;
+    bool insideTetrCheck( const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3, const vec3& vert ) const;
     bool anyVertInsidePotentialTetrCheck( front::Edge* fEdge ) const;
     bool parallelFacesCheck( front::Edge* fEdge ) const;
-    bool doesFrontIntersectSphere( const Vec& center, real_t radius ) const;
+    bool doesFrontIntersectSphere( const vec3& center, real_t radius ) const;
     bool frontSplitCheck(    front::Edge* fEdge, front::Edge* oppFEdge = nullptr ) const;
     bool frontCollapseCheck( front::Edge* fEdge, front::Edge* oppFEdge = nullptr ) const;
 
-    static pair_dd computeMinMaxEdgesLengths(    const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3 );
-    static pair_dd computeMinMaxEdgesSqrLengths( const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3 );
-    static real_t  computeTetrSimpleQuality(     const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3 );
-    static real_t  computeTetrSimpleSqrQuality(  const Vec& p0, const Vec& p1, const Vec& p2, const Vec& p3 );
+    static pair_dd computeMinMaxEdgesLengths(    const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3 );
+    static pair_dd computeMinMaxEdgesSqrLengths( const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3 );
+    static real_t  computeTetrSimpleQuality(     const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3 );
+    static real_t  computeTetrSimpleSqrQuality(  const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3 );
 
     front::Edge* currentFrontEdge( real_t maxCompl ) const;
     bool exhaustWithoutNewVertPriorityPredicate( front::Edge* fEdge );
     bool exhaustWithNewVertPriorityPredicate(    front::Edge* fEdge );
     ExhaustType computeExhaustionTypeQualityPriority(
         front::Edge* fEdge,
-        front::Face*& out_withNWFFace, Vec*& out_withNWNewVertPos );
+        front::Face*& out_withNWFFace, vec3*& out_withNWNewVertPos );
 
-    Vec computeNormalInTetr( const front::Face* fFace, const Vec& oppVertPos ) const;
-    Vec computeNormalInTetr( const front::Face* fFace, const pmg::Edge* oneOfRemainingEdges ) const;
-    Vec computeNormalInTetr( const Vec& fFacePos0, const Vec& fFacePos1, const Vec& fFacePos2, const Vec& oppVertPos ) const;
+    vec3 computeNormalInTetr( const front::Face* fFace, const vec3& oppVertPos ) const;
+    vec3 computeNormalInTetr( const front::Face* fFace, const pmg::Edge* oneOfRemainingEdges ) const;
+    vec3 computeNormalInTetr( const vec3& fFacePos0, const vec3& fFacePos1, const vec3& fFacePos2, const vec3& oppVertPos ) const;
 
     void setFEdgesInFrontSplit( const front::Edge* fEdge, front::Edge* newOppFEdges[2], front::Face* newFFaces[2], pair_ff oppFFaces ) const;
     void exhaustFrontCollapse( front::Edge* fEdge, front::Edge* oppFEdge );
@@ -134,20 +134,20 @@ private:
 
 
     bool tryComputeNewVertPosType3(
-            front::Face* fFace, Vec& out_pos );
+            front::Face* fFace, vec3& out_pos );
     bool tryComputeNewVertPosType2(
-            front::Face* frontFace, Vec& out_pos,
+            front::Face* frontFace, vec3& out_pos,
             int smallAngleIndex0, int smallAngleIndex1 );
     bool tryComputeNewVertPosType1(
-            front::Face* fFace, Vec& out_pos,
+            front::Face* fFace, vec3& out_pos,
             int smallAngleIndex);
     bool tryComputeNewVertPosType0(
-            front::Face* fFace, Vec& out_pos );
-    bool tryComputeNewVertPos( front::Face* fFace, Vec& out_pos );
+            front::Face* fFace, vec3& out_pos );
+    bool tryComputeNewVertPos( front::Face* fFace, vec3& out_pos );
 
     real_t sqr4FaceArea( const front::Face* fFace ) const;
     front::Face* chooseFaceForExhaustionWithNewVert( front::Edge* fEdge );
-    void         exhaustWithNewVert( front::Face* fFace, const Vec& vertPos );
+    void         exhaustWithNewVert( front::Face* fFace, const vec3& vertPos );
 
     bool tryExhaustWithoutNewVert( front::Edge* fEdge, bool doesOppEdgeExists = true, front::Edge* oppEdge = nullptr );
     bool tryExhaustWithNewVert(    front::Edge* fEdge );

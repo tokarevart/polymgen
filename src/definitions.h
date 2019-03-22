@@ -3,7 +3,7 @@
 
 #pragma once
 
-struct Vec;
+struct vec3;
 
 namespace pmg {
 class PolyhedralSet;

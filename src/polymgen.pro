@@ -16,7 +16,6 @@ SOURCES += \
     spatial-objs/polyhedral-set.cpp \
     spatial-objs/tetr.cpp \
     main.cpp \
-    real-type.cpp \
     spatial-objs/polyhedron.cpp \
     spatial-objs/face.cpp \
     spatial-objs/shell/shell-face.cpp \

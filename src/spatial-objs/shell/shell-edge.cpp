@@ -25,12 +25,12 @@ const std::vector<Vert*>&shell::Edge::innerVerts() const
 
 void shell::Edge::segmentize(real_t preferredLen)
 {
-    size_t n_inner_verts = static_cast<size_t>(roundReal(magnitude() / preferredLen)) - 1;
+    size_t n_inner_verts = static_cast<size_t>(std::round(magnitude() / preferredLen)) - 1;
     if (n_inner_verts == 0) return;
 
-    Vec dir = (*verts[1] - *verts[0]) / (n_inner_verts + 1);
+    vec3 dir = (*verts[1] - *verts[0]) / (n_inner_verts + 1);
 
-    Vec cur_pos = verts[0]->pos();
+    vec3 cur_pos = verts[0]->pos();
     for (size_t i = 0; i < n_inner_verts; i++)
     {
         cur_pos += dir;
@@ -56,8 +56,8 @@ real_t shell::Edge::magnitude() const
 
 real_t shell::Edge::sqrMagnitude() const
 {
-    Vec buf = *verts[1] - *verts[0];
-    return Vec::dot(buf, buf);
+    vec3 buf = *verts[1] - *verts[0];
+    return vec3::dot(buf, buf);
 }
 
 

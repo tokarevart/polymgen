@@ -11,16 +11,16 @@ using FrSuEdge = pmg::front::Edge;
 
 
 
-Vec FrSuFace::computeNormal()
+vec3 FrSuFace::computeNormal()
 {
-    Vec center = computeCenter();
-    Vec third_pos = face->findVertNot(face->edges[0])->pos();
-    Vec loc_normal = Vec::cross(
+    vec3 center = computeCenter();
+    vec3 third_pos = face->findVertNot(face->edges[0])->pos();
+    vec3 loc_normal = vec3::cross(
         face->edges[0]->verts[0]->pos() - third_pos,
         face->edges[0]->verts[1]->pos() - third_pos).normalize();
 
     // I don't know why it led to better(correct) result.
-    Vec test_normal_correct_intersect = loc_normal + Vec(static_cast<real_t>(2.1632737147),
+    vec3 test_normal_correct_intersect = loc_normal + vec3(static_cast<real_t>(2.1632737147),
                                                          static_cast<real_t>(1.488313178),
                                                          static_cast<real_t>(-0.71123534278))
                                                      * static_cast<real_t>(1e-3);
@@ -44,7 +44,7 @@ Vec FrSuFace::computeNormal()
 
 
 
-Vec FrSuFace::computeCenter()
+vec3 FrSuFace::computeCenter()
 {
     return face->computeCenter();
 }

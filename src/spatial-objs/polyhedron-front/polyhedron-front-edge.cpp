@@ -55,7 +55,7 @@ real_t FrSuEdge::computeAngleExCos()
 {
     auto adj_faces = getAdjFFaces();
 
-    real_t normals_cos = Vec::dot(std::get<0>(adj_faces)->normal, std::get<1>(adj_faces)->normal);
+    real_t normals_cos = vec3::dot(std::get<0>(adj_faces)->normal, std::get<1>(adj_faces)->normal);
 
     m_needExCosProcessing = false;
     return m_exCos = spatalgs::cpaTime(
@@ -69,8 +69,8 @@ real_t FrSuEdge::computeAngleExCos()
 real_t FrSuEdge::computeAngle()
 {
     return angleExCos() < static_cast<real_t>(-1.0) ?
-        acosReal(m_exCos + static_cast<real_t>(2.0)) + PI :
-        acosReal(m_exCos);
+        std::acos(m_exCos + static_cast<real_t>(2.0)) + PI :
+        std::acos(m_exCos);
 }
 
 
@@ -108,22 +108,22 @@ FrSuEdge* FrSuEdge::findOppEdge()
     for (auto& fedge : opp_fedges)
         adj_ffaces_vec.push_back(fedge->getAdjFFaces());
 
-    Vec main_vert_pos = edge->verts[0]->pos();
-    Vec main_vert_proj = spatalgs::project(main_vert_pos, opp_verts.first->pos(), opp_verts.second->pos());
-    Vec main_vec = main_vert_pos - main_vert_proj;
+    vec3 main_vert_pos = edge->verts[0]->pos();
+    vec3 main_vert_proj = spatalgs::project(main_vert_pos, opp_verts.first->pos(), opp_verts.second->pos());
+    vec3 main_vec = main_vert_pos - main_vert_proj;
 
     FrSuEdge* max_cos_fedge = nullptr;
     real_t max_cos = -1.0;
     for (size_t i = 0; i < adj_ffaces_vec.size(); i++)
     {
-        Vec adj_opp_pos0 = adj_ffaces_vec[i].first->face->findVertNot(opp_fedges.front()->edge)->pos();
-        Vec adj_opp_pos1 = adj_ffaces_vec[i].second->face->findVertNot(opp_fedges.front()->edge)->pos();
-        Vec adj_opp_proj0 = spatalgs::project(adj_opp_pos0, opp_verts.first->pos(), opp_verts.second->pos());
-        Vec adj_opp_proj1 = spatalgs::project(adj_opp_pos1, opp_verts.first->pos(), opp_verts.second->pos());
-        Vec adj_vec0 = adj_opp_pos0 - adj_opp_proj0;
-        Vec adj_vec1 = adj_opp_pos1 - adj_opp_proj1;
-        real_t cos0 = Vec::cos(adj_vec0, main_vec);
-        real_t cos1 = Vec::cos(adj_vec1, main_vec);
+        vec3 adj_opp_pos0 = adj_ffaces_vec[i].first->face->findVertNot(opp_fedges.front()->edge)->pos();
+        vec3 adj_opp_pos1 = adj_ffaces_vec[i].second->face->findVertNot(opp_fedges.front()->edge)->pos();
+        vec3 adj_opp_proj0 = spatalgs::project(adj_opp_pos0, opp_verts.first->pos(), opp_verts.second->pos());
+        vec3 adj_opp_proj1 = spatalgs::project(adj_opp_pos1, opp_verts.first->pos(), opp_verts.second->pos());
+        vec3 adj_vec0 = adj_opp_pos0 - adj_opp_proj0;
+        vec3 adj_vec1 = adj_opp_pos1 - adj_opp_proj1;
+        real_t cos0 = vec3::cos(adj_vec0, main_vec);
+        real_t cos1 = vec3::cos(adj_vec1, main_vec);
         real_t max_cur_cos = std::max(cos0, cos1);
         if (max_cur_cos > max_cos)
         {

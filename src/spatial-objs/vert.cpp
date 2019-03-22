@@ -6,13 +6,13 @@
 
 
 
-const Vec& pmg::Vert::pos() const
+const vec3& pmg::Vert::pos() const
 {
     return *m_pos;
 }
 
 
-void pmg::Vert::setPos(const Vec& newPos)
+void pmg::Vert::setPos(const vec3& newPos)
 {
     *m_pos = newPos;
 }
@@ -40,19 +40,19 @@ const real_t& pmg::Vert::operator[](short axis) const
 }
 
 
-Vec pmg::Vert::operator-(const pmg::Vert& other) const
+vec3 pmg::Vert::operator-(const pmg::Vert& other) const
 {
     return *m_pos - *other.m_pos;
 }
 
 
-Vec pmg::Vert::operator-(const shell::Vert& other) const
+vec3 pmg::Vert::operator-(const shell::Vert& other) const
 {
     return *m_pos - other.pos();
 }
 
 
-pmg::Vert& pmg::Vert::operator+=(const Vec& other)
+pmg::Vert& pmg::Vert::operator+=(const vec3& other)
 {
     if (belongsToShellVert)
     {
@@ -60,12 +60,12 @@ pmg::Vert& pmg::Vert::operator+=(const Vec& other)
     }
     else if (belongsToShellEdge)
     {
-        (*m_pos) += Vec(other).project(*belongsToShellEdge->verts[0] - *belongsToShellEdge->verts[1]);
+        (*m_pos) += vec3(other).project(*belongsToShellEdge->verts[0] - *belongsToShellEdge->verts[1]);
         return *this;
     }
     else if (belongsToShellFace)
     {
-        (*m_pos) += Vec(other).project(
+        (*m_pos) += vec3(other).project(
             *belongsToShellFace->edges[0]->verts[1] - *belongsToShellFace->edges[0]->verts[0],
             *belongsToShellFace->edges[1]->verts[1] - *belongsToShellFace->edges[1]->verts[0]);
         return *this;
@@ -77,7 +77,7 @@ pmg::Vert& pmg::Vert::operator+=(const Vec& other)
 }
 
 
-pmg::Vert& pmg::Vert::operator-=(const Vec& other)
+pmg::Vert& pmg::Vert::operator-=(const vec3& other)
 {
     if (belongsToShellVert)
     {
@@ -85,7 +85,7 @@ pmg::Vert& pmg::Vert::operator-=(const Vec& other)
     }
     else if (belongsToShellEdge)
     {
-        (*m_pos) -= Vec(other).project(*belongsToShellEdge->verts[0] - *belongsToShellEdge->verts[1]);
+        (*m_pos) -= vec3(other).project(*belongsToShellEdge->verts[0] - *belongsToShellEdge->verts[1]);
         return *this;
     }
     else
@@ -100,17 +100,17 @@ pmg::Vert& pmg::Vert::operator-=(const Vec& other)
 
 pmg::Vert::Vert()
 {
-    m_pos.reset(new Vec());
+    m_pos.reset(new vec3());
 }
 
 
 pmg::Vert::Vert(real_t coor0, real_t coor1, real_t coor2)
 {
-    m_pos.reset(new Vec(coor0, coor1, coor2));
+    m_pos.reset(new vec3(coor0, coor1, coor2));
 }
 
 
-pmg::Vert::Vert(const Vec& position)
+pmg::Vert::Vert(const vec3& position)
 {
-    m_pos.reset(new Vec(position));
+    m_pos.reset(new vec3(position));
 }

@@ -222,7 +222,7 @@ bool shell::Face::anyVertInsidePotentialTriangCheck(sfront::Vert* fVert) const
 }
 
 
-bool shell::Face::doesSegmentIntersectsWithFront(const Vec& p0, const Vec& p1) const
+bool shell::Face::doesSegmentIntersectsWithFront(const vec3& p0, const vec3& p1) const
 {
     for (auto& fedge : m_frontEdges)
         if (spatalgs::segmentsDistance(
@@ -236,17 +236,17 @@ bool shell::Face::doesSegmentIntersectsWithFront(const Vec& p0, const Vec& p1) c
 
 
 
-Vec shell::Face::computeNormalInTriang(sfront::Edge* fEdge, const Vec& oppVertPos)
+vec3 shell::Face::computeNormalInTriang(sfront::Edge* fEdge, const vec3& oppVertPos)
 {
-    Vec p0 = fEdge->edge->verts[0]->pos();
-    Vec p1 = fEdge->edge->verts[1]->pos();
+    vec3 p0 = fEdge->edge->verts[0]->pos();
+    vec3 p1 = fEdge->edge->verts[1]->pos();
     return (spatalgs::project(oppVertPos, p0, p1) - oppVertPos).normalize();
 }
 
 
 
 
-bool shell::Face::tryComputeNewVertPosType2(sfront::Edge* fEdge, Vec& out_pos)
+bool shell::Face::tryComputeNewVertPosType2(sfront::Edge* fEdge, vec3& out_pos)
 {
     sfront::Vert* main_f_verts[2];
     main_f_verts[0] = findFrontVert(fEdge->edge->verts[0]);
@@ -257,19 +257,19 @@ bool shell::Face::tryComputeNewVertPosType2(sfront::Edge* fEdge, Vec& out_pos)
     auto en0 = std::get<0>(adj_f_edges0) == fEdge ? std::get<1>(adj_f_edges0) : std::get<0>(adj_f_edges0);
     auto en1 = std::get<0>(adj_f_edges1) == fEdge ? std::get<1>(adj_f_edges1) : std::get<0>(adj_f_edges1);
 
-    Vec vn0_pos = en0->edge->findNot(fEdge->edge)->pos();
-    Vec vn1_pos = en1->edge->findNot(fEdge->edge)->pos();
+    vec3 vn0_pos = en0->edge->findNot(fEdge->edge)->pos();
+    vec3 vn1_pos = en1->edge->findNot(fEdge->edge)->pos();
 
-    Vec v0_pos = main_f_verts[0]->vert->pos();
-    Vec v1_pos = main_f_verts[1]->vert->pos();
+    vec3 v0_pos = main_f_verts[0]->vert->pos();
+    vec3 v1_pos = main_f_verts[1]->vert->pos();
 
-    Vec e0 = (vn0_pos - 2.0 * v0_pos + main_f_verts[1]->vert->pos()).normalize();
-    Vec e1 = (vn1_pos - 2.0 * v1_pos + v0_pos).normalize();
+    vec3 e0 = (vn0_pos - 2.0 * v0_pos + main_f_verts[1]->vert->pos()).normalize();
+    vec3 e1 = (vn1_pos - 2.0 * v1_pos + v0_pos).normalize();
 
-    Vec new_pos = spatalgs::linesClosestPoint(v0_pos, v0_pos + e0, v1_pos, v1_pos + e1);
+    vec3 new_pos = spatalgs::linesClosestPoint(v0_pos, v0_pos + e0, v1_pos, v1_pos + e1);
 
-    Vec v0_to_np = new_pos - v0_pos;
-    Vec v1_to_np = new_pos - v1_pos;
+    vec3 v0_to_np = new_pos - v0_pos;
+    vec3 v1_to_np = new_pos - v1_pos;
     if (doesSegmentIntersectsWithFront(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
         doesSegmentIntersectsWithFront(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np))
         return false;
@@ -279,7 +279,7 @@ bool shell::Face::tryComputeNewVertPosType2(sfront::Edge* fEdge, Vec& out_pos)
 }
 
 
-bool shell::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, Vec& out_pos, int smallAngleIndex)
+bool shell::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, vec3& out_pos, int smallAngleIndex)
 {
     auto main_vert = fEdge->edge->verts[smallAngleIndex];
     auto sec_vert  = fEdge->edge->findNot(main_vert);
@@ -289,18 +289,18 @@ bool shell::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, Vec& out_pos, i
     auto en = std::get<0>(adj_f_edges) == fEdge ? std::get<1>(adj_f_edges) : std::get<0>(adj_f_edges);
     auto vn = en->edge->findNot(main_vert);
 
-    Vec e = (sec_vert->pos() - static_cast<real_t>(2.0) * main_vert->pos() + vn->pos()).normalize();
+    vec3 e = (sec_vert->pos() - static_cast<real_t>(2.0) * main_vert->pos() + vn->pos()).normalize();
 
     real_t av_magn = static_cast<real_t>(0.5) * (fEdge->edge->magnitude() + en->edge->magnitude());
     real_t raw_deform = K_D * (m_preferredLength - av_magn);
     real_t deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
     real_t magn_d = av_magn + deform;
-    Vec new_pos = main_vert->pos() + magn_d * e;
+    vec3 new_pos = main_vert->pos() + magn_d * e;
 
-//    Vec new_pos = main_vert->pos() + av_magn * e;
+//    vec3 new_pos = main_vert->pos() + av_magn * e;
 
-    Vec v0_to_np = new_pos - main_vert->pos();
-    Vec v1_to_np = new_pos - sec_vert->pos();
+    vec3 v0_to_np = new_pos - main_vert->pos();
+    vec3 v1_to_np = new_pos - sec_vert->pos();
     if (doesSegmentIntersectsWithFront(main_vert->pos() + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
         doesSegmentIntersectsWithFront(sec_vert->pos()  + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np))
         return false;
@@ -310,20 +310,20 @@ bool shell::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, Vec& out_pos, i
 }
 
 
-bool shell::Face::tryComputeNewVertPosType0(sfront::Edge* fEdge, Vec& out_pos)
+bool shell::Face::tryComputeNewVertPosType0(sfront::Edge* fEdge, vec3& out_pos)
 {
     real_t magn = fEdge->edge->magnitude();
     real_t raw_deform = K_D * (m_preferredLength - magn);
     real_t deform = raw_deform < magn * K_MAXD ? raw_deform : magn * K_MAXD;
     real_t magn_d = magn + deform;
-    Vec new_pos = fEdge->computeCenter() + static_cast<real_t>(0.5) * sqrtReal(static_cast<real_t>(4.0) * magn_d * magn_d - magn * magn) * fEdge->normal;
+    vec3 new_pos = fEdge->computeCenter() + static_cast<real_t>(0.5) * std::sqrt(static_cast<real_t>(4.0) * magn_d * magn_d - magn * magn) * fEdge->normal;
 
-//    Vec new_pos = fEdge->computeCenter() + fEdge->normal * m_preferredLength * SQRT3_2;
+//    vec3 new_pos = fEdge->computeCenter() + fEdge->normal * m_preferredLength * SQRT3_2;
 
-    Vec v0_pos = fEdge->edge->verts[0]->pos();
-    Vec v1_pos = fEdge->edge->verts[1]->pos();
-    Vec v_to_np0 = (new_pos - v0_pos);
-    Vec v_to_np1 = (new_pos - v1_pos);
+    vec3 v0_pos = fEdge->edge->verts[0]->pos();
+    vec3 v1_pos = fEdge->edge->verts[1]->pos();
+    vec3 v_to_np0 = (new_pos - v0_pos);
+    vec3 v_to_np1 = (new_pos - v1_pos);
     if (doesSegmentIntersectsWithFront(v0_pos + v_to_np0 * FROM_VERT_COEF, new_pos + v_to_np0 * NOT_TOO_CLOSE) ||
         doesSegmentIntersectsWithFront(v1_pos + v_to_np1 * FROM_VERT_COEF, new_pos + v_to_np1 * NOT_TOO_CLOSE))
         return false;
@@ -333,7 +333,7 @@ bool shell::Face::tryComputeNewVertPosType0(sfront::Edge* fEdge, Vec& out_pos)
 }
 
 
-bool shell::Face::tryComputeNewVertPos(sfront::Edge* fEdge, Vec& out_pos)
+bool shell::Face::tryComputeNewVertPos(sfront::Edge* fEdge, vec3& out_pos)
 {
     real_t angs_coses[2]
     {
@@ -358,16 +358,16 @@ bool shell::Face::tryComputeNewVertPos(sfront::Edge* fEdge, Vec& out_pos)
 
 
 
-pair_dd shell::Face::computeMinMaxEdgesLengths(const Vec& p0, const Vec& p1, const Vec& p2)
+pair_dd shell::Face::computeMinMaxEdgesLengths(const vec3& p0, const vec3& p1, const vec3& p2)
 {
     auto min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2);
-    min_max.first  = sqrtReal(min_max.first);
-    min_max.second = sqrtReal(min_max.second);
+    min_max.first  = std::sqrt(min_max.first);
+    min_max.second = std::sqrt(min_max.second);
     return min_max;
 }
 
 
-pair_dd shell::Face::computeMinMaxEdgesSqrLengths(const Vec& p0, const Vec& p1, const Vec& p2)
+pair_dd shell::Face::computeMinMaxEdgesSqrLengths(const vec3& p0, const vec3& p1, const vec3& p2)
 {
     real_t sqr_magns[3];
     sqr_magns[0] = (p1 - p0).sqrMagnitude();
@@ -377,14 +377,14 @@ pair_dd shell::Face::computeMinMaxEdgesSqrLengths(const Vec& p0, const Vec& p1, 
 }
 
 
-real_t shell::Face::computeTriangSimpleQuality(const Vec& p0, const Vec& p1, const Vec& p2)
+real_t shell::Face::computeTriangSimpleQuality(const vec3& p0, const vec3& p1, const vec3& p2)
 {
     auto sqr_min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2);
-    return sqrtReal(sqr_min_max.first / sqr_min_max.second);
+    return std::sqrt(sqr_min_max.first / sqr_min_max.second);
 }
 
 
-real_t shell::Face::computeTriangSimpleSqrQuality(const Vec& p0, const Vec& p1, const Vec& p2)
+real_t shell::Face::computeTriangSimpleSqrQuality(const vec3& p0, const vec3& p1, const vec3& p2)
 {
     auto sqr_min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2);
     return sqr_min_max.first / sqr_min_max.second;
@@ -401,7 +401,7 @@ sfront::Edge* shell::Face::chooseEdgeForExhaustionWithNewVert(sfront::Vert* fVer
 }
 
 
-void shell::Face::exhaustWithNewVert(sfront::Edge* fEdge, const Vec& vertPos)
+void shell::Face::exhaustWithNewVert(sfront::Edge* fEdge, const vec3& vertPos)
 {
     pmg::Vert* main_verts[2] { fEdge->edge->verts[0], fEdge->edge->verts[1] };
 
@@ -458,7 +458,7 @@ bool shell::Face::tryExhaustWithoutNewVert(sfront::Vert* fVert)
 bool shell::Face::tryExhaustWithNewVert(sfront::Vert* fVert)
 {
     auto exhaust_f_edge = chooseEdgeForExhaustionWithNewVert(fVert);
-    Vec new_vert_pos;
+    vec3 new_vert_pos;
     if (!tryComputeNewVertPos(exhaust_f_edge, new_vert_pos))
         return false;
 
@@ -515,7 +515,7 @@ bool shell::Face::exhaustWithNewVertPriorityPredicate(sfront::Vert* fEdge)
 
 
 shell::Face::ExhaustType shell::Face::computeExhaustionTypeQualityPriority(
-        sfront::Vert* fVert, sfront::Edge*& out_withNWFrontEdge, Vec*& out_withNWNewVertPos)
+        sfront::Vert* fVert, sfront::Edge*& out_withNWFrontEdge, vec3*& out_withNWNewVertPos)
 {
     if (anyVertInsidePotentialTriangCheck(fVert))
         return ExhaustType::WithNewVert;
@@ -527,7 +527,7 @@ shell::Face::ExhaustType shell::Face::computeExhaustionTypeQualityPriority(
         std::get<1>(opp_verts)->pos());
 
     sfront::Edge* f_edge = chooseEdgeForExhaustionWithNewVert(fVert);
-    Vec new_vert_pos;
+    vec3 new_vert_pos;
     if (!tryComputeNewVertPos(f_edge, new_vert_pos))
         return ExhaustType::DontExhaust;
 
@@ -540,7 +540,7 @@ shell::Face::ExhaustType shell::Face::computeExhaustionTypeQualityPriority(
         return ExhaustType::WithoutNewVert;
 
     out_withNWFrontEdge = f_edge;
-    out_withNWNewVertPos = new Vec(new_vert_pos);
+    out_withNWNewVertPos = new vec3(new_vert_pos);
     return ExhaustType::WithNewVert;
 }
 
@@ -602,7 +602,7 @@ void shell::Face::processAngles()
         else
         {
             sfront::Edge* exhaust_from_f_edge = nullptr;
-            Vec* new_vert_pos = nullptr;
+            vec3* new_vert_pos = nullptr;
             switch (computeExhaustionTypeQualityPriority(cur_f_vert, exhaust_from_f_edge, new_vert_pos))
             {
             case ExhaustType::WithoutNewVert:
@@ -649,7 +649,7 @@ void shell::Face::smoothMesh(unsigned nIterations)
     {
         for (auto& vert : m_innerVerts)
         {
-            Vec shift;
+            vec3 shift;
             int delta_shifts_num = 0;
             for (auto& edge : m_innerEdges)
             {
@@ -705,8 +705,8 @@ bool shell::Face::flipIfNeeded(pmg::Edge* edge)
     opp_nodes[0] = std::get<0>(around_faces)->findVertNot(edge);
     opp_nodes[1] = std::get<1>(around_faces)->findVertNot(edge);
 
-    real_t alpha = acosReal(Vec::cos(*edge->verts[0] - *opp_nodes[0], *edge->verts[1] - *opp_nodes[0]));
-    real_t beta  = acosReal(Vec::cos(*edge->verts[0] - *opp_nodes[1], *edge->verts[1] - *opp_nodes[1]));
+    real_t alpha = std::acos(vec3::cos(*edge->verts[0] - *opp_nodes[0], *edge->verts[1] - *opp_nodes[0]));
+    real_t beta  = std::acos(vec3::cos(*edge->verts[0] - *opp_nodes[1], *edge->verts[1] - *opp_nodes[1]));
 
     if (alpha + beta <= PI)
         return false;

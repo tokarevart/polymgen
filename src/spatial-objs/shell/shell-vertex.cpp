@@ -8,13 +8,13 @@ using namespace pmg;
 
 
 
-Vec shell::Vert::operator-(const shell::Vert& other) const
+vec3 shell::Vert::operator-(const shell::Vert& other) const
 {
     return *m_pos - *other.m_pos;
 }
 
 
-const Vec& shell::Vert::pos() const
+const vec3& shell::Vert::pos() const
 {
     return *m_pos;
 }
@@ -32,7 +32,7 @@ const real_t& shell::Vert::operator[](unsigned axis) const
 }
 
 
-Vec shell::Vert::operator-(const pmg::Vert& other) const
+vec3 shell::Vert::operator-(const pmg::Vert& other) const
 {
     return *m_pos - other.pos();
 }
@@ -42,17 +42,17 @@ Vec shell::Vert::operator-(const pmg::Vert& other) const
 
 shell::Vert::Vert()
 {
-    m_pos.reset(new Vec());
+    m_pos.reset(new vec3());
 }
 
 
 shell::Vert::Vert(real_t coor0, real_t coor1, real_t coor2)
 {
-    m_pos.reset(new Vec(coor0, coor1, coor2));
+    m_pos.reset(new vec3(coor0, coor1, coor2));
 }
 
 
-shell::Vert::Vert(const Vec& position)
+shell::Vert::Vert(const vec3& position)
 {
-    m_pos.reset(new Vec(position));
+    m_pos.reset(new vec3(position));
 }

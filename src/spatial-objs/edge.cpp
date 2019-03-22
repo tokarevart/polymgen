@@ -96,8 +96,8 @@ bool pmg::Edge::flipIfNeeded(std::list<pmg::Edge*>& edgesList, std::list<pmg::Fa
     opp_nodes[0] = std::get<0>(around_faces)->findVertNot(this);
     opp_nodes[1] = std::get<1>(around_faces)->findVertNot(this);
 
-    real_t alpha = acosReal(Vec::cos(*verts[0] - *opp_nodes[0], *verts[1] - *opp_nodes[0]));
-    real_t beta  = acosReal(Vec::cos(*verts[0] - *opp_nodes[1], *verts[1] - *opp_nodes[1]));
+    real_t alpha = std::acos(vec3::cos(*verts[0] - *opp_nodes[0], *verts[1] - *opp_nodes[0]));
+    real_t beta  = std::acos(vec3::cos(*verts[0] - *opp_nodes[1], *verts[1] - *opp_nodes[1]));
 
     if (alpha + beta <= PI)
         return false;
@@ -199,8 +199,8 @@ bool pmg::Edge::needToFlip(const std::list<pmg::Face*>& facesList)
     opp_nodes[0] = std::get<0>(around_faces)->findVertNot(this);
     opp_nodes[1] = std::get<1>(around_faces)->findVertNot(this);
 
-    real_t alpha = acosReal(Vec::cos(*verts[0] - *opp_nodes[0], *verts[1] - *opp_nodes[0]));
-    real_t beta  = acosReal(Vec::cos(*verts[0] - *opp_nodes[1], *verts[1] - *opp_nodes[1]));
+    real_t alpha = std::acos(vec3::cos(*verts[0] - *opp_nodes[0], *verts[1] - *opp_nodes[0]));
+    real_t beta  = std::acos(vec3::cos(*verts[0] - *opp_nodes[1], *verts[1] - *opp_nodes[1]));
 
     if (alpha + beta <= PI)
         return true;

@@ -217,10 +217,10 @@ void PolyhedralSet::outputLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, unsig
             file << std::setw(8) << eid++;
             file << std::setw(8) << pid;
             file << std::setw(8) << tetr->verts[0]->globalNum;
-            Vec v0 = tetr->verts[1]->pos() - tetr->verts[0]->pos();
-            Vec v1 = tetr->verts[2]->pos() - tetr->verts[0]->pos();
-            Vec v2 = tetr->verts[3]->pos() - tetr->verts[0]->pos();
-            if (Vec::dot(v2, Vec::cross(v0, v1)) > static_cast<real_t>(0.0))
+            vec3 v0 = tetr->verts[1]->pos() - tetr->verts[0]->pos();
+            vec3 v1 = tetr->verts[2]->pos() - tetr->verts[0]->pos();
+            vec3 v2 = tetr->verts[3]->pos() - tetr->verts[0]->pos();
+            if (vec3::dot(v2, vec3::cross(v0, v1)) > static_cast<real_t>(0.0))
             {
                 file << std::setw(8) << tetr->verts[1]->globalNum;
                 file << std::setw(8) << tetr->verts[2]->globalNum;
