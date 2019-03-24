@@ -15,13 +15,13 @@ int main()
     
     std::cout << "Generating PolyShell...";
     size_t n = 4;
-    psg::PolyShell polys = psg::generateCuboids(n, n, n);
+    psg::PolyShell shell = psg::generateCuboids(n, n, n);
     std::cout << " done.\n";
 
     std::cout << "Initializing PolyhedralSet...";
-    pmg::PolyhedralSet polyhedr(polys);
+    pmg::PolyhedralSet polyhedr(shell);
     std::cout << " done.\n";
-    polys.clear();
+    shell.clear();
 
     std::cout << "Generating mesh...";
     polyhedr.generateMesh(preferredEdgeLength);

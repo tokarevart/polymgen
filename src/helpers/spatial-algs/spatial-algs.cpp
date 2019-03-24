@@ -440,25 +440,11 @@ real_t spatalgs::distancePointToSegment(const vec3& point, const vec3& segm_p0, 
     else if (real_t sqr_magns[2] { (segm_p0 - point).sqrMagnitude(), (segm_p1 - point).sqrMagnitude() };
              sqr_magns[0] < sqr_magns[1])
     {
-        if constexpr (std::is_same<real_t, float>())
-        {
-            return sqrtf(sqr_magns[0]);
-        }
-        else
-        {
-            return sqrt(sqr_magns[0]);
-        }
+        return std::sqrt(sqr_magns[0]);
     }
     else
     {
-        if constexpr (std::is_same<real_t, float>())
-        {
-            return sqrtf(sqr_magns[1]);
-        }
-        else
-        {
-            return sqrt(sqr_magns[1]);
-        }
+        return std::sqrt(sqr_magns[1]);
     }
 }
 

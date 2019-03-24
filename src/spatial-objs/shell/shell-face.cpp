@@ -342,8 +342,8 @@ bool shell::Face::tryComputeNewVertPos(sfront::Edge* fEdge, vec3& out_pos)
     };
     int indexes[2];
     int small_angs_num = 0;
-    if (angs_coses[0] > cosDeg<120, real_t>) indexes[small_angs_num++] = 0;
-    if (angs_coses[1] > cosDeg<120, real_t>) indexes[small_angs_num++] = 1;
+    if (angs_coses[0] > std::cos(degToRad(120)) /*cosDeg<120, real_t>*/) indexes[small_angs_num++] = 0;
+    if (angs_coses[1] > std::cos(degToRad(120)) /*cosDeg<120, real_t>*/) indexes[small_angs_num++] = 1;
 
     switch (small_angs_num)
     {
@@ -493,7 +493,7 @@ bool shell::Face::exhaustWithoutNewVertPriorityPredicate(sfront::Vert* fEdge)
     if (fEdge->angleExCos() > static_cast<real_t>(0.5))
         return true;
 
-    if (fEdge->angleExCos() < cosDeg<80, real_t>)
+    if (fEdge->angleExCos() < std::cos(degToRad(80)) /*cosDeg<80, real_t>*/)
         return false;
 
     auto adj_edges = fEdge->findAdjEdges();

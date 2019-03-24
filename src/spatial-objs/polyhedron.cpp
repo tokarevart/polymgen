@@ -7,7 +7,6 @@
 #include <float.h>
 #include "helpers/spatial-algs/spatial-algs.h"
 
-#include "helpers/cosd-values.h"
 
 using namespace pmg;
 
@@ -702,13 +701,13 @@ front::Edge* Polyhedron::currentFrontEdge(real_t maxCompl) const
 
 bool Polyhedron::exhaustWithoutNewVertPriorityPredicate(front::Edge* curFEdge)
 {
-    if (curFEdge->angleExCos() > cosDeg<70, real_t>)
+    if (curFEdge->angleExCos() > std::cos(degToRad(70)))
         return true;
 
     auto opp_verts = curFEdge->findOppVerts();
     if (curFEdge->findOppEdge() ||
-        (curFEdge->angleExCos() < cosDeg<70, real_t> &&
-         curFEdge->angleExCos() > cosDeg<100, real_t> &&
+        (curFEdge->angleExCos() < std::cos(degToRad(70)) &&
+         curFEdge->angleExCos() > std::cos(degToRad(100)) &&
          (*std::get<1>(opp_verts) - *std::get<0>(opp_verts)).sqrMagnitude() <= m_preferredLength * m_preferredLength))
         return true;
 
@@ -721,7 +720,7 @@ bool Polyhedron::exhaustWithoutNewVertPriorityPredicate(front::Edge* curFEdge)
 
 bool Polyhedron::exhaustWithNewVertPriorityPredicate(front::Edge* currentFrontEdge)
 {
-    if (currentFrontEdge->angleExCos() < cosDeg<120, real_t>)
+    if (currentFrontEdge->angleExCos() < std::cos(degToRad(120)))
         return true;
 
     return false;
@@ -1356,9 +1355,9 @@ bool Polyhedron::tryComputeNewVertPosType3(front::Face* fFace, vec3& out_pos)
     adj_ffaces = third_f_edge->getAdjFFaces();
     auto fn2 = std::get<0>(adj_ffaces) == fFace ? std::get<1>(adj_ffaces) : std::get<0>(adj_ffaces);
 
-    const vec3& v0_pos = v0->pos();
-    const vec3& v1_pos = v1->pos();
-    const vec3& v2_pos = v2->pos();
+    vec3 v0_pos = v0->pos();
+    vec3 v1_pos = v1->pos();
+    vec3 v2_pos = v2->pos();
 
     vec3 n_m  = fFace->normal;
     vec3 n_n0 = fn0->normal;
@@ -1386,9 +1385,9 @@ bool Polyhedron::tryComputeNewVertPosType3(front::Face* fFace, vec3& out_pos)
                         + fface->face->edges[1]->magnitude()
                         + fface->face->edges[2]->magnitude();
     real_t av_magn = (sum_magns[0] + sum_magns[1] + sum_magns[2] + sum_magns[3]) / static_cast<real_t>(12.0);
-    if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos /*+ NOT_TOO_CLOSE * v0_to_np*/) ||
-        segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos /*+ NOT_TOO_CLOSE * v1_to_np*/) ||
-        segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos /*+ NOT_TOO_CLOSE * v2_to_np*/) ||
+    if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos) ||
+        segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos) ||
+        segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos) ||
         doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
 //        !vertInsideFrontCheck(new_pos) ||
         faceIntersectionCheck(v0, v1, new_pos) ||
@@ -1447,19 +1446,6 @@ bool Polyhedron::tryComputeNewVertPosType2(front::Face* fFace, vec3& out_pos, in
     vec3 e = vec3::cross(np_mn0, np_mn1).normalize();
     if (vec3::dot(e, n_m) < static_cast<real_t>(0.0)) e *= static_cast<real_t>(-1.0);
 
-//    real_t fface_area = fFace->Face->computeArea();
-//    real_t sp = SQRT3_2 * 0.5 * m_preferredLength * m_preferredLength;
-//    real_t sf0 = 0.5 * (fface_area + fn0->Face->computeArea());
-//    real_t sf1 = 0.5 * (fface_area + fn1->Face->computeArea());
-//    real_t raw_deform0 = K_D * (sp - sf0);
-//    real_t raw_deform1 = K_D * (sp - sf1);
-//    real_t deform0 = raw_deform0 < sf0 * K_MAXD ? raw_deform0 : sf0 * K_MAXD;
-//    real_t deform1 = raw_deform1 < sf1 * K_MAXD ? raw_deform1 : sf1 * K_MAXD;
-//    real_t sc0 = sf0 + deform0;
-//    real_t sc1 = sf1 + deform1;
-//    real_t x0_2 = sc0 / vec3::cross(v2->pos() - v0->pos(), e).magnitude();
-//    real_t x1_2 = sc1 / vec3::cross(v2->pos() - v1->pos(), e).magnitude();
-//    vec3 new_pos = v2_pos + (x0_2 + x1_2) * e;
     real_t lm0 = main_edges[0]->magnitude();
     real_t lm1 = main_edges[1]->magnitude();
     real_t l0 = (v1_pos - v0_pos).magnitude();
@@ -1476,24 +1462,22 @@ bool Polyhedron::tryComputeNewVertPosType2(front::Face* fFace, vec3& out_pos, in
     vec3 v0_to_np = new_pos - v0_pos;
     vec3 v1_to_np = new_pos - v1_pos;
     vec3 v2_to_np = new_pos - v2_pos;
-    if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos /*+ NOT_TOO_CLOSE * v0_to_np*/) ||
-        segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos /*+ NOT_TOO_CLOSE * v1_to_np*/) ||
-        segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos /*+ NOT_TOO_CLOSE * v2_to_np*/) ||
+    if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos) ||
+        segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos) ||
+        segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos) ||
         doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * magn_d) ||
-        !vertInsideFrontCheck(new_pos) ||
+//        !vertInsideFrontCheck(new_pos) ||
         faceIntersectionCheck(v0, v1, new_pos) ||
         faceIntersectionCheck(v0, v2, new_pos) ||
         faceIntersectionCheck(v1, v2, new_pos))
     {
-//        x0_2 = sf0 / vec3::cross(v2->pos() - v0->pos(), e).magnitude();
-//        x1_2 = sf1 / vec3::cross(v2->pos() - v1->pos(), e).magnitude();
         new_pos = new_pos = v2_pos + av_magn * e;
         v0_to_np = new_pos - v0_pos;
         v1_to_np = new_pos - v1_pos;
         v2_to_np = new_pos - v2_pos;
-        if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos /*+ NOT_TOO_CLOSE * v0_to_np*/) ||
-            segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos /*+ NOT_TOO_CLOSE * v1_to_np*/) ||
-            segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos /*+ NOT_TOO_CLOSE * v2_to_np*/) ||
+        if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos) ||
+            segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos) ||
+            segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos) ||
             doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
 //            !vertInsideFrontCheck(new_pos) ||
             faceIntersectionCheck(v0, v1, new_pos) ||
@@ -1550,11 +1534,11 @@ bool Polyhedron::tryComputeNewVertPosType1(front::Face* fFace, vec3& out_pos, in
     vec3 v0_to_np = new_pos - v0_pos;
     vec3 v1_to_np = new_pos - v1_pos;
     vec3 v2_to_np = new_pos - v2_pos;
-    if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos /*+ NOT_TOO_CLOSE * v0_to_np*/) ||
-        segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos /*+ NOT_TOO_CLOSE * v1_to_np*/) ||
-        segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos /*+ NOT_TOO_CLOSE * v2_to_np*/) ||
+    if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos) ||
+        segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos) ||
+        segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos) ||
         doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * magn_d) ||
-        !vertInsideFrontCheck(new_pos) ||
+//        !vertInsideFrontCheck(new_pos) ||
         faceIntersectionCheck(v0, v1, new_pos) ||
         faceIntersectionCheck(v0, v2, new_pos) ||
         faceIntersectionCheck(v1, v2, new_pos))
@@ -1563,9 +1547,9 @@ bool Polyhedron::tryComputeNewVertPosType1(front::Face* fFace, vec3& out_pos, in
         v0_to_np = new_pos - v0_pos;
         v1_to_np = new_pos - v1_pos;
         v2_to_np = new_pos - v2_pos;
-        if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos /*+ NOT_TOO_CLOSE * v0_to_np*/) ||
-            segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos /*+ NOT_TOO_CLOSE * v1_to_np*/) ||
-            segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos /*+ NOT_TOO_CLOSE * v2_to_np*/) ||
+        if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos) ||
+            segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos) ||
+            segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos) ||
             doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
 //            !vertInsideFrontCheck(new_pos) ||
             faceIntersectionCheck(v0, v1, new_pos) ||
@@ -1595,9 +1579,9 @@ bool Polyhedron::tryComputeNewVertPosType0(front::Face* fFace, vec3& out_pos)
     auto v0 = fFace->face->edges[0]->verts[0];
     auto v1 = fFace->face->edges[0]->verts[1];
     auto v2 = fFace->face->findVertNot(fFace->face->edges[0]);
-    const vec3& v0_pos = v0->pos();
-    const vec3& v1_pos = v1->pos();
-    const vec3& v2_pos = v2->pos();
+    vec3 v0_pos = v0->pos();
+    vec3 v1_pos = v1->pos();
+    vec3 v2_pos = v2->pos();
     vec3 v0_to_np = new_pos - v0_pos;
     vec3 v1_to_np = new_pos - v1_pos;
     vec3 v2_to_np = new_pos - v2_pos;
@@ -1642,9 +1626,9 @@ bool Polyhedron::tryComputeNewVertPos(front::Face* fFace, vec3& out_pos)
     };
     int indexes[3];
     int small_angs_num = 0;
-    if (angs_coses[0] > cosDeg<140, real_t>) indexes[small_angs_num++] = 0;
-    if (angs_coses[1] > cosDeg<140, real_t>) indexes[small_angs_num++] = 1;
-    if (angs_coses[2] > cosDeg<140, real_t>) indexes[small_angs_num++] = 2;
+    if (angs_coses[0] > std::cos(degToRad(140))) indexes[small_angs_num++] = 0;
+    if (angs_coses[1] > std::cos(degToRad(140))) indexes[small_angs_num++] = 1;
+    if (angs_coses[2] > std::cos(degToRad(140))) indexes[small_angs_num++] = 2;
 
     switch (small_angs_num)
     {
@@ -1662,9 +1646,9 @@ bool Polyhedron::tryComputeNewVertPos(front::Face* fFace, vec3& out_pos)
 
 real_t Polyhedron::sqr4FaceArea(const front::Face* fFace) const
 {
-    vec3 vec0 = *fFace->face->edges[0]->verts[1] - *fFace->face->edges[0]->verts[0];
-    vec3 vec1 = *fFace->face->edges[1]->verts[1] - *fFace->face->edges[1]->verts[0];
-    return vec3::cross(vec0, vec1).sqrMagnitude();
+    vec3 edge0_vec = *fFace->face->edges[0]->verts[1] - *fFace->face->edges[0]->verts[0];
+    vec3 edge1_vec = *fFace->face->edges[1]->verts[1] - *fFace->face->edges[1]->verts[0];
+    return vec3::cross(edge0_vec, edge1_vec).sqrMagnitude();
 }
 
 

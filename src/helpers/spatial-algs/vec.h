@@ -1,4 +1,4 @@
-// Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
+﻿// Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
 #pragma once
@@ -11,7 +11,7 @@ struct vec3
     real_t coors[3];
 
     static real_t dot  ( const vec3& vec0, const vec3& vec1 );
-    static vec3    cross( const vec3& vec0, const vec3& vec1 );
+    static vec3   cross( const vec3& vec0, const vec3& vec1 );
     static real_t mixed( const vec3& vec0, const vec3& vec1, const vec3& vec2 );
 
     static real_t cos( const vec3& vec0, const vec3& vec1 );

@@ -40,7 +40,6 @@ HEADERS += \
     spatial-objs/polyhedral-set.h \
     spatial-objs/tetr.h \
     definitions.h \
-    helpers/cosd-values.h \
     real-type.h \
     spatial-objs/polyhedron.h \
     spatial-objs/face.h \

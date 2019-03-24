@@ -42,14 +42,7 @@ real_t vec3::mixed(const vec3 &vec0, const vec3 &vec1, const vec3 &vec2)
 
 real_t vec3::cos(const vec3& vec0, const vec3& vec1)
 {
-    if constexpr (std::is_same<real_t, float>())
-    {
-        return vec3::dot(vec0, vec1) / sqrtf(vec0.sqrMagnitude() * vec1.sqrMagnitude());
-    }
-    else
-    {
-        return vec3::dot(vec0, vec1) / sqrt(vec0.sqrMagnitude() * vec1.sqrMagnitude());
-    }
+    return vec3::dot(vec0, vec1) / std::sqrt(vec0.sqrMagnitude() * vec1.sqrMagnitude());
 }
 
 
@@ -57,14 +50,7 @@ real_t vec3::cos(const vec3& vec0, const vec3& vec1)
 
 real_t vec3::magnitude() const
 {
-    if constexpr (std::is_same<real_t, float>())
-    {
-        return sqrtf(sqrMagnitude());
-    }
-    else
-    {
-        return sqrt(sqrMagnitude());
-    }
+    return std::sqrt(sqrMagnitude());
 }
 
 
