@@ -13,9 +13,9 @@ double preferredLength = 0.45;
 polyhedr.generateMesh(preferredLength);
 polyhedr.output(pmg::PolyhedralSet::FileType::Obj); // Or ...FileType::LsDynaKeyword
 ```
-![Cube mesh](https://github.com/Tokarevart/polymgen/blob/master/images/polymesh_1.png)
-![Cube mesh](https://github.com/Tokarevart/polymgen/blob/master/images/polymesh_2.png)
 ![Cube mesh](https://github.com/Tokarevart/polymgen/blob/master/images/polymesh_3.png)
+![Cube mesh](https://github.com/Tokarevart/polymgen/blob/master/images/polymesh_2.png)
+![Cube mesh](https://github.com/Tokarevart/polymgen/blob/master/images/polymesh_1.png)
 # License
 Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 
