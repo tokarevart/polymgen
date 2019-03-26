@@ -4,7 +4,7 @@ It is created with the purpose of use in solving boundary-value problems for pol
 # Example:
 ```c++
 // Number of cubes along the corresponding axis.
-size_t nX = 3, nY = 3, nZ = 3;
+size_t nX = 2, nY = 4, nZ = 8;
 psg::PolyShell shell = psg::generateCuboids(nX, nY, nZ);
 pmg::PolyhedralSet polyhedr(shell);
 
