@@ -2,10 +2,9 @@
 // Licensed under the MIT License.
 
 #include "spatial-objs/shell/shell-face.h"
-#include "algorithm"
+#include <algorithm>
 #include "helpers/spatial-algs/spatial-algs.h"
 
-#include "helpers/cosd-values.h"
 
 using namespace pmg;
 namespace sfront = shell::front;
@@ -205,7 +204,7 @@ void shell::Face::removeFromFront(sfront::Vert* fVert)
 
 bool shell::Face::anyVertInsidePotentialTriangCheck(sfront::Vert* fVert) const
 {
-    auto opp_verts = fVert->findOppVerts();
+    auto opp_verts = fVert->oppVerts();
     pmg::Vert* tr[3]
     {
         fVert->vert,
@@ -520,7 +519,7 @@ shell::Face::ExhaustType shell::Face::computeExhaustionTypeQualityPriority(
     if (anyVertInsidePotentialTriangCheck(fVert))
         return ExhaustType::WithNewVert;
 
-    auto opp_verts = fVert->findOppVerts();
+    auto opp_verts = fVert->oppVerts();
     real_t without_nv_quality = computeTriangSimpleSqrQuality(
         fVert->vert->pos(),
         std::get<0>(opp_verts)->pos(),

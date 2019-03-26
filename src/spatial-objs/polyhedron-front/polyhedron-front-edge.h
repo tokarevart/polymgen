@@ -32,11 +32,11 @@ public:
     real_t computeAngle();
 
     // Opp means opposite.
-    pair_vv   findOppVerts();
+    pair_vv      oppVerts();
     front::Edge* findOppEdge();
 
     // Adj means adjacent.
-    pair_ff getAdjFFaces();
+    pair_ff adjFFaces();
 
     bool addAdjFFace(       const front::Face* fFace );
     bool removeAdjFFace(    const front::Face* fFace );

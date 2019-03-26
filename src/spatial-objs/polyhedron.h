@@ -149,7 +149,7 @@ private:
     front::Face* chooseFaceForExhaustionWithNewVert( front::Edge* fEdge );
     void         exhaustWithNewVert( front::Face* fFace, const vec3& vertPos );
 
-    bool tryExhaustWithoutNewVert( front::Edge* fEdge, bool doesOppEdgeExists = true, front::Edge* oppEdge = nullptr );
+    bool tryExhaustWithoutNewVert( front::Edge* fEdge );
     bool tryExhaustWithNewVert(    front::Edge* fEdge );
 
     bool globalIntersectionCheck();

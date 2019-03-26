@@ -17,11 +17,11 @@ class Face
 {
 public:
     pmg::Face* face;
-    front::Edge* fEdges[3] { nullptr, nullptr, nullptr };
+    front::Edge* fEdges[3] { nullptr, };
     vec3 normal;
 
-    vec3    computeNormal();
-    vec3    computeCenter();
+    vec3   computeNormal();
+    vec3   computeCenter();
     real_t computeQuality();
 
     front::Edge* findFEdge( const pmg::Edge* edge ) const;

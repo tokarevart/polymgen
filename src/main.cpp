@@ -11,7 +11,7 @@
 
 int main()
 {
-    real_t preferredEdgeLength = static_cast<real_t>(0.45);
+    real_t preferredEdgeLength = static_cast<real_t>(0.35);
     
     std::cout << "Generating PolyShell...";
     size_t n = 4;

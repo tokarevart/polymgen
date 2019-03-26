@@ -53,7 +53,7 @@ real_t FrSuEdge::computeComplexity()
 
 real_t FrSuEdge::computeAngleExCos()
 {
-    auto adj_faces = getAdjFFaces();
+    auto adj_faces = adjFFaces();
 
     real_t normals_cos = vec3::dot(std::get<0>(adj_faces)->normal, std::get<1>(adj_faces)->normal);
 
@@ -76,9 +76,9 @@ real_t FrSuEdge::computeAngle()
 
 
 
-pair_vv FrSuEdge::findOppVerts()
+pair_vv FrSuEdge::oppVerts()
 {
-    auto adj_faces = getAdjFFaces();
+    auto adj_faces = adjFFaces();
 
     return { std::get<0>(adj_faces)->face->findVertNot(edge),
              std::get<1>(adj_faces)->face->findVertNot(edge) };
@@ -87,7 +87,7 @@ pair_vv FrSuEdge::findOppVerts()
 
 FrSuEdge* FrSuEdge::findOppEdge()
 {
-    auto opp_verts = findOppVerts();
+    auto opp_verts = oppVerts();
     std::vector<FrSuEdge*> opp_fedges;
     for (auto& f_edge : m_relatedPolyhedron->frontEdges())
     {
@@ -106,7 +106,7 @@ FrSuEdge* FrSuEdge::findOppEdge()
     std::vector<pair_ff> adj_ffaces_vec;
     adj_ffaces_vec.reserve(opp_fedges.size());
     for (auto& fedge : opp_fedges)
-        adj_ffaces_vec.push_back(fedge->getAdjFFaces());
+        adj_ffaces_vec.push_back(fedge->adjFFaces());
 
     vec3 main_vert_pos = edge->verts[0]->pos();
     vec3 main_vert_proj = spatalgs::project(main_vert_pos, opp_verts.first->pos(), opp_verts.second->pos());
@@ -138,7 +138,7 @@ FrSuEdge* FrSuEdge::findOppEdge()
 
 
 
-pair_ff FrSuEdge::getAdjFFaces()
+pair_ff FrSuEdge::adjFFaces()
 {
     if (!isAdjFacesFull())
         fillAdjFFaces();

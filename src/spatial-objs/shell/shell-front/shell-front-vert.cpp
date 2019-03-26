@@ -95,7 +95,7 @@ pair_ee FrPlVert::findAdjEdges() const
 }
 
 
-pair_vv FrPlVert::findOppVerts() const
+pair_vv FrPlVert::oppVerts() const
 {
     auto adj_edges = findAdjEdges();
     return pair_vv(adj_edges.first->edge->findNot(vert),

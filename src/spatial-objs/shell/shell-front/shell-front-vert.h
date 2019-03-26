@@ -30,7 +30,7 @@ public:
     real_t computeAngle();
 
     pair_ee findAdjEdges() const;
-    pair_vv findOppVerts() const;
+    pair_vv oppVerts() const;
 
     Vert(const shell::Face* relatedShellFace, const pmg::Vert* vert);
 

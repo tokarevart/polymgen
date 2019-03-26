@@ -9,15 +9,15 @@
 
 namespace spatalgs {
 
-vec3  project( const vec3& point,
+vec3 project( const vec3& point,
               const vec3& line_p0, const vec3& line_p1 );
 
 bool project( vec3& out,
               const vec3& point,
               const vec3& segm_p0, const vec3& segm_p1 );
 
-vec3  project( const vec3& point,
-                   const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2 );
+vec3 project( const vec3& point,
+              const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2 );
 
 bool project( vec3& out,
               const vec3& point,
@@ -96,11 +96,11 @@ vec3 closestSegmentPointToPoint( const vec3& point,
 vec3 closestTrianglePointToPointOnPlane( const vec3& point,
                                         const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2 );
 
-real_t distancePointToLine(     const vec3& point,
-                              const vec3& line_p0,  const vec3& line_p1 );
+real_t distancePointToLine( const vec3& point,
+                            const vec3& line_p0, const vec3& line_p1 );
 
 real_t distancePointToSegment( const vec3& point,
-                               const vec3& segm_p0,  const vec3& segm_p1 );
+                               const vec3& segm_p0, const vec3& segm_p1 );
 
 real_t distancePointToPlane( const vec3& point,
                              const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2 );

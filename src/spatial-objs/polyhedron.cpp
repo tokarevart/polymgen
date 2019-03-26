@@ -305,9 +305,9 @@ bool XOR(bool b0, bool b1)
 }
 
 
-bool Polyhedron::edgeIntersectionCheck(front::Edge* frontEdge) const
+bool Polyhedron::edgeIntersectionCheck(front::Edge* fEdge) const
 {
-    auto opp_verts = frontEdge->findOppVerts();
+    auto opp_verts = fEdge->oppVerts();
     vec3 opp_verts_poses[2];
     opp_verts_poses[0] = std::get<0>(opp_verts)->pos();
     opp_verts_poses[1] = std::get<1>(opp_verts)->pos();
@@ -466,12 +466,12 @@ bool Polyhedron::faceIntersectionCheck(const Vert* v0, const Vert* v1, const Ver
 }
 
 
-bool Polyhedron::facesIntersectionCheck(front::Edge* frontEdge) const
+bool Polyhedron::facesIntersectionCheck(front::Edge* fEdge) const
 {
-    auto opp_verts = frontEdge->findOppVerts();
+    auto opp_verts = fEdge->oppVerts();
         
-    if (faceIntersectionCheck(frontEdge->edge->verts[0], std::get<0>(opp_verts), std::get<1>(opp_verts)) ||
-        faceIntersectionCheck(frontEdge->edge->verts[1], std::get<0>(opp_verts), std::get<1>(opp_verts)))
+    if (faceIntersectionCheck(fEdge->edge->verts[0], std::get<0>(opp_verts), std::get<1>(opp_verts)) ||
+        faceIntersectionCheck(fEdge->edge->verts[1], std::get<0>(opp_verts), std::get<1>(opp_verts)))
         return true;
 
     return false;
@@ -498,7 +498,7 @@ bool Polyhedron::insideTetrCheck(const vec3& p0, const vec3& p1, const vec3& p2,
 
 bool Polyhedron::anyVertInsidePotentialTetrCheck(front::Edge* fEdge) const
 {
-    auto opp_verts = fEdge->findOppVerts();
+    auto opp_verts = fEdge->oppVerts();
 
     vec3 points[4];
     points[0] = std::get<0>(opp_verts)->pos();
@@ -527,7 +527,7 @@ bool Polyhedron::frontSplitCheck(front::Edge* fEdge, front::Edge* oppFEdge) cons
     if (!opp_fedge)
         return false;
 
-    auto opp_fedge_opp_verts = opp_fedge->findOppVerts();
+    auto opp_fedge_opp_verts = opp_fedge->oppVerts();
 
     if (std::get<0>(opp_fedge_opp_verts) == fEdge->edge->verts[0] ||
         std::get<0>(opp_fedge_opp_verts) == fEdge->edge->verts[1] ||
@@ -547,7 +547,7 @@ bool Polyhedron::frontCollapseCheck(front::Edge* fEdge, front::Edge* oppFEdge) c
     if (!opp_fedge)
         return false;
 
-    auto opp_ffaces = opp_fedge->getAdjFFaces();
+    auto opp_ffaces = opp_fedge->adjFFaces();
 
     if (!fEdge->edge->contains(opp_ffaces.first->face->findVertNot(opp_fedge->edge)) ||
         !fEdge->edge->contains(opp_ffaces.second->face->findVertNot(opp_fedge->edge)))
@@ -559,7 +559,7 @@ bool Polyhedron::frontCollapseCheck(front::Edge* fEdge, front::Edge* oppFEdge) c
 
 bool Polyhedron::parallelFacesCheck(front::Edge* fEdge) const
 {
-    auto adj_ffaces = fEdge->getAdjFFaces();
+    auto adj_ffaces = fEdge->adjFFaces();
 
     Vert* opp_verts[2];
     opp_verts[0] = std::get<0>(adj_ffaces)->face->findVertNot(fEdge->edge);
@@ -704,7 +704,7 @@ bool Polyhedron::exhaustWithoutNewVertPriorityPredicate(front::Edge* curFEdge)
     if (curFEdge->angleExCos() > std::cos(degToRad(70)))
         return true;
 
-    auto opp_verts = curFEdge->findOppVerts();
+    auto opp_verts = curFEdge->oppVerts();
     if (curFEdge->findOppEdge() ||
         (curFEdge->angleExCos() < std::cos(degToRad(70)) &&
          curFEdge->angleExCos() > std::cos(degToRad(100)) &&
@@ -742,7 +742,7 @@ Polyhedron::ExhaustType Polyhedron::computeExhaustionTypeQualityPriority(
         return ExhaustType::WithNewVert;
     }
 
-    auto opp_verts = currentFrontEdge->findOppVerts();
+    auto opp_verts = currentFrontEdge->oppVerts();
     real_t without_nv_quality = computeTetrSimpleSqrQuality(
         currentFrontEdge->edge->verts[0]->pos(),
         currentFrontEdge->edge->verts[1]->pos(),
@@ -926,8 +926,8 @@ void Polyhedron::setFEdgesInFrontSplit(const front::Edge* fEdge, front::Edge* ne
 
 void Polyhedron::exhaustFrontCollapse(front::Edge *fEdge, front::Edge *oppFEdge)
 {
-    auto fedge_adj_faces = fEdge->getAdjFFaces();
-    auto opp_ffaces   = oppFEdge->getAdjFFaces();
+    auto fedge_adj_faces = fEdge->adjFFaces();
+    auto opp_ffaces   = oppFEdge->adjFFaces();
 
     m_innerTetrs.push_back(new Tetr(
         fEdge->edge->verts[0],
@@ -974,14 +974,14 @@ void Polyhedron::exhaustFrontCollapse(front::Edge *fEdge, front::Edge *oppFEdge)
 void Polyhedron::exhaustFrontSplit(front::Edge* fEdge, front::Edge* oppFEdge)
 {
     // This volatile helps to avoid computational error.
-    volatile auto adj_ffaces = fEdge->getAdjFFaces();
+    volatile auto adj_ffaces = fEdge->adjFFaces();
 
     Vert* opp_verts[2];
     opp_verts[0] = adj_ffaces.first->face->findVertNot(fEdge->edge);
     opp_verts[1] = adj_ffaces.second->face->findVertNot(fEdge->edge);
 
     auto opp_edge    = oppFEdge->edge;
-    auto opp_ffaces = oppFEdge->getAdjFFaces();
+    auto opp_ffaces = oppFEdge->adjFFaces();
 
     opp_ffaces.first->removeFEdge(oppFEdge);
     opp_ffaces.second->removeFEdge(oppFEdge);
@@ -1099,11 +1099,11 @@ void Polyhedron::exhaustFrontSplit(front::Edge* fEdge, front::Edge* oppFEdge)
 
 void Polyhedron::exhaustWithoutNewVertOppEdgeExists(front::Edge* fEdge, front::Edge* oppFEdge)
 {
-    auto opp_ffaces = oppFEdge->getAdjFFaces();
+    auto opp_ffaces = oppFEdge->adjFFaces();
 
     front::Face* main_ffaces[3];
     Vert* main_vert;
-    auto fedge_adj_faces = fEdge->getAdjFFaces();
+    auto fedge_adj_faces = fEdge->adjFFaces();
     main_ffaces[0] = std::get<0>(fedge_adj_faces);
     main_ffaces[1] = std::get<1>(fedge_adj_faces);
 
@@ -1186,7 +1186,7 @@ void Polyhedron::exhaustWithoutNewVertOppEdgeExists(front::Edge* fEdge, front::E
 void Polyhedron::exhaustWithoutNewVertOppEdgeDontExists(front::Edge* fEdge)
 {
     // This volatile helps to avoid computational error.
-    volatile auto adj_ffaces = fEdge->getAdjFFaces();
+    volatile auto adj_ffaces = fEdge->adjFFaces();
 
     Vert* opp_verts[2];
     opp_verts[0] = adj_ffaces.first->face->findVertNot(fEdge->edge);
@@ -1348,11 +1348,11 @@ bool Polyhedron::tryComputeNewVertPosType3(front::Face* fFace, vec3& out_pos)
     auto v1 = main_edges[1]->verts[0] == main_vert ? main_edges[1]->verts[1] : main_edges[1]->verts[0];
     auto v2 = main_vert;
 
-    auto adj_ffaces = main_fedges[0]->getAdjFFaces();
+    auto adj_ffaces = main_fedges[0]->adjFFaces();
     auto fn0 = std::get<0>(adj_ffaces) == fFace ? std::get<1>(adj_ffaces) : std::get<0>(adj_ffaces);
-    adj_ffaces = main_fedges[1]->getAdjFFaces();
+    adj_ffaces = main_fedges[1]->adjFFaces();
     auto fn1 = std::get<0>(adj_ffaces) == fFace ? std::get<1>(adj_ffaces) : std::get<0>(adj_ffaces);
-    adj_ffaces = third_f_edge->getAdjFFaces();
+    adj_ffaces = third_f_edge->adjFFaces();
     auto fn2 = std::get<0>(adj_ffaces) == fFace ? std::get<1>(adj_ffaces) : std::get<0>(adj_ffaces);
 
     vec3 v0_pos = v0->pos();
@@ -1389,7 +1389,6 @@ bool Polyhedron::tryComputeNewVertPosType3(front::Face* fFace, vec3& out_pos)
         segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos) ||
         segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos) ||
         doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
-//        !vertInsideFrontCheck(new_pos) ||
         faceIntersectionCheck(v0, v1, new_pos) ||
         faceIntersectionCheck(v0, v2, new_pos) ||
         faceIntersectionCheck(v1, v2, new_pos))
@@ -1420,10 +1419,10 @@ bool Polyhedron::tryComputeNewVertPosType2(front::Face* fFace, vec3& out_pos, in
     auto v1 = main_edges[1]->verts[0] == main_vert ? main_edges[1]->verts[1] : main_edges[1]->verts[0];
     auto v2 = main_vert;
 
-    auto adj_ffaces = main_fedges[0]->getAdjFFaces();
+    auto adj_ffaces = main_fedges[0]->adjFFaces();
     auto fn0 = std::get<0>(adj_ffaces) == fFace ? std::get<1>(adj_ffaces) : std::get<0>(adj_ffaces);
     auto vn0 = fn0->face->findVertNot(main_fedges[0]->edge);
-    adj_ffaces = main_fedges[1]->getAdjFFaces();
+    adj_ffaces = main_fedges[1]->adjFFaces();
     auto fn1 = std::get<0>(adj_ffaces) == fFace ? std::get<1>(adj_ffaces) : std::get<0>(adj_ffaces);
     auto vn1 = fn1->face->findVertNot(main_fedges[1]->edge);
 
@@ -1466,11 +1465,13 @@ bool Polyhedron::tryComputeNewVertPosType2(front::Face* fFace, vec3& out_pos, in
         segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos) ||
         segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos) ||
         doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * magn_d) ||
-//        !vertInsideFrontCheck(new_pos) ||
         faceIntersectionCheck(v0, v1, new_pos) ||
         faceIntersectionCheck(v0, v2, new_pos) ||
         faceIntersectionCheck(v1, v2, new_pos))
     {
+        // Do i really need it???
+        // ???
+
         new_pos = new_pos = v2_pos + av_magn * e;
         v0_to_np = new_pos - v0_pos;
         v1_to_np = new_pos - v1_pos;
@@ -1479,7 +1480,6 @@ bool Polyhedron::tryComputeNewVertPosType2(front::Face* fFace, vec3& out_pos, in
             segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos) ||
             segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos) ||
             doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
-//            !vertInsideFrontCheck(new_pos) ||
             faceIntersectionCheck(v0, v1, new_pos) ||
             faceIntersectionCheck(v0, v2, new_pos) ||
             faceIntersectionCheck(v1, v2, new_pos))
@@ -1505,7 +1505,7 @@ bool Polyhedron::tryComputeNewVertPosType1(front::Face* fFace, vec3& out_pos, in
     auto v1 = main_edge->verts[1];
     auto v2 = fFace->face->findVertNot(main_edge);
 
-    auto adj_ffaces = main_f_edge->getAdjFFaces();
+    auto adj_ffaces = main_f_edge->adjFFaces();
     auto fn = std::get<0>(adj_ffaces) == fFace ? std::get<1>(adj_ffaces) : std::get<0>(adj_ffaces);
     auto vn = fn->face->findVertNot(main_edge);
 
@@ -1538,11 +1538,13 @@ bool Polyhedron::tryComputeNewVertPosType1(front::Face* fFace, vec3& out_pos, in
         segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos) ||
         segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos) ||
         doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * magn_d) ||
-//        !vertInsideFrontCheck(new_pos) ||
         faceIntersectionCheck(v0, v1, new_pos) ||
         faceIntersectionCheck(v0, v2, new_pos) ||
         faceIntersectionCheck(v1, v2, new_pos))
     {
+        // Do i really need it???
+        // ???
+
         new_pos = c + std::sqrt(av_magn * av_magn - v0_c_dist * v0_c_dist) * e;
         v0_to_np = new_pos - v0_pos;
         v1_to_np = new_pos - v1_pos;
@@ -1551,7 +1553,6 @@ bool Polyhedron::tryComputeNewVertPosType1(front::Face* fFace, vec3& out_pos, in
             segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos) ||
             segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos) ||
             doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
-//            !vertInsideFrontCheck(new_pos) ||
             faceIntersectionCheck(v0, v1, new_pos) ||
             faceIntersectionCheck(v0, v2, new_pos) ||
             faceIntersectionCheck(v1, v2, new_pos))
@@ -1567,10 +1568,9 @@ bool Polyhedron::tryComputeNewVertPosType1(front::Face* fFace, vec3& out_pos, in
 
 bool Polyhedron::tryComputeNewVertPosType0(front::Face* fFace, vec3& out_pos)
 {
-    real_t av_magn = ONE_3 * (
-          fFace->face->edges[0]->magnitude()
-        + fFace->face->edges[1]->magnitude()
-        + fFace->face->edges[2]->magnitude());
+    real_t av_magn = ONE_3 * (  fFace->face->edges[0]->magnitude()
+                              + fFace->face->edges[1]->magnitude()
+                              + fFace->face->edges[2]->magnitude());
     real_t raw_deform = K_D * (m_preferredLength - av_magn);
     real_t deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
     real_t magn_d = av_magn + deform;
@@ -1585,24 +1585,25 @@ bool Polyhedron::tryComputeNewVertPosType0(front::Face* fFace, vec3& out_pos)
     vec3 v0_to_np = new_pos - v0_pos;
     vec3 v1_to_np = new_pos - v1_pos;
     vec3 v2_to_np = new_pos - v2_pos;
-    if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos /*+ NOT_TOO_CLOSE * v0_to_np*/) ||
-        segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos /*+ NOT_TOO_CLOSE * v1_to_np*/) ||
-        segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos /*+ NOT_TOO_CLOSE * v2_to_np*/) ||
+    if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos) ||
+        segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos) ||
+        segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos) ||
         doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * magn_d) ||
-//        !vertInsideFrontCheck(new_pos) ||
         faceIntersectionCheck(v0, v1, new_pos) ||
         faceIntersectionCheck(v0, v2, new_pos) ||
         faceIntersectionCheck(v1, v2, new_pos))
     {
+        // Do i really need it???
+        // ???
+
         new_pos = fFace->computeCenter() + std::sqrt(av_magn * av_magn - ONE_3 * av_magn * av_magn) * fFace->normal;
         v0_to_np = new_pos - v0_pos;
         v1_to_np = new_pos - v1_pos;
         v2_to_np = new_pos - v2_pos;
-        if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos /*+ NOT_TOO_CLOSE * v0_to_np*/) ||
-            segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos /*+ NOT_TOO_CLOSE * v1_to_np*/) ||
-            segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos /*+ NOT_TOO_CLOSE * v2_to_np*/) ||
+        if (segmentFrontIntersectionCheck(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos) ||
+            segmentFrontIntersectionCheck(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos) ||
+            segmentFrontIntersectionCheck(v2_pos + FROM_VERT_COEF * v2_to_np, new_pos) ||
             doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
-            !vertInsideFrontCheck(new_pos) ||
             faceIntersectionCheck(v0, v1, new_pos) ||
             faceIntersectionCheck(v0, v2, new_pos) ||
             faceIntersectionCheck(v1, v2, new_pos))
@@ -1654,7 +1655,7 @@ real_t Polyhedron::sqr4FaceArea(const front::Face* fFace) const
 
 front::Face* Polyhedron::chooseFaceForExhaustionWithNewVert(front::Edge* fEdge)
 {
-    auto adj_ffaces = fEdge->getAdjFFaces();
+    auto adj_ffaces = fEdge->adjFFaces();
 
     return sqr4FaceArea(std::get<0>(adj_ffaces)) < sqr4FaceArea(std::get<1>(adj_ffaces)) ?
 //    return std::get<0>(adj_ffaces)->computeQuality() < std::get<1>(adj_ffaces)->computeQuality() ?
@@ -1729,15 +1730,15 @@ void Polyhedron::exhaustWithNewVert(front::Face* fFace, const vec3& vertPos)
 
 
 
-bool Polyhedron::tryExhaustWithoutNewVert(front::Edge* fEdge, bool oppEdgeExistence, front::Edge* oppEdge)
+bool Polyhedron::tryExhaustWithoutNewVert(front::Edge* fEdge)
 {
-    if (parallelFacesCheck(fEdge) ||
-        edgeIntersectionCheck(fEdge) ||
+    if (parallelFacesCheck(fEdge) ||            // ???
+//        edgeIntersectionCheck(fEdge) ||
         facesIntersectionCheck(fEdge) ||
-        anyVertInsidePotentialTetrCheck(fEdge))
+        anyVertInsidePotentialTetrCheck(fEdge)) // ???
         return false;
 
-    exhaustWithoutNewVert(fEdge, oppEdgeExistence, oppEdge);
+    exhaustWithoutNewVert(fEdge);
     return true;
 }
 
