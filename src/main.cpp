@@ -11,11 +11,11 @@
 
 int main()
 {
-    real_t preferredEdgeLength = static_cast<real_t>(0.45);
+    real_t preferredEdgeLength = static_cast<real_t>(0.3);
     
     std::cout << "Generating PolyShell...";
-    size_t n = 4;
-    psg::PolyShell shell = psg::generateCuboids(n, n, n);
+    size_t n = 6;
+    psg::PolyShell shell = psg::generateCuboids(n, n, n/2);
     std::cout << " done.\n";
 
     std::cout << "Initializing PolyhedralSet...";
