@@ -30,7 +30,7 @@ class PolyhedralSet
 public:
     enum class FileType
     {
-        Obj,
+        WavefrontObj,
         LsDynaKeyword
     };
 
@@ -40,7 +40,7 @@ public:
 
     void input( std::string_view polyStructFileName );
     void input( const psg::PolyShell& polyStruct );
-    void output( FileType filetype = FileType::Obj, std::string_view filename = "_AUTO_", unsigned PolyhedralSetId = 1u ) const;
+    void output( FileType filetype = FileType::WavefrontObj, std::string_view filename = "_AUTO_", unsigned PolyhedralSetId = 1u ) const;
 
     PolyhedralSet();
     PolyhedralSet( std::string_view polyStructFileName );

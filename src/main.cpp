@@ -29,7 +29,7 @@ int main()
 
     std::cout << "Outputting data to file...";
     polyhedr.output(pmg::PolyhedralSet::FileType::LsDynaKeyword);
-    polyhedr.output(pmg::PolyhedralSet::FileType::Obj);
+    polyhedr.output(pmg::PolyhedralSet::FileType::WavefrontObj);
     std::cout << " done.\n";
 
     return 0;

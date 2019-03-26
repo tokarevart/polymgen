@@ -283,7 +283,7 @@ void PolyhedralSet::generateMesh(real_t preferredLength, std::string_view logFil
     }
     catch (std::logic_error error)
     {
-        output(FileType::Obj, "debug.obj");
+        output(FileType::WavefrontObj, "debug.obj");
         throw error;
     }
     tmr.stop();
@@ -301,7 +301,7 @@ void PolyhedralSet::generateMesh(real_t preferredLength, std::string_view logFil
         }
         catch (std::logic_error error)
         {
-            output(FileType::Obj, "debug.obj");
+            output(FileType::WavefrontObj, "debug.obj");
             throw error;
         }
 
@@ -608,7 +608,7 @@ std::string PolyhedralSet::generateOutputFilename(FileType filetype, std::string
     ss << av_nfe << "_phfe";
     switch (filetype)
     {
-    case FileType::Obj:
+    case FileType::WavefrontObj:
         return ss.str() + ".obj";
 
     case FileType::LsDynaKeyword:
@@ -624,8 +624,8 @@ void PolyhedralSet::output(FileType filetype, std::string_view filename, unsigne
     tmr.start();
     switch (filetype)
     {
-    case FileType::Obj:
-        outputObj(generateOutputFilename(FileType::Obj, filename));
+    case FileType::WavefrontObj:
+        outputObj(generateOutputFilename(FileType::WavefrontObj, filename));
         break;
 
     case FileType::LsDynaKeyword:

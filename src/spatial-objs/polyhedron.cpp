@@ -942,7 +942,7 @@ void Polyhedron::exhaustFrontCollapse(front::Edge *fEdge, front::Edge *oppFEdge)
     m_innerTetrs.push_back(new_tetr);
 
 //    if (new_tetr->computeQuality() < 1e-2)
-//        m_polycr->output(PolyhedralSet::FileType::Obj, "debug.obj");
+//        m_polycr->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
 
 
     std::vector<front::Edge*> fedges_to_erase;
@@ -1084,7 +1084,7 @@ void Polyhedron::exhaustFrontSplit(front::Edge* fEdge, front::Edge* oppFEdge)
     m_innerTetrs.push_back(new_tetr);
 
 //    if (new_tetr->computeQuality() < 1e-2)
-//        m_polycr->output(PolyhedralSet::FileType::Obj, "debug.obj");
+//        m_polycr->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
 
 
     removeFromFront(adj_ffaces.first);
@@ -1157,7 +1157,7 @@ void Polyhedron::exhaustWithoutNewVertOppEdgeExists(front::Edge* fEdge, front::E
     m_innerTetrs.push_back(new_tetr);
 
 //    if (new_tetr->computeQuality() < 1e-2)
-//        m_polycr->output(PolyhedralSet::FileType::Obj, "debug.obj");
+//        m_polycr->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
 
     std::vector<front::Edge*> erased_fedges;
     erased_fedges.reserve(3);
@@ -1281,7 +1281,7 @@ void Polyhedron::exhaustWithoutNewVertOppEdgeDontExists(front::Edge* fEdge)
 
 //    std::cout << std::endl << fEdge->edge->magnitude() << ' ' << fEdge->computeAngle() * 180.0 / M_PI;
 //    if (new_tetr->computeQuality() < 1e-2)
-//        m_polycr->output(PolyhedralSet::FileType::Obj, "debug.obj");
+//        m_polycr->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
 
     
     removeFromFront(adj_ffaces.first);
@@ -1722,7 +1722,7 @@ void Polyhedron::exhaustWithNewVert(front::Face* fFace, const vec3& vertPos)
                              new_tetr_fedges[5]->edge->verts[1]);
     m_innerTetrs.push_back(new_tetr);
 //    if (new_tetr->computeQuality() < 1e-2)
-//        m_polycr->output(PolyhedralSet::FileType::Obj, "debug.obj");
+//        m_polycr->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
 
     removeFromFront(fFace);
 }
@@ -1839,7 +1839,7 @@ void Polyhedron::processAngles()
 
 #ifdef DEV_DEBUG
 //        if (debug_i++ >= 1200)
-//        m_polycr->output(PolyhedralSet::FileType::Obj, "debug.obj");
+//        m_polycr->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
 //        if (debug_i++ >= 0)
 //            std::cout << std::endl << debug_i - 1;
 
