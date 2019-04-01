@@ -26,7 +26,11 @@ const std::vector<Vert*>&shell::Edge::innerVerts() const
 void shell::Edge::segmentize(real_t preferredLen)
 {
     size_t n_inner_verts = static_cast<size_t>(std::round(magnitude() / preferredLen)) - 1;
-    if (n_inner_verts == 0) return;
+    if (n_inner_verts == 0)
+    {
+        m_innerEdges.push_back(new pmg::Edge(verts[0]->attachedVert, verts[1]->attachedVert));
+        return;
+    }
 
     vec3 dir = (*verts[1] - *verts[0]) / (n_inner_verts + 1);
 
