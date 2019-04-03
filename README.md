@@ -1,7 +1,7 @@
 # Polymgen
 Polymgen is a library for generating tetrahedral mesh of many polyhedrons. 
 It is created with the purpose of use in solving boundary-value problems for polycrystal by the finite element method.
-# Example:
+## Example:
 ```c++
 // Number of cubes along the corresponding axis.
 size_t nX = 2, nY = 4, nZ = 8;
@@ -16,7 +16,7 @@ polyhedr.output(pmg::PolyhedralSet::FileType::WavefrontObj); // Or ...FileType::
 ![Cube mesh](https://github.com/Tokarevart/polymgen/blob/master/images/polymesh_3.png)
 ![Cube mesh](https://github.com/Tokarevart/polymgen/blob/master/images/polymesh_2.png)
 ![Cube mesh](https://github.com/Tokarevart/polymgen/blob/master/images/polymesh_1.png)
-# License
+## License
 Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 
 Licensed under the [MIT License](/LICENSE).
