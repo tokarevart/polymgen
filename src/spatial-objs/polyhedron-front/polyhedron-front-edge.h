@@ -25,11 +25,10 @@ public:
 
     void refreshAngleData();
 
+    real_t angle();
     real_t complexity();
-    real_t angleExCos();
-    real_t computeComplexity();
-    real_t computeAngleExCos();
     real_t computeAngle();
+    real_t computeComplexity();
 
     // Opp means opposite.
     pair_vv      oppVerts();
@@ -50,10 +49,10 @@ private:
     Polyhedron* m_relatedPolyhedron;
     pair_ff m_adjFFaces{ nullptr, nullptr };
 
-    real_t m_exCos;
+    real_t m_angle;
     real_t m_complexity;
 
-    bool m_needExCosProcessing      = true;
+    bool m_needAngleProcessing      = true;
     bool m_needComplexityProcessing = true;
 
     bool isAdjFacesFull();

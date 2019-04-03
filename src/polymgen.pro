@@ -8,7 +8,6 @@ SOURCES += \
     helpers/spatial-algs/spatial-algs.cpp \
     helpers/spatial-algs/vec.cpp \
     helpers/logger.cpp \
-    helpers/timer.cpp \
     polysgen/polysgen.cpp \
     spatial-objs/shell/shell-edge.cpp \
     spatial-objs/shell/shell-vertex.cpp \
@@ -32,7 +31,6 @@ HEADERS += \
     helpers/spatial-algs/spatial-algs.h \
     helpers/spatial-algs/vec.h \
     helpers/logger.h \
-    helpers/timer.h \
     polysgen/polysgen.h \
     spatial-objs/shell/shell-edge.h \
     spatial-objs/shell/shell-vertex.h \

@@ -701,13 +701,13 @@ front::Edge* Polyhedron::currentFrontEdge(real_t maxCompl) const
 
 bool Polyhedron::exhaustWithoutNewVertPriorityPredicate(front::Edge* curFEdge)
 {
-    if (curFEdge->angleExCos() > std::cos(degToRad(70)))
+    if (curFEdge->angle() < degToRad(70))
         return true;
 
     auto opp_verts = curFEdge->oppVerts();
     if (curFEdge->findOppEdge() ||
-        (curFEdge->angleExCos() < std::cos(degToRad(70)) &&
-         curFEdge->angleExCos() > std::cos(degToRad(100)) &&
+        (curFEdge->angle() > degToRad(70) &&
+         curFEdge->angle() < degToRad(100) &&
          (*std::get<1>(opp_verts) - *std::get<0>(opp_verts)).sqrMagnitude() <= m_preferredLength * m_preferredLength))
         return true;
 
@@ -720,7 +720,7 @@ bool Polyhedron::exhaustWithoutNewVertPriorityPredicate(front::Edge* curFEdge)
 
 bool Polyhedron::exhaustWithNewVertPriorityPredicate(front::Edge* currentFrontEdge)
 {
-    if (currentFrontEdge->angleExCos() < std::cos(degToRad(120)))
+    if (currentFrontEdge->angle() > degToRad(120))
         return true;
 
     return false;
@@ -1619,17 +1619,17 @@ bool Polyhedron::tryComputeNewVertPosType0(front::Face* fFace, vec3& out_pos)
 
 bool Polyhedron::tryComputeNewVertPos(front::Face* fFace, vec3& out_pos)
 {
-    real_t angs_coses[3]
+    real_t angs[3]
     { 
-        fFace->fEdges[0]->angleExCos(),
-        fFace->fEdges[1]->angleExCos(),
-        fFace->fEdges[2]->angleExCos()
+        fFace->fEdges[0]->angle(),
+        fFace->fEdges[1]->angle(),
+        fFace->fEdges[2]->angle()
     };
     int indexes[3];
     int small_angs_num = 0;
-    if (angs_coses[0] > std::cos(degToRad(140))) indexes[small_angs_num++] = 0;
-    if (angs_coses[1] > std::cos(degToRad(140))) indexes[small_angs_num++] = 1;
-    if (angs_coses[2] > std::cos(degToRad(140))) indexes[small_angs_num++] = 2;
+    if (angs[0] < degToRad(140)) indexes[small_angs_num++] = 0;
+    if (angs[1] < degToRad(140)) indexes[small_angs_num++] = 1;
+    if (angs[2] < degToRad(140)) indexes[small_angs_num++] = 2;
 
     switch (small_angs_num)
     {

@@ -15,7 +15,7 @@ int main()
     
     std::cout << "Generating PolyShell...";
     size_t n = 4;
-    psg::PolyShell shell = psg::generateCuboids(1, 1, 2);
+    psg::PolyShell shell = psg::generateCuboids(n, n, n);
     std::cout << " done.\n";
 
     std::cout << "Initializing PolyhedralSet...";

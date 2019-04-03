@@ -7,8 +7,8 @@
 #include <sstream>
 #include <iomanip>
 #include <iostream>
+#include <ctime>
 #include "helpers/spatial-algs/spatial-algs.h"
-#include "helpers/timer.h"
 
 using namespace pmg;
 
@@ -275,8 +275,7 @@ void PolyhedralSet::generateMesh(real_t preferredLength, std::string_view logFil
 {
     m_preferredLength = preferredLength;
 
-    Timer tmr;
-    tmr.start();
+    std::clock_t shell_triang_start = std::clock();
     try
     {
         triangulateShell();
@@ -286,9 +285,9 @@ void PolyhedralSet::generateMesh(real_t preferredLength, std::string_view logFil
         output(FileType::WavefrontObj, "debug.obj");
         throw error;
     }
-    tmr.stop();
+    double shell_triang_elapsed = static_cast<double>(std::clock() - shell_triang_start) / CLOCKS_PER_SEC;
 
-    tmr.start();
+    std::clock_t volume_exh_start = std::clock();
     real_t min_q = 1.0, av_q = 0.0;
     size_t n_elems = 0;
     size_t max = m_polyhedrons.size();
@@ -315,7 +314,7 @@ void PolyhedralSet::generateMesh(real_t preferredLength, std::string_view logFil
         }
     }
     av_q /= m_polyhedrons.size();
-    tmr.stop();
+    double volume_exh_elapsed = static_cast<double>(std::clock() - volume_exh_start) / CLOCKS_PER_SEC;
     m_lastLogger.reset(new Logger(generateLogFileName(logFileName)));
     *m_lastLogger << std::fixed
         << "Minimum quality"          << min_q << ""
@@ -323,8 +322,8 @@ void PolyhedralSet::generateMesh(real_t preferredLength, std::string_view logFil
         << "Polyhedrons number"       << m_polyhedrons.size()  << ""
         << "Elements number"          << n_elems               << ""
         << "Preferred edge length"    << m_preferredLength     << ""
-        << "Shell triangulation time" << tmr.getDuration(0,  Timer::TimeScale::Microseconds) * 1e-6 << "s"
-        << "Volume exhaustion time"   << tmr.getLastDuration(Timer::TimeScale::Microseconds) * 1e-6 << "s";
+        << "Shell triangulation time" << shell_triang_elapsed << "s"
+        << "Volume exhaustion time"   << volume_exh_elapsed   << "s";
 }
 
 
@@ -620,8 +619,7 @@ std::string PolyhedralSet::generateOutputFilename(FileType filetype, std::string
 
 void PolyhedralSet::output(FileType filetype, std::string_view filename, unsigned PolyhedralSetId) const
 {
-    Timer tmr;
-    tmr.start();
+    std::clock_t start = std::clock();
     switch (filetype)
     {
     case FileType::WavefrontObj:
@@ -632,11 +630,11 @@ void PolyhedralSet::output(FileType filetype, std::string_view filename, unsigne
         outputLSDynaKeyword(generateOutputFilename(FileType::LsDynaKeyword, filename), PolyhedralSetId);
         break;
     }
-    tmr.stop();
+    double elapsed = static_cast<double>(std::clock() - start) / CLOCKS_PER_SEC;
 
     if (m_lastLogger && m_lastLogger->isOpen())
     {
-        *m_lastLogger << "Mesh file writing time" << tmr.getLastDuration(Timer::TimeScale::Microseconds) * 1e-6 << "s";
+        *m_lastLogger << "Mesh file writing time" << elapsed << "s";
         m_lastLogger->close();
     }
 }

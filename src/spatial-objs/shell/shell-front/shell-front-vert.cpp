@@ -10,7 +10,7 @@
 #define K_ALPHA static_cast<real_t>(4.0)
 
 
-using FrPlEdge   = pmg::shell::front::Edge;
+using FrPlEdge = pmg::shell::front::Edge;
 using FrPlVert = pmg::shell::front::Vert;
 using pair_ee  = std::pair<FrPlEdge*, FrPlEdge*>;
 using pair_vv  = std::pair<pmg::Vert*, pmg::Vert*>;
@@ -20,7 +20,7 @@ using pair_vv  = std::pair<pmg::Vert*, pmg::Vert*>;
 
 void FrPlVert::refreshAngleData()
 {
-    m_needExCosProcessing      = true;
+    m_needAngleProcessing      = true;
     m_needComplexityProcessing = true;
 }
 
@@ -34,12 +34,12 @@ real_t FrPlVert::complexity()
 }
 
 
-real_t FrPlVert::angleExCos()
+real_t FrPlVert::angle()
 {
-    if (!m_needExCosProcessing)
-        return m_exCos;
+    if (!m_needAngleProcessing)
+        return m_angle;
 
-    return computeAngleExCos();
+    return computeAngle();
 }
 
 
@@ -53,26 +53,17 @@ real_t FrPlVert::computeComplexity()
 }
 
 
-real_t FrPlVert::computeAngleExCos()
-{
-    auto adj_edges = findAdjEdges();
-
-    real_t normals_cos = vec3::dot(std::get<0>(adj_edges)->normal, std::get<1>(adj_edges)->normal);
-
-    m_needExCosProcessing = false;
-    return m_exCos = spatalgs::cpaTime(
-            std::get<0>(adj_edges)->computeCenter(), std::get<0>(adj_edges)->normal,
-            std::get<1>(adj_edges)->computeCenter(), std::get<1>(adj_edges)->normal) < static_cast<real_t>(1e-6) ?
-        static_cast<real_t>(-2.0) + normals_cos :
-        -normals_cos;
-}
-
-
 real_t FrPlVert::computeAngle()
 {
-    return angleExCos() < static_cast<real_t>(-1.0) ?
-        std::acos(m_exCos + static_cast<real_t>(2.0)) + PI :
-        std::acos(m_exCos);
+    auto adj_edges = findAdjEdges();
+    real_t normals_cos = vec3::dot(std::get<0>(adj_edges)->normal, std::get<1>(adj_edges)->normal);
+
+    m_needAngleProcessing = false;
+    return m_angle = spatalgs::cpaTime(
+            std::get<0>(adj_edges)->computeCenter(), std::get<0>(adj_edges)->normal,
+            std::get<1>(adj_edges)->computeCenter(), std::get<1>(adj_edges)->normal) < static_cast<real_t>(1e-6) ?
+        std::acos(normals_cos) + PI :
+        std::acos(-normals_cos);
 }
 
 

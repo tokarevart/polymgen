@@ -334,15 +334,15 @@ bool shell::Face::tryComputeNewVertPosType0(sfront::Edge* fEdge, vec3& out_pos)
 
 bool shell::Face::tryComputeNewVertPos(sfront::Edge* fEdge, vec3& out_pos)
 {
-    real_t angs_coses[2]
+    real_t angs[2]
     {
-        findFrontVert(fEdge->edge->verts[0])->angleExCos(),
-        findFrontVert(fEdge->edge->verts[1])->angleExCos()
+        findFrontVert(fEdge->edge->verts[0])->angle(),
+        findFrontVert(fEdge->edge->verts[1])->angle()
     };
     int indexes[2];
     int small_angs_num = 0;
-    if (angs_coses[0] > std::cos(degToRad(120)) /*cosDeg<120, real_t>*/) indexes[small_angs_num++] = 0;
-    if (angs_coses[1] > std::cos(degToRad(120)) /*cosDeg<120, real_t>*/) indexes[small_angs_num++] = 1;
+    if (angs[0] < degToRad(120) /*cosDeg<120, real_t>*/) indexes[small_angs_num++] = 0;
+    if (angs[1] < degToRad(120) /*cosDeg<120, real_t>*/) indexes[small_angs_num++] = 1;
 
     switch (small_angs_num)
     {
@@ -489,10 +489,10 @@ sfront::Vert* shell::Face::currentFrontVert(real_t maxCompl) const
 
 bool shell::Face::exhaustWithoutNewVertPriorityPredicate(sfront::Vert* fEdge)
 {
-    if (fEdge->angleExCos() > static_cast<real_t>(0.5))
+    if (fEdge->angle() < degToRad(60))
         return true;
 
-    if (fEdge->angleExCos() < std::cos(degToRad(80)) /*cosDeg<80, real_t>*/)
+    if (fEdge->angle() > degToRad(80))
         return false;
 
     auto adj_edges = fEdge->findAdjEdges();
@@ -506,7 +506,7 @@ bool shell::Face::exhaustWithoutNewVertPriorityPredicate(sfront::Vert* fEdge)
 
 bool shell::Face::exhaustWithNewVertPriorityPredicate(sfront::Vert* fEdge)
 {
-    if (fEdge->angleExCos() > degToRad(110))
+    if (fEdge->angle() > degToRad(100))
         return true;
 
     return false;
