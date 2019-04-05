@@ -22,8 +22,6 @@ using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
 #define K_ALPHA static_cast<real_t>(2.5)
 
 
-
-
 real_t pmg::Edge::magnitude() const
 {
     return (*verts[1] - *verts[0]).magnitude();

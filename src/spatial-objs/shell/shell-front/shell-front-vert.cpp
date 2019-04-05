@@ -10,22 +10,19 @@
 #define K_ALPHA static_cast<real_t>(4.0)
 
 
-using FrPlEdge = pmg::shell::front::Edge;
-using FrPlVert = pmg::shell::front::Vert;
-using pair_ee  = std::pair<FrPlEdge*, FrPlEdge*>;
+using namespace pmg::shell;
+using pair_ee  = std::pair<front::Edge*, front::Edge*>;
 using pair_vv  = std::pair<pmg::Vert*, pmg::Vert*>;
 
 
-
-
-void FrPlVert::refreshAngleData()
+void front::Vert::refreshAngleData()
 {
     m_needAngleProcessing      = true;
     m_needComplexityProcessing = true;
 }
 
 
-real_t FrPlVert::complexity()
+real_t front::Vert::complexity()
 {
     if (!m_needComplexityProcessing)
         return m_complexity;
@@ -34,7 +31,7 @@ real_t FrPlVert::complexity()
 }
 
 
-real_t FrPlVert::angle()
+real_t front::Vert::angle()
 {
     if (!m_needAngleProcessing)
         return m_angle;
@@ -43,7 +40,7 @@ real_t FrPlVert::angle()
 }
 
 
-real_t FrPlVert::computeComplexity()
+real_t front::Vert::computeComplexity()
 {
     m_needComplexityProcessing = false;
     auto adj_edges = findAdjEdges();
@@ -53,7 +50,7 @@ real_t FrPlVert::computeComplexity()
 }
 
 
-real_t FrPlVert::computeAngle()
+real_t front::Vert::computeAngle()
 {
     auto adj_edges = findAdjEdges();
     real_t normals_cos = vec3::dot(std::get<0>(adj_edges)->normal, std::get<1>(adj_edges)->normal);
@@ -69,7 +66,7 @@ real_t FrPlVert::computeAngle()
 
 
 
-pair_ee FrPlVert::findAdjEdges() const
+pair_ee front::Vert::findAdjEdges() const
 {
     pair_ee res(nullptr, nullptr);
     int i = 0;
@@ -86,7 +83,7 @@ pair_ee FrPlVert::findAdjEdges() const
 }
 
 
-pair_vv FrPlVert::oppVerts() const
+pair_vv front::Vert::oppVerts() const
 {
     auto adj_edges = findAdjEdges();
     return pair_vv(adj_edges.first->edge->findNot(vert),
@@ -96,5 +93,5 @@ pair_vv FrPlVert::oppVerts() const
 
 
 
-FrPlVert::Vert(const shell::Face* relatedShellFace, const pmg::Vert* vert)
+front::Vert::Vert(const shell::Face* relatedShellFace, const pmg::Vert* vert)
     : vert(const_cast<pmg::Vert*>(vert)), m_relatedShellFace(const_cast<shell::Face*>(relatedShellFace)) {}

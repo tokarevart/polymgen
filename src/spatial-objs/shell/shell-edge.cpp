@@ -9,8 +9,6 @@
 using namespace pmg;
 
 
-
-
 const std::vector<Edge*>&shell::Edge::innerEdges() const
 {
     return m_innerEdges;

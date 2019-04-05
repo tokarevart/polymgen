@@ -11,22 +11,22 @@
 #define K_ALPHA static_cast<real_t>(4.0)
 
 
-using FrSuFace = pmg::front::Face;
+using namespace pmg;
 using FrSuEdge = pmg::front::Edge;
 using pair_vv = std::pair<pmg::Vert*, pmg::Vert*>;
-using pair_ff = std::pair<FrSuFace*, FrSuFace*>;
+using pair_ff = std::pair<front::Face*, front::Face*>;
 
 
 
 
-void FrSuEdge::refreshAngleData()
+void front::Edge::refreshAngleData()
 {
     m_needAngleProcessing      = true;
     m_needComplexityProcessing = true;
 }
 
 
-real_t FrSuEdge::complexity()
+real_t front::Edge::complexity()
 {
     if (!m_needComplexityProcessing)
         return m_complexity;
@@ -35,7 +35,7 @@ real_t FrSuEdge::complexity()
 }
 
 
-real_t FrSuEdge::angle()
+real_t front::Edge::angle()
 {
     if (!m_needAngleProcessing)
         return m_angle;
@@ -44,14 +44,14 @@ real_t FrSuEdge::angle()
 }
 
 
-real_t FrSuEdge::computeComplexity()
+real_t front::Edge::computeComplexity()
 {
     m_needComplexityProcessing = false;
     return m_complexity = m_relatedPolyhedron->preferredLength() / edge->magnitude() + K_ALPHA * PI / angle();
 }
 
 
-real_t FrSuEdge::computeAngle()
+real_t front::Edge::computeAngle()
 {
     auto adj_faces = adjFFaces();
     real_t normals_cos = vec3::dot(std::get<0>(adj_faces)->normal, std::get<1>(adj_faces)->normal);
@@ -67,7 +67,7 @@ real_t FrSuEdge::computeAngle()
 
 
 
-pair_vv FrSuEdge::oppVerts()
+pair_vv front::Edge::oppVerts()
 {
     auto adj_faces = adjFFaces();
 
@@ -76,10 +76,10 @@ pair_vv FrSuEdge::oppVerts()
 }
 
 
-FrSuEdge* FrSuEdge::findOppEdge()
+FrSuEdge* front::Edge::findOppEdge()
 {
     auto opp_verts = oppVerts();
-    std::vector<FrSuEdge*> opp_fedges;
+    std::vector<front::Edge*> opp_fedges;
     for (auto& f_edge : m_relatedPolyhedron->frontEdges())
     {
         if (((f_edge->edge->verts[0] == std::get<0>(opp_verts) &&
@@ -103,7 +103,7 @@ FrSuEdge* FrSuEdge::findOppEdge()
     vec3 main_vert_proj = spatalgs::project(main_vert_pos, opp_verts.first->pos(), opp_verts.second->pos());
     vec3 main_vec = main_vert_pos - main_vert_proj;
 
-    FrSuEdge* max_cos_fedge = nullptr;
+    front::Edge* max_cos_fedge = nullptr;
     real_t max_cos = -1.0;
     for (size_t i = 0; i < adj_ffaces_vec.size(); i++)
     {
@@ -129,7 +129,7 @@ FrSuEdge* FrSuEdge::findOppEdge()
 
 
 
-pair_ff FrSuEdge::adjFFaces()
+pair_ff front::Edge::adjFFaces()
 {
     if (!isAdjFacesFull())
         fillAdjFFaces();
@@ -140,12 +140,12 @@ pair_ff FrSuEdge::adjFFaces()
 
 
 
-bool FrSuEdge::addAdjFFace(const FrSuFace* fFace)
+bool front::Edge::addAdjFFace(const front::Face* fFace)
 {
     if (!std::get<0>(m_adjFFaces))
-        std::get<0>(m_adjFFaces)  = const_cast<FrSuFace*>(fFace);
+        std::get<0>(m_adjFFaces)  = const_cast<front::Face*>(fFace);
     else if (!std::get<1>(m_adjFFaces))
-        std::get<1>(m_adjFFaces) = const_cast<FrSuFace*>(fFace);
+        std::get<1>(m_adjFFaces) = const_cast<front::Face*>(fFace);
     else
         return false;
 
@@ -153,11 +153,11 @@ bool FrSuEdge::addAdjFFace(const FrSuFace* fFace)
 }
 
 
-bool FrSuEdge::removeAdjFFace(const FrSuFace* fFace)
+bool front::Edge::removeAdjFFace(const front::Face* fFace)
 {
-    if (std::get<0>(m_adjFFaces) == const_cast<FrSuFace*>(fFace))
+    if (std::get<0>(m_adjFFaces) == const_cast<front::Face*>(fFace))
         std::get<0>(m_adjFFaces) = nullptr;
-    else if (std::get<1>(m_adjFFaces) == const_cast<FrSuFace*>(fFace))
+    else if (std::get<1>(m_adjFFaces) == const_cast<front::Face*>(fFace))
         std::get<1>(m_adjFFaces) = nullptr;
     else
         return false;
@@ -166,35 +166,35 @@ bool FrSuEdge::removeAdjFFace(const FrSuFace* fFace)
 }
 
 
-bool FrSuEdge::adjFFacesContains(const FrSuFace* fFace) const
+bool front::Edge::adjFFacesContains(const front::Face* fFace) const
 {
-    return std::get<0>(m_adjFFaces) == const_cast<FrSuFace*>(fFace) ||
-           std::get<1>(m_adjFFaces) == const_cast<FrSuFace*>(fFace);
+    return std::get<0>(m_adjFFaces) == const_cast<front::Face*>(fFace) ||
+           std::get<1>(m_adjFFaces) == const_cast<front::Face*>(fFace);
 }
 
 
-void FrSuEdge::fillAdjFFaces(const FrSuFace* fFace0, const FrSuFace* fFace1)
+void front::Edge::fillAdjFFaces(const front::Face* fFace0, const front::Face* fFace1)
 {
-    m_adjFFaces.first  = const_cast<FrSuFace*>(fFace0);
-    m_adjFFaces.second = const_cast<FrSuFace*>(fFace1);
+    m_adjFFaces.first  = const_cast<front::Face*>(fFace0);
+    m_adjFFaces.second = const_cast<front::Face*>(fFace1);
 }
 
 
 
 
-FrSuEdge::Edge(const Polyhedron* relatedPolyhedron, const pmg::Edge* edge)
+front::Edge::Edge(const Polyhedron* relatedPolyhedron, const pmg::Edge* edge)
     : edge(const_cast<pmg::Edge*>(edge)), m_relatedPolyhedron(const_cast<Polyhedron*>(relatedPolyhedron)) {}
 
 
 
 
-bool FrSuEdge::isAdjFacesFull()
+bool front::Edge::isAdjFacesFull()
 {
     return std::get<0>(m_adjFFaces) && std::get<1>(m_adjFFaces);
 }
 
 
-pair_ff FrSuEdge::fillAdjFFaces()
+pair_ff front::Edge::fillAdjFFaces()
 {
     for (auto& fface : m_relatedPolyhedron->frontFaces())
     {

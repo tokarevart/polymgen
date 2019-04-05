@@ -5,13 +5,12 @@
 #include <stdexcept>
 
 
-using FrSuFace = pmg::front::Face;
-using FrSuEdge = pmg::front::Edge;
+using namespace pmg;
 
 
 
 
-vec3 FrSuFace::computeNormal()
+vec3 front::Face::computeNormal()
 {
     vec3 center = computeCenter();
     vec3 third_pos = face->findVertNot(face->edges[0])->pos();
@@ -44,13 +43,13 @@ vec3 FrSuFace::computeNormal()
 
 
 
-vec3 FrSuFace::computeCenter()
+vec3 front::Face::computeCenter()
 {
     return face->computeCenter();
 }
 
 
-real_t FrSuFace::computeQuality()
+real_t front::Face::computeQuality()
 {
     return face->computeQuality();
 }
@@ -58,7 +57,7 @@ real_t FrSuFace::computeQuality()
 
 
 
-FrSuEdge* FrSuFace::findFEdge(const pmg::Edge* edge) const
+front::Edge* front::Face::findFEdge(const pmg::Edge* edge) const
 {
     for (auto& fedge : fEdges)
         if (fedge->edge == edge)
@@ -68,7 +67,7 @@ FrSuEdge* FrSuFace::findFEdge(const pmg::Edge* edge) const
 }
 
 
-FrSuEdge* FrSuFace::findFEdge(const pmg::Vert* v0, const pmg::Vert* v1) const
+front::Edge* front::Face::findFEdge(const pmg::Vert* v0, const pmg::Vert* v1) const
 {
     for (auto& fedge : fEdges)
         if ((fedge->edge->verts[0] == v0 && fedge->edge->verts[1] == v1) ||
@@ -79,7 +78,7 @@ FrSuEdge* FrSuFace::findFEdge(const pmg::Vert* v0, const pmg::Vert* v1) const
 }
 
 
-FrSuEdge* FrSuFace::findFEdgeNot(const pmg::Vert* vert) const
+front::Edge* front::Face::findFEdgeNot(const pmg::Vert* vert) const
 {
     for (auto& fedge : fEdges)
         if (!fedge->edge->contains(vert))
@@ -91,20 +90,20 @@ FrSuEdge* FrSuFace::findFEdgeNot(const pmg::Vert* vert) const
 
 
 
-void FrSuFace::addFEdge(const FrSuEdge* fEdge)
+void front::Face::addFEdge(const front::Edge* fEdge)
 {
     if (!fEdges[0])
-        fEdges[0] = const_cast<FrSuEdge*>(fEdge);
+        fEdges[0] = const_cast<front::Edge*>(fEdge);
     else if (!fEdges[1])
-        fEdges[1] = const_cast<FrSuEdge*>(fEdge);
+        fEdges[1] = const_cast<front::Edge*>(fEdge);
     else if (!fEdges[2])
-        fEdges[2] = const_cast<FrSuEdge*>(fEdge);
+        fEdges[2] = const_cast<front::Edge*>(fEdge);
     else
         throw std::logic_error("pmg::front::Face::addFEdge can't add fEdge when fEdges already full.");
 }
 
 
-void FrSuFace::removeFEdge(const FrSuEdge* fEdge)
+void front::Face::removeFEdge(const front::Edge* fEdge)
 {
     for (auto& fedge : fEdges)
     {
@@ -119,7 +118,7 @@ void FrSuFace::removeFEdge(const FrSuEdge* fEdge)
 }
 
 
-bool FrSuFace::isFEdgesFull() const
+bool front::Face::isFEdgesFull() const
 {
     if (fEdges[0] && fEdges[1] && fEdges[2])
         return true;
@@ -130,7 +129,7 @@ bool FrSuFace::isFEdgesFull() const
 
 
 
-bool FrSuFace::contains(const FrSuEdge* fEdge) const
+bool front::Face::contains(const front::Edge* fEdge) const
 {
     if (fEdges[0] == fEdge ||
         fEdges[1] == fEdge ||
@@ -143,5 +142,5 @@ bool FrSuFace::contains(const FrSuEdge* fEdge) const
 
 
 
-FrSuFace::Face(const Polyhedron* relatedPolyhedron, const pmg::Face* face)
+front::Face::Face(const Polyhedron* relatedPolyhedron, const pmg::Face* face)
     : face(const_cast<pmg::Face*>(face)), m_relatedPolyhedron(const_cast<Polyhedron*>(relatedPolyhedron)) {}

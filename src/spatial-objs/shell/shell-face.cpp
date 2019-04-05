@@ -44,8 +44,6 @@ real_t shell::Face::preferredLength() const
 }
 
 
-
-
 const std::list<pmg::Face*>& shell::Face::innerFaces() const
 {
     return m_innerFaces;

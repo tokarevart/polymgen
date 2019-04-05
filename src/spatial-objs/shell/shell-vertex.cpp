@@ -6,8 +6,6 @@
 using namespace pmg;
 
 
-
-
 vec3 shell::Vert::operator-(const shell::Vert& other) const
 {
     return *m_pos - *other.m_pos;
