@@ -329,9 +329,9 @@ bool Polyhedron::edgeIntersectionCheck(front::Edge* fEdge) const
     for (auto& f_edge : m_frontEdges)
     {
         Vert* vert_buf;
-        if (bool contains[2] { f_edge->edge->contains(std::get<0>(opp_verts)),
-                               f_edge->edge->contains(std::get<1>(opp_verts)) };
-            contains[0])
+        bool contains[2] { f_edge->edge->contains(std::get<0>(opp_verts)),
+                           f_edge->edge->contains(std::get<1>(opp_verts)) };
+        if (contains[0])
         {
             if (f_edge->edge->verts[0] == std::get<0>(opp_verts))
                 vert_buf = f_edge->edge->verts[1];
