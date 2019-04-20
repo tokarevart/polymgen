@@ -31,16 +31,17 @@ class PolyhedralSet
 public:
     struct Log
     {
-        real_t minQuality;
-        real_t avQuality;
-        real_t minMeshAbsGrad;
-        real_t avMeshAbsGrad;
-        size_t nPolyhs;
-        size_t nElems;
-        real_t prefLen;
-        double shellTrTime;
-        double volumeExhTime;
-        double meshFileWritingTime;
+        real_t minQuality     = static_cast<real_t>(-1.0);
+        real_t avQuality      = static_cast<real_t>(-1.0);
+        real_t minMeshAbsGrad = static_cast<real_t>(-1.0);
+        real_t avMeshAbsGrad  = static_cast<real_t>(-1.0);
+        size_t nPolyhs        = 0;
+        size_t nElems         = 0;
+        real_t prefLen        = static_cast<real_t>(-1.0);
+        double shellTrTime         = -1.0;
+        double volumeExhTime       = -1.0;
+        double optimizationTime    = -1.0;
+        double meshFileWritingTime = -1.0;
 
         void write( std::ostream& stream ) const;
     };

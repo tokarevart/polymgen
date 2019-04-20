@@ -16,25 +16,27 @@ int main()
     std::cout << "Generating PolyShell...";
     size_t n = 4;
     psg::PolyShell shell = psg::generateCuboids(n, n, n);
-    std::cout << " done.\n";
+    std::cout << std::string(7, ' ') + "done." << std::endl;
 
     std::cout << "Initializing PolyhedralSet...";
     pmg::PolyhedralSet polyhset(shell);
-    std::cout << " done.\n";
+    std::cout << " done." << std::endl;
     shell.clear();
 
     std::cout << "Generating mesh...";
     polyhset.generateMesh(preferredLength);
     polyhset.optimizeMesh();
-    std::cout << " done.\n";
+    std::cout << std::string(12, ' ') + "done." << std::endl;
 
     std::cout << "Outputting data to file...";
     polyhset.output(pmg::PolyhedralSet::FileType::LsDynaKeyword);
     polyhset.output(pmg::PolyhedralSet::FileType::WavefrontObj);
-    std::cout << " done.\n";
+    std::cout << std::string(4, ' ') + "done." << std::endl << std::endl;
 
     std::ofstream log_file(polyhset.generateLogFileName());
     polyhset.log().write(log_file);
+    std::cout << "Log:" << std::endl;
+    polyhset.log().write(std::cout);
     log_file.close();
 
     return 0;

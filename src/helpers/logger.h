@@ -24,7 +24,6 @@ public:
     static Logger::Iomanip<IomanipType::Width>     setw        ( std::streamsize new_width );
     static Logger::Iomanip<IomanipType::Precision> setprecision( std::streamsize new_precision );
 
-    std::string log();
     void open( std::ostream& stream );
     void flush();
     void clear();
@@ -69,7 +68,6 @@ private:
     };
 
     std::ostream* m_stream = nullptr;
-    std::string m_log;
 
     std::vector<std::string> m_descriptions;
     std::vector<std::string> m_values;

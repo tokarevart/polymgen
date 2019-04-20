@@ -689,17 +689,34 @@ PolyhedralSet::~PolyhedralSet()
 
 
 
+
 void PolyhedralSet::Log::write(std::ostream& stream) const
 {
-    Logger(stream) << std::fixed
-        << "Minimum quality"          << minQuality << ""
-        << "Average quality"          << avQuality  << ""
-        << "Minimum absMeshGrad"      << -1 << ""
-        << "Average absMeshGrad"      << -1 << ""
-        << "Polyhedrons number"       << nPolyhs     << ""
-        << "Elements number"          << nElems      << ""
-        << "Preferred edge length"    << prefLen     << ""
-        << "Shell triangulation time" << shellTrTime << "s"
-        << "Volume exhaustion time"   << volumeExhTime  << "s"
-        << "Mesh file writing time"   << meshFileWritingTime << "s";
+    Logger logger(stream);
+    logger << std::fixed;
+    auto logWriteIfPositive = [&logger](std::string_view first, auto second, std::string_view third)
+    {
+        if constexpr (std::is_same<decltype(second), size_t>())
+        {
+             logger << first.data() << second << third.data();
+        }
+        else
+        {
+            if (second >= 0.0)
+                 logger << first.data() << second << third.data();
+            else logger << first.data() << "-" << "";
+        }
+    };
+
+    logWriteIfPositive("Minimum quality",          minQuality,     "");
+    logWriteIfPositive("Average quality",          avQuality,      "");
+    logWriteIfPositive("Minimum absMeshGrad",      minMeshAbsGrad, "");
+    logWriteIfPositive("Average absMeshGrad",      avMeshAbsGrad,  "");
+    logWriteIfPositive("Polyhedrons number",       nPolyhs,        "");
+    logWriteIfPositive("Elements number",          nElems,         "");
+    logWriteIfPositive("Preferred edge length",    prefLen,        "");
+    logWriteIfPositive("Shell triangulation time", shellTrTime,         "s");
+    logWriteIfPositive("Volume exhaustion time",   volumeExhTime,       "s");
+    logWriteIfPositive("Optimization time",        optimizationTime,    "s");
+    logWriteIfPositive("Mesh file writing time",   meshFileWritingTime, "s");
 }

@@ -22,14 +22,11 @@ void Logger::flush()
 
     size_t extended_line_description_size = max_descriptions_size + 6;
 
-    m_log = "";
     for (size_t i = 0; i < m_descriptions.size(); i++)
     {
-        m_log +=  ">>  " + m_descriptions[i] + std::string(extended_line_description_size - m_descriptions[i].size(), '.')
-                + ">>  " + m_values[i] + ' ' + m_endings[i] + '\n';
+        *m_stream <<  ">>  " + m_descriptions[i] + std::string(extended_line_description_size - m_descriptions[i].size(), '.')
+                    + ">>  " + m_values[i] + ' ' + m_endings[i] + '\n';
     }
-
-    *m_stream << m_log;
 }
 
 
@@ -46,13 +43,6 @@ Logger::Iomanip<Logger::IomanipType::Precision> Logger::setprecision(std::stream
 }
 
 
-
-
-std::string Logger::log()
-{
-    flush();
-    return m_log;
-}
 
 
 void Logger::open(std::ostream& stream)
