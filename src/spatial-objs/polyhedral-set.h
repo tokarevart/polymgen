@@ -28,9 +28,8 @@ namespace pmg {
 class PolyhedralSet
 {
 public:
-    struct LogData
+    struct Log
     {
-        std::string logFileName = "_AUTO_";
         real_t minQuality;
         real_t avQuality;
         real_t minAbsMeshGrad;
@@ -38,9 +37,11 @@ public:
         size_t nPolyhs;
         size_t nElems;
         real_t prefLen;
-        real_t shellTrTime;
-        real_t volExhTime;
-        real_t meshFileWritingTime;
+        double shellTrTime;
+        double volumeExhTime;
+        double meshFileWritingTime;
+
+        void write( std::ostream& stream ) const;
     };
 
     enum class FileType
@@ -49,14 +50,17 @@ public:
         LsDynaKeyword
     };
 
-    void generateMesh( real_t preferredLength, std::string_view logFileName = "_AUTO_" );
+    void generateMesh( real_t preferredLength );
     void optimizeMesh( real_t minQuality );
     const PolyMesh* structurizeMesh();
     const PolyMesh* getLastMesh();
 
+    Log log() const;
+    std::string generateLogFileName() const;
+
     void input( std::string_view polyStructFileName );
     void input( const psg::PolyShell& polyStruct );
-    void output( FileType filetype = FileType::WavefrontObj, std::string_view filename = "_AUTO_", unsigned PolyhedralSetId = 1u ) const;
+    void output( FileType filetype = FileType::WavefrontObj, std::string_view filename = "_AUTO_", unsigned PolyhedralSetId = 1u );
 
     PolyhedralSet();
     PolyhedralSet( std::string_view polyStructFileName );
@@ -65,11 +69,10 @@ public:
 
 
 private:
-    LogData m_logData;
+    Log m_log;
 
     real_t m_prefLen;
     PolyMesh* m_lastMesh = nullptr;
-    std::unique_ptr<Logger> m_lastLogger;
 
     std::vector<Polyhedron*> m_polyhedrons;
 
@@ -87,7 +90,6 @@ private:
     void outputLSDynaKeyword_ELEMENT_SOLID( std::ofstream& file, unsigned PolyhedralSetId = 1u ) const;
     void outputLSDynaKeyword( const std::string& filename, unsigned PolyhedralSetId = 1u ) const;
 
-    std::string generateLogFileName( std::string_view logFileName ) const;
     std::string generateOutputFilename( FileType filetype, std::string_view filename ) const;
 };
 

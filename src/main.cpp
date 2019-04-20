@@ -32,5 +32,9 @@ int main()
     polyhset.output(pmg::PolyhedralSet::FileType::WavefrontObj);
     std::cout << " done.\n";
 
+    std::ofstream log_file(polyhset.generateLogFileName());
+    polyhset.log().write(log_file);
+    log_file.close();
+
     return 0;
 }

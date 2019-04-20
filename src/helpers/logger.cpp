@@ -22,11 +22,14 @@ void Logger::flush()
 
     size_t extended_line_description_size = max_descriptions_size + 6;
 
+    m_log = "";
     for (size_t i = 0; i < m_descriptions.size(); i++)
     {
-        m_file << ">>  " + m_descriptions[i] + std::string(extended_line_description_size - m_descriptions[i].size(), '.')
-            + ">>  " + m_values[i] + ' ' + m_endings[i] << '\n';
+        m_log +=  ">>  " + m_descriptions[i] + std::string(extended_line_description_size - m_descriptions[i].size(), '.')
+                + ">>  " + m_values[i] + ' ' + m_endings[i] + '\n';
     }
+
+    *m_stream << m_log;
 }
 
 
@@ -45,23 +48,16 @@ Logger::Iomanip<Logger::IomanipType::Precision> Logger::setprecision(std::stream
 
 
 
-bool Logger::isOpen() const
-{
-    return m_file.is_open();
-}
-
-
-void Logger::open(const std::string& filename, std::ios::openmode mode)
-{
-    m_file.open(filename, mode);
-}
-
-
-void Logger::close()
+std::string Logger::log()
 {
     flush();
-    clear();
-    m_file.close();
+    return m_log;
+}
+
+
+void Logger::open(std::ostream& stream)
+{
+    m_stream = &stream;
 }
 
 
@@ -355,14 +351,14 @@ Logger::Logger()
 }
 
 
-Logger::Logger(const std::string& filename, std::ios::openmode mode)
+Logger::Logger(std::ostream& stream)
 {
     m_bufiss.reset(new std::stringstream(std::ios::in | std::ios::out));
-    m_file.open(filename, mode);
+    open(stream);
 }
 
 
 Logger::~Logger()
 {
-    flush();
+    if (m_stream) flush();
 }

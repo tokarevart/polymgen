@@ -3,7 +3,7 @@
 
 #pragma once
 #include <string>
-#include <fstream>
+#include <iostream>
 #include <vector>
 #include <sstream>
 #include <memory>
@@ -24,9 +24,9 @@ public:
     static Logger::Iomanip<IomanipType::Width>     setw        ( std::streamsize new_width );
     static Logger::Iomanip<IomanipType::Precision> setprecision( std::streamsize new_precision );
 
-    bool isOpen() const;
-    void open( const std::string& filename, std::ios::openmode mode = std::ios::out );
-    void close();
+    std::string log();
+    void open( std::ostream& stream );
+    void flush();
     void clear();
 
     std::streamsize width() const;
@@ -57,7 +57,7 @@ public:
     Logger& operator<<( Logger::Iomanip<IomT> ioManip );
 
     Logger();
-    Logger( const std::string& filename, std::ios::openmode mode = std::ios::out );
+    Logger( std::ostream& stream );
     ~Logger();
 
 
@@ -68,7 +68,8 @@ private:
         std::streamsize param;
     };
 
-    std::ofstream m_file;
+    std::ostream* m_stream = nullptr;
+    std::string m_log;
 
     std::vector<std::string> m_descriptions;
     std::vector<std::string> m_values;
@@ -76,8 +77,6 @@ private:
 
     std::unique_ptr<std::stringstream> m_bufiss;
     int m_turnFlag = 0;
-
-    void flush();
 
     void istreamTypeOperatorHelper();
 };

@@ -253,11 +253,8 @@ void PolyhedralSet::outputLSDynaKeyword(const std::string& filename, unsigned Po
 
 
 
-std::string PolyhedralSet::generateLogFileName(std::string_view logFileName) const
+std::string PolyhedralSet::generateLogFileName() const
 {
-    if (logFileName != "_AUTO_")
-        return logFileName.data();
-
     std::stringstream ss;
     ss << "pmg_log_" << m_polyhedrons.size() << "_nph_";
     size_t av_nfe = 0;
@@ -270,7 +267,7 @@ std::string PolyhedralSet::generateLogFileName(std::string_view logFileName) con
 }
 
 
-void PolyhedralSet::generateMesh(real_t preferredLength, std::string_view logFileName)
+void PolyhedralSet::generateMesh(real_t preferredLength)
 {
     m_prefLen = preferredLength;
 
@@ -315,26 +312,15 @@ void PolyhedralSet::generateMesh(real_t preferredLength, std::string_view logFil
     av_q /= m_polyhedrons.size();
     double volume_exh_elapsed = static_cast<double>(std::clock() - volume_exh_start) / CLOCKS_PER_SEC;
 
-    m_logData.minQuality  = min_q;
-    m_logData.avQuality   = av_q;
-    m_logData.nPolyhs     = m_polyhedrons.size();
-    m_logData.nElems      = n_elems;
-    m_logData.prefLen     = m_prefLen;
-    m_logData.shellTrTime = shell_triang_elapsed;
-    m_logData.volExhTime  = volume_exh_elapsed;
-
-    m_logData.logFileName = logFileName;
-    m_lastLogger.reset(new Logger(generateLogFileName(m_logData.logFileName)));
-    *m_lastLogger << std::fixed
-        << "Minimum quality"          << m_logData.minQuality << ""
-        << "Average quality"          << m_logData.avQuality  << ""
-        << "Minimum absMeshGrad"      << -1 << ""
-        << "Average absMeshGrad"      << -1 << ""
-        << "Polyhedrons number"       << m_logData.nPolyhs     << ""
-        << "Elements number"          << m_logData.nElems      << ""
-        << "Preferred edge length"    << m_logData.prefLen     << ""
-        << "Shell triangulation time" << m_logData.shellTrTime << "s"
-        << "Volume exhaustion time"   << m_logData.volExhTime  << "s";
+    m_log.minQuality = min_q;
+    m_log.avQuality  = av_q;
+    m_log.minAbsMeshGrad;
+    m_log.avAbsMeshGrad;
+    m_log.nPolyhs = m_polyhedrons.size();
+    m_log.nElems  = n_elems;
+    m_log.prefLen = m_prefLen;
+    m_log.shellTrTime   = shell_triang_elapsed;
+    m_log.volumeExhTime = volume_exh_elapsed;
 }
 
 
@@ -448,6 +434,14 @@ const PolyMesh* PolyhedralSet::structurizeMesh()
 const PolyMesh* PolyhedralSet::getLastMesh()
 {
     return m_lastMesh;
+}
+
+
+
+
+PolyhedralSet::Log PolyhedralSet::log() const
+{
+    return m_log;
 }
 
 
@@ -628,7 +622,7 @@ std::string PolyhedralSet::generateOutputFilename(FileType filetype, std::string
 }
 
 
-void PolyhedralSet::output(FileType filetype, std::string_view filename, unsigned PolyhedralSetId) const
+void PolyhedralSet::output(FileType filetype, std::string_view filename, unsigned PolyhedralSetId)
 {
     std::clock_t start = std::clock();
     switch (filetype)
@@ -643,24 +637,7 @@ void PolyhedralSet::output(FileType filetype, std::string_view filename, unsigne
     }
     double elapsed = static_cast<double>(std::clock() - start) / CLOCKS_PER_SEC;
 
-    if (m_lastLogger && m_lastLogger->isOpen())
-    {
-        m_lastLogger->close();
-        m_lastLogger->open(generateLogFileName(m_logData.logFileName));
-        *m_lastLogger << std::fixed
-            << "Minimum quality"          << m_logData.minQuality << ""
-            << "Average quality"          << m_logData.avQuality  << ""
-            << "Minimum absMeshGrad"      << -1 << ""
-            << "Average absMeshGrad"      << -1 << ""
-            << "Polyhedrons number"       << m_logData.nPolyhs     << ""
-            << "Elements number"          << m_logData.nElems      << ""
-            << "Preferred edge length"    << m_logData.prefLen     << ""
-            << "Shell triangulation time" << m_logData.shellTrTime << "s"
-            << "Volume exhaustion time"   << m_logData.volExhTime  << "s"
-            << "Mesh optimization time"   << -1      << "s"
-            << "Mesh file writing time"   << elapsed << "s";
-        m_lastLogger->close();
-    }
+    m_log.meshFileWritingTime = elapsed;
 }
 
 
@@ -692,4 +669,21 @@ PolyhedralSet::~PolyhedralSet()
         delete edge;
     for (auto& vert : m_shellVerts)
         delete vert;
+}
+
+
+
+void PolyhedralSet::Log::write(std::ostream& stream) const
+{
+    Logger(stream) << std::fixed
+        << "Minimum quality"          << minQuality << ""
+        << "Average quality"          << avQuality  << ""
+        << "Minimum absMeshGrad"      << -1 << ""
+        << "Average absMeshGrad"      << -1 << ""
+        << "Polyhedrons number"       << nPolyhs     << ""
+        << "Elements number"          << nElems      << ""
+        << "Preferred edge length"    << prefLen     << ""
+        << "Shell triangulation time" << shellTrTime << "s"
+        << "Volume exhaustion time"   << volumeExhTime  << "s"
+        << "Mesh file writing time"   << meshFileWritingTime << "s";
 }
