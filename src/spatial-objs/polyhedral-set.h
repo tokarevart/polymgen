@@ -28,6 +28,21 @@ namespace pmg {
 class PolyhedralSet
 {
 public:
+    struct LogData
+    {
+        std::string logFileName = "_AUTO_";
+        real_t minQuality;
+        real_t avQuality;
+        real_t minAbsMeshGrad;
+        real_t avAbsMeshGrad;
+        size_t nPolyhs;
+        size_t nElems;
+        real_t prefLen;
+        real_t shellTrTime;
+        real_t volExhTime;
+        real_t meshFileWritingTime;
+    };
+
     enum class FileType
     {
         WavefrontObj,
@@ -35,6 +50,7 @@ public:
     };
 
     void generateMesh( real_t preferredLength, std::string_view logFileName = "_AUTO_" );
+    void optimizeMesh( real_t minQuality );
     const PolyMesh* structurizeMesh();
     const PolyMesh* getLastMesh();
 
@@ -49,8 +65,9 @@ public:
 
 
 private:
-    real_t m_preferredLength;
+    LogData m_logData;
 
+    real_t m_prefLen;
     PolyMesh* m_lastMesh = nullptr;
     std::unique_ptr<Logger> m_lastLogger;
 

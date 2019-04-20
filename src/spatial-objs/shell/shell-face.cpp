@@ -8,7 +8,7 @@
 
 using namespace pmg;
 namespace sfront = shell::front;
-using pair_dd = std::pair<real_t, real_t>;
+using pair_rr = std::pair<real_t, real_t>;
 using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
 using pair_ee = std::pair<pmg::Edge*, pmg::Edge*>;
 
@@ -40,7 +40,7 @@ constexpr real_t degToRad(T value)
 
 real_t shell::Face::preferredLength() const
 {
-    return m_preferredLength;
+    return m_prefLen;
 }
 
 
@@ -99,7 +99,7 @@ shell::Edge* shell::Face::findShellEdgeContaining(const pmg::Edge* edge) const
 
 void shell::Face::triangulate(real_t preferredLen)
 {
-    m_preferredLength = preferredLen;
+    m_prefLen = preferredLen;
     initializeFront();
     computeFrontNormals();
     processAngles();
@@ -109,7 +109,7 @@ void shell::Face::triangulate(real_t preferredLen)
     smoothMesh(20);
     for (int i = 0; i < 3; i++)
     {
-        delaunayPostproc();
+        optimizeMesh();
         smoothMesh(20);
     }
 }
@@ -224,7 +224,7 @@ bool shell::Face::doesSegmentIntersectsWithFront(const vec3& p0, const vec3& p1)
     for (auto& fedge : m_frontEdges)
         if (spatalgs::segmentsDistance(
                 fedge->edge->verts[0]->pos(), fedge->edge->verts[1]->pos(),
-                p0, p1) < EDGES_INTERS_DIST_COEF * m_preferredLength)
+                p0, p1) < EDGES_INTERS_DIST_COEF * m_prefLen)
             return true;
 
     return false;
@@ -289,7 +289,7 @@ bool shell::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, vec3& out_pos, 
     vec3 e = (sec_vert->pos() - static_cast<real_t>(2.0) * main_vert->pos() + vn->pos()).normalize();
 
     real_t av_magn = static_cast<real_t>(0.5) * (fEdge->edge->magnitude() + en->edge->magnitude());
-    real_t raw_deform = K_D * (m_preferredLength - av_magn);
+    real_t raw_deform = K_D * (m_prefLen - av_magn);
     real_t deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
     real_t magn_d = av_magn + deform;
     vec3 new_pos = main_vert->pos() + magn_d * e;
@@ -310,12 +310,12 @@ bool shell::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, vec3& out_pos, 
 bool shell::Face::tryComputeNewVertPosType0(sfront::Edge* fEdge, vec3& out_pos)
 {
     real_t magn = fEdge->edge->magnitude();
-    real_t raw_deform = K_D * (m_preferredLength - magn);
+    real_t raw_deform = K_D * (m_prefLen - magn);
     real_t deform = raw_deform < magn * K_MAXD ? raw_deform : magn * K_MAXD;
     real_t magn_d = magn + deform;
     vec3 new_pos = fEdge->computeCenter() + static_cast<real_t>(0.5) * std::sqrt(static_cast<real_t>(4.0) * magn_d * magn_d - magn * magn) * fEdge->normal;
 
-//    vec3 new_pos = fEdge->computeCenter() + fEdge->normal * m_preferredLength * SQRT3_2;
+//    vec3 new_pos = fEdge->computeCenter() + fEdge->normal * m_prefLen * SQRT3_2;
 
     vec3 v0_pos = fEdge->edge->verts[0]->pos();
     vec3 v1_pos = fEdge->edge->verts[1]->pos();
@@ -355,7 +355,7 @@ bool shell::Face::tryComputeNewVertPos(sfront::Edge* fEdge, vec3& out_pos)
 
 
 
-pair_dd shell::Face::computeMinMaxEdgesLengths(const vec3& p0, const vec3& p1, const vec3& p2)
+pair_rr shell::Face::computeMinMaxEdgesLengths(const vec3& p0, const vec3& p1, const vec3& p2)
 {
     auto min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2);
     min_max.first  = std::sqrt(min_max.first);
@@ -364,7 +364,7 @@ pair_dd shell::Face::computeMinMaxEdgesLengths(const vec3& p0, const vec3& p1, c
 }
 
 
-pair_dd shell::Face::computeMinMaxEdgesSqrLengths(const vec3& p0, const vec3& p1, const vec3& p2)
+pair_rr shell::Face::computeMinMaxEdgesSqrLengths(const vec3& p0, const vec3& p1, const vec3& p2)
 {
     real_t sqr_magns[3];
     sqr_magns[0] = (p1 - p0).sqrMagnitude();
@@ -735,7 +735,7 @@ bool shell::Face::flipIfNeeded(pmg::Edge* edge)
 }
 
 
-void shell::Face::delaunayPostproc()
+void shell::Face::optimizeMesh()
 {
     for (auto& edge : m_innerEdges)
         flipIfNeeded(edge);

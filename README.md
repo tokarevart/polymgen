@@ -6,12 +6,12 @@ It is created with the purpose of use in solving boundary-value problems for pol
 // Number of cubes along the corresponding axis.
 size_t nX = 2, nY = 4, nZ = 8;
 psg::PolyShell shell = psg::generateCuboids(nX, nY, nZ);
-pmg::PolyhedralSet polyhedr(shell);
+pmg::PolyhedralSet polyhset(shell);
 
 // Preferred tetrahedron edge length.
 double preferredLength = 0.45;
-polyhedr.generateMesh(preferredLength);
-polyhedr.output(pmg::PolyhedralSet::FileType::WavefrontObj); // Or ...FileType::LsDynaKeyword
+polyhset.generateMesh(preferredLength);
+polyhset.output(pmg::PolyhedralSet::FileType::WavefrontObj); // Or ...FileType::LsDynaKeyword
 ```
 ![Cube mesh](https://github.com/Tokarevart/polymgen/blob/master/images/polymesh_3.png)
 ![Cube mesh](https://github.com/Tokarevart/polymgen/blob/master/images/polymesh_2.png)

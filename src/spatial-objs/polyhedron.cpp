@@ -4,12 +4,10 @@
 #include "polyhedron.h"
 #include <algorithm>
 #include <iostream>
-#include <float.h>
 #include "helpers/spatial-algs/spatial-algs.h"
 
 
 using namespace pmg;
-
 using pair_ff = std::pair<front::Face*, front::Face*>;
 
 
@@ -338,7 +336,7 @@ bool Polyhedron::edgeIntersectionCheck(front::Edge* fEdge) const
             else
                 vert_buf = f_edge->edge->verts[0];
 
-            if (spatalgs::distancePointToSegment(vert_buf->pos(), opp_verts_poses[0], opp_verts_poses[1]) < EDGES_INTERS_DIST_COEF * m_preferredLength)
+            if (spatalgs::distancePointToSegment(vert_buf->pos(), opp_verts_poses[0], opp_verts_poses[1]) < EDGES_INTERS_DIST_COEF * m_prefLen)
                 return true;
         }
         else if (contains[1])
@@ -348,14 +346,14 @@ bool Polyhedron::edgeIntersectionCheck(front::Edge* fEdge) const
             else
                 vert_buf = f_edge->edge->verts[0];
 
-            if (spatalgs::distancePointToSegment(vert_buf->pos(), opp_verts_poses[0], opp_verts_poses[1]) < EDGES_INTERS_DIST_COEF * m_preferredLength)
+            if (spatalgs::distancePointToSegment(vert_buf->pos(), opp_verts_poses[0], opp_verts_poses[1]) < EDGES_INTERS_DIST_COEF * m_prefLen)
                 return true;
         }
         else
         {
             if (spatalgs::segmentsDistance(
                     opp_verts_poses[0], opp_verts_poses[1],
-                    f_edge->edge->verts[0]->pos(), f_edge->edge->verts[1]->pos()) < EDGES_INTERS_DIST_COEF * m_preferredLength)
+                    f_edge->edge->verts[0]->pos(), f_edge->edge->verts[1]->pos()) < EDGES_INTERS_DIST_COEF * m_prefLen)
                 return true;
         }
     }
@@ -708,7 +706,7 @@ bool Polyhedron::exhaustWithoutNewVertPriorityPredicate(front::Edge* curFEdge)
     if (curFEdge->findOppEdge() ||
         (curFEdge->angle() > degToRad(70) &&
          curFEdge->angle() < degToRad(100) &&
-         (*std::get<1>(opp_verts) - *std::get<0>(opp_verts)).sqrMagnitude() <= m_preferredLength * m_preferredLength))
+         (*std::get<1>(opp_verts) - *std::get<0>(opp_verts)).sqrMagnitude() <= m_prefLen * m_prefLen))
         return true;
 
     if (frontSplitCheck(curFEdge))
@@ -942,7 +940,7 @@ void Polyhedron::exhaustFrontCollapse(front::Edge *fEdge, front::Edge *oppFEdge)
     m_innerTetrs.push_back(new_tetr);
 
 //    if (new_tetr->computeQuality() < 1e-2)
-//        m_polycr->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
+//        m_polyhset->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
 
 
     std::vector<front::Edge*> fedges_to_erase;
@@ -1084,7 +1082,7 @@ void Polyhedron::exhaustFrontSplit(front::Edge* fEdge, front::Edge* oppFEdge)
     m_innerTetrs.push_back(new_tetr);
 
 //    if (new_tetr->computeQuality() < 1e-2)
-//        m_polycr->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
+//        m_polyhset->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
 
 
     removeFromFront(adj_ffaces.first);
@@ -1157,7 +1155,7 @@ void Polyhedron::exhaustWithoutNewVertOppEdgeExists(front::Edge* fEdge, front::E
     m_innerTetrs.push_back(new_tetr);
 
 //    if (new_tetr->computeQuality() < 1e-2)
-//        m_polycr->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
+//        m_polyhset->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
 
     std::vector<front::Edge*> erased_fedges;
     erased_fedges.reserve(3);
@@ -1281,7 +1279,7 @@ void Polyhedron::exhaustWithoutNewVertOppEdgeDontExists(front::Edge* fEdge)
 
 //    std::cout << std::endl << fEdge->edge->magnitude() << ' ' << fEdge->computeAngle() * 180.0 / M_PI;
 //    if (new_tetr->computeQuality() < 1e-2)
-//        m_polycr->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
+//        m_polyhset->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
 
     
     removeFromFront(adj_ffaces.first);
@@ -1453,7 +1451,7 @@ bool Polyhedron::tryComputeNewVertPosType2(front::Face* fFace, vec3& out_pos, in
     real_t l3 = (vn1_pos - v1_pos).magnitude();
     real_t l4 = (vn1_pos - v2_pos).magnitude();
     real_t av_magn = (lm0 + lm1 + l0 + l1 + l2 + l3 + l4) / static_cast<real_t>(7.0);
-    real_t raw_deform = K_D * (m_preferredLength - av_magn);
+    real_t raw_deform = K_D * (m_prefLen - av_magn);
     real_t deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
     real_t magn_d = av_magn + deform;
     vec3 new_pos = v2_pos + magn_d * e;
@@ -1526,7 +1524,7 @@ bool Polyhedron::tryComputeNewVertPosType1(front::Face* fFace, vec3& out_pos, in
     real_t l3 = (vn_pos - v1_pos).magnitude();
     real_t av_magn = static_cast<real_t>(0.2) * (me_magn + l0 + l1 + l2 + l3);
     real_t v0_c_dist = (c - v0_pos).magnitude();
-    real_t raw_deform = K_D * (m_preferredLength - av_magn);
+    real_t raw_deform = K_D * (m_prefLen - av_magn);
     real_t deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
     real_t magn_d = av_magn + deform;
     vec3 new_pos = c + std::sqrt(magn_d * magn_d - v0_c_dist * v0_c_dist) * e;
@@ -1571,7 +1569,7 @@ bool Polyhedron::tryComputeNewVertPosType0(front::Face* fFace, vec3& out_pos)
     real_t av_magn = ONE_3 * (  fFace->face->edges[0]->magnitude()
                               + fFace->face->edges[1]->magnitude()
                               + fFace->face->edges[2]->magnitude());
-    real_t raw_deform = K_D * (m_preferredLength - av_magn);
+    real_t raw_deform = K_D * (m_prefLen - av_magn);
     real_t deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
     real_t magn_d = av_magn + deform;
     vec3 new_pos = fFace->computeCenter() + std::sqrt(magn_d * magn_d - ONE_3 * av_magn * av_magn) * fFace->normal;
@@ -1722,7 +1720,7 @@ void Polyhedron::exhaustWithNewVert(front::Face* fFace, const vec3& vertPos)
                              new_tetr_fedges[5]->edge->verts[1]);
     m_innerTetrs.push_back(new_tetr);
 //    if (new_tetr->computeQuality() < 1e-2)
-//        m_polycr->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
+//        m_polyhset->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
 
     removeFromFront(fFace);
 }
@@ -1839,7 +1837,7 @@ void Polyhedron::processAngles()
 
 #ifdef DEV_DEBUG
 //        if (debug_i++ >= 1200)
-//        m_polycr->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
+//        m_polyhset->output(PolyhedralSet::FileType::WavefrontObj, "debug.obj");
 //        if (debug_i++ >= 0)
 //            std::cout << std::endl << debug_i - 1;
 
@@ -1877,7 +1875,7 @@ void Polyhedron::debug()
 
 void Polyhedron::generateMesh(real_t preferredLen)
 {
-    m_preferredLength = preferredLen;
+    m_prefLen = preferredLen;
     initializeFront();
     computeFrontNormals();
     processAngles();
@@ -1963,7 +1961,7 @@ void Polyhedron::smoothAroundFrontVert(Vert* fVert)
         {
             d_shift = *edge->verts[0] - *fVert;
         }
-        shift += d_shift * (d_shift.magnitude() - m_preferredLength);
+        shift += d_shift * (d_shift.magnitude() - m_prefLen);
         delta_shifts_num++;
     }
     shift /= delta_shifts_num;
@@ -1995,9 +1993,9 @@ std::pair<real_t, real_t> Polyhedron::analyzeMeshQuality()
 Polyhedron::Polyhedron() {}
 
 
-Polyhedron::Polyhedron(PolyhedralSet* polyhedr)
+Polyhedron::Polyhedron(PolyhedralSet* polyhset)
 {
-    m_polycr = polyhedr;
+    m_polyhset = polyhset;
 }
 
 
@@ -2018,7 +2016,7 @@ Polyhedron::~Polyhedron()
 
 real_t Polyhedron::preferredLength() const
 {
-    return m_preferredLength;
+    return m_prefLen;
 }
 
 

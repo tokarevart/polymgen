@@ -11,7 +11,7 @@
 
 int main()
 {
-    real_t preferredEdgeLength = static_cast<real_t>(0.5);
+    real_t preferredLength = static_cast<real_t>(0.5);
     
     std::cout << "Generating PolyShell...";
     size_t n = 4;
@@ -19,17 +19,17 @@ int main()
     std::cout << " done.\n";
 
     std::cout << "Initializing PolyhedralSet...";
-    pmg::PolyhedralSet polyhedr(shell);
+    pmg::PolyhedralSet polyhset(shell);
     std::cout << " done.\n";
     shell.clear();
 
     std::cout << "Generating mesh...";
-    polyhedr.generateMesh(preferredEdgeLength);
+    polyhset.generateMesh(preferredLength);
     std::cout << " done.\n";
 
     std::cout << "Outputting data to file...";
-    polyhedr.output(pmg::PolyhedralSet::FileType::LsDynaKeyword);
-    polyhedr.output(pmg::PolyhedralSet::FileType::WavefrontObj);
+    polyhset.output(pmg::PolyhedralSet::FileType::LsDynaKeyword);
+    polyhset.output(pmg::PolyhedralSet::FileType::WavefrontObj);
     std::cout << " done.\n";
 
     return 0;

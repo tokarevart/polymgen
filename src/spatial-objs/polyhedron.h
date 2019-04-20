@@ -25,18 +25,18 @@ namespace pmg {
 
 class Polyhedron
 {
-    using pair_dd = std::pair<real_t, real_t>;
+    using pair_rr = std::pair<real_t, real_t>;
 
 public:
     real_t preferredLength() const;
 
-    void addToShell(const shell::Face* shellFace);
-    void addToShell(const shell::Edge* shellEdge);
-    void addToShell(const shell::Vert* shellVert);
+    void addToShell( const shell::Face* shellFace );
+    void addToShell( const shell::Edge* shellEdge );
+    void addToShell( const shell::Vert* shellVert );
 
-    bool shellContains(const shell::Face* shellFace) const;
-    bool shellContains(const shell::Edge* shellEdge)  const;
-    bool shellContains(const shell::Vert* shellVert)  const;
+    bool shellContains( const shell::Face* shellFace ) const;
+    bool shellContains( const shell::Edge* shellEdge )  const;
+    bool shellContains( const shell::Vert* shellVert )  const;
 
     const std::vector<Tetr*>& innerTetrs()  const;
     const std::vector<Face*>& innerFaces() const;
@@ -46,11 +46,12 @@ public:
     const std::list<front::Edge*>& frontEdges()  const;
 
     // Returns minimum and average tetrahedrons qualitys.
-    pair_dd analyzeMeshQuality();
-    void    generateMesh(real_t preferredLength);
+    pair_rr analyzeMeshQuality();
+    void    generateMesh( real_t preferredLength );
+    void    optimizeMesh( real_t minQuality );
 
     Polyhedron();
-    Polyhedron(PolyhedralSet* polyhedr);
+    Polyhedron( PolyhedralSet* polyhset );
     ~Polyhedron();
 
 
@@ -64,9 +65,9 @@ private:
 
     using pair_ff = std::pair<front::Face*, front::Face*>;
 
-    real_t m_preferredLength;
+    real_t m_prefLen;
 
-    PolyhedralSet* m_polycr = nullptr;
+    PolyhedralSet* m_polyhset = nullptr;
 
     std::vector<shell::Face*> m_shellFaces;
     std::vector<shell::Edge*> m_shellEdges;
@@ -109,8 +110,8 @@ private:
     bool frontSplitCheck(    front::Edge* fEdge, front::Edge* oppFEdge = nullptr ) const;
     bool frontCollapseCheck( front::Edge* fEdge, front::Edge* oppFEdge = nullptr ) const;
 
-    static pair_dd computeMinMaxEdgesLengths(    const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3 );
-    static pair_dd computeMinMaxEdgesSqrLengths( const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3 );
+    static pair_rr computeMinMaxEdgesLengths(    const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3 );
+    static pair_rr computeMinMaxEdgesSqrLengths( const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3 );
     static real_t  computeTetrSimpleQuality(     const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3 );
     static real_t  computeTetrSimpleSqrQuality(  const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3 );
 

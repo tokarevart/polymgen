@@ -49,60 +49,58 @@ private:
         WithNewVert
     };
 
-    using FrPlEdge = front::Edge;
-    using FrPlVert = front::Vert;
-    using pair_dd = std::pair<real_t, real_t>;
+    using pair_rr = std::pair<real_t, real_t>;
     using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
     using pair_ee = std::pair<pmg::Edge*, pmg::Edge*>;
 
-    real_t m_preferredLength;
+    real_t m_prefLen;
 
-    std::list<pmg::Face*>  m_innerFaces;
+    std::list<pmg::Face*>   m_innerFaces;
     std::list<pmg::Edge*>   m_innerEdges;
     std::vector<pmg::Vert*> m_innerVerts;
 
-    std::list<FrPlEdge*>   m_frontEdges;
-    std::list<FrPlVert*> m_frontVerts;
+    std::list<front::Edge*> m_frontEdges;
+    std::list<front::Vert*> m_frontVerts;
 
-    FrPlVert* findFrontVert( const pmg::Vert* vert ) const;
+    front::Vert* findFrontVert( const pmg::Vert* vert ) const;
 
-    FrPlEdge* addToFront( const pmg::Edge* edge );
-    FrPlVert* addToFront( const pmg::Vert* vert );
+    front::Edge* addToFront( const pmg::Edge* edge );
+    front::Vert* addToFront( const pmg::Vert* vert );
 
-    void removeFromFront( FrPlEdge* fEdge );
-    void removeFromFront( FrPlVert* fVert );
+    void removeFromFront( front::Edge* fEdge );
+    void removeFromFront( front::Vert* fVert );
 
-    bool anyVertInsidePotentialTriangCheck( FrPlVert* fVert ) const;
+    bool anyVertInsidePotentialTriangCheck( front::Vert* fVert ) const;
     bool doesSegmentIntersectsWithFront( const vec3& p0, const vec3& p1 ) const;
 
-    vec3 computeNormalInTriang( FrPlEdge* fEdge, const vec3& oppVertPos );
-    vec3 computeNormalInTriang( FrPlEdge* fEdge, pmg::Edge* oneOfRemainingEdges ); // Do i need it?
+    vec3 computeNormalInTriang( front::Edge* fEdge, const vec3& oppVertPos );
+    vec3 computeNormalInTriang( front::Edge* fEdge, pmg::Edge* oneOfRemainingEdges ); // Do i need it?
 
-    bool tryComputeNewVertPosType2( FrPlEdge* fEdge, vec3& out_pos );
-    bool tryComputeNewVertPosType1( FrPlEdge* fEdge, vec3& out_pos, int smallAngleIndex );
-    bool tryComputeNewVertPosType0( FrPlEdge* fEdge, vec3& out_pos );
-    bool tryComputeNewVertPos(      FrPlEdge* fEdge, vec3& out_pos );
+    bool tryComputeNewVertPosType2( front::Edge* fEdge, vec3& out_pos );
+    bool tryComputeNewVertPosType1( front::Edge* fEdge, vec3& out_pos, int smallAngleIndex );
+    bool tryComputeNewVertPosType0( front::Edge* fEdge, vec3& out_pos );
+    bool tryComputeNewVertPos(      front::Edge* fEdge, vec3& out_pos );
 
-    static pair_dd computeMinMaxEdgesLengths(    const vec3& p0, const vec3& p1, const vec3& p2 );
-    static pair_dd computeMinMaxEdgesSqrLengths( const vec3& p0, const vec3& p1, const vec3& p2 );
-    static real_t  computeTriangSimpleQuality(     const vec3& p0, const vec3& p1, const vec3& p2 );
-    static real_t  computeTriangSimpleSqrQuality(  const vec3& p0, const vec3& p1, const vec3& p2 );
+    static pair_rr computeMinMaxEdgesLengths(     const vec3& p0, const vec3& p1, const vec3& p2 );
+    static pair_rr computeMinMaxEdgesSqrLengths(  const vec3& p0, const vec3& p1, const vec3& p2 );
+    static real_t  computeTriangSimpleQuality(    const vec3& p0, const vec3& p1, const vec3& p2 );
+    static real_t  computeTriangSimpleSqrQuality( const vec3& p0, const vec3& p1, const vec3& p2 );
 
-    FrPlEdge* chooseEdgeForExhaustionWithNewVert( FrPlVert* fVert );
-    void      exhaustWithNewVert( FrPlEdge* fEdge, const vec3& vertPos );
-    void      exhaustWithoutNewVert( FrPlVert* fVert );
+    front::Edge* chooseEdgeForExhaustionWithNewVert( front::Vert* fVert );
+    void exhaustWithNewVert( front::Edge* fEdge, const vec3& vertPos );
+    void exhaustWithoutNewVert( front::Vert* fVert );
 
-    bool tryExhaustWithoutNewVert( FrPlVert* fVert );
-    bool tryExhaustWithNewVert(    FrPlVert* fVert );
+    bool tryExhaustWithoutNewVert( front::Vert* fVert );
+    bool tryExhaustWithNewVert(    front::Vert* fVert );
 
     bool globalIntersectionCheck() const;
 
-    FrPlVert* currentFrontVert( real_t maxCompl ) const;
-    bool exhaustWithoutNewVertPriorityPredicate( FrPlVert* fEdge );
-    bool exhaustWithNewVertPriorityPredicate(    FrPlVert* fEdge );
+    front::Vert* currentFrontVert( real_t maxCompl ) const;
+    bool exhaustWithoutNewVertPriorityPredicate( front::Vert* fEdge );
+    bool exhaustWithNewVertPriorityPredicate(    front::Vert* fEdge );
     ExhaustType computeExhaustionTypeQualityPriority(
-        FrPlVert* fVert,
-        FrPlEdge*& out_withNWFrontEdge, vec3*& out_withNWNewVertPos );
+        front::Vert* fVert,
+        front::Edge*& out_withNWFrontEdge, vec3*& out_withNWNewVertPos );
 
     void processLastFace();
     void processAngles();
@@ -111,7 +109,7 @@ private:
 
     pair_ff find2AdjFaces( pmg::Edge* edge ) const;
     bool flipIfNeeded( pmg::Edge* edge );
-    void delaunayPostproc();
+    void optimizeMesh();
 
     void computeFrontNormals() const;
     void initializeFront();
