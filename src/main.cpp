@@ -25,6 +25,7 @@ int main()
 
     std::cout << "Generating mesh...";
     polyhset.generateMesh(preferredLength);
+    polyhset.optimizeMesh();
     std::cout << " done.\n";
 
     std::cout << "Outputting data to file...";

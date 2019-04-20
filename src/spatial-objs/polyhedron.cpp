@@ -1881,7 +1881,18 @@ void Polyhedron::generateMesh(real_t preferredLen)
     processAngles();
 //    if (globalIntersectionCheck())
 //        throw std::logic_error("Intersection error.\npmg::Polyhedron::globalIntersectionCheck returned true.");
-    smoothMesh(20);
+
+    m_isQualityAnalyzed = false;
+}
+
+
+void Polyhedron::optimizeMesh(settings::Optimization optSettings)
+{
+    smoothMesh(optSettings.nSmoothIters);
+
+    //
+
+    m_isQualityAnalyzed = false;
 }
 
 
@@ -1897,9 +1908,9 @@ bool Polyhedron::globalIntersectionCheck()
 
 
 
-void Polyhedron::smoothMesh(unsigned iterationsNum)
+void Polyhedron::smoothMesh(size_t nIters)
 {
-    for (unsigned i = 0; i < iterationsNum; i++)
+    for (size_t i = 0; i < nIters; i++)
     {
         for (auto& vert : m_innerVerts)
         {
@@ -1925,17 +1936,17 @@ void Polyhedron::smoothMesh(unsigned iterationsNum)
 }
 
 
-void Polyhedron::smoothNotFinisedMesh(unsigned iterationsNum)
+void Polyhedron::smoothNotFinisedMesh(size_t nIters)
 {
-    for (unsigned i = 0; i < iterationsNum; i++)
+    for (size_t i = 0; i < nIters; i++)
         for (auto &vert : m_innerVerts)
             smoothAroundFrontVert(vert);
 }
 
 
-void Polyhedron::smoothFront(unsigned iterationsNum)
+void Polyhedron::smoothFront(size_t nIters)
 {
-    for (unsigned i = 0; i < iterationsNum; i++)
+    for (size_t i = 0; i < nIters; i++)
         for (auto &vert : m_innerVerts)
             smoothAroundFrontVert(vert);
 }
@@ -1971,6 +1982,9 @@ void Polyhedron::smoothAroundFrontVert(Vert* fVert)
 
 std::pair<real_t, real_t> Polyhedron::analyzeMeshQuality()
 {
+    if (m_isQualityAnalyzed)
+        return m_meshQuality;
+
     size_t simps_num = 0;
     real_t av_q = 0.0;
     real_t min_q = 1.0;
@@ -1984,7 +1998,8 @@ std::pair<real_t, real_t> Polyhedron::analyzeMeshQuality()
     }
     av_q /= simps_num;
 
-    return { min_q, av_q };
+    m_isQualityAnalyzed = true;
+    return m_meshQuality = { min_q, av_q };
 }
 
 

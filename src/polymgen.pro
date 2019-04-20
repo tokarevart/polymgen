@@ -47,5 +47,6 @@ HEADERS += \
     spatial-objs/polyhedron-front/polyhedron-front-face.h \
     spatial-objs/shell/shell-front/shell-front-edge.h \
     spatial-objs/shell/shell-front/shell-front-vert.h \
-    data-structures/polyshell.h
+    data-structures/polyshell.h \
+    spatial-objs/pmg-settings.h
 

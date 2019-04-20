@@ -15,6 +15,7 @@
 #include "spatial-objs/vert.h"
 #include "helpers/spatial-algs/vec.h"
 #include "real-type.h"
+#include "pmg-settings.h"
 
 #include "spatial-objs/polyhedral-set.h"
 
@@ -27,7 +28,7 @@ class Polyhedron
 {
     using pair_rr = std::pair<real_t, real_t>;
 
-public:
+public:    
     real_t preferredLength() const;
 
     void addToShell( const shell::Face* shellFace );
@@ -35,20 +36,21 @@ public:
     void addToShell( const shell::Vert* shellVert );
 
     bool shellContains( const shell::Face* shellFace ) const;
-    bool shellContains( const shell::Edge* shellEdge )  const;
-    bool shellContains( const shell::Vert* shellVert )  const;
+    bool shellContains( const shell::Edge* shellEdge ) const;
+    bool shellContains( const shell::Vert* shellVert ) const;
 
-    const std::vector<Tetr*>& innerTetrs()  const;
+    const std::vector<Tetr*>& innerTetrs() const;
     const std::vector<Face*>& innerFaces() const;
-    const std::vector<Vert*>& innerVerts()  const;
+    const std::vector<Vert*>& innerVerts() const;
 
     const std::list<front::Face*>& frontFaces() const;
-    const std::list<front::Edge*>& frontEdges()  const;
+    const std::list<front::Edge*>& frontEdges() const;
 
-    // Returns minimum and average tetrahedrons qualitys.
+    // Returns minimum and average tetrahedrons quality or absGrad.
     pair_rr analyzeMeshQuality();
+    pair_rr analyzeMeshAbsGrad();
     void    generateMesh( real_t preferredLength );
-    void    optimizeMesh( real_t minQuality );
+    void    optimizeMesh( settings::Optimization optSettings = settings::Optimization() );
 
     Polyhedron();
     Polyhedron( PolyhedralSet* polyhset );
@@ -64,6 +66,11 @@ private:
     };
 
     using pair_ff = std::pair<front::Face*, front::Face*>;
+
+    pair_rr m_meshQuality;
+    pair_rr m_absMeshGrad;
+    bool m_isQualityAnalyzed     = false;
+    bool m_isAbsMeshGradAnalyzed = false;
 
     real_t m_prefLen;
 
@@ -160,9 +167,9 @@ private:
 
     void debug();
 
-    void smoothMesh(           unsigned nIterations );
-    void smoothNotFinisedMesh( unsigned nIterations );
-    void smoothFront(          unsigned nIterations );
+    void smoothMesh(           size_t nIters );
+    void smoothNotFinisedMesh( size_t nIters );
+    void smoothFront(          size_t nIters );
     void smoothAroundFrontVert( Vert* frontVert );
 
     void computeFrontNormals();

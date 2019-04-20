@@ -19,6 +19,7 @@
 #include "data-structures/polyshell.h"
 #include "helpers/logger.h"
 #include "real-type.h"
+#include "pmg-settings.h"
 
 #include "definitions.h"
 
@@ -32,8 +33,8 @@ public:
     {
         real_t minQuality;
         real_t avQuality;
-        real_t minAbsMeshGrad;
-        real_t avAbsMeshGrad;
+        real_t minMeshAbsGrad;
+        real_t avMeshAbsGrad;
         size_t nPolyhs;
         size_t nElems;
         real_t prefLen;
@@ -51,11 +52,11 @@ public:
     };
 
     void generateMesh( real_t preferredLength );
-    void optimizeMesh( real_t minQuality );
+    void optimizeMesh( settings::Optimization optSettings = settings::Optimization() );
     const PolyMesh* structurizeMesh();
     const PolyMesh* getLastMesh();
 
-    Log log() const;
+    Log log();
     std::string generateLogFileName() const;
 
     void input( std::string_view polyStructFileName );
@@ -70,6 +71,7 @@ public:
 
 private:
     Log m_log;
+    bool m_isLogged = false;
 
     real_t m_prefLen;
     PolyMesh* m_lastMesh = nullptr;

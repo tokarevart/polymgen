@@ -284,11 +284,9 @@ void PolyhedralSet::generateMesh(real_t preferredLength)
     double shell_triang_elapsed = static_cast<double>(std::clock() - shell_triang_start) / CLOCKS_PER_SEC;
 
     std::clock_t volume_exh_start = std::clock();
-    real_t min_q = 1.0, av_q = 0.0;
-    size_t n_elems = 0;
-    size_t max = m_polyhedrons.size();
+    size_t n_polyhs = m_polyhedrons.size();
     #pragma omp parallel for
-    for (size_t i = 0; i < max; i++)
+    for (size_t i = 0; i < n_polyhs; i++)
     {
         try
         {
@@ -299,28 +297,25 @@ void PolyhedralSet::generateMesh(real_t preferredLength)
             output(FileType::WavefrontObj, "debug.obj");
             throw error;
         }
-
-        auto buf_min_av_q = m_polyhedrons[i]->analyzeMeshQuality();
-        #pragma omp critical
-        {
-            if (buf_min_av_q.first < min_q)
-                min_q = buf_min_av_q.first;
-            av_q += buf_min_av_q.second;
-            n_elems += m_polyhedrons[i]->innerTetrs().size();
-        }
     }
-    av_q /= m_polyhedrons.size();
     double volume_exh_elapsed = static_cast<double>(std::clock() - volume_exh_start) / CLOCKS_PER_SEC;
 
-    m_log.minQuality = min_q;
-    m_log.avQuality  = av_q;
-    m_log.minAbsMeshGrad;
-    m_log.avAbsMeshGrad;
     m_log.nPolyhs = m_polyhedrons.size();
-    m_log.nElems  = n_elems;
     m_log.prefLen = m_prefLen;
     m_log.shellTrTime   = shell_triang_elapsed;
     m_log.volumeExhTime = volume_exh_elapsed;
+    m_isLogged = false;
+}
+
+
+void PolyhedralSet::optimizeMesh(settings::Optimization optSettings)
+{
+    size_t n_polyhs = m_polyhedrons.size();
+    #pragma omp parallel for
+    for (size_t i = 0; i < n_polyhs; i++)
+        m_polyhedrons[i]->optimizeMesh(optSettings);
+
+    m_isLogged = false;
 }
 
 
@@ -439,8 +434,29 @@ const PolyMesh* PolyhedralSet::getLastMesh()
 
 
 
-PolyhedralSet::Log PolyhedralSet::log() const
+PolyhedralSet::Log PolyhedralSet::log()
 {
+    if (m_isLogged)
+        return m_log;
+
+    real_t min_q = 1.0, av_q = 0.0;
+    size_t n_elems = 0;
+    for (auto& polyh : m_polyhedrons)
+    {
+        auto buf_min_av_q = polyh->analyzeMeshQuality();
+        if (buf_min_av_q.first < min_q)
+            min_q = buf_min_av_q.first;
+        av_q += buf_min_av_q.second;
+        n_elems += polyh->innerTetrs().size();
+    }
+    av_q /= m_polyhedrons.size();
+
+    m_log.minMeshAbsGrad;
+    m_log.avMeshAbsGrad;
+    m_log.minQuality = min_q;
+    m_log.avQuality  = av_q;
+    m_log.nElems     = n_elems;
+
     return m_log;
 }
 
