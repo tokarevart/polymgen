@@ -39,15 +39,15 @@ public:
     bool shellContains( const shell::Edge* shellEdge ) const;
     bool shellContains( const shell::Vert* shellVert ) const;
 
-    const std::vector<Tetr*>& innerTetrs() const;
-    const std::vector<Face*>& innerFaces() const;
-    const std::vector<Vert*>& innerVerts() const;
+    const std::list<Tetr*>& innerTetrs() const;
+    const std::list<Face*>& innerFaces() const;
+    const std::list<Vert*>& innerVerts() const;
 
     const std::list<front::Face*>& frontFaces() const;
     const std::list<front::Edge*>& frontEdges() const;
 
     // Returns minimum and average tetrahedrons quality or absGrad.
-    pair_rr analyzeMeshQuality();
+    pair_rr analyzeMeshQuality( std::list<Tetr*>::iterator* out_minQualityTetr = nullptr );
     pair_rr analyzeMeshAbsGrad();
     void    generateMesh( real_t preferredLength );
     void    optimizeMesh( settings::Optimization optSettings = settings::Optimization() );
@@ -80,10 +80,10 @@ private:
     std::vector<shell::Edge*> m_shellEdges;
     std::vector<shell::Vert*> m_shellVerts;
 
-    std::vector<Tetr*> m_innerTetrs;
-    std::vector<Face*> m_innerFaces;
-    std::vector<Edge*> m_innerEdges;
-    std::vector<Vert*> m_innerVerts;
+    std::list<Tetr*> m_innerTetrs;
+    std::list<Face*> m_innerFaces;
+    std::list<Edge*> m_innerEdges;
+    std::list<Vert*> m_innerVerts;
 
     std::list<front::Face*> m_frontFaces;
     std::list<front::Edge*> m_frontEdges;
@@ -171,6 +171,9 @@ private:
     void smoothNotFinisedMesh( size_t nIters );
     void smoothFront(          size_t nIters );
     void smoothAroundFrontVert( Vert* frontVert );
+
+    void flip( std::list<Tetr*>::iterator tetr );
+    void flipWhile( real_t qualityLessThan );
 
     void computeFrontNormals();
     void initializeFFaceFEdges( front::Face* fFace ) const;

@@ -26,10 +26,10 @@ public:
     Vert* findNot( const Edge* edge ) const;
     Vert* findNot( const Vert* vert ) const;
 
-    void flip( std::list<Edge*>& edgesList, std::list<Face*>& facesList );
+    void flip(         std::list<Edge*>& edgesList, std::list<Face*>& facesList );
     bool flipIfNeeded( std::list<Edge*>& edgesList, std::list<Face*>& facesList );
     // Adj means adjacent.
-    void findAdjFaces( const std::list<Face*>& facesList, std::list<Face*>& adjFaces ) const;
+    void    findAdjFaces(  const std::list<Face*>& facesList, std::list<Face*>& adjFaces ) const;
     pair_ff find2AdjFaces( const std::list<Face*>& facesList ) const;
 
     bool contains( const Vert* vert ) const;

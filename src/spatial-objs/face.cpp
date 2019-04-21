@@ -18,7 +18,7 @@ vec3 pmg::Face::computeCenter() const
 
 real_t pmg::Face::computeQuality() const
 {
-    return findShortestEdge()->sqrMagnitude() / findLongestEdge()->sqrMagnitude();
+    return shortestEdge()->sqrMagnitude() / longestEdge()->sqrMagnitude();
 }
 
 
@@ -32,7 +32,7 @@ real_t pmg::Face::computeArea() const
 
 
 
-pmg::Edge* pmg::Face::intersectAlongEdge(const pmg::Face* face0, const pmg::Face* face1)
+pmg::Edge* pmg::Face::adjByEdge(const pmg::Face* face0, const pmg::Face* face1)
 {
     int inters = 0;
     pmg::Edge* res = nullptr;
@@ -105,7 +105,7 @@ pmg::Edge* pmg::Face::findEdge(const pmg::Vert* vert0, const pmg::Vert* vert1) c
 }
 
 
-pmg::Edge* pmg::Face::findShortestEdge() const
+pmg::Edge* pmg::Face::shortestEdge() const
 {
     if (edges[0]->sqrMagnitude() < edges[1]->sqrMagnitude())
     {
@@ -124,7 +124,7 @@ pmg::Edge* pmg::Face::findShortestEdge() const
 }
 
 
-pmg::Edge* pmg::Face::findLongestEdge() const
+pmg::Edge* pmg::Face::longestEdge() const
 {
     if (edges[0]->sqrMagnitude() > edges[1]->sqrMagnitude())
     {

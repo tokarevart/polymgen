@@ -8,6 +8,7 @@
 
 
 using namespace pmg;
+using pair_rr = std::pair<real_t, real_t>;
 using pair_ff = std::pair<front::Face*, front::Face*>;
 
 
@@ -578,8 +579,8 @@ bool Polyhedron::parallelFacesCheck(front::Edge* fEdge) const
         if ((fface != std::get<0>(adj_ffaces)) &&
             (fface != std::get<1>(adj_ffaces)))
         {
-            inters_reses[0] = Face::intersectAlongEdge(fface->face, std::get<0>(adj_ffaces)->face);
-            inters_reses[1] = Face::intersectAlongEdge(fface->face, std::get<1>(adj_ffaces)->face);
+            inters_reses[0] = Face::adjByEdge(fface->face, std::get<0>(adj_ffaces)->face);
+            inters_reses[1] = Face::adjByEdge(fface->face, std::get<1>(adj_ffaces)->face);
             if (!XOR(static_cast<bool>(inters_reses[0]), static_cast<bool>(inters_reses[1])))
                 continue;
 
@@ -1882,7 +1883,8 @@ void Polyhedron::generateMesh(real_t preferredLen)
 //    if (globalIntersectionCheck())
 //        throw std::logic_error("Intersection error.\npmg::Polyhedron::globalIntersectionCheck returned true.");
 
-    m_isQualityAnalyzed = false;
+    m_isQualityAnalyzed     = false;
+    m_isAbsMeshGradAnalyzed = false;
 }
 
 
@@ -1890,9 +1892,31 @@ void Polyhedron::optimizeMesh(settings::Optimization optSettings)
 {
     smoothMesh(optSettings.nSmoothIters);
 
-    //
+//    std::list<Tetr*>::iterator min_q_tetr = m_innerTetrs.end();
+//    std::list<Tetr*>::iterator adj_tetr   = m_innerTetrs.end();
+//    analyzeMeshQuality(&min_q_tetr);
+//    auto largest_face = (*min_q_tetr)->largestFace();
+//    auto opp_vert0    = (*min_q_tetr)->findNot(largest_face);
 
-    m_isQualityAnalyzed = false;
+//    for (auto iter = m_innerTetrs.begin(); iter != m_innerTetrs.end(); iter++)
+//        if (   pmg::Tetr::adjByFace(*iter, *min_q_tetr)
+//            && !(*iter)->contains(opp_vert0))
+//            adj_tetr = iter;
+
+//    if (adj_tetr == m_innerTetrs.end())
+//        throw std::logic_error("Unhandled error in function pmg::Polyhedron::optimizeMesh");
+
+//    auto opp_vert1 = (*adj_tetr)->findNot(largest_face);
+
+
+
+//    delete *min_q_tetr;
+//    delete *adj_tetr;
+//    m_innerTetrs.erase(min_q_tetr);
+//    m_innerTetrs.erase(adj_tetr);
+
+    m_isQualityAnalyzed     = false;
+    m_isAbsMeshGradAnalyzed = false;
 }
 
 
@@ -1980,7 +2004,7 @@ void Polyhedron::smoothAroundFrontVert(Vert* fVert)
 }
 
 
-std::pair<real_t, real_t> Polyhedron::analyzeMeshQuality()
+pair_rr Polyhedron::analyzeMeshQuality(std::list<Tetr*>::iterator* out_minQualityTetr)
 {
     if (m_isQualityAnalyzed)
         return m_meshQuality;
@@ -1988,18 +2012,55 @@ std::pair<real_t, real_t> Polyhedron::analyzeMeshQuality()
     size_t simps_num = 0;
     real_t av_q = 0.0;
     real_t min_q = 1.0;
-    for (auto &tetr : m_innerTetrs)
+    std::list<Tetr*>::iterator min_q_tetr = m_innerTetrs.begin();
+    for (auto iter = m_innerTetrs.begin(); iter != m_innerTetrs.end(); iter++)
     {
-        real_t q = tetr->computeQuality();
+        real_t q = (*iter)->computeQuality();
         av_q += q;
         simps_num++;
         if (q < min_q)
+        {
             min_q = q;
+            if (out_minQualityTetr)
+                min_q_tetr = iter;
+        }
     }
     av_q /= simps_num;
+    if (out_minQualityTetr)
+        *out_minQualityTetr = min_q_tetr;
 
     m_isQualityAnalyzed = true;
     return m_meshQuality = { min_q, av_q };
+}
+
+
+pair_rr Polyhedron::analyzeMeshAbsGrad()
+{
+    if (m_isAbsMeshGradAnalyzed)
+        return m_absMeshGrad;
+
+    for (auto& tetr : m_innerTetrs)
+    {
+        real_t volume = tetr->computeVolume();
+        for (auto& vert : tetr->verts)
+        {
+            vert->minAdjTetrVol = std::min(volume, vert->minAdjTetrVol);
+            vert->maxAdjTetrVol = std::max(volume, vert->maxAdjTetrVol);
+        }
+    }
+
+    real_t min_abs_grad = static_cast<real_t>(1.0);
+    real_t av_abs_grad  = static_cast<real_t>(0.0);
+    for (auto& vert : m_innerVerts)
+    {
+        real_t cur_abs_grad = vert->minAdjTetrVol / vert->maxAdjTetrVol;
+        min_abs_grad = std::min(cur_abs_grad, min_abs_grad);
+        av_abs_grad += cur_abs_grad;
+    }
+    av_abs_grad /= m_innerVerts.size();
+
+    m_isAbsMeshGradAnalyzed = true;
+    return m_absMeshGrad = { min_abs_grad, av_abs_grad };
 }
 
 
@@ -2075,19 +2136,19 @@ bool Polyhedron::shellContains(const shell::Vert* shellVert) const
 
 
 
-const std::vector<Tetr*>& Polyhedron::innerTetrs() const
+const std::list<Tetr*>& Polyhedron::innerTetrs() const
 {
     return m_innerTetrs;
 }
 
 
-const std::vector<Face*>& Polyhedron::innerFaces() const
+const std::list<Face*>& Polyhedron::innerFaces() const
 {
     return m_innerFaces;
 }
 
 
-const std::vector<Vert*>& Polyhedron::innerVerts() const
+const std::list<Vert*>& Polyhedron::innerVerts() const
 {
     return m_innerVerts;
 }

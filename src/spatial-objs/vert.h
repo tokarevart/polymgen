@@ -19,16 +19,18 @@ class Vert
 {
 public:
     size_t globalNum;
+    real_t minAdjTetrVol = std::numeric_limits<real_t>::max();
+    real_t maxAdjTetrVol = std::numeric_limits<real_t>::min();
 
     shell::Face* belongsToShellFace = nullptr;
     shell::Edge* belongsToShellEdge = nullptr;
     shell::Vert* belongsToShellVert = nullptr;
 
     const vec3& pos() const;
-          void   setPos( const vec3& newPos );
-          void   setPos( real_t coor0, real_t coor1, real_t coor2 );
+    void  setPos( const vec3& newPos );
+    void  setPos( real_t coor0, real_t coor1, real_t coor2 );
 
-          real_t& operator[]( short axis );
+    real_t&       operator[]( short axis );
     const real_t& operator[]( short axis ) const;
     vec3 operator-( const Vert& other )        const;
     vec3 operator-( const shell::Vert& other ) const;

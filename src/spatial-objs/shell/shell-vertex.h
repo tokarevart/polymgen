@@ -21,7 +21,7 @@ public:
 
     const vec3& pos() const;
 
-          real_t& operator[](unsigned axis);
+    real_t&       operator[](unsigned axis);
     const real_t& operator[](unsigned axis)   const;
     vec3 operator-(const shell::Vert& other) const;
     vec3 operator-(const   pmg::Vert& other) const;

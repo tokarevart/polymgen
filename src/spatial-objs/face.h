@@ -17,20 +17,20 @@ class Face
 public:
     Edge* edges[3];
 
-    vec3    computeCenter()  const;
+    vec3   computeCenter()  const;
     real_t computeQuality() const;
     real_t computeArea()    const;
 
-    static Edge* intersectAlongEdge( const Face* facet0, const Face* facet1 );
+    static Edge* adjByEdge( const Face* facet0, const Face* facet1 );
 
     bool intersectsBy( const vec3& origin, const vec3& dir ) const;
     Vert* findVertNot( const Edge* edge ) const;
     Edge* findEdgeNot( const Vert* vert ) const;
     Edge* findEdge( const Vert* vert0, const Vert* vert1 ) const;
-    Edge* findShortestEdge() const;
-    Edge* findLongestEdge()  const;
+    Edge* shortestEdge() const;
+    Edge* longestEdge()  const;
 
-    bool contains( const Edge*   edge ) const;
+    bool contains( const Edge* edge ) const;
     bool contains( const Vert* vert ) const;
 
     Face( const Edge* edge0, const Edge* edge1, const Edge* edge2 );
