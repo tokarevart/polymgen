@@ -20,6 +20,7 @@
 #include "helpers/logger.h"
 #include "real-type.h"
 #include "pmg-settings.h"
+#include "file-type.h"
 
 #include "definitions.h"
 
@@ -40,20 +41,14 @@ public:
         real_t prefLen        = static_cast<real_t>(-1.0);
         double shellTrTime         = -1.0;
         double volumeExhTime       = -1.0;
-        double optimizationTime    = -1.0;
         double meshFileWritingTime = -1.0;
 
         void write( std::ostream& stream ) const;
     };
 
-    enum class FileType
-    {
-        WavefrontObj,
-        LsDynaKeyword
-    };
-
-    void generateMesh( real_t preferredLength );
-    void optimizeMesh( settings::Optimization optSettings = settings::Optimization() );
+    void tetrahedralize( real_t preferredLength, gensettings::Polyhedron genSettings = gensettings::Polyhedron() );
+    void smoothMesh( size_t nItersVolume = 1, size_t nItersShell = 1 );
+    void shellDelaunayPostP();
     const PolyMesh* structurizeMesh();
     const PolyMesh* getLastMesh();
 
@@ -62,7 +57,7 @@ public:
 
     void input( std::string_view polyStructFileName );
     void input( const psg::PolyShell& polyStruct );
-    void output( FileType filetype = FileType::WavefrontObj, std::string_view filename = "_AUTO_", unsigned PolyhedralSetId = 1u );
+    void output( FileType filetype = FileType::WavefrontObj, std::string_view filename = "_AUTO_", unsigned polyhedralSetId = 1u );
 
     PolyhedralSet();
     PolyhedralSet( std::string_view polyStructFileName );
@@ -85,7 +80,7 @@ private:
 
     shell::Edge* findShellEdge( const shell::Vert* v0, const shell::Vert* v1 ) const;
 
-    void triangulateShell();
+    void triangulateShell( gensettings::Shell genSettings );
 
     void outputObj( std::string_view filename ) const;
     void outputLSDynaKeyword_PART( std::ofstream& file ) const;

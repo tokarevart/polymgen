@@ -97,7 +97,7 @@ shell::Edge* shell::Face::findShellEdgeContaining(const pmg::Edge* edge) const
 
 
 
-void shell::Face::triangulate(real_t preferredLen)
+void shell::Face::triangulate(real_t preferredLen, gensettings::Shell genSettings)
 {
     m_prefLen = preferredLen;
     initializeFront();
@@ -106,12 +106,13 @@ void shell::Face::triangulate(real_t preferredLen)
 //    if (globalIntersectionCheck())
 //        throw std::logic_error("Intersection error.\npmg::shell::Face::globalIntersectionCheck returned true.");
 
-    smoothMesh(20);
-    for (int i = 0; i < 3; i++)
-    {
-        optimizeMesh();
-        smoothMesh(20);
-    }
+    optimizeMesh(genSettings.nSmoothIters, genSettings.nDelaunaySmoothIters);
+//    smoothMesh(20);
+//    for (int i = 0; i < 3; i++)
+//    {
+//        delaunayPostP();
+//        smoothMesh(20);
+//    }
 }
 
 
@@ -640,9 +641,9 @@ void shell::Face::processAngles()
 
 
 
-void shell::Face::smoothMesh(unsigned nIterations)
+void shell::Face::smoothMesh(size_t nIters)
 {
-    for (unsigned i = 0; i < nIterations; i++)
+    for (size_t i = 0; i < nIters; i++)
     {
         for (auto& vert : m_innerVerts)
         {
@@ -735,10 +736,20 @@ bool shell::Face::flipIfNeeded(pmg::Edge* edge)
 }
 
 
-void shell::Face::optimizeMesh()
+void shell::Face::delaunayPostP()
 {
     for (auto& edge : m_innerEdges)
         flipIfNeeded(edge);
+}
+
+
+void shell::Face::optimizeMesh(size_t nSmoothIters, size_t nDelaunaySmoothIters)
+{
+    for (size_t i = 0; i < nDelaunaySmoothIters; i++)
+    {
+        delaunayPostP();
+        smoothMesh(nSmoothIters);
+    }
 }
 
 

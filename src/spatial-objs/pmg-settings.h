@@ -3,18 +3,30 @@
 #include "../real-type.h"
 
 namespace pmg {
-namespace settings {
+namespace gensettings {
 
-struct Generation
+struct Shell
 {
-    //
+    real_t kMaxD = static_cast<real_t>(0.3);
+    real_t kD    = static_cast<real_t>(0.5);
+
+    size_t nSmoothIters         = 20;
+    size_t nDelaunaySmoothIters =  3;
 };
 
-struct Optimization
+struct Volume
 {
+    real_t kMaxD = static_cast<real_t>(0.3);
+    real_t kD    = static_cast<real_t>(0.4);
+
     size_t nSmoothIters = 20;
-    real_t minQuality   = static_cast<real_t>(0.3);
 };
 
-} // namespace settings
+struct Polyhedron
+{
+    Shell  shell  = Shell();
+    Volume volume = Volume();
+};
+
+} // namespace gensettings
 } // namespace pmg

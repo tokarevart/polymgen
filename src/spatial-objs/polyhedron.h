@@ -49,8 +49,8 @@ public:
     // Returns minimum and average tetrahedrons quality or absGrad.
     pair_rr analyzeMeshQuality( std::list<Tetr*>::iterator* out_minQualityTetr = nullptr );
     pair_rr analyzeMeshAbsGrad();
-    void    generateMesh( real_t preferredLength );
-    void    optimizeMesh( settings::Optimization optSettings = settings::Optimization() );
+    void    tetrahedralize( real_t preferredLength, gensettings::Volume genSettings = gensettings::Volume() );
+    void    smoothMesh( size_t nIters );
 
     Polyhedron();
     Polyhedron( PolyhedralSet* polyhset );
@@ -167,7 +167,6 @@ private:
 
     void debug();
 
-    void smoothMesh(           size_t nIters );
     void smoothNotFinisedMesh( size_t nIters );
     void smoothFront(          size_t nIters );
     void smoothAroundFrontVert( Vert* frontVert );

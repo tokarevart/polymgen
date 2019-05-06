@@ -1874,7 +1874,7 @@ void Polyhedron::debug()
 
 
 
-void Polyhedron::generateMesh(real_t preferredLen)
+void Polyhedron::tetrahedralize(real_t preferredLen, gensettings::Volume genSettings)
 {
     m_prefLen = preferredLen;
     initializeFront();
@@ -1883,41 +1883,43 @@ void Polyhedron::generateMesh(real_t preferredLen)
 //    if (globalIntersectionCheck())
 //        throw std::logic_error("Intersection error.\npmg::Polyhedron::globalIntersectionCheck returned true.");
 
+    smoothMesh(genSettings.nSmoothIters);
+
     m_isQualityAnalyzed     = false;
     m_isAbsMeshGradAnalyzed = false;
 }
 
 
-void Polyhedron::optimizeMesh(settings::Optimization optSettings)
-{
-    smoothMesh(optSettings.nSmoothIters);
-
+//void Polyhedron::optimizeMesh(settings::Optimization optSettings)
+//{
+//    smoothMesh(optSettings.nSmoothIters);
+//
 //    std::list<Tetr*>::iterator min_q_tetr = m_innerTetrs.end();
 //    std::list<Tetr*>::iterator adj_tetr   = m_innerTetrs.end();
 //    analyzeMeshQuality(&min_q_tetr);
 //    auto largest_face = (*min_q_tetr)->largestFace();
 //    auto opp_vert0    = (*min_q_tetr)->findNot(largest_face);
-
+//
 //    for (auto iter = m_innerTetrs.begin(); iter != m_innerTetrs.end(); iter++)
 //        if (   pmg::Tetr::adjByFace(*iter, *min_q_tetr)
 //            && !(*iter)->contains(opp_vert0))
 //            adj_tetr = iter;
-
+//
 //    if (adj_tetr == m_innerTetrs.end())
 //        throw std::logic_error("Unhandled error in function pmg::Polyhedron::optimizeMesh");
-
+//
 //    auto opp_vert1 = (*adj_tetr)->findNot(largest_face);
-
-
-
+//
+//
+//
 //    delete *min_q_tetr;
 //    delete *adj_tetr;
 //    m_innerTetrs.erase(min_q_tetr);
 //    m_innerTetrs.erase(adj_tetr);
-
-    m_isQualityAnalyzed     = false;
-    m_isAbsMeshGradAnalyzed = false;
-}
+//
+//    m_isQualityAnalyzed     = false;
+//    m_isAbsMeshGradAnalyzed = false;
+//}
 
 
 bool Polyhedron::globalIntersectionCheck()

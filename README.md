@@ -10,8 +10,8 @@ pmg::PolyhedralSet polyhset(shell);
 
 // Preferred tetrahedron edge length.
 double preferredLength = 0.45;
-polyhset.generateMesh(preferredLength);
-polyhset.output(pmg::PolyhedralSet::FileType::WavefrontObj); // Or ...FileType::LsDynaKeyword
+polyhset.tetrahedralize(preferredLength);
+polyhset.output(pmg::FileType::WavefrontObj); // Or pmg::FileType::LsDynaKeyword
 ```
 ![Cube mesh](https://github.com/Tokarevart/polymgen/blob/master/images/polymesh_3.png)
 ![Cube mesh](https://github.com/Tokarevart/polymgen/blob/master/images/polymesh_2.png)

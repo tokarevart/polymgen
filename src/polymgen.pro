@@ -28,6 +28,7 @@ SOURCES += \
 
 HEADERS += \
     data-structures/polymesh.h \
+    spatial-objs/file-type.h \
     helpers/spatial-algs/spatial-algs.h \
     helpers/spatial-algs/vec.h \
     helpers/logger.h \

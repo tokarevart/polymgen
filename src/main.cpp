@@ -8,7 +8,6 @@
 #include "spatial-objs/polyhedral-set.h"
 #include "polysgen/polysgen.h"
 
-
 int main()
 {
     real_t preferredLength = static_cast<real_t>(0.5);
@@ -24,13 +23,12 @@ int main()
     shell.clear();
 
     std::cout << "Generating mesh...";
-    polyhset.generateMesh(preferredLength);
-    polyhset.optimizeMesh();
+    polyhset.tetrahedralize(preferredLength);
     std::cout << std::string(12, ' ') + "done." << std::endl;
 
     std::cout << "Outputting data to file...";
-    polyhset.output(pmg::PolyhedralSet::FileType::LsDynaKeyword);
-    polyhset.output(pmg::PolyhedralSet::FileType::WavefrontObj);
+    polyhset.output(pmg::FileType::LsDynaKeyword);
+    polyhset.output(pmg::FileType::WavefrontObj);
     std::cout << std::string(4, ' ') + "done." << std::endl << std::endl;
 
     std::ofstream log_file(polyhset.generateLogFileName());

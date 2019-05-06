@@ -9,6 +9,7 @@
 #include "spatial-objs/shell/shell-front/shell-front-edge.h"
 #include "spatial-objs/shell/shell-front/shell-front-vert.h"
 #include "real-type.h"
+#include "../pmg-settings.h"
 
 #include "definitions.h"
 
@@ -23,8 +24,8 @@ public:
 
     real_t preferredLength() const;
 
-    const std::list<pmg::Face*>&   innerFaces() const;
-    const std::list<pmg::Edge*>&   innerEdges() const;
+    const std::list  <pmg::Face*>& innerFaces() const;
+    const std::list  <pmg::Edge*>& innerEdges() const;
     const std::vector<pmg::Vert*>& innerVerts() const;
 
     const std::list<front::Edge*>& frontEdges() const;
@@ -33,9 +34,12 @@ public:
     shell::Edge* findShellEdgeContaining( const pmg::Edge* edge ) const;
 
     // Needs shell edges to be already segmentized.
-    void triangulate( real_t preferredLen );
+    void triangulate( real_t preferredLen, gensettings::Shell genSettings = gensettings::Shell() );
+    void smoothMesh( size_t nIters );
+    void delaunayPostP();
+    void optimizeMesh( size_t nSmoothIters = 20, size_t nDelaunaySmoothIters = 3 );
 
-    bool contains( const shell::Edge*   sEdge ) const;
+    bool contains( const shell::Edge* sEdge ) const;
     bool contains( const shell::Vert* sVert ) const;
 
     Face( const shell::Edge* sEdge0, const shell::Edge* sEdge1, const shell::Edge* sEdge2 );
@@ -105,11 +109,8 @@ private:
     void processLastFace();
     void processAngles();
 
-    void smoothMesh( unsigned nIterations );
-
     pair_ff find2AdjFaces( pmg::Edge* edge ) const;
     bool flipIfNeeded( pmg::Edge* edge );
-    void optimizeMesh();
 
     void computeFrontNormals() const;
     void initializeFront();

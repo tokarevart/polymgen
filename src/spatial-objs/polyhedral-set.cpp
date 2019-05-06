@@ -32,7 +32,7 @@ shell::Edge* PolyhedralSet::findShellEdge(const shell::Vert* v0, const shell::Ve
 }
 
 
-void PolyhedralSet::triangulateShell()
+void PolyhedralSet::triangulateShell(gensettings::Shell genSettings)
 {
     for (auto& svert : m_shellVerts)
         svert->attachedVert = new pmg::Vert(svert->pos());
@@ -43,7 +43,7 @@ void PolyhedralSet::triangulateShell()
     size_t n_shell_faces = m_shellFaces.size();
     #pragma omp parallel for
     for (size_t i = 0; i < n_shell_faces; i++)
-        m_shellFaces[i]->triangulate(m_prefLen);
+        m_shellFaces[i]->triangulate(m_prefLen, genSettings);
 }
 
 
@@ -267,14 +267,14 @@ std::string PolyhedralSet::generateLogFileName() const
 }
 
 
-void PolyhedralSet::generateMesh(real_t preferredLength)
+void PolyhedralSet::tetrahedralize(real_t preferredLength, gensettings::Polyhedron genSettings)
 {
     m_prefLen = preferredLength;
 
     std::clock_t shell_triang_start = std::clock();
     try
     {
-        triangulateShell();
+        triangulateShell(genSettings.shell);
     }
     catch (std::logic_error error)
     {
@@ -290,7 +290,7 @@ void PolyhedralSet::generateMesh(real_t preferredLength)
     {
         try
         {
-            m_polyhedrons[i]->generateMesh(m_prefLen);
+            m_polyhedrons[i]->tetrahedralize(m_prefLen, genSettings.volume);
         }
         catch (std::logic_error error)
         {
@@ -308,16 +308,29 @@ void PolyhedralSet::generateMesh(real_t preferredLength)
 }
 
 
-void PolyhedralSet::optimizeMesh(settings::Optimization optSettings)
+void PolyhedralSet::smoothMesh(size_t nItersVolume, size_t nItersShell)
 {
-    std::clock_t opt_start = std::clock();
+    size_t n_sfaces = m_shellFaces.size();
+    #pragma omp parallel for
+    for (size_t i = 0; i < n_sfaces; i++)
+        m_shellFaces[i]->smoothMesh(nItersShell);
 
     size_t n_polyhs = m_polyhedrons.size();
     #pragma omp parallel for
     for (size_t i = 0; i < n_polyhs; i++)
-        m_polyhedrons[i]->optimizeMesh(optSettings);
+        m_polyhedrons[i]->smoothMesh(nItersVolume);
 
-    m_log.optimizationTime = static_cast<double>(std::clock() - opt_start) / CLOCKS_PER_SEC;
+    m_isLogged = false;
+}
+
+
+void PolyhedralSet::shellDelaunayPostP()
+{
+    size_t n_sfaces = m_shellFaces.size();
+    #pragma omp parallel for
+    for (size_t i = 0; i < n_sfaces; i++)
+        m_shellFaces[i]->delaunayPostP();
+
     m_isLogged = false;
 }
 
@@ -645,7 +658,7 @@ std::string PolyhedralSet::generateOutputFilename(FileType filetype, std::string
 }
 
 
-void PolyhedralSet::output(FileType filetype, std::string_view filename, unsigned PolyhedralSetId)
+void PolyhedralSet::output(FileType filetype, std::string_view filename, unsigned polyhedralSetId)
 {
     std::clock_t start = std::clock();
     switch (filetype)
@@ -655,7 +668,7 @@ void PolyhedralSet::output(FileType filetype, std::string_view filename, unsigne
         break;
 
     case FileType::LsDynaKeyword:
-        outputLSDynaKeyword(generateOutputFilename(FileType::LsDynaKeyword, filename), PolyhedralSetId);
+        outputLSDynaKeyword(generateOutputFilename(FileType::LsDynaKeyword, filename), polyhedralSetId);
         break;
     }
     double elapsed = static_cast<double>(std::clock() - start) / CLOCKS_PER_SEC;
@@ -724,6 +737,5 @@ void PolyhedralSet::Log::write(std::ostream& stream) const
     logWriteIfPositive("Preferred edge length",    prefLen,        "");
     logWriteIfPositive("Shell triangulation time", shellTrTime,         "s");
     logWriteIfPositive("Volume exhaustion time",   volumeExhTime,       "s");
-    logWriteIfPositive("Optimization time",        optimizationTime,    "s");
     logWriteIfPositive("Mesh file writing time",   meshFileWritingTime, "s");
 }
