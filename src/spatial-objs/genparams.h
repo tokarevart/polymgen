@@ -3,7 +3,7 @@
 #include "../real-type.h"
 
 namespace pmg {
-namespace gensettings {
+namespace genparams {
 
 struct Shell
 {
@@ -28,5 +28,5 @@ struct Polyhedron
     Volume volume = Volume();
 };
 
-} // namespace gensettings
+} // namespace genparams
 } // namespace pmg

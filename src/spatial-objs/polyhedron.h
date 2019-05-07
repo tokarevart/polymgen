@@ -15,7 +15,7 @@
 #include "spatial-objs/vert.h"
 #include "helpers/spatial-algs/vec.h"
 #include "real-type.h"
-#include "pmg-settings.h"
+#include "genparams.h"
 
 #include "spatial-objs/polyhedral-set.h"
 
@@ -49,7 +49,7 @@ public:
     // Returns minimum and average tetrahedrons quality or absGrad.
     pair_rr analyzeMeshQuality( std::list<Tetr*>::iterator* out_minQualityTetr = nullptr );
     pair_rr analyzeMeshAbsGrad();
-    void    tetrahedralize( real_t preferredLength, gensettings::Volume genSettings = gensettings::Volume() );
+    void    tetrahedralize( real_t preferredLength, genparams::Volume genParams = genparams::Volume() );
     void    smoothMesh( size_t nIters );
 
     Polyhedron();

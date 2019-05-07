@@ -97,7 +97,7 @@ shell::Edge* shell::Face::findShellEdgeContaining(const pmg::Edge* edge) const
 
 
 
-void shell::Face::triangulate(real_t preferredLen, gensettings::Shell genSettings)
+void shell::Face::triangulate(real_t preferredLen, genparams::Shell genParams)
 {
     m_prefLen = preferredLen;
     initializeFront();
@@ -106,7 +106,7 @@ void shell::Face::triangulate(real_t preferredLen, gensettings::Shell genSetting
 //    if (globalIntersectionCheck())
 //        throw std::logic_error("Intersection error.\npmg::shell::Face::globalIntersectionCheck returned true.");
 
-    optimizeMesh(genSettings.nSmoothIters, genSettings.nDelaunaySmoothIters);
+    optimizeMesh(genParams.nSmoothIters, genParams.nDelaunaySmoothIters);
 //    smoothMesh(20);
 //    for (int i = 0; i < 3; i++)
 //    {

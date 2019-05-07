@@ -19,8 +19,8 @@
 #include "data-structures/polyshell.h"
 #include "helpers/logger.h"
 #include "real-type.h"
-#include "pmg-settings.h"
-#include "file-type.h"
+#include "genparams.h"
+#include "filetype.h"
 
 #include "definitions.h"
 
@@ -46,7 +46,7 @@ public:
         void write( std::ostream& stream ) const;
     };
 
-    void tetrahedralize( real_t preferredLength, gensettings::Polyhedron genSettings = gensettings::Polyhedron() );
+    void tetrahedralize( real_t preferredLength, genparams::Polyhedron genParams = genparams::Polyhedron() );
     void smoothMesh( size_t nItersVolume = 1, size_t nItersShell = 1 );
     void shellDelaunayPostP();
     const PolyMesh* structurizeMesh();
@@ -80,7 +80,7 @@ private:
 
     shell::Edge* findShellEdge( const shell::Vert* v0, const shell::Vert* v1 ) const;
 
-    void triangulateShell( gensettings::Shell genSettings );
+    void triangulateShell( genparams::Shell genParams );
 
     void outputObj( std::string_view filename ) const;
     void outputLSDynaKeyword_PART( std::ofstream& file ) const;

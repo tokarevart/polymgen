@@ -1874,7 +1874,7 @@ void Polyhedron::debug()
 
 
 
-void Polyhedron::tetrahedralize(real_t preferredLen, gensettings::Volume genSettings)
+void Polyhedron::tetrahedralize(real_t preferredLen, genparams::Volume genParams)
 {
     m_prefLen = preferredLen;
     initializeFront();
@@ -1883,7 +1883,7 @@ void Polyhedron::tetrahedralize(real_t preferredLen, gensettings::Volume genSett
 //    if (globalIntersectionCheck())
 //        throw std::logic_error("Intersection error.\npmg::Polyhedron::globalIntersectionCheck returned true.");
 
-    smoothMesh(genSettings.nSmoothIters);
+    smoothMesh(genParams.nSmoothIters);
 
     m_isQualityAnalyzed     = false;
     m_isAbsMeshGradAnalyzed = false;

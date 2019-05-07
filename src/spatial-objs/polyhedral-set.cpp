@@ -32,7 +32,7 @@ shell::Edge* PolyhedralSet::findShellEdge(const shell::Vert* v0, const shell::Ve
 }
 
 
-void PolyhedralSet::triangulateShell(gensettings::Shell genSettings)
+void PolyhedralSet::triangulateShell(genparams::Shell genParams)
 {
     for (auto& svert : m_shellVerts)
         svert->attachedVert = new pmg::Vert(svert->pos());
@@ -43,7 +43,7 @@ void PolyhedralSet::triangulateShell(gensettings::Shell genSettings)
     size_t n_shell_faces = m_shellFaces.size();
     #pragma omp parallel for
     for (size_t i = 0; i < n_shell_faces; i++)
-        m_shellFaces[i]->triangulate(m_prefLen, genSettings);
+        m_shellFaces[i]->triangulate(m_prefLen, genParams);
 }
 
 
@@ -267,14 +267,14 @@ std::string PolyhedralSet::generateLogFileName() const
 }
 
 
-void PolyhedralSet::tetrahedralize(real_t preferredLength, gensettings::Polyhedron genSettings)
+void PolyhedralSet::tetrahedralize(real_t preferredLength, genparams::Polyhedron genParams)
 {
     m_prefLen = preferredLength;
 
     std::clock_t shell_triang_start = std::clock();
     try
     {
-        triangulateShell(genSettings.shell);
+        triangulateShell(genParams.shell);
     }
     catch (std::logic_error error)
     {
@@ -290,7 +290,7 @@ void PolyhedralSet::tetrahedralize(real_t preferredLength, gensettings::Polyhedr
     {
         try
         {
-            m_polyhedrons[i]->tetrahedralize(m_prefLen, genSettings.volume);
+            m_polyhedrons[i]->tetrahedralize(m_prefLen, genParams.volume);
         }
         catch (std::logic_error error)
         {

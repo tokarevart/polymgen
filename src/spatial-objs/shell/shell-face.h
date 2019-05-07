@@ -9,7 +9,7 @@
 #include "spatial-objs/shell/shell-front/shell-front-edge.h"
 #include "spatial-objs/shell/shell-front/shell-front-vert.h"
 #include "real-type.h"
-#include "../pmg-settings.h"
+#include "../genparams.h"
 
 #include "definitions.h"
 
@@ -34,7 +34,7 @@ public:
     shell::Edge* findShellEdgeContaining( const pmg::Edge* edge ) const;
 
     // Needs shell edges to be already segmentized.
-    void triangulate( real_t preferredLen, gensettings::Shell genSettings = gensettings::Shell() );
+    void triangulate( real_t preferredLen, genparams::Shell genParams = genparams::Shell() );
     void smoothMesh( size_t nIters );
     void delaunayPostP();
     void optimizeMesh( size_t nSmoothIters = 20, size_t nDelaunaySmoothIters = 3 );

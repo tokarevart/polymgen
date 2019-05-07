@@ -28,11 +28,12 @@ SOURCES += \
 
 HEADERS += \
     data-structures/polymesh.h \
-    spatial-objs/file-type.h \
     helpers/spatial-algs/spatial-algs.h \
     helpers/spatial-algs/vec.h \
     helpers/logger.h \
     polysgen/polysgen.h \
+    spatial-objs/filetype.h \
+    spatial-objs/genparams.h \
     spatial-objs/shell/shell-edge.h \
     spatial-objs/shell/shell-vertex.h \
     spatial-objs/edge.h \
@@ -48,6 +49,5 @@ HEADERS += \
     spatial-objs/polyhedron-front/polyhedron-front-face.h \
     spatial-objs/shell/shell-front/shell-front-edge.h \
     spatial-objs/shell/shell-front/shell-front-vert.h \
-    data-structures/polyshell.h \
-    spatial-objs/pmg-settings.h
+    data-structures/polyshell.h
 
