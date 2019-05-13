@@ -17,10 +17,10 @@ psg::PolyShell psg::generateCuboids(size_t nX, size_t nY, size_t nZ, real_t dX, 
     shell.faces.resize(2 * (w * h * (t + 1)
                         + t * h * (w + 1)
                         + w * t * (h + 1)));
-    shell.polyhedrons.resize(w * t * h);
+    shell.polyhs.resize(w * t * h);
 
-    for (size_t i = 0; i < shell.polyhedrons.size(); i++)
-        shell.polyhedrons[i].assign(12, 0);
+    for (size_t i = 0; i < shell.polyhs.size(); i++)
+        shell.polyhs[i].assign(12, 0);
 
     for (size_t i = 0; i < shell.verts.size(); i++)
     {
@@ -60,25 +60,25 @@ psg::PolyShell psg::generateCuboids(size_t nX, size_t nY, size_t nZ, real_t dX, 
         shell.faces[k0 + k + 1][2] = shell.faces[k0 + k + 1][1] + 1;
     }
 
-    for (size_t i = 0; i < shell.polyhedrons.size(); i++)
+    for (size_t i = 0; i < shell.polyhs.size(); i++)
     {
-        shell.polyhedrons[i][0] = 2 * (i + i / w);
-        shell.polyhedrons[i][1] = shell.polyhedrons[i][0] + 1;
+        shell.polyhs[i][0] = 2 * (i + i / w);
+        shell.polyhs[i][1] = shell.polyhs[i][0] + 1;
 
-        shell.polyhedrons[i][2] = shell.polyhedrons[i][1] + 1;
-        shell.polyhedrons[i][3] = shell.polyhedrons[i][2] + 1;
+        shell.polyhs[i][2] = shell.polyhs[i][1] + 1;
+        shell.polyhs[i][3] = shell.polyhs[i][2] + 1;
 
-        shell.polyhedrons[i][4] = 2 * (h * t * (w + 1) + i + w * (i / (w * t)));
-        shell.polyhedrons[i][5] = shell.polyhedrons[i][4] + 1;
+        shell.polyhs[i][4] = 2 * (h * t * (w + 1) + i + w * (i / (w * t)));
+        shell.polyhs[i][5] = shell.polyhs[i][4] + 1;
 
-        shell.polyhedrons[i][6] = shell.polyhedrons[i][4] + 2 * w;
-        shell.polyhedrons[i][7] = shell.polyhedrons[i][6] + 1;
+        shell.polyhs[i][6] = shell.polyhs[i][4] + 2 * w;
+        shell.polyhs[i][7] = shell.polyhs[i][6] + 1;
 
-        shell.polyhedrons[i][8] = 2 * (h * (w * (t + 1) + t * (w + 1)) + i);
-        shell.polyhedrons[i][9] = shell.polyhedrons[i][8] + 1;
+        shell.polyhs[i][8] = 2 * (h * (w * (t + 1) + t * (w + 1)) + i);
+        shell.polyhs[i][9] = shell.polyhs[i][8] + 1;
 
-        shell.polyhedrons[i][10] = shell.polyhedrons[i][8]  + 2 * w * t;
-        shell.polyhedrons[i][11] = shell.polyhedrons[i][10] + 1;
+        shell.polyhs[i][10] = shell.polyhs[i][8]  + 2 * w * t;
+        shell.polyhs[i][11] = shell.polyhs[i][10] + 1;
     }
 
     return shell;

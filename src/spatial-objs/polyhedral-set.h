@@ -49,8 +49,8 @@ public:
     void tetrahedralize( real_t preferredLength, genparams::Polyhedron genParams = genparams::Polyhedron() );
     void smoothMesh( size_t nItersVolume = 1, size_t nItersShell = 1 );
     void shellDelaunayPostP();
-    const PolyMesh* structurizeMesh();
-    const PolyMesh* getLastMesh();
+
+    PolyMesh structurizeMesh() const;
 
     Log log();
     std::string generateLogFileName() const;
@@ -70,7 +70,6 @@ private:
     bool m_isLogged = false;
 
     real_t m_prefLen;
-    PolyMesh* m_lastMesh = nullptr;
 
     std::vector<Polyhedron*> m_polyhedrons;
 

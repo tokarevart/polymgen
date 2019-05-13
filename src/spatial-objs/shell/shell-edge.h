@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #pragma once
+#include <array>
 #include <vector>
 #include "spatial-objs/shell/shell-vertex.h"
 #include "real-type.h"
@@ -15,7 +16,7 @@ namespace shell {
 class Edge
 {
 public:
-    shell::Vert* verts[2];
+    std::array<shell::Vert*, 2> verts;
 
     const std::vector<pmg::Edge*>& innerEdges() const;
     const std::vector<pmg::Vert*>& innerVerts() const;
@@ -26,14 +27,14 @@ public:
     real_t sqrMagnitude() const;
 
     bool contains(const shell::Vert* sVert) const;
-    bool contains(const   pmg::Edge*    edge) const;
-    bool contains(const   pmg::Vert*  vert) const;
+    bool contains(const   pmg::Edge* edge)  const;
+    bool contains(const   pmg::Vert* vert)  const;
 
     Edge(const shell::Vert* vert0, const shell::Vert* vert1);
 
 
 private:
-    std::vector<pmg::Edge*>   m_innerEdges;
+    std::vector<pmg::Edge*> m_innerEdges;
     std::vector<pmg::Vert*> m_innerVerts;
 };
 

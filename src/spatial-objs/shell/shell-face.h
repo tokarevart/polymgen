@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #pragma once
+#include <array>
 #include <list>
 #include <vector>
 #include "spatial-objs/edge.h"
@@ -20,7 +21,7 @@ namespace shell {
 class Face
 {
 public:
-    shell::Edge* edges[3];
+    std::array<shell::Edge*, 3> edges;
 
     real_t preferredLength() const;
 

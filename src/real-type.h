@@ -2,4 +2,4 @@
 // Licensed under the MIT License.
 
 #pragma once
-typedef double real_t;
+using real_t = double;

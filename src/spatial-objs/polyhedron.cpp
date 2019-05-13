@@ -803,7 +803,7 @@ vec3 Polyhedron::computeNormalInTetr(const vec3& fFacePos0, const vec3& fFacePos
 
 
 
-void Polyhedron::setFEdgesInFrontSplit(const front::Edge* fEdge, front::Edge* newOppFEdges[2], front::Face* newFFaces[2], pair_ff oppFFaces) const
+void Polyhedron::setFEdgesInFrontSplit(const front::Edge* fEdge, std::array<front::Edge*, 2> newOppFEdges, std::array<front::Face*, 2> newFFaces, pair_ff oppFFaces) const
 {
 //    real_t cpa_times[2][2];
 //    cpa_times[0][0] = tva::spatalgs::cpaTime(newFFaces[0]->computeCenter(), newFFaces[0]->normal,
@@ -1060,15 +1060,15 @@ void Polyhedron::exhaustFrontSplit(front::Edge* fEdge, front::Edge* oppFEdge)
         }
     }
     new_ffaces[1] = addToFront(new Face(new_tetr_fedges[0]->edge,
-                                          new_tetr_fedges[1]->edge,
-                                          new_tetr_fedges[2]->edge));
+                                        new_tetr_fedges[1]->edge,
+                                        new_tetr_fedges[2]->edge));
     new_ffaces[1]->addFEdge(new_tetr_fedges[0]);
     new_ffaces[1]->addFEdge(new_tetr_fedges[1]);
     new_ffaces[1]->addFEdge(new_tetr_fedges[2]);
     new_ffaces[1]->normal = computeNormalInTetr(new_ffaces[1], fEdge->edge);
 
 
-    setFEdgesInFrontSplit(fEdge, new_opp_fedges, new_ffaces, opp_ffaces);
+    setFEdgesInFrontSplit(fEdge, { new_opp_fedges[0], new_opp_fedges[1] }, { new_ffaces[0], new_ffaces[1] }, opp_ffaces);
 
 //    m_innerTetrs.push_back(new Tetr(
 //        fEdge->edge->verts[0],
@@ -1868,7 +1868,7 @@ void Polyhedron::debug()
         for (auto& vert : sface->innerVerts())
             accum += vert->pos();
 
-    std::cout << "\n{ " << accum.coors[0] + accum.coors[1] + accum.coors[2] << " }";
+    std::cout << "\n{ " << accum.x[0] + accum.x[1] + accum.x[2] << " }";
 }
 
 
@@ -1890,36 +1890,6 @@ void Polyhedron::tetrahedralize(real_t preferredLen, genparams::Volume genParams
 }
 
 
-//void Polyhedron::optimizeMesh(settings::Optimization optSettings)
-//{
-//    smoothMesh(optSettings.nSmoothIters);
-//
-//    std::list<Tetr*>::iterator min_q_tetr = m_innerTetrs.end();
-//    std::list<Tetr*>::iterator adj_tetr   = m_innerTetrs.end();
-//    analyzeMeshQuality(&min_q_tetr);
-//    auto largest_face = (*min_q_tetr)->largestFace();
-//    auto opp_vert0    = (*min_q_tetr)->findNot(largest_face);
-//
-//    for (auto iter = m_innerTetrs.begin(); iter != m_innerTetrs.end(); iter++)
-//        if (   pmg::Tetr::adjByFace(*iter, *min_q_tetr)
-//            && !(*iter)->contains(opp_vert0))
-//            adj_tetr = iter;
-//
-//    if (adj_tetr == m_innerTetrs.end())
-//        throw std::logic_error("Unhandled error in function pmg::Polyhedron::optimizeMesh");
-//
-//    auto opp_vert1 = (*adj_tetr)->findNot(largest_face);
-//
-//
-//
-//    delete *min_q_tetr;
-//    delete *adj_tetr;
-//    m_innerTetrs.erase(min_q_tetr);
-//    m_innerTetrs.erase(adj_tetr);
-//
-//    m_isQualityAnalyzed     = false;
-//    m_isAbsMeshGradAnalyzed = false;
-//}
 
 
 bool Polyhedron::globalIntersectionCheck()

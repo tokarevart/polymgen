@@ -3,6 +3,7 @@
 
 #pragma once
 #include <stddef.h>
+#include <array>
 #include <vector>
 #include "real-type.h"
 
@@ -11,33 +12,18 @@ namespace psg {
 
 struct PolyShell
 {
-    struct VertPos
-    {
-        real_t x;
-        real_t y;
-        real_t z;
+    using coordinate_t = real_t;
+    using VertIdx = size_t;
+    using FaceIdx = size_t;
+    using Vert  = std::array<coordinate_t, 3>;
+    using Face  = std::array<VertIdx, 3>;
+    using Polyh = std::vector<FaceIdx>;
 
-        real_t& operator[](unsigned i);
-        real_t  operator[](unsigned i) const;
-    };
+    std::vector<Vert>  verts;
+    std::vector<Face>  faces;
+    std::vector<Polyh> polyhs;
 
-    struct Face
-    {
-        size_t vert0;
-        size_t vert1;
-        size_t vert2;
-
-        size_t& operator[](unsigned i);
-        size_t  operator[](unsigned i) const;
-    };
-
-    typedef size_t FaceIdx;
-    typedef std::vector<FaceIdx> Polyhedron;
-
-    std::vector<VertPos>    verts;
-    std::vector<Face>       faces;
-    std::vector<Polyhedron> polyhedrons;
-
+    bool empty() const;
     void clear();
 
     PolyShell& operator=(PolyShell&& other) noexcept;

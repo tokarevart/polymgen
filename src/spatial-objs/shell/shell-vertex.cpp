@@ -20,13 +20,13 @@ const vec3& shell::Vert::pos() const
 
 real_t& shell::Vert::operator[](unsigned axis)
 {
-    return m_pos->coors[axis];
+    return m_pos->x[axis];
 }
 
 
 const real_t& shell::Vert::operator[](unsigned axis) const
 {
-    return m_pos->coors[axis];
+    return m_pos->x[axis];
 }
 
 
@@ -44,9 +44,9 @@ shell::Vert::Vert()
 }
 
 
-shell::Vert::Vert(real_t coor0, real_t coor1, real_t coor2)
+shell::Vert::Vert(real_t x0, real_t x1, real_t x2)
 {
-    m_pos.reset(new vec3(coor0, coor1, coor2));
+    m_pos.reset(new vec3(x0, x1, x2));
 }
 
 

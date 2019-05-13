@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #pragma once
+#include <array>
 #include <list>
 #include <vector>
 #include "spatial-objs/polyhedron-front/polyhedron-front-face.h"
@@ -133,7 +134,7 @@ private:
     vec3 computeNormalInTetr( const front::Face* fFace, const pmg::Edge* oneOfRemainingEdges ) const;
     vec3 computeNormalInTetr( const vec3& fFacePos0, const vec3& fFacePos1, const vec3& fFacePos2, const vec3& oppVertPos ) const;
 
-    void setFEdgesInFrontSplit( const front::Edge* fEdge, front::Edge* newOppFEdges[2], front::Face* newFFaces[2], pair_ff oppFFaces ) const;
+    void setFEdgesInFrontSplit( const front::Edge* fEdge, std::array<front::Edge*, 2> newOppFEdges, std::array<front::Face*, 2> newFFaces, pair_ff oppFFaces ) const;
     void exhaustFrontCollapse( front::Edge* fEdge, front::Edge* oppFEdge );
     void exhaustFrontSplit( front::Edge* fEdge, front::Edge* oppFEdge );
     void exhaustWithoutNewVertOppEdgeExists( front::Edge* fEdge, front::Edge* oppFEdge );

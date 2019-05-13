@@ -20,9 +20,9 @@ void pmg::Vert::setPos(const vec3& newPos)
 
 void pmg::Vert::setPos(real_t coor0, real_t coor1, real_t coor2)
 {
-    m_pos->coors[0] = coor0;
-    m_pos->coors[1] = coor1;
-    m_pos->coors[2] = coor2;
+    m_pos->x[0] = coor0;
+    m_pos->x[1] = coor1;
+    m_pos->x[2] = coor2;
 }
 
 
@@ -30,13 +30,13 @@ void pmg::Vert::setPos(real_t coor0, real_t coor1, real_t coor2)
 
 real_t& pmg::Vert::operator[](short axis)
 {
-    return m_pos->coors[axis];
+    return m_pos->x[axis];
 }
 
 
 const real_t& pmg::Vert::operator[](short axis) const
 {
-    return m_pos->coors[axis];
+    return m_pos->x[axis];
 }
 
 

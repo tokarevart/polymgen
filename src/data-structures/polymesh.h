@@ -3,33 +3,35 @@
 
 #pragma once
 #include <stddef.h>
+#include <array>
+#include <vector>
 #include "real-type.h"
 
-// Note:
-// Make memory leak safe later.
 
 namespace pmg {
 
 struct PolyMesh
 {
-    size_t  nNodes;
+    using coordinate_t = real_t;
+    using VertIdx = size_t;
+    using TetrIdx = size_t;
+    using Vert  = std::array<coordinate_t, 3>;
+    using Tetr  = std::array<VertIdx, 4>;
+    using Polyh = std::vector<TetrIdx>;
 
-    // { x0, y0, z0, x1, y1, z1 ... }
-    real_t* nodesPositions;
-    size_t  nTetrs;
-    size_t  nCryses;
+    std::vector<Vert>  verts;
+    std::vector<Tetr>  tetrs;
+    std::vector<Polyh> polyhs;
 
-    // Number of tetrahedrons in each crystalline.
-    size_t* nCrysesTetrs;
+    bool empty() const;
+    void clear();
 
-    // c - Polyhedron,
-    // t - tetrahedron,
-    // n - node.
-    // { ... c[i]_t[0]_n[0..3] ... c[i]_t[nCrysesTetrs[i]]_n[0..3] }
-    size_t* tetrs;
+    PolyMesh& operator=(PolyMesh&& other) noexcept;
+    PolyMesh& operator=(const PolyMesh& other);
 
+    PolyMesh(PolyMesh&& other) noexcept;
+    PolyMesh(const PolyMesh& other);
     PolyMesh();
-    ~PolyMesh();
 };
 
 } // namespace pmg

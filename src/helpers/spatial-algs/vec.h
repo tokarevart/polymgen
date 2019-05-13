@@ -3,12 +3,15 @@
 
 #pragma once
 #include <cmath>
+#include <array>
 #include "real-type.h"
 
 
 struct vec3
 {
-    real_t coors[3];
+    using coordinate_t = real_t;
+
+    std::array<coordinate_t, 3> x;
 
     static real_t dot  ( const vec3& vec0, const vec3& vec1 );
     static vec3   cross( const vec3& vec0, const vec3& vec1 );
@@ -34,12 +37,12 @@ struct vec3
     vec3& operator-=( const vec3& right );
     vec3& operator*=( real_t scalar );
     vec3& operator/=( real_t scalar );
-          real_t& operator[]( unsigned i );
+    real_t&       operator[]( unsigned i );
     const real_t& operator[]( unsigned i ) const;
 
     vec3();
     vec3( const vec3& vec );
-    vec3( real_t coor0, real_t coor1, real_t coor2 );
+    vec3( coordinate_t x0, coordinate_t x1, coordinate_t x2 );
 };
 
 vec3 operator*( const vec3& vec, real_t scalar );

@@ -15,9 +15,9 @@
         (std::min(p0_coor, p1_coor) - EPS < (p) && (p) < std::max(p0_coor, p1_coor) + EPS)
 
 #define INSIDE_RECTANGLE(corner0, corner1, point) \
-        (BETWEEN(corner0.coors[0], corner1.coors[0], point.coors[0]) && \
-         BETWEEN(corner0.coors[1], corner1.coors[1], point.coors[1]) && \
-         BETWEEN(corner0.coors[2], corner1.coors[2], point.coors[2]))
+        (BETWEEN(corner0.x[0], corner1.x[0], point.x[0]) && \
+         BETWEEN(corner0.x[1], corner1.x[1], point.x[1]) && \
+         BETWEEN(corner0.x[2], corner1.x[2], point.x[2]))
 
 
 
@@ -65,7 +65,7 @@ bool spatalgs::doesRayIntersectPlane(
         const vec3& dir,
         const vec3& pl_p0, const vec3& pl_p1, const vec3& pl_p2)
 {
-    vec3 edges[2]{ pl_p1 - pl_p0, pl_p2 - pl_p0 };
+    std::array<vec3, 2> edges = { pl_p1 - pl_p0, pl_p2 - pl_p0 };
 
     vec3 pvec = vec3::cross(dir, edges[1]);
     real_t det = vec3::dot(edges[0], pvec);
@@ -78,7 +78,7 @@ bool spatalgs::rayIntersectPlane(
     const vec3& origin, const vec3& dir,
     const vec3& pl_p0, const vec3& pl_p1, const vec3& pl_p2)
 {
-    vec3 edges[2]{ pl_p1 - pl_p0, pl_p2 - pl_p0 };
+    std::array<vec3, 2> edges = { pl_p1 - pl_p0, pl_p2 - pl_p0 };
 
     vec3 pvec = vec3::cross(dir, edges[1]);
     real_t det = vec3::dot(edges[0], pvec);
@@ -98,7 +98,7 @@ bool spatalgs::doesRayIntersectTriangle(
     const vec3& origin, const vec3& dir,
     const vec3& tr_p0, const vec3& tr_p1, const vec3& tr_p2)
 {
-    vec3 edges[2]{ tr_p1 - tr_p0, tr_p2 - tr_p0 };
+    std::array<vec3, 2> edges = { tr_p1 - tr_p0, tr_p2 - tr_p0 };
 
     vec3 pvec = vec3::cross(dir, edges[1]);
     real_t det = vec3::dot(edges[0], pvec);
@@ -156,7 +156,7 @@ bool spatalgs::lineIntersectPlane(
     const vec3& line_point, const vec3& line_dir,
     const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2)
 {
-    vec3 edges[2]{ plane_p1 - plane_p0, plane_p2 - plane_p0 };
+    std::array<vec3, 2> edges = { plane_p1 - plane_p0, plane_p2 - plane_p0 };
 
     vec3 pvec = vec3::cross(line_dir, edges[1]);
     real_t det = vec3::dot(edges[0], pvec);
@@ -176,7 +176,7 @@ vec3 spatalgs::lineIntersectPlane(
     const vec3& line_point, const vec3& line_dir,
     const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2)
 {
-    vec3 edges[2]{ plane_p1 - plane_p0, plane_p2 - plane_p0 };
+    std::array<vec3, 2> edges = { plane_p1 - plane_p0, plane_p2 - plane_p0 };
 
     vec3 pvec = vec3::cross(line_dir, edges[1]);
     vec3 tvec = line_point - plane_p0;
@@ -193,9 +193,7 @@ bool spatalgs::doesSegmentIntersectTriangle(
 {
     const vec3 dir = segm_p1 - segm_p0;
 
-    vec3 edges[2]
-    { tr_p1 - tr_p0,
-        tr_p2 - tr_p0 };
+    std::array<vec3, 2> edges = { tr_p1 - tr_p0, tr_p2 - tr_p0 };
 
     vec3 pvec = vec3::cross(dir, edges[1]);
     real_t det = vec3::dot(edges[0], pvec);
@@ -226,7 +224,7 @@ bool spatalgs::segmentIntersectPlane(
 {
     const vec3 dir = p1 - p0;
 
-    vec3 edges[2]{ pl_p1 - pl_p0, pl_p2 - pl_p0 };
+    std::array<vec3, 2> edges = { pl_p1 - pl_p0, pl_p2 - pl_p0 };
 
     vec3 pvec = vec3::cross(dir, edges[1]);
     real_t det = vec3::dot(edges[0], pvec);
@@ -452,12 +450,12 @@ real_t spatalgs::distancePointToSegment(const vec3& point, const vec3& segm_p0, 
 real_t spatalgs::distancePointToTriangleOnPlane(
         const vec3& point, const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2)
 {
-    vec3 closest_points[3];
+    std::array<vec3, 3> closest_points;
     closest_points[0] = closestSegmentPointToPoint(point, trngl_p0, trngl_p1);
     closest_points[1] = closestSegmentPointToPoint(point, trngl_p1, trngl_p2);
     closest_points[2] = closestSegmentPointToPoint(point, trngl_p2, trngl_p0);
 
-    real_t sqrs[3];
+    std::array<real_t, 3> sqrs;
     sqrs[0] = (closest_points[0] - point).sqrMagnitude();
     sqrs[1] = (closest_points[1] - point).sqrMagnitude();
     sqrs[2] = (closest_points[2] - point).sqrMagnitude();
@@ -503,12 +501,12 @@ vec3 spatalgs::closestSegmentPointToPoint(const vec3& point, const vec3& segm_p0
 
 real_t spatalgs::computeMaxSqrsSum(const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2)
 {
-    real_t sqrs[3];
+    std::array<real_t, 3> sqrs;
     sqrs[0] = (trngl_p1 - trngl_p0).sqrMagnitude();
     sqrs[1] = (trngl_p2 - trngl_p1).sqrMagnitude();
     sqrs[2] = (trngl_p0 - trngl_p2).sqrMagnitude();
 
-    int max_inds[2];
+    size_t max_inds[2];
     if (sqrs[0] < sqrs[1])
     {
         max_inds[0] = 1;
@@ -532,7 +530,7 @@ real_t spatalgs::computeMaxSqrsSum(const vec3& trngl_p0, const vec3& trngl_p1, c
 
 real_t spatalgs::computeSqrsSum(const vec3& point, const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2)
 {
-    real_t sqrs[3];
+    std::array<real_t, 3> sqrs;
     sqrs[0] = (trngl_p0 - point).sqrMagnitude();
     sqrs[1] = (trngl_p1 - point).sqrMagnitude();
     sqrs[2] = (trngl_p2 - point).sqrMagnitude();
@@ -543,17 +541,17 @@ real_t spatalgs::computeSqrsSum(const vec3& point, const vec3& trngl_p0, const v
 vec3 spatalgs::closestTrianglePointToPointOnPlane(
         const vec3& point, const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2)
 {
-    vec3 closest_points[3];
+    std::array<vec3, 3> closest_points;
     closest_points[0] = closestSegmentPointToPoint(point, trngl_p0, trngl_p1);
     closest_points[1] = closestSegmentPointToPoint(point, trngl_p1, trngl_p2);
     closest_points[2] = closestSegmentPointToPoint(point, trngl_p2, trngl_p0);
 
-    real_t sqrs[3];
+    std::array<real_t, 3> sqrs;
     sqrs[0] = (closest_points[0] - point).sqrMagnitude();
     sqrs[1] = (closest_points[1] - point).sqrMagnitude();
     sqrs[2] = (closest_points[2] - point).sqrMagnitude();
 
-    int min_i = -1;
+    size_t min_i;
     if (sqrs[0] < sqrs[1])
     {
         if (sqrs[0] < sqrs[2])
