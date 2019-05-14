@@ -48,8 +48,6 @@ void shell::Edge::segmentize(real_t preferredLen)
 }
 
 
-
-
 real_t shell::Edge::magnitude() const
 {
     return std::sqrt(sqrMagnitude());
@@ -63,8 +61,7 @@ real_t shell::Edge::sqrMagnitude() const
 }
 
 
-
-
+// TODO: replace its usage with pmg::relations content
 bool shell::Edge::contains(const shell::Vert* sVert) const
 {
     if (verts[0] == sVert ||
@@ -75,6 +72,7 @@ bool shell::Edge::contains(const shell::Vert* sVert) const
 }
 
 
+// TODO: replace its usage with pmg::relations content
 bool shell::Edge::contains(const pmg::Edge* edge) const
 {
     if (std::find(m_innerEdges.begin(), m_innerEdges.end(), edge) != m_innerEdges.end())
@@ -84,6 +82,7 @@ bool shell::Edge::contains(const pmg::Edge* edge) const
 }
 
 
+// TODO: replace its usage with pmg::relations content
 bool shell::Edge::contains(const pmg::Vert* vert) const
 {
     if (verts[0]->attachedVert == vert ||

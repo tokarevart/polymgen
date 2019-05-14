@@ -34,8 +34,6 @@ real_t pmg::Edge::sqrMagnitude() const
 }
 
 
-
-
 pmg::Vert* pmg::Edge::findNot(const pmg::Edge* edge) const
 {
     if (verts[0] != edge->verts[0] && verts[0] != edge->verts[1])
@@ -54,16 +52,14 @@ pmg::Vert* pmg::Edge::findNot(const pmg::Vert* vert) const
 }
 
 
-
-
 void pmg::Edge::flip(std::list<pmg::Edge*>& edgesList, std::list<pmg::Face*>& facesList)
 {
-    pmg::Vert* opp_nodes[2];
+    std::array<pmg::Vert*, 2> opp_nodes;
     auto around_faces = find2AdjFaces(facesList);
     opp_nodes[0] = std::get<0>(around_faces)->findVertNot(this);
     opp_nodes[1] = std::get<1>(around_faces)->findVertNot(this);
 
-    auto old_edge   = std::find(edgesList.begin(), edgesList.end(), this);
+    auto old_edge  = std::find(edgesList.begin(), edgesList.end(), this);
     auto old_face0 = std::find(facesList.begin(), facesList.end(), std::get<0>(around_faces));
     auto old_face1 = std::find(facesList.begin(), facesList.end(), std::get<1>(around_faces));
 
@@ -89,7 +85,7 @@ void pmg::Edge::flip(std::list<pmg::Edge*>& edgesList, std::list<pmg::Face*>& fa
 
 bool pmg::Edge::flipIfNeeded(std::list<pmg::Edge*>& edgesList, std::list<pmg::Face*>& facesList)
 {
-    pmg::Vert* opp_nodes[2];
+    std::array<pmg::Vert*, 2> opp_nodes;
     auto around_faces = find2AdjFaces(facesList);
     opp_nodes[0] = std::get<0>(around_faces)->findVertNot(this);
     opp_nodes[1] = std::get<1>(around_faces)->findVertNot(this);
@@ -101,7 +97,7 @@ bool pmg::Edge::flipIfNeeded(std::list<pmg::Edge*>& edgesList, std::list<pmg::Fa
         return false;
 
 
-    auto old_edge   = std::find(edgesList.begin(), edgesList.end(), this);
+    auto old_edge  = std::find(edgesList.begin(), edgesList.end(), this);
     auto old_face0 = std::find(facesList.begin(), facesList.end(), std::get<0>(around_faces));
     auto old_face1 = std::find(facesList.begin(), facesList.end(), std::get<1>(around_faces));
 
@@ -127,11 +123,14 @@ bool pmg::Edge::flipIfNeeded(std::list<pmg::Edge*>& edgesList, std::list<pmg::Fa
 }
 
 
-void pmg::Edge::findAdjFaces(const std::list<pmg::Face*>& facesList, std::list<pmg::Face*>& adjFaces) const
+std::list<pmg::Face*> pmg::Edge::findAdjFaces(const std::list<pmg::Face*>& facesList) const
 {
+    std::list<pmg::Face*> res;
     for (auto& face : facesList)
         if (face->contains(this))
-            adjFaces.push_back(face);
+            res.push_back(face);
+
+    return res;
 }
 
 
@@ -160,8 +159,7 @@ pair_ff pmg::Edge::find2AdjFaces(const std::list<pmg::Face*>& facesList) const
 }
 
 
-
-
+// TODO: replace its usage with pmg::relations content
 bool pmg::Edge::contains(const pmg::Vert* vert) const
 {
     if (verts[0] == vert ||
@@ -172,27 +170,24 @@ bool pmg::Edge::contains(const pmg::Vert* vert) const
 }
 
 
-
-
+// TODO: replace its usage with pmg::relations content
 bool pmg::Edge::belongsToShell()
 {
-    if ((verts[0]->belongsToShellVert ||
-         verts[0]->belongsToShellEdge   ||
-         verts[0]->belongsToShellFace) &&
-        (verts[1]->belongsToShellVert ||
-         verts[1]->belongsToShellEdge   ||
-         verts[1]->belongsToShellFace))
+    if ((verts[0]->belongsToSVert ||
+         verts[0]->belongsToSEdge   ||
+         verts[0]->belongsToSFace) &&
+        (verts[1]->belongsToSVert ||
+         verts[1]->belongsToSEdge   ||
+         verts[1]->belongsToSFace))
         return true;
 
     return false;
 }
 
 
-
-
 bool pmg::Edge::needToFlip(const std::list<pmg::Face*>& facesList)
 {
-    pmg::Vert* opp_nodes[2];
+    std::array<pmg::Vert*, 2> opp_nodes;
     auto around_faces = find2AdjFaces(facesList);
     opp_nodes[0] = std::get<0>(around_faces)->findVertNot(this);
     opp_nodes[1] = std::get<1>(around_faces)->findVertNot(this);

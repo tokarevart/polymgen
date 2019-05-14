@@ -69,7 +69,7 @@ real_t front::Vert::computeAngle()
 pair_ee front::Vert::findAdjEdges() const
 {
     pair_ee res(nullptr, nullptr);
-    int i = 0;
+    size_t i = 0;
     for (auto& fedge : m_relatedShellFace->frontEdges())
     {
         if (fedge->edge->contains(vert))

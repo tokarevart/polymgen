@@ -19,8 +19,8 @@
 #include "data-structures/polyshell.h"
 #include "helpers/logger.h"
 #include "real-type.h"
-#include "genparams.h"
-#include "filetype.h"
+#include "spatial-objs/genparams.h"
+#include "spatial-objs/filetype.h"
 
 #include "definitions.h"
 
@@ -55,12 +55,10 @@ public:
     Log log();
     std::string generateLogFileName() const;
 
-    void input( std::string_view polyStructFileName );
-    void input( const psg::PolyShell& polyStruct );
+    // TODO: make mesh output with PolyMesh method instead
     void output( FileType filetype = FileType::WavefrontObj, std::string_view filename = "_AUTO_", unsigned polyhedralSetId = 1u );
 
     PolyhedralSet();
-    PolyhedralSet( std::string_view polyStructFileName );
     PolyhedralSet( const psg::PolyShell& polyStruct );
     ~PolyhedralSet();
 
@@ -73,6 +71,7 @@ private:
 
     std::vector<Polyhedron*> m_polyhedrons;
 
+    // TODO: use Shell class instead
     std::vector<shell::Face*> m_shellFaces;
     std::vector<shell::Edge*> m_shellEdges;
     std::vector<shell::Vert*> m_shellVerts;
@@ -88,6 +87,9 @@ private:
     void outputLSDynaKeyword( const std::string& filename, unsigned PolyhedralSetId = 1u ) const;
 
     std::string generateOutputFilename( FileType filetype, std::string_view filename ) const;
+
+    void assign( std::string_view polyStructFileName ); // NOTE: deprecated
+    void assign( const psg::PolyShell& polyStruct );
 };
 
 } // namespace pmg

@@ -9,10 +9,12 @@ SOURCES += \
     helpers/spatial-algs/vec.cpp \
     helpers/logger.cpp \
     polysgen/polysgen.cpp \
+    spatial-objs/relations.cpp \
     spatial-objs/shell/shell-edge.cpp \
     spatial-objs/shell/shell-vertex.cpp \
     spatial-objs/edge.cpp \
     spatial-objs/polyhedral-set.cpp \
+    spatial-objs/shell/shell.cpp \
     spatial-objs/tetr.cpp \
     main.cpp \
     spatial-objs/polyhedron.cpp \
@@ -34,10 +36,12 @@ HEADERS += \
     polysgen/polysgen.h \
     spatial-objs/filetype.h \
     spatial-objs/genparams.h \
+    spatial-objs/relations.h \
     spatial-objs/shell/shell-edge.h \
     spatial-objs/shell/shell-vertex.h \
     spatial-objs/edge.h \
     spatial-objs/polyhedral-set.h \
+    spatial-objs/shell/shell.h \
     spatial-objs/tetr.h \
     definitions.h \
     real-type.h \

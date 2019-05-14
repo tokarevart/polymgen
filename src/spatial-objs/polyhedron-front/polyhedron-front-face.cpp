@@ -3,6 +3,7 @@
 
 #include "spatial-objs/polyhedron-front/polyhedron-front-face.h"
 #include <stdexcept>
+#include "helpers/spatial-algs/spatial-algs.h"
 
 
 using namespace pmg;
@@ -24,13 +25,17 @@ vec3 front::Face::computeNormal()
                                                          static_cast<real_t>(-0.71123534278))
                                                      * static_cast<real_t>(1e-3);
 
-    int intersects_num = 0;
+    size_t intersects_num = 0;
     for (auto& fface : m_relatedPolyhedron->frontFaces())
     {
         if (fface == this)
             continue;
 
-        if (fface->face->intersectsBy(center, test_normal_correct_intersect))
+        if (spatalgs::doesRayIntersectTriangle(
+                center, test_normal_correct_intersect,
+                fface->face->edges[0]->verts[0]->pos(),
+                fface->face->edges[0]->verts[1]->pos(),
+                fface->face->findVertNot(fface->face->edges[0])->pos()))
             intersects_num++;
     }
 
@@ -127,6 +132,18 @@ bool front::Face::isFEdgesFull() const
 }
 
 
+
+
+bool front::Face::contains(const pmg::Vert* vert) const
+{
+    return face->contains(vert);
+}
+
+
+bool front::Face::contains(const pmg::Edge* edge) const
+{
+    return face->contains(edge);
+}
 
 
 bool front::Face::contains(const front::Edge* fEdge) const

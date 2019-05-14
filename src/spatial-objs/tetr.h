@@ -13,25 +13,21 @@ namespace pmg {
 
 class Tetr
 {
-    using FaceV = std::array<Vert*, 3>;
+    using FaceV = std::array<pmg::Vert*, 3>;
 
 public:
-    Vert* verts[4];
+    // TODO: represent Tetr as a 4 Faces
+    std::array<pmg::Vert*, 4> verts;
 
     real_t computeVolume()  const;
     real_t computeQuality() const;
 
     bool contains( const Vert* vert ) const;
 
-    Vert* findNot( FaceV face ) const;
-    FaceV largestFace() const;
-
-    static bool adjByFace( const Tetr* tetr0, const Tetr* tetr1 );
-
-    Tetr( const Vert* vert0,
-          const Vert* vert1,
-          const Vert* vert2,
-          const Vert* vert3 );
+    Tetr( const pmg::Vert* vert0,
+          const pmg::Vert* vert1,
+          const pmg::Vert* vert2,
+          const pmg::Vert* vert3 );
 };
 
 } // namespace pmg

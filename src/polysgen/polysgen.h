@@ -3,7 +3,6 @@
 
 #pragma once
 #include <stddef.h>
-#include <memory>
 #include "data-structures/polyshell.h"
 
 

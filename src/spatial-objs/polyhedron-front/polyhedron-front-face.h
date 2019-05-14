@@ -17,7 +17,7 @@ class Face
 {
 public:
     pmg::Face* face;
-    front::Edge* fEdges[3] { nullptr, };
+    std::array<front::Edge*, 3> fEdges = { nullptr, };
     vec3 normal;
 
     vec3   computeNormal();
@@ -31,6 +31,8 @@ public:
     void removeFEdge( const front::Edge* fEdge );
     bool isFEdgesFull() const;
 
+    bool contains( const   pmg::Vert* vert )  const;
+    bool contains( const   pmg::Edge* edge )  const;
     bool contains( const front::Edge* fEdge ) const;
 
     Face(const Polyhedron* relatedPolyhedron, const pmg::Face* face);

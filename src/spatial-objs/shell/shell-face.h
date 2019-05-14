@@ -10,7 +10,7 @@
 #include "spatial-objs/shell/shell-front/shell-front-edge.h"
 #include "spatial-objs/shell/shell-front/shell-front-vert.h"
 #include "real-type.h"
-#include "../genparams.h"
+#include "spatial-objs/genparams.h"
 
 #include "definitions.h"
 
@@ -25,9 +25,9 @@ public:
 
     real_t preferredLength() const;
 
-    const std::list  <pmg::Face*>& innerFaces() const;
-    const std::list  <pmg::Edge*>& innerEdges() const;
-    const std::vector<pmg::Vert*>& innerVerts() const;
+    const std::list<pmg::Face*>& innerFaces() const;
+    const std::list<pmg::Edge*>& innerEdges() const;
+    const std::list<pmg::Vert*>& innerVerts() const;
 
     const std::list<front::Edge*>& frontEdges() const;
 
@@ -35,6 +35,7 @@ public:
     shell::Edge* findShellEdgeContaining( const pmg::Edge* edge ) const;
 
     // Needs shell edges to be already segmentized.
+    // TODO: improve as tetrahedralization algorithm later
     void triangulate( real_t preferredLen, genparams::Shell genParams = genparams::Shell() );
     void smoothMesh( size_t nIters );
     void delaunayPostP();
@@ -60,9 +61,9 @@ private:
 
     real_t m_prefLen;
 
-    std::list<pmg::Face*>   m_innerFaces;
-    std::list<pmg::Edge*>   m_innerEdges;
-    std::vector<pmg::Vert*> m_innerVerts;
+    std::list<pmg::Face*> m_innerFaces;
+    std::list<pmg::Edge*> m_innerEdges;
+    std::list<pmg::Vert*> m_innerVerts;
 
     std::list<front::Edge*> m_frontEdges;
     std::list<front::Vert*> m_frontVerts;
@@ -82,7 +83,7 @@ private:
     vec3 computeNormalInTriang( front::Edge* fEdge, pmg::Edge* oneOfRemainingEdges ); // Do i need it?
 
     bool tryComputeNewVertPosType2( front::Edge* fEdge, vec3& out_pos );
-    bool tryComputeNewVertPosType1( front::Edge* fEdge, vec3& out_pos, int smallAngleIndex );
+    bool tryComputeNewVertPosType1( front::Edge* fEdge, vec3& out_pos, size_t smallAngleIdx );
     bool tryComputeNewVertPosType0( front::Edge* fEdge, vec3& out_pos );
     bool tryComputeNewVertPos(      front::Edge* fEdge, vec3& out_pos );
 

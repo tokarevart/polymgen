@@ -22,17 +22,17 @@ public:
     real_t minAdjTetrVol = std::numeric_limits<real_t>::max();
     real_t maxAdjTetrVol = std::numeric_limits<real_t>::min();
 
-    shell::Face* belongsToShellFace = nullptr;
-    shell::Edge* belongsToShellEdge = nullptr;
-    shell::Vert* belongsToShellVert = nullptr;
+    shell::Face* belongsToSFace = nullptr;
+    shell::Edge* belongsToSEdge = nullptr;
+    shell::Vert* belongsToSVert = nullptr;
 
     const vec3& pos() const;
     void  setPos( const vec3& newPos );
     void  setPos( real_t coor0, real_t coor1, real_t coor2 );
 
-    real_t&       operator[]( short axis );
-    const real_t& operator[]( short axis ) const;
-    vec3 operator-( const Vert& other )        const;
+    real_t&       operator[]( unsigned axis );
+    const real_t& operator[]( unsigned axis ) const;
+    vec3 operator-( const pmg::Vert&   other ) const;
     vec3 operator-( const shell::Vert& other ) const;
     Vert& operator+=( const vec3& other );
     Vert& operator-=( const vec3& other );

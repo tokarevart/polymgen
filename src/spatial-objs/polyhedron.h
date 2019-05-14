@@ -15,8 +15,9 @@
 #include "spatial-objs/edge.h"
 #include "spatial-objs/vert.h"
 #include "helpers/spatial-algs/vec.h"
+#include "spatial-objs/relations.h"
 #include "real-type.h"
-#include "genparams.h"
+#include "spatial-objs/genparams.h"
 
 #include "spatial-objs/polyhedral-set.h"
 
@@ -27,6 +28,7 @@ namespace pmg {
 
 class Polyhedron
 {
+    // TODO: replace all pairs of the same types with std::array
     using pair_rr = std::pair<real_t, real_t>;
 
 public:    
@@ -68,15 +70,18 @@ private:
 
     using pair_ff = std::pair<front::Face*, front::Face*>;
 
+    genparams::Volume m_genparams;
+
     pair_rr m_meshQuality;
-    pair_rr m_absMeshGrad;
+    pair_rr m_meshAbsGrad;
     bool m_isQualityAnalyzed     = false;
-    bool m_isAbsMeshGradAnalyzed = false;
+    bool m_isMeshAbsGradAnalyzed = false;
 
     real_t m_prefLen;
 
     PolyhedralSet* m_polyhset = nullptr;
 
+    // TODO: use Shell class instead
     std::vector<shell::Face*> m_shellFaces;
     std::vector<shell::Edge*> m_shellEdges;
     std::vector<shell::Vert*> m_shellVerts;
@@ -86,6 +91,7 @@ private:
     std::list<Edge*> m_innerEdges;
     std::list<Vert*> m_innerVerts;
 
+    // TODO: add front::Vert class
     std::list<front::Face*> m_frontFaces;
     std::list<front::Edge*> m_frontEdges;
 
@@ -106,6 +112,8 @@ private:
     bool vertInsideFrontCheck( const vec3& v ) const;
     bool segmentGlobalIntersectionCheck( const vec3& v0, const vec3& v1 ) const;
     bool segmentFrontIntersectionCheck( const vec3& v0, const vec3& v1 ) const;
+    bool segmentFrontIntersectionCheck( const Vert* v0, const vec3& v1 ) const;
+    bool segmentFrontIntersectionCheck( const Vert* v0, const Vert* v1 ) const;
     bool edgeGlobalIntersectionCheck( const Edge* edge ) const;
     bool edgeIntersectionCheck( front::Edge* fEdge ) const;
     bool faceIntersectionCheck( const Vert* v0, const Vert* v1, const vec3&    v2 ) const;
@@ -114,6 +122,7 @@ private:
     bool insideTetrCheck( const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3, const vec3& vert ) const;
     bool anyVertInsidePotentialTetrCheck( front::Edge* fEdge ) const;
     bool parallelFacesCheck( front::Edge* fEdge ) const;
+    // TODO: add more proximity checks
     bool doesFrontIntersectSphere( const vec3& center, real_t radius ) const;
     bool frontSplitCheck(    front::Edge* fEdge, front::Edge* oppFEdge = nullptr ) const;
     bool frontCollapseCheck( front::Edge* fEdge, front::Edge* oppFEdge = nullptr ) const;
@@ -134,6 +143,7 @@ private:
     vec3 computeNormalInTetr( const front::Face* fFace, const pmg::Edge* oneOfRemainingEdges ) const;
     vec3 computeNormalInTetr( const vec3& fFacePos0, const vec3& fFacePos1, const vec3& fFacePos2, const vec3& oppVertPos ) const;
 
+    // TODO: add known neighbors initializations while creating new Tetr
     void setFEdgesInFrontSplit( const front::Edge* fEdge, std::array<front::Edge*, 2> newOppFEdges, std::array<front::Face*, 2> newFFaces, pair_ff oppFFaces ) const;
     void exhaustFrontCollapse( front::Edge* fEdge, front::Edge* oppFEdge );
     void exhaustFrontSplit( front::Edge* fEdge, front::Edge* oppFEdge );
@@ -146,10 +156,10 @@ private:
             front::Face* fFace, vec3& out_pos );
     bool tryComputeNewVertPosType2(
             front::Face* frontFace, vec3& out_pos,
-            int smallAngleIndex0, int smallAngleIndex1 );
+            size_t smallAngleIdx0, size_t smallAngleIdx1 );
     bool tryComputeNewVertPosType1(
             front::Face* fFace, vec3& out_pos,
-            int smallAngleIndex);
+            size_t smallAngleIdx);
     bool tryComputeNewVertPosType0(
             front::Face* fFace, vec3& out_pos );
     bool tryComputeNewVertPos( front::Face* fFace, vec3& out_pos );

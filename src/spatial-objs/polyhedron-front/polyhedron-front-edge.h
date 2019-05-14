@@ -31,6 +31,7 @@ public:
     real_t computeComplexity();
 
     // Opp means opposite.
+    // NOTE: maybe store oppVert or information that there is no oppVert
     pair_vv      oppVerts();
     front::Edge* findOppEdge();
 

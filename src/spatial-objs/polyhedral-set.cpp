@@ -1,7 +1,7 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "polyhedral-set.h"
+#include "spatial-objs/polyhedral-set.h"
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
@@ -15,18 +15,14 @@ using namespace pmg;
 //#define DEV_DEBUG
 
 
-
-
 shell::Edge* PolyhedralSet::findShellEdge(const shell::Vert* v0, const shell::Vert* v1) const
 {
     for (auto& s_edge : m_shellEdges)
-    {
-        if ((s_edge->verts[0] == v0  &&
-             s_edge->verts[1] == v1) ||
-            (s_edge->verts[1] == v0  &&
-             s_edge->verts[0] == v1))
+        if (   (   s_edge->verts[0] == v0
+                && s_edge->verts[1] == v1)
+            || (   s_edge->verts[1] == v0
+                && s_edge->verts[0] == v1))
             return s_edge;
-    }
     
     return nullptr;
 }
@@ -45,8 +41,6 @@ void PolyhedralSet::triangulateShell(genparams::Shell genParams)
     for (size_t i = 0; i < n_shell_faces; i++)
         m_shellFaces[i]->triangulate(m_prefLen, genParams);
 }
-
-
 
 
 void PolyhedralSet::outputObj(std::string_view filename) const
@@ -251,8 +245,6 @@ void PolyhedralSet::outputLSDynaKeyword(const std::string& filename, unsigned Po
 }
 
 
-
-
 std::string PolyhedralSet::generateLogFileName() const
 {
     std::stringstream ss;
@@ -335,8 +327,6 @@ void PolyhedralSet::shellDelaunayPostP()
 }
 
 
-
-
 PolyMesh PolyhedralSet::structurizeMesh() const
 {
     PolyMesh mesh;
@@ -407,8 +397,6 @@ PolyMesh PolyhedralSet::structurizeMesh() const
 }
 
 
-
-
 PolyhedralSet::Log PolyhedralSet::log()
 {
     if (m_isLogged)
@@ -440,9 +428,7 @@ PolyhedralSet::Log PolyhedralSet::log()
 }
 
 
-
-
-void PolyhedralSet::input(std::string_view polyStructFileName)
+void PolyhedralSet::assign(std::string_view polyStructFileName)
 {
     std::ifstream input(polyStructFileName.data());
 
@@ -528,14 +514,16 @@ void PolyhedralSet::input(std::string_view polyStructFileName)
 }
 
 
-void PolyhedralSet::input(const psg::PolyShell& polyStruct)
+void PolyhedralSet::assign(const psg::PolyShell& polyStruct)
 {
     for (size_t i = 0; i < polyStruct.verts.size(); i++)
     {
-        real_t x[3];
-        x[0] = polyStruct.verts[i][0];
-        x[1] = polyStruct.verts[i][1];
-        x[2] = polyStruct.verts[i][2];
+        std::array<real_t, 3> x =
+        {
+            polyStruct.verts[i][0],
+            polyStruct.verts[i][1],
+            polyStruct.verts[i][2]
+        };
 
         m_shellVerts.push_back(new shell::Vert(x[0], x[1], x[2]));
     }
@@ -571,23 +559,22 @@ void PolyhedralSet::input(const psg::PolyShell& polyStruct)
     {
         for (size_t j = 0; j < polyStruct.polyhs[i].size(); ++j)
         {
-            size_t face_ind = polyStruct.polyhs[i][j];
-
+            size_t face_idx = polyStruct.polyhs[i][j];
             for (size_t k = 0; k < 3; ++k)
             {
-                if (!m_polyhedrons[i]->shellContains(m_shellFaces[face_ind]->edges[k]))
+                if (!m_polyhedrons[i]->shellContains(m_shellFaces[face_idx]->edges[k]))
                 {
-                    m_polyhedrons[i]->addToShell(m_shellFaces[face_ind]->edges[k]);
+                    m_polyhedrons[i]->addToShell(m_shellFaces[face_idx]->edges[k]);
 
-                    if (!m_polyhedrons[i]->shellContains(m_shellFaces[face_ind]->edges[k]->verts[0]))
-                        m_polyhedrons[i]->addToShell(m_shellFaces[face_ind]->edges[k]->verts[0]);
+                    if (!m_polyhedrons[i]->shellContains(m_shellFaces[face_idx]->edges[k]->verts[0]))
+                        m_polyhedrons[i]->addToShell(m_shellFaces[face_idx]->edges[k]->verts[0]);
 
-                    if (!m_polyhedrons[i]->shellContains(m_shellFaces[face_ind]->edges[k]->verts[1]))
-                        m_polyhedrons[i]->addToShell(m_shellFaces[face_ind]->edges[k]->verts[1]);
+                    if (!m_polyhedrons[i]->shellContains(m_shellFaces[face_idx]->edges[k]->verts[1]))
+                        m_polyhedrons[i]->addToShell(m_shellFaces[face_idx]->edges[k]->verts[1]);
                 }
             }
 
-            m_polyhedrons[i]->addToShell(m_shellFaces[face_ind]);
+            m_polyhedrons[i]->addToShell(m_shellFaces[face_idx]);
         }
     }
 }
@@ -641,15 +628,9 @@ void PolyhedralSet::output(FileType filetype, std::string_view filename, unsigne
 PolyhedralSet::PolyhedralSet() {}
 
 
-PolyhedralSet::PolyhedralSet(std::string_view polyStructFileName)
-{
-    input(polyStructFileName);
-}
-
-
 PolyhedralSet::PolyhedralSet(const psg::PolyShell& polyStruct)
 {
-    input(polyStruct);
+    assign(polyStruct);
 }
 
 

@@ -30,37 +30,6 @@ real_t pmg::Face::computeArea() const
 }
 
 
-
-
-pmg::Edge* pmg::Face::adjByEdge(const pmg::Face* face0, const pmg::Face* face1)
-{
-    int inters = 0;
-    pmg::Edge* res = nullptr;
-    for (auto& edge0 : face0->edges)
-        for (auto& edge1 : face1->edges)
-            if (edge0 == edge1)
-            {
-                inters++;
-                res = edge0;
-                break;
-            }
-
-    return inters == 1 ? res : nullptr;
-}
-
-
-
-
-bool pmg::Face::intersectsBy(const vec3& origin, const vec3& dir) const
-{
-    return spatalgs::doesRayIntersectTriangle(
-        origin, dir,
-        edges[0]->verts[0]->pos(),
-        edges[0]->verts[1]->pos(),
-        findVertNot(edges[0])->pos());
-}
-
-
 pmg::Vert* pmg::Face::findVertNot(const pmg::Edge* edge) const
 {
     for (auto& face_edge : edges)
@@ -81,10 +50,8 @@ pmg::Vert* pmg::Face::findVertNot(const pmg::Edge* edge) const
 pmg::Edge* pmg::Face::findEdgeNot(const pmg::Vert* vert) const
 {
     for (auto& edge : edges)
-    {
         if (!edge->contains(vert))
             return edge;
-    }
 
     return nullptr;
 }
@@ -93,13 +60,11 @@ pmg::Edge* pmg::Face::findEdgeNot(const pmg::Vert* vert) const
 pmg::Edge* pmg::Face::findEdge(const pmg::Vert* vert0, const pmg::Vert* vert1) const
 {
     for (auto& edge : edges)
-    {
         if ((edge->verts[0] == vert0 &&
              edge->verts[1] == vert1) ||
             (edge->verts[0] == vert1 &&
              edge->verts[1] == vert0))
             return edge;
-    }
     
     return nullptr;
 }
@@ -143,8 +108,7 @@ pmg::Edge* pmg::Face::longestEdge() const
 }
 
 
-
-
+// TODO: replace its usage with pmg::relations content
 bool pmg::Face::contains(const pmg::Edge* edge) const
 {
     for (auto& edge0 : edges)
@@ -155,6 +119,7 @@ bool pmg::Face::contains(const pmg::Edge* edge) const
 }
 
 
+// TODO: replace its usage with pmg::relations content
 bool pmg::Face::contains(const pmg::Vert* vert) const
 {
     for (auto& edge : edges)
@@ -163,8 +128,6 @@ bool pmg::Face::contains(const pmg::Vert* vert) const
 
     return false;
 }
-
-
 
 
 pmg::Face::Face(const pmg::Edge* edge0, const pmg::Edge* edge1, const pmg::Edge* edge2)

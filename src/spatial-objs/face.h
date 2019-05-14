@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #pragma once
+#include <array>
 #include "spatial-objs/edge.h"
 #include "spatial-objs/vert.h"
 #include "helpers/spatial-algs/vec.h"
@@ -15,26 +16,25 @@ namespace pmg {
 class Face
 {
 public:
-    Edge* edges[3];
+    std::array<pmg::Edge*, 3> edges;
 
     vec3   computeCenter()  const;
     real_t computeQuality() const;
     real_t computeArea()    const;
 
-    static Edge* adjByEdge( const Face* facet0, const Face* facet1 );
+//    static pmg::Edge* adjByEdge( const pmg::Face* face0, const pmg::Face* face1 );
 
-    bool intersectsBy( const vec3& origin, const vec3& dir ) const;
-    Vert* findVertNot( const Edge* edge ) const;
-    Edge* findEdgeNot( const Vert* vert ) const;
-    Edge* findEdge( const Vert* vert0, const Vert* vert1 ) const;
-    Edge* shortestEdge() const;
-    Edge* longestEdge()  const;
+    pmg::Vert* findVertNot( const pmg::Edge* edge ) const;
+    pmg::Edge* findEdgeNot( const pmg::Vert* vert ) const;
+    pmg::Edge* findEdge( const pmg::Vert* vert0, const pmg::Vert* vert1 ) const;
+    pmg::Edge* shortestEdge() const;
+    pmg::Edge* longestEdge()  const;
 
-    bool contains( const Edge* edge ) const;
-    bool contains( const Vert* vert ) const;
+    bool contains( const pmg::Edge* edge ) const;
+    bool contains( const pmg::Vert* vert ) const;
 
-    Face( const Edge* edge0, const Edge* edge1, const Edge* edge2 );
-    Face( const Vert* vert0, const Vert* vert1, const Vert* vert2 );
+    Face( const pmg::Edge* edge0, const pmg::Edge* edge1, const pmg::Edge* edge2 );
+    Face( const pmg::Vert* vert0, const pmg::Vert* vert1, const pmg::Vert* vert2 );
 };
 
 } // namespace pmg

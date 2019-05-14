@@ -4,18 +4,6 @@
 #include "helpers/spatial-algs/vec.h"
 
 
-#define DET(a, b, c, d) \
-        ((a) * (d) - (b) * (c))
-
-#define BETWEEN(p0_coor, p1_coor, p) \
-        (std::min(p0_coor, p1_coor) - EPS < (p) && (p) < std::max(p0_coor, p1_coor) + EPS)
-
-#define INSIDE_RECTANGLE(corner0, corner1, point) \
-            (BETWEEN(corner0.x[0], corner1.x[0], point.x[0]) && \
-             BETWEEN(corner0.x[1], corner1.x[1], point.x[1]) && \
-             BETWEEN(corner0.x[2], corner1.x[2], point.x[2]))
-
-
 
 
 real_t vec3::dot(const vec3& vec0, const vec3& vec1)

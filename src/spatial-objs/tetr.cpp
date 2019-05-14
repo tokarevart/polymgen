@@ -6,8 +6,6 @@
 #include "helpers/spatial-algs/vec.h"
 
 
-
-
 real_t pmg::Tetr::computeVolume() const
 {
     vec3 v0 = verts[0]->pos();
@@ -20,10 +18,10 @@ real_t pmg::Tetr::computeVolume() const
 real_t pmg::Tetr::computeQuality() const
 {
     real_t sqr_prods[4];
-    for (int i = 0; i < 4; i++)
+    for (size_t i = 0; i < 4; i++)
     {
-        sqr_prods[i] = 1.0;
-        for (int j = 0; j < 4; j++)
+        sqr_prods[i] = static_cast<real_t>(1.0);
+        for (size_t j = 0; j < 4; j++)
             if (j != i)
                 sqr_prods[i] *= (*verts[j] - *verts[i]).sqrMagnitude();
     }
@@ -31,6 +29,8 @@ real_t pmg::Tetr::computeQuality() const
 
     return static_cast<real_t>(8.48528137423857) * computeVolume() / std::sqrt(max_sqr_prod);
 }
+
+
 
 
 pmg::Tetr::Tetr(const Vert* vert0, const Vert* vert1, const Vert* vert2, const Vert* vert3)

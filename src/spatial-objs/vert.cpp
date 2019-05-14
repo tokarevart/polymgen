@@ -26,15 +26,13 @@ void pmg::Vert::setPos(real_t coor0, real_t coor1, real_t coor2)
 }
 
 
-
-
-real_t& pmg::Vert::operator[](short axis)
+real_t& pmg::Vert::operator[](unsigned axis)
 {
     return m_pos->x[axis];
 }
 
 
-const real_t& pmg::Vert::operator[](short axis) const
+const real_t& pmg::Vert::operator[](unsigned axis) const
 {
     return m_pos->x[axis];
 }
@@ -54,20 +52,20 @@ vec3 pmg::Vert::operator-(const shell::Vert& other) const
 
 pmg::Vert& pmg::Vert::operator+=(const vec3& other)
 {
-    if (belongsToShellVert)
+    if (belongsToSVert)
     {
         return *this;
     }
-    else if (belongsToShellEdge)
+    else if (belongsToSEdge)
     {
-        (*m_pos) += vec3(other).project(*belongsToShellEdge->verts[0] - *belongsToShellEdge->verts[1]);
+        (*m_pos) += vec3(other).project(*belongsToSEdge->verts[0] - *belongsToSEdge->verts[1]);
         return *this;
     }
-    else if (belongsToShellFace)
+    else if (belongsToSFace)
     {
         (*m_pos) += vec3(other).project(
-            *belongsToShellFace->edges[0]->verts[1] - *belongsToShellFace->edges[0]->verts[0],
-            *belongsToShellFace->edges[1]->verts[1] - *belongsToShellFace->edges[1]->verts[0]);
+            *belongsToSFace->edges[0]->verts[1] - *belongsToSFace->edges[0]->verts[0],
+            *belongsToSFace->edges[1]->verts[1] - *belongsToSFace->edges[1]->verts[0]);
         return *this;
     }
     else
@@ -79,13 +77,13 @@ pmg::Vert& pmg::Vert::operator+=(const vec3& other)
 
 pmg::Vert& pmg::Vert::operator-=(const vec3& other)
 {
-    if (belongsToShellVert)
+    if (belongsToSVert)
     {
         return *this;
     }
-    else if (belongsToShellEdge)
+    else if (belongsToSEdge)
     {
-        (*m_pos) -= vec3(other).project(*belongsToShellEdge->verts[0] - *belongsToShellEdge->verts[1]);
+        (*m_pos) -= vec3(other).project(*belongsToSEdge->verts[0] - *belongsToSEdge->verts[1]);
         return *this;
     }
     else
