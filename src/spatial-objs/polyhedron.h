@@ -86,6 +86,7 @@ private:
     std::vector<shell::Edge*> m_shellEdges;
     std::vector<shell::Vert*> m_shellVerts;
 
+    // TODO: create and use Volume class instead
     std::list<Tetr*> m_innerTetrs;
     std::list<Face*> m_innerFaces;
     std::list<Edge*> m_innerEdges;

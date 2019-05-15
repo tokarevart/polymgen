@@ -1,13 +1,13 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "spatial-objs/shell/shell-face.h"
+#include "spatial-objs/surface/surface-face.h"
 #include <algorithm>
 #include "helpers/spatial-algs/spatial-algs.h"
 
 
 using namespace pmg;
-namespace sfront = shell::front;
+namespace sfront = surface::front;
 using pair_rr = std::pair<real_t, real_t>;
 using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
 using pair_ee = std::pair<pmg::Edge*, pmg::Edge*>;
@@ -35,37 +35,37 @@ constexpr real_t degToRad(T value)
 }
 
 
-real_t shell::Face::preferredLength() const
+real_t surface::Face::preferredLength() const
 {
     return m_prefLen;
 }
 
 
-const std::list<pmg::Face*>& shell::Face::innerFaces() const
+const std::list<pmg::Face*>& surface::Face::innerFaces() const
 {
     return m_innerFaces;
 }
 
 
-const std::list<pmg::Edge*>& shell::Face::innerEdges() const
+const std::list<pmg::Edge*>& surface::Face::innerEdges() const
 {
     return m_innerEdges;
 }
 
 
-const std::list<pmg::Vert*>& shell::Face::innerVerts() const
+const std::list<pmg::Vert*>& surface::Face::innerVerts() const
 {
     return m_innerVerts;
 }
 
 
-const std::list<sfront::Edge*>& shell::Face::frontEdges() const
+const std::list<sfront::Edge*>& surface::Face::frontEdges() const
 {
     return m_frontEdges;
 }
 
 
-shell::Vert* shell::Face::findVertNot(const shell::Edge* edge) const
+surface::Vert* surface::Face::findVertNot(const surface::Edge* edge) const
 {
     for (auto& face_edge : edges)
     {
@@ -82,7 +82,7 @@ shell::Vert* shell::Face::findVertNot(const shell::Edge* edge) const
 }
 
 
-shell::Edge* shell::Face::findShellEdgeContaining(const pmg::Edge* edge) const
+surface::Edge* surface::Face::findSurfaceEdgeContaining(const pmg::Edge* edge) const
 {
     for (auto& sedge : edges)
         if (sedge->contains(edge))
@@ -92,21 +92,21 @@ shell::Edge* shell::Face::findShellEdgeContaining(const pmg::Edge* edge) const
 }
 
 
-void shell::Face::triangulate(real_t preferredLen, genparams::Shell genParams)
+void surface::Face::triangulate(real_t preferredLen, genparams::Surface genParams)
 {
     m_prefLen = preferredLen;
     initializeFront();
     computeFrontNormals();
     processAngles();
 //    if (globalIntersectionCheck())
-//        throw std::logic_error("Intersection error.\npmg::shell::Face::globalIntersectionCheck returned true.");
+//        throw std::logic_error("Intersection error.\npmg::surface::Face::globalIntersectionCheck returned true.");
 
     optimizeMesh(genParams.nSmoothIters, genParams.nDelaunaySmoothIters);
 }
 
 
 // TODO: replace its usage with pmg::relations content
-bool shell::Face::contains(const shell::Edge* edge) const
+bool surface::Face::contains(const surface::Edge* edge) const
 {
     for (auto& edge_ : edges)
         if (edge_ == edge)
@@ -117,7 +117,7 @@ bool shell::Face::contains(const shell::Edge* edge) const
 
 
 // TODO: replace its usage with pmg::relations content
-bool shell::Face::contains(const shell::Vert* vert) const
+bool surface::Face::contains(const surface::Vert* vert) const
 {
     for (auto& edge : edges)
         if (edge->contains(vert))
@@ -129,20 +129,20 @@ bool shell::Face::contains(const shell::Vert* vert) const
 
 
 
-shell::Face::Face(
-    const shell::Edge* edge0,
-    const shell::Edge* edge1,
-    const shell::Edge* edge2)
+surface::Face::Face(
+    const surface::Edge* edge0,
+    const surface::Edge* edge1,
+    const surface::Edge* edge2)
 {
-    edges[0] = const_cast<shell::Edge*>(edge0);
-    edges[1] = const_cast<shell::Edge*>(edge1);
-    edges[2] = const_cast<shell::Edge*>(edge2);
+    edges[0] = const_cast<surface::Edge*>(edge0);
+    edges[1] = const_cast<surface::Edge*>(edge1);
+    edges[2] = const_cast<surface::Edge*>(edge2);
 }
 
 
 
 
-sfront::Vert* shell::Face::findFrontVert(const pmg::Vert* vert) const
+sfront::Vert* surface::Face::findFrontVert(const pmg::Vert* vert) const
 {
     for (auto& fvert : m_frontVerts)
         if (fvert->vert == vert)
@@ -152,7 +152,7 @@ sfront::Vert* shell::Face::findFrontVert(const pmg::Vert* vert) const
 }
 
 
-sfront::Edge* shell::Face::addToFront(const pmg::Edge* edge)
+sfront::Edge* surface::Face::addToFront(const pmg::Edge* edge)
 {
     sfront::Edge* new_f_edge = new sfront::Edge(this, edge);
     m_frontEdges.push_back(new_f_edge);
@@ -161,7 +161,7 @@ sfront::Edge* shell::Face::addToFront(const pmg::Edge* edge)
 }
 
 
-sfront::Vert* shell::Face::addToFront(const pmg::Vert* vert)
+sfront::Vert* surface::Face::addToFront(const pmg::Vert* vert)
 {
     sfront::Vert* new_f_vert = new sfront::Vert(this, vert);
     m_frontVerts.push_back(new_f_vert);
@@ -170,21 +170,21 @@ sfront::Vert* shell::Face::addToFront(const pmg::Vert* vert)
 }
 
 
-void shell::Face::removeFromFront(sfront::Edge* fEdge)
+void surface::Face::removeFromFront(sfront::Edge* fEdge)
 {
     m_frontEdges.erase(std::find(m_frontEdges.begin(), m_frontEdges.end(), fEdge));
     delete fEdge;
 }
 
 
-void shell::Face::removeFromFront(sfront::Vert* fVert)
+void surface::Face::removeFromFront(sfront::Vert* fVert)
 {
     m_frontVerts.erase(std::find(m_frontVerts.begin(), m_frontVerts.end(), fVert));
     delete fVert;
 }
 
 
-bool shell::Face::anyVertInsidePotentialTriangCheck(sfront::Vert* fVert) const
+bool surface::Face::anyVertInsidePotentialTriangCheck(sfront::Vert* fVert) const
 {
     auto opp_verts = fVert->oppVerts();
     pmg::Vert* tr[3]
@@ -203,7 +203,7 @@ bool shell::Face::anyVertInsidePotentialTriangCheck(sfront::Vert* fVert) const
 }
 
 
-bool shell::Face::doesSegmentIntersectsWithFront(const vec3& v0, const vec3& v1) const
+bool surface::Face::doesSegmentIntersectsWithFront(const vec3& v0, const vec3& v1) const
 {
     for (auto& fedge : m_frontEdges)
         if (spatalgs::segmentsDistance(
@@ -215,7 +215,7 @@ bool shell::Face::doesSegmentIntersectsWithFront(const vec3& v0, const vec3& v1)
 }
 
 
-bool shell::Face::doesSegmentIntersectsWithFront(const pmg::Vert* v0, const vec3& v1) const
+bool surface::Face::doesSegmentIntersectsWithFront(const pmg::Vert* v0, const vec3& v1) const
 {
     for (auto& fedge : m_frontEdges)
     {
@@ -232,7 +232,7 @@ bool shell::Face::doesSegmentIntersectsWithFront(const pmg::Vert* v0, const vec3
 }
 
 
-vec3 shell::Face::computeNormalInTriang(sfront::Edge* fEdge, const vec3& oppVertPos)
+vec3 surface::Face::computeNormalInTriang(sfront::Edge* fEdge, const vec3& oppVertPos)
 {
     vec3 p0 = fEdge->edge->verts[0]->pos();
     vec3 p1 = fEdge->edge->verts[1]->pos();
@@ -240,7 +240,7 @@ vec3 shell::Face::computeNormalInTriang(sfront::Edge* fEdge, const vec3& oppVert
 }
 
 
-bool shell::Face::tryComputeNewVertPosType2(sfront::Edge* fEdge, vec3& out_pos)
+bool surface::Face::tryComputeNewVertPosType2(sfront::Edge* fEdge, vec3& out_pos)
 {
     sfront::Vert* main_f_verts[2];
     main_f_verts[0] = findFrontVert(fEdge->edge->verts[0]);
@@ -273,7 +273,7 @@ bool shell::Face::tryComputeNewVertPosType2(sfront::Edge* fEdge, vec3& out_pos)
 }
 
 
-bool shell::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, vec3& out_pos, size_t smallAngleIdx)
+bool surface::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, vec3& out_pos, size_t smallAngleIdx)
 {
     auto main_vert = fEdge->edge->verts[smallAngleIdx];
     auto sec_vert  = fEdge->edge->findNot(main_vert);
@@ -304,7 +304,7 @@ bool shell::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, vec3& out_pos, 
 }
 
 
-bool shell::Face::tryComputeNewVertPosType0(sfront::Edge* fEdge, vec3& out_pos)
+bool surface::Face::tryComputeNewVertPosType0(sfront::Edge* fEdge, vec3& out_pos)
 {
     real_t magn = fEdge->edge->magnitude();
     real_t raw_deform = K_D * (m_prefLen - magn);
@@ -327,7 +327,7 @@ bool shell::Face::tryComputeNewVertPosType0(sfront::Edge* fEdge, vec3& out_pos)
 }
 
 
-bool shell::Face::tryComputeNewVertPos(sfront::Edge* fEdge, vec3& out_pos)
+bool surface::Face::tryComputeNewVertPos(sfront::Edge* fEdge, vec3& out_pos)
 {
     std::array<real_t, 2> angs
     {
@@ -350,7 +350,7 @@ bool shell::Face::tryComputeNewVertPos(sfront::Edge* fEdge, vec3& out_pos)
 }
 
 
-pair_rr shell::Face::computeMinMaxEdgesLengths(const vec3& p0, const vec3& p1, const vec3& p2)
+pair_rr surface::Face::computeMinMaxEdgesLengths(const vec3& p0, const vec3& p1, const vec3& p2)
 {
     auto min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2);
     min_max.first  = std::sqrt(min_max.first);
@@ -359,7 +359,7 @@ pair_rr shell::Face::computeMinMaxEdgesLengths(const vec3& p0, const vec3& p1, c
 }
 
 
-pair_rr shell::Face::computeMinMaxEdgesSqrLengths(const vec3& p0, const vec3& p1, const vec3& p2)
+pair_rr surface::Face::computeMinMaxEdgesSqrLengths(const vec3& p0, const vec3& p1, const vec3& p2)
 {
     std::array<real_t, 3> sqr_magns;
     sqr_magns[0] = (p1 - p0).sqrMagnitude();
@@ -369,21 +369,21 @@ pair_rr shell::Face::computeMinMaxEdgesSqrLengths(const vec3& p0, const vec3& p1
 }
 
 
-real_t shell::Face::computeTriangSimpleQuality(const vec3& p0, const vec3& p1, const vec3& p2)
+real_t surface::Face::computeTriangSimpleQuality(const vec3& p0, const vec3& p1, const vec3& p2)
 {
     auto sqr_min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2);
     return std::sqrt(sqr_min_max.first / sqr_min_max.second);
 }
 
 
-real_t shell::Face::computeTriangSimpleSqrQuality(const vec3& p0, const vec3& p1, const vec3& p2)
+real_t surface::Face::computeTriangSimpleSqrQuality(const vec3& p0, const vec3& p1, const vec3& p2)
 {
     auto sqr_min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2);
     return sqr_min_max.first / sqr_min_max.second;
 }
 
 
-sfront::Edge* shell::Face::chooseEdgeForExhaustionWithNewVert(sfront::Vert* fVert)
+sfront::Edge* surface::Face::chooseEdgeForExhaustionWithNewVert(sfront::Vert* fVert)
 {
     auto adj_edges = fVert->findAdjEdges();
     return std::get<0>(adj_edges)->edge->sqrMagnitude() < std::get<1>(adj_edges)->edge->sqrMagnitude() ?
@@ -391,7 +391,7 @@ sfront::Edge* shell::Face::chooseEdgeForExhaustionWithNewVert(sfront::Vert* fVer
 }
 
 
-void shell::Face::exhaustWithNewVert(sfront::Edge* fEdge, const vec3& vertPos)
+void surface::Face::exhaustWithNewVert(sfront::Edge* fEdge, const vec3& vertPos)
 {
     std::array<pmg::Vert*, 2> main_verts = { fEdge->edge->verts[0], fEdge->edge->verts[1] };
 
@@ -410,7 +410,7 @@ void shell::Face::exhaustWithNewVert(sfront::Edge* fEdge, const vec3& vertPos)
 }
 
 
-void shell::Face::exhaustWithoutNewVert(sfront::Vert* fVert)
+void surface::Face::exhaustWithoutNewVert(sfront::Vert* fVert)
 {
     auto adj_edges = fVert->findAdjEdges();
     std::pair<pmg::Vert*, pmg::Vert*> opp_verts =
@@ -433,7 +433,7 @@ void shell::Face::exhaustWithoutNewVert(sfront::Vert* fVert)
 }
 
 
-bool shell::Face::tryExhaustWithoutNewVert(sfront::Vert* fVert)
+bool surface::Face::tryExhaustWithoutNewVert(sfront::Vert* fVert)
 {
     if (anyVertInsidePotentialTriangCheck(fVert))
         return false;
@@ -443,7 +443,7 @@ bool shell::Face::tryExhaustWithoutNewVert(sfront::Vert* fVert)
 }
 
 
-bool shell::Face::tryExhaustWithNewVert(sfront::Vert* fVert)
+bool surface::Face::tryExhaustWithNewVert(sfront::Vert* fVert)
 {
     auto exhaust_f_edge = chooseEdgeForExhaustionWithNewVert(fVert);
     vec3 new_vert_pos;
@@ -455,7 +455,7 @@ bool shell::Face::tryExhaustWithNewVert(sfront::Vert* fVert)
 }
 
 
-sfront::Vert* shell::Face::currentFrontVert(real_t maxCompl) const
+sfront::Vert* surface::Face::currentFrontVert(real_t maxCompl) const
 {
     real_t cur_max_compl = 0.0;
     sfront::Vert* cur_max_f_edge = nullptr;
@@ -474,7 +474,7 @@ sfront::Vert* shell::Face::currentFrontVert(real_t maxCompl) const
 }
 
 
-bool shell::Face::exhaustWithoutNewVertPriorityPredicate(sfront::Vert* fEdge)
+bool surface::Face::exhaustWithoutNewVertPriorityPredicate(sfront::Vert* fEdge)
 {
     if (fEdge->angle() < degToRad(60))
         return true;
@@ -491,7 +491,7 @@ bool shell::Face::exhaustWithoutNewVertPriorityPredicate(sfront::Vert* fEdge)
 }
 
 
-bool shell::Face::exhaustWithNewVertPriorityPredicate(sfront::Vert* fEdge)
+bool surface::Face::exhaustWithNewVertPriorityPredicate(sfront::Vert* fEdge)
 {
     if (fEdge->angle() > degToRad(100))
         return true;
@@ -500,7 +500,7 @@ bool shell::Face::exhaustWithNewVertPriorityPredicate(sfront::Vert* fEdge)
 }
 
 
-shell::Face::ExhaustType shell::Face::computeExhaustionTypeQualityPriority(
+surface::Face::ExhaustType surface::Face::computeExhaustionTypeQualityPriority(
         sfront::Vert* fVert, sfront::Edge*& out_withNWFrontEdge, vec3*& out_withNWNewVertPos)
 {
     if (anyVertInsidePotentialTriangCheck(fVert))
@@ -531,7 +531,7 @@ shell::Face::ExhaustType shell::Face::computeExhaustionTypeQualityPriority(
 }
 
 
-void shell::Face::processLastFace()
+void surface::Face::processLastFace()
 {
     std::array<pmg::Edge*, 3> edges;
     size_t i = 0;
@@ -550,10 +550,10 @@ void shell::Face::processLastFace()
 }
 
 
-void shell::Face::processAngles()
+void surface::Face::processAngles()
 {
     if (m_frontEdges.size() < 3)
-        throw std::logic_error("Wrong input data.\nError in function: pmg::shell::Face::processAngles");
+        throw std::logic_error("Wrong input data.\nError in function: pmg::surface::Face::processAngles");
 
     if (m_frontEdges.size() == 3)
     {
@@ -565,7 +565,7 @@ void shell::Face::processAngles()
     for (sfront::Vert* cur_f_vert = currentFrontVert(max_compl);; cur_f_vert = currentFrontVert(max_compl))
     {
         if (!cur_f_vert)
-            throw std::logic_error("pmg::shell::Face::currentFrontVert returned nullptr");
+            throw std::logic_error("pmg::surface::Face::currentFrontVert returned nullptr");
 
         if (exhaustWithoutNewVertPriorityPredicate(cur_f_vert))
         {
@@ -625,7 +625,7 @@ void shell::Face::processAngles()
 }
 
 
-void shell::Face::smoothMesh(size_t nIters)
+void surface::Face::smoothMesh(size_t nIters)
 {
     for (size_t i = 0; i < nIters; i++)
     {
@@ -653,7 +653,7 @@ void shell::Face::smoothMesh(size_t nIters)
 }
 
 
-pair_ff shell::Face::find2AdjFaces(pmg::Edge* edge) const
+pair_ff surface::Face::find2AdjFaces(pmg::Edge* edge) const
 {
     pair_ff res;
     bool not_found_yet = true;
@@ -674,11 +674,11 @@ pair_ff shell::Face::find2AdjFaces(pmg::Edge* edge) const
         }
     }
 
-    throw std::logic_error("pmg::shell::Face::find2AdjFaces didn't find 2 adjacent Faces.");
+    throw std::logic_error("pmg::surface::Face::find2AdjFaces didn't find 2 adjacent Faces.");
 }
 
 
-bool shell::Face::flipIfNeeded(pmg::Edge* edge)
+bool surface::Face::flipIfNeeded(pmg::Edge* edge)
 {
     std::array<pmg::Vert*, 2> opp_nodes;
     auto around_faces = find2AdjFaces(edge);
@@ -718,14 +718,14 @@ bool shell::Face::flipIfNeeded(pmg::Edge* edge)
 }
 
 
-void shell::Face::delaunayPostP()
+void surface::Face::delaunayPostP()
 {
     for (auto& edge : m_innerEdges)
         flipIfNeeded(edge);
 }
 
 
-void shell::Face::optimizeMesh(size_t nSmoothIters, size_t nDelaunaySmoothIters)
+void surface::Face::optimizeMesh(size_t nSmoothIters, size_t nDelaunaySmoothIters)
 {
     for (size_t i = 0; i < nDelaunaySmoothIters; i++)
     {
@@ -735,16 +735,16 @@ void shell::Face::optimizeMesh(size_t nSmoothIters, size_t nDelaunaySmoothIters)
 }
 
 
-void shell::Face::computeFrontNormals() const
+void surface::Face::computeFrontNormals() const
 {
     for (auto& fedge : m_frontEdges)
         fedge->computeNormal();
 }
 
 
-void shell::Face::initializeFront()
+void surface::Face::initializeFront()
 {
-    std::vector<shell::Vert*> sverts;
+    std::vector<surface::Vert*> sverts;
     for (auto& this_edge : edges)
         for (auto& svert : this_edge->verts)
             if (std::find(sverts.begin(), sverts.end(), svert) == sverts.end())

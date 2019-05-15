@@ -1,7 +1,7 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "spatial-objs/shell/shell-front/shell-front-vert.h"
+#include "spatial-objs/surface/surface-front/surface-front-vert.h"
 #include <stdexcept>
 #include "helpers/spatial-algs/spatial-algs.h"
 
@@ -10,7 +10,7 @@
 #define K_ALPHA static_cast<real_t>(4.0)
 
 
-using namespace pmg::shell;
+using namespace pmg::surface;
 using pair_ee  = std::pair<front::Edge*, front::Edge*>;
 using pair_vv  = std::pair<pmg::Vert*, pmg::Vert*>;
 
@@ -45,8 +45,8 @@ real_t front::Vert::computeComplexity()
     m_needComplexityProcessing = false;
     auto adj_edges = findAdjEdges();
     real_t adj_edges_av_len = static_cast<real_t>(0.5) * (  std::get<0>(adj_edges)->edge->magnitude()
-                                     + std::get<1>(adj_edges)->edge->magnitude());
-    return m_complexity = m_relatedShellFace->preferredLength() / adj_edges_av_len + K_ALPHA * PI / computeAngle();
+                                                          + std::get<1>(adj_edges)->edge->magnitude());
+    return m_complexity = m_relatedSurfaceFace->preferredLength() / adj_edges_av_len + K_ALPHA * PI / computeAngle();
 }
 
 
@@ -70,7 +70,7 @@ pair_ee front::Vert::findAdjEdges() const
 {
     pair_ee res(nullptr, nullptr);
     size_t i = 0;
-    for (auto& fedge : m_relatedShellFace->frontEdges())
+    for (auto& fedge : m_relatedSurfaceFace->frontEdges())
     {
         if (fedge->edge->contains(vert))
         {
@@ -79,7 +79,7 @@ pair_ee front::Vert::findAdjEdges() const
         }
     }
 
-    throw std::logic_error("Function pmg::shell::front::Vert::findAdjEdges didn't find 2 adjacent front edges.");
+    throw std::logic_error("Function pmg::surface::front::Vert::findAdjEdges didn't find 2 adjacent front edges.");
 }
 
 
@@ -93,5 +93,5 @@ pair_vv front::Vert::oppVerts() const
 
 
 
-front::Vert::Vert(const shell::Face* relatedShellFace, const pmg::Vert* vert)
-    : vert(const_cast<pmg::Vert*>(vert)), m_relatedShellFace(const_cast<shell::Face*>(relatedShellFace)) {}
+front::Vert::Vert(const surface::Face* relatedSurfaceFace, const pmg::Vert* vert)
+    : vert(const_cast<pmg::Vert*>(vert)), m_relatedSurfaceFace(const_cast<surface::Face*>(relatedSurfaceFace)) {}

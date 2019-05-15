@@ -10,21 +10,21 @@ SOURCES += \
     helpers/logger.cpp \
     polysgen/polysgen.cpp \
     spatial-objs/relations.cpp \
-    spatial-objs/shell/shell-edge.cpp \
-    spatial-objs/shell/shell-vertex.cpp \
     spatial-objs/edge.cpp \
     spatial-objs/polyhedral-set.cpp \
-    spatial-objs/shell/shell.cpp \
+    spatial-objs/surface/surface-edge.cpp \
+    spatial-objs/surface/surface-face.cpp \
+    spatial-objs/surface/surface-front/surface-front-edge.cpp \
+    spatial-objs/surface/surface-front/surface-front-vert.cpp \
+    spatial-objs/surface/surface-vertex.cpp \
+    spatial-objs/surface/surface.cpp \
     spatial-objs/tetr.cpp \
     main.cpp \
     spatial-objs/polyhedron.cpp \
     spatial-objs/face.cpp \
-    spatial-objs/shell/shell-face.cpp \
     spatial-objs/vert.cpp \
     spatial-objs/polyhedron-front/polyhedron-front-edge.cpp \
     spatial-objs/polyhedron-front/polyhedron-front-face.cpp \
-    spatial-objs/shell/shell-front/shell-front-edge.cpp \
-    spatial-objs/shell/shell-front/shell-front-vert.cpp \
     data-structures/polyshell.cpp
 
 
@@ -42,6 +42,12 @@ HEADERS += \
     spatial-objs/edge.h \
     spatial-objs/polyhedral-set.h \
     spatial-objs/shell/shell.h \
+    spatial-objs/surface/surface-edge.h \
+    spatial-objs/surface/surface-face.h \
+    spatial-objs/surface/surface-front/surface-front-edge.h \
+    spatial-objs/surface/surface-front/surface-front-vert.h \
+    spatial-objs/surface/surface-vertex.h \
+    spatial-objs/surface/surface.h \
     spatial-objs/tetr.h \
     definitions.h \
     real-type.h \

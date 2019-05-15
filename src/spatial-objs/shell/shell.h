@@ -1,9 +1,9 @@
 #pragma once
+#include "spatial-objs/surface/surface.h"
 
 
-// TODO: implement Shell class
-class Shell
-{
-public:
-    Shell();
-};
+//namespace pmg {
+
+//using Shell = Surface;
+
+//} // namespace pmg

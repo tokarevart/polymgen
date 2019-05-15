@@ -1,7 +1,7 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "spatial-objs/shell/shell-edge.h"
+#include "spatial-objs/surface/surface-edge.h"
 #include <cmath>
 #include <algorithm>
 #include "helpers/spatial-algs/vec.h"
@@ -9,19 +9,19 @@
 using namespace pmg;
 
 
-const std::vector<Edge*>&shell::Edge::innerEdges() const
+const std::vector<Edge*>& surface::Edge::innerEdges() const
 {
     return m_innerEdges;
 }
 
 
-const std::vector<Vert*>&shell::Edge::innerVerts() const
+const std::vector<Vert*>& surface::Edge::innerVerts() const
 {
     return m_innerVerts;
 }
 
 
-void shell::Edge::segmentize(real_t preferredLen)
+void surface::Edge::segmentize(real_t preferredLen)
 {
     size_t n_inner_verts = static_cast<size_t>(std::round(magnitude() / preferredLen)) - 1;
     if (n_inner_verts == 0)
@@ -48,13 +48,13 @@ void shell::Edge::segmentize(real_t preferredLen)
 }
 
 
-real_t shell::Edge::magnitude() const
+real_t surface::Edge::magnitude() const
 {
     return std::sqrt(sqrMagnitude());
 }
 
 
-real_t shell::Edge::sqrMagnitude() const
+real_t surface::Edge::sqrMagnitude() const
 {
     vec3 buf = *verts[1] - *verts[0];
     return vec3::dot(buf, buf);
@@ -62,7 +62,7 @@ real_t shell::Edge::sqrMagnitude() const
 
 
 // TODO: replace its usage with pmg::relations content
-bool shell::Edge::contains(const shell::Vert* sVert) const
+bool surface::Edge::contains(const surface::Vert* sVert) const
 {
     if (verts[0] == sVert ||
         verts[1] == sVert)
@@ -73,7 +73,7 @@ bool shell::Edge::contains(const shell::Vert* sVert) const
 
 
 // TODO: replace its usage with pmg::relations content
-bool shell::Edge::contains(const pmg::Edge* edge) const
+bool surface::Edge::contains(const pmg::Edge* edge) const
 {
     if (std::find(m_innerEdges.begin(), m_innerEdges.end(), edge) != m_innerEdges.end())
         return true;
@@ -83,7 +83,7 @@ bool shell::Edge::contains(const pmg::Edge* edge) const
 
 
 // TODO: replace its usage with pmg::relations content
-bool shell::Edge::contains(const pmg::Vert* vert) const
+bool surface::Edge::contains(const pmg::Vert* vert) const
 {
     if (verts[0]->attachedVert == vert ||
         verts[1]->attachedVert == vert ||
@@ -96,8 +96,8 @@ bool shell::Edge::contains(const pmg::Vert* vert) const
 
 
 
-shell::Edge::Edge(const shell::Vert* vert0, const shell::Vert* vert1)
+surface::Edge::Edge(const surface::Vert* vert0, const surface::Vert* vert1)
 {
-    verts[0] = const_cast<shell::Vert*>(vert0);
-    verts[1] = const_cast<shell::Vert*>(vert1);
+    verts[0] = const_cast<surface::Vert*>(vert0);
+    verts[1] = const_cast<surface::Vert*>(vert1);
 }

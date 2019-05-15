@@ -18,7 +18,7 @@ class Face;
 class Edge;
 } // namespace front
 
-namespace shell {
+namespace surface {
 class Face;
 class Edge;
 class Vert;
@@ -27,5 +27,6 @@ namespace front {
 class Edge;
 class Vert;
 } // namespace front
-} // namespace shell
+} // namespace surface
+namespace shell = surface;
 } // namespace pmg

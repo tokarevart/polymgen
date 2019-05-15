@@ -5,7 +5,7 @@
 namespace pmg {
 namespace genparams {
 
-struct Shell
+struct Surface
 {
     real_t cMinDis = static_cast<real_t>(0.2);
     real_t cMaxDef = static_cast<real_t>(0.3);
@@ -14,6 +14,8 @@ struct Shell
     size_t nSmoothIters         = 20;
     size_t nDelaunaySmoothIters =  3;
 };
+
+using Shell = Surface;
 
 struct Volume
 {
