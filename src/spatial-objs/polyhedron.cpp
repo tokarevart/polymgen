@@ -22,6 +22,8 @@ using pair_ff = std::pair<front::Face*, front::Face*>;
         (BETWEEN(corner0[0], corner1[0], point[0]) && \
          BETWEEN(corner0[1], corner1[1], point[1]))
 
+
+// TODO: reduce the amount of defines
 #define ALPHA_P      static_cast<real_t>(70.52877936550931)
 #define DEG_1_IN_RAD static_cast<real_t>( 0.0174532925199432957)
 
@@ -30,8 +32,7 @@ using pair_ff = std::pair<front::Face*, front::Face*>;
 #define SQRT_2_3             static_cast<real_t>(0.8164965809277260)
 #define ONE_PLUS_SQRT2_SQRT3 static_cast<real_t>(1.3938468501173517)
 
-#define NOT_TOO_CLOSE          static_cast<real_t>(2e-1)
-#define FROM_VERT_COEF         static_cast<real_t>(1e-2)
+#define K_MIN_DIS              static_cast<real_t>(2e-1)
 #define EDGES_INTERS_DIST_COEF static_cast<real_t>(4e-3)
 
 #define K_MAXD static_cast<real_t>(0.3)
@@ -242,7 +243,7 @@ bool Polyhedron::segmentFrontIntersectionCheck(const Vert* v0, const vec3& v1) c
 {
     for (auto& fface : m_frontFaces)
     {
-        if (fface->contains(v0))
+        if (relations::contains(fface, v0))
             continue;
 
         if (spatalgs::doesSegmentIntersectTriangle(
@@ -261,8 +262,8 @@ bool Polyhedron::segmentFrontIntersectionCheck(const Vert* v0, const Vert* v1) c
 {
     for (auto& fface : m_frontFaces)
     {
-        if (   fface->contains(v0)
-            || fface->contains(v1))
+        if (   relations::contains(fface, v0)
+            || relations::contains(fface, v1))
             continue;
 
         if (spatalgs::doesSegmentIntersectTriangle(
@@ -279,11 +280,6 @@ bool Polyhedron::segmentFrontIntersectionCheck(const Vert* v0, const Vert* v1) c
 
 bool Polyhedron::edgeGlobalIntersectionCheck(const Edge* edge) const
 {
-    vec3 delta = static_cast<real_t>(8.0) * FROM_VERT_COEF * (*edge->verts[1] - *edge->verts[0]);
-    vec3 segment[2];
-    segment[0] = edge->verts[0]->pos() + delta;
-    segment[1] = edge->verts[1]->pos() - delta;
-
     for (auto& face : m_innerFaces)
     {
         if (   face->contains(edge->verts[0])
@@ -291,7 +287,7 @@ bool Polyhedron::edgeGlobalIntersectionCheck(const Edge* edge) const
             continue;
 
         if (spatalgs::doesSegmentIntersectTriangle(
-                segment[0], segment[1],
+                edge->verts[0]->pos(), edge->verts[1]->pos(),
                 face->edges[0]->verts[0]->pos(),
                 face->edges[0]->verts[1]->pos(),
                 face->findVertNot(face->edges[0])->pos()))
@@ -1266,7 +1262,7 @@ bool Polyhedron::tryComputeNewVertPosType3(front::Face* fFace, vec3& out_pos)
     if (segmentFrontIntersectionCheck(v0, new_pos) ||
         segmentFrontIntersectionCheck(v1, new_pos) ||
         segmentFrontIntersectionCheck(v2, new_pos) ||
-        doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
+        doesFrontIntersectSphere(new_pos, K_MIN_DIS * av_magn) ||
         faceIntersectionCheck(v0, v1, new_pos) ||
         faceIntersectionCheck(v0, v2, new_pos) ||
         faceIntersectionCheck(v1, v2, new_pos))
@@ -1339,7 +1335,7 @@ bool Polyhedron::tryComputeNewVertPosType2(front::Face* fFace, vec3& out_pos, si
     if (segmentFrontIntersectionCheck(v0, new_pos) ||
         segmentFrontIntersectionCheck(v1, new_pos) ||
         segmentFrontIntersectionCheck(v2, new_pos) ||
-        doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * magn_d) ||
+        doesFrontIntersectSphere(new_pos, K_MIN_DIS * magn_d) ||
         faceIntersectionCheck(v0, v1, new_pos) ||
         faceIntersectionCheck(v0, v2, new_pos) ||
         faceIntersectionCheck(v1, v2, new_pos))
@@ -1350,7 +1346,7 @@ bool Polyhedron::tryComputeNewVertPosType2(front::Face* fFace, vec3& out_pos, si
         if (segmentFrontIntersectionCheck(v0, new_pos) ||
             segmentFrontIntersectionCheck(v1, new_pos) ||
             segmentFrontIntersectionCheck(v2, new_pos) ||
-            doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
+            doesFrontIntersectSphere(new_pos, K_MIN_DIS * av_magn) ||
             faceIntersectionCheck(v0, v1, new_pos) ||
             faceIntersectionCheck(v0, v2, new_pos) ||
             faceIntersectionCheck(v1, v2, new_pos))
@@ -1405,7 +1401,7 @@ bool Polyhedron::tryComputeNewVertPosType1(front::Face* fFace, vec3& out_pos, si
     if (segmentFrontIntersectionCheck(v0, new_pos) ||
         segmentFrontIntersectionCheck(v1, new_pos) ||
         segmentFrontIntersectionCheck(v2, new_pos) ||
-        doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * magn_d) ||
+        doesFrontIntersectSphere(new_pos, K_MIN_DIS * magn_d) ||
         faceIntersectionCheck(v0, v1, new_pos) ||
         faceIntersectionCheck(v0, v2, new_pos) ||
         faceIntersectionCheck(v1, v2, new_pos))
@@ -1416,7 +1412,7 @@ bool Polyhedron::tryComputeNewVertPosType1(front::Face* fFace, vec3& out_pos, si
         if (segmentFrontIntersectionCheck(v0, new_pos) ||
             segmentFrontIntersectionCheck(v1, new_pos) ||
             segmentFrontIntersectionCheck(v2, new_pos) ||
-            doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
+            doesFrontIntersectSphere(new_pos, K_MIN_DIS * av_magn) ||
             faceIntersectionCheck(v0, v1, new_pos) ||
             faceIntersectionCheck(v0, v2, new_pos) ||
             faceIntersectionCheck(v1, v2, new_pos))
@@ -1447,7 +1443,7 @@ bool Polyhedron::tryComputeNewVertPosType0(front::Face* fFace, vec3& out_pos)
     if (segmentFrontIntersectionCheck(v0, new_pos) ||
         segmentFrontIntersectionCheck(v1, new_pos) ||
         segmentFrontIntersectionCheck(v2, new_pos) ||
-        doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * magn_d) ||
+        doesFrontIntersectSphere(new_pos, K_MIN_DIS * magn_d) ||
         faceIntersectionCheck(v0, v1, new_pos) ||
         faceIntersectionCheck(v0, v2, new_pos) ||
         faceIntersectionCheck(v1, v2, new_pos))
@@ -1458,7 +1454,7 @@ bool Polyhedron::tryComputeNewVertPosType0(front::Face* fFace, vec3& out_pos)
         if (segmentFrontIntersectionCheck(v0, new_pos) ||
             segmentFrontIntersectionCheck(v1, new_pos) ||
             segmentFrontIntersectionCheck(v2, new_pos) ||
-            doesFrontIntersectSphere(new_pos, NOT_TOO_CLOSE * av_magn) ||
+            doesFrontIntersectSphere(new_pos, K_MIN_DIS * av_magn) ||
             faceIntersectionCheck(v0, v1, new_pos) ||
             faceIntersectionCheck(v0, v2, new_pos) ||
             faceIntersectionCheck(v1, v2, new_pos))

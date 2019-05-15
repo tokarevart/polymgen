@@ -26,19 +26,5 @@ vec3 front::Edge::computeCenter()
 
 
 
-bool front::Edge::isAdj(const front::Edge* edge0, const front::Edge* edge1)
-{
-    if (edge0->edge->verts[0] == edge1->edge->verts[0] ||
-        edge0->edge->verts[0] == edge1->edge->verts[1] ||
-        edge0->edge->verts[1] == edge1->edge->verts[0] ||
-        edge0->edge->verts[1] == edge1->edge->verts[1])
-        return true;
-
-    return false;
-}
-
-
-
-
 front::Edge::Edge(const shell::Face* relatedShellFace, const pmg::Edge* edge)
     : edge(const_cast<pmg::Edge*>(edge)), m_relatedShellFace(const_cast<shell::Face*>(relatedShellFace)) {}

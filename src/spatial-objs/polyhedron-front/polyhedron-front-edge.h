@@ -7,11 +7,12 @@
 #include "spatial-objs/polyhedron.h"
 #include "spatial-objs/polyhedron-front/polyhedron-front-face.h"
 #include "spatial-objs/vert.h"
+#include "spatial-objs/relations.h"
 #include "real-type.h"
 
 #include "definitions.h"
 
-
+// TODO: maybe rename polyhedron-front-edge to volume-front-edge and pmg::front to pmg::volume::front
 namespace pmg {
 namespace front {
 

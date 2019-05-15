@@ -31,10 +31,6 @@ public:
     void removeFEdge( const front::Edge* fEdge );
     bool isFEdgesFull() const;
 
-    bool contains( const   pmg::Vert* vert )  const;
-    bool contains( const   pmg::Edge* edge )  const;
-    bool contains( const front::Edge* fEdge ) const;
-
     Face(const Polyhedron* relatedPolyhedron, const pmg::Face* face);
 
 

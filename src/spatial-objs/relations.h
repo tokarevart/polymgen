@@ -1,4 +1,6 @@
 #pragma once
+#include "spatial-objs/polyhedron-front/polyhedron-front-face.h"
+#include "spatial-objs/polyhedron-front/polyhedron-front-edge.h"
 #include "spatial-objs/face.h"
 #include "spatial-objs/edge.h"
 #include "spatial-objs/vert.h"
@@ -7,6 +9,7 @@
 namespace pmg {
 namespace relations {
 
+pmg::Vert* adjacentByVert( const shell::front::Edge* fEdge0, const shell::front::Edge* fEdge1 );
 pmg::Edge* adjacentByEdge( const pmg::Face* face0, const pmg::Face* face1 );
 pmg::Vert* adjacentByVert( const pmg::Face* face0, const pmg::Face* face1 );
 pmg::Vert* adjacentByVert( const pmg::Face* face,  const pmg::Edge* edge  );

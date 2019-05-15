@@ -13,16 +13,15 @@ using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
 using pair_ee = std::pair<pmg::Edge*, pmg::Edge*>;
 
 
+// TODO: reduce the amount of defines
 #define DEG_1_IN_RAD static_cast<real_t>(0.0174532925199432957)
 #define PI           static_cast<real_t>(M_PI)
-
 
 #define NINE_DIV_SIXTEEN static_cast<real_t>(0.5625)
 #define SIXTEEN_DIV_NINE static_cast<real_t>(1.7777777777777777)
 #define SQRT3_2          static_cast<real_t>(0.8660254037844386)
 
-#define NOT_TOO_CLOSE  static_cast<real_t>(2e-1)
-#define FROM_VERT_COEF static_cast<real_t>(1e-2)
+#define K_MIN_DIS              static_cast<real_t>(2e-1)
 #define EDGES_INTERS_DIST_COEF static_cast<real_t>(1e-4)
 
 #define K_MAXD static_cast<real_t>(0.3)
@@ -204,13 +203,30 @@ bool shell::Face::anyVertInsidePotentialTriangCheck(sfront::Vert* fVert) const
 }
 
 
-bool shell::Face::doesSegmentIntersectsWithFront(const vec3& p0, const vec3& p1) const
+bool shell::Face::doesSegmentIntersectsWithFront(const vec3& v0, const vec3& v1) const
 {
     for (auto& fedge : m_frontEdges)
         if (spatalgs::segmentsDistance(
                 fedge->edge->verts[0]->pos(), fedge->edge->verts[1]->pos(),
-                p0, p1) < EDGES_INTERS_DIST_COEF * m_prefLen)
+                v0, v1) < EDGES_INTERS_DIST_COEF * m_prefLen)
             return true;
+
+    return false;
+}
+
+
+bool shell::Face::doesSegmentIntersectsWithFront(const pmg::Vert* v0, const vec3& v1) const
+{
+    for (auto& fedge : m_frontEdges)
+    {
+        if (fedge->edge->contains(v0))
+            continue;
+
+        if (spatalgs::segmentsDistance(
+                fedge->edge->verts[0]->pos(), fedge->edge->verts[1]->pos(),
+                v0->pos(), v1) < EDGES_INTERS_DIST_COEF * m_prefLen)
+            return true;
+    }
 
     return false;
 }
@@ -238,18 +254,18 @@ bool shell::Face::tryComputeNewVertPosType2(sfront::Edge* fEdge, vec3& out_pos)
     vec3 vn0_pos = en0->edge->findNot(fEdge->edge)->pos();
     vec3 vn1_pos = en1->edge->findNot(fEdge->edge)->pos();
 
-    vec3 v0_pos = main_f_verts[0]->vert->pos();
-    vec3 v1_pos = main_f_verts[1]->vert->pos();
+    auto v0 = main_f_verts[0]->vert;
+    auto v1 = main_f_verts[1]->vert;
 
-    vec3 e0 = (vn0_pos - 2.0 * v0_pos + main_f_verts[1]->vert->pos()).normalize();
-    vec3 e1 = (vn1_pos - 2.0 * v1_pos + v0_pos).normalize();
+    vec3 e0 = (vn0_pos - 2.0 * v0->pos() + main_f_verts[1]->vert->pos()).normalize();
+    vec3 e1 = (vn1_pos - 2.0 * v1->pos() + v0->pos()).normalize();
 
-    vec3 new_pos = spatalgs::linesClosestPoint(v0_pos, v0_pos + e0, v1_pos, v1_pos + e1);
+    vec3 new_pos = spatalgs::linesClosestPoint(v0->pos(), v0->pos() + e0, v1->pos(), v1->pos() + e1);
 
-    vec3 v0_to_np = new_pos - v0_pos;
-    vec3 v1_to_np = new_pos - v1_pos;
-    if (doesSegmentIntersectsWithFront(v0_pos + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
-        doesSegmentIntersectsWithFront(v1_pos + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np))
+    vec3 v0_to_np = new_pos - v0->pos();
+    vec3 v1_to_np = new_pos - v1->pos();
+    if (doesSegmentIntersectsWithFront(v0, new_pos + K_MIN_DIS * v0_to_np) ||
+        doesSegmentIntersectsWithFront(v1, new_pos + K_MIN_DIS * v1_to_np))
         return false;
 
     out_pos = new_pos;
@@ -279,8 +295,8 @@ bool shell::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, vec3& out_pos, 
 
     vec3 v0_to_np = new_pos - main_vert->pos();
     vec3 v1_to_np = new_pos - sec_vert->pos();
-    if (doesSegmentIntersectsWithFront(main_vert->pos() + FROM_VERT_COEF * v0_to_np, new_pos + NOT_TOO_CLOSE * v0_to_np) ||
-        doesSegmentIntersectsWithFront(sec_vert->pos()  + FROM_VERT_COEF * v1_to_np, new_pos + NOT_TOO_CLOSE * v1_to_np))
+    if (doesSegmentIntersectsWithFront(main_vert->pos(), new_pos + K_MIN_DIS * v0_to_np) ||
+        doesSegmentIntersectsWithFront(sec_vert->pos(),  new_pos + K_MIN_DIS * v1_to_np))
         return false;
 
     out_pos = new_pos;
@@ -298,12 +314,12 @@ bool shell::Face::tryComputeNewVertPosType0(sfront::Edge* fEdge, vec3& out_pos)
 
 //    vec3 new_pos = fEdge->computeCenter() + fEdge->normal * m_prefLen * SQRT3_2;
 
-    vec3 v0_pos = fEdge->edge->verts[0]->pos();
-    vec3 v1_pos = fEdge->edge->verts[1]->pos();
-    vec3 v_to_np0 = (new_pos - v0_pos);
-    vec3 v_to_np1 = (new_pos - v1_pos);
-    if (doesSegmentIntersectsWithFront(v0_pos + v_to_np0 * FROM_VERT_COEF, new_pos + v_to_np0 * NOT_TOO_CLOSE) ||
-        doesSegmentIntersectsWithFront(v1_pos + v_to_np1 * FROM_VERT_COEF, new_pos + v_to_np1 * NOT_TOO_CLOSE))
+    auto v0 = fEdge->edge->verts[0];
+    auto v1 = fEdge->edge->verts[1];
+    vec3 v_to_np0 = (new_pos - v0->pos());
+    vec3 v_to_np1 = (new_pos - v1->pos());
+    if (doesSegmentIntersectsWithFront(v0, new_pos + v_to_np0 * K_MIN_DIS) ||
+        doesSegmentIntersectsWithFront(v1, new_pos + v_to_np1 * K_MIN_DIS))
         return false;
 
     out_pos = new_pos;

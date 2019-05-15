@@ -198,7 +198,7 @@ pair_ff front::Edge::fillAdjFFaces()
 {
     for (auto& fface : m_relatedPolyhedron->frontFaces())
     {
-        if (fface->contains(this))
+        if (relations::contains(fface, this))
         {
             if (adjFFacesContains(fface))
                 continue;

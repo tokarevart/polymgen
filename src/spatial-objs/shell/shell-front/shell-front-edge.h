@@ -22,8 +22,6 @@ public:
     vec3 computeNormal();
     vec3 computeCenter();
 
-    static bool isAdj( const Edge* edge0, const Edge* edge1 );
-
     Edge( const shell::Face* relatedShellFace, const pmg::Edge* edge );
 
 

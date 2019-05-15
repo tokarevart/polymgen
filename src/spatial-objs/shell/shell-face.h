@@ -77,7 +77,8 @@ private:
     void removeFromFront( front::Vert* fVert );
 
     bool anyVertInsidePotentialTriangCheck( front::Vert* fVert ) const;
-    bool doesSegmentIntersectsWithFront( const vec3& p0, const vec3& p1 ) const;
+    bool doesSegmentIntersectsWithFront( const vec3&      v0, const vec3& v1 ) const;
+    bool doesSegmentIntersectsWithFront( const pmg::Vert* v0, const vec3& v1 ) const;
 
     vec3 computeNormalInTriang( front::Edge* fEdge, const vec3& oppVertPos );
     vec3 computeNormalInTriang( front::Edge* fEdge, pmg::Edge* oneOfRemainingEdges ); // Do i need it?
