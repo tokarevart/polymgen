@@ -327,7 +327,7 @@ void PolyhedralSet::shellDelaunayPostP()
 }
 
 
-PolyMesh PolyhedralSet::structurizeMesh() const
+PolyMesh PolyhedralSet::mesh() const
 {
     PolyMesh mesh;
     mesh.polyhs.assign(m_polyhedrons.size(), std::vector<PolyMesh::TetrIdx>());

@@ -13,10 +13,6 @@ using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
 #define BETWEEN(p0_coor, p1_coor, p) \
         (std::min(p0_coor, p1_coor) - EPS < p && p < std::max(p0_coor, p1_coor) + EPS)
 
-#define INSIDE_RECTANGLE(corner0, corner1, point) \
-        (BETWEEN(corner0[0], corner1[0], point[0]) && \
-         BETWEEN(corner0[1], corner1[1], point[1]))
-
 #define PI static_cast<real_t>(M_PI)
 
 #define K_ALPHA static_cast<real_t>(2.5)

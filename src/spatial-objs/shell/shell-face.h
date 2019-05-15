@@ -21,6 +21,7 @@ namespace shell {
 class Face
 {
 public:
+    // TODO: represent shell::Face as any number of shell::Edges instead
     std::array<shell::Edge*, 3> edges;
 
     real_t preferredLength() const;
@@ -35,7 +36,6 @@ public:
     shell::Edge* findShellEdgeContaining( const pmg::Edge* edge ) const;
 
     // Needs shell edges to be already segmentized.
-    // TODO: improve as tetrahedralization algorithm later
     void triangulate( real_t preferredLen, genparams::Shell genParams = genparams::Shell() );
     void smoothMesh( size_t nIters );
     void delaunayPostP();
@@ -76,6 +76,7 @@ private:
     void removeFromFront( front::Edge* fEdge );
     void removeFromFront( front::Vert* fVert );
 
+    // TODO: change methods names
     bool anyVertInsidePotentialTriangCheck( front::Vert* fVert ) const;
     bool doesSegmentIntersectsWithFront( const vec3&      v0, const vec3& v1 ) const;
     bool doesSegmentIntersectsWithFront( const pmg::Vert* v0, const vec3& v1 ) const;

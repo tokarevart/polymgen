@@ -47,8 +47,8 @@ bool lineIntersectPlane( vec3& out_intersectPoint,
                          const vec3& line_point, const vec3& line_dir,
                          const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2 );
 
-vec3  lineIntersectPlane( const vec3& line_point, const vec3& line_dir,
-                               const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2 );
+vec3 lineIntersectPlane( const vec3& line_point, const vec3& line_dir,
+                         const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2 );
 
 
 bool doesSegmentIntersectTriangle( const vec3& segm_p0, const vec3& segm_p1,
@@ -67,7 +67,7 @@ bool segmentIntersectPlane( vec3& out_intersectPoint,
                             const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2 );
 
 vec3 segmentIntersectPlane( const vec3& segm_p0,  const vec3& segm_p1,
-                                 const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2 );
+                            const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2 );
 
 
 bool doesTriangleIntersectSphere( const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2,
@@ -89,12 +89,15 @@ bool isPointOnTriangle( const vec3& point,
                         const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2,
                         real_t max_sqrs_sum );
 
+bool isPointInTetrahedron( const vec3& point,
+                           const vec3& tetr_p0, const vec3& tetr_p1, const vec3& tetr_p2, const vec3& tetr_p3 );
+
 
 vec3 closestSegmentPointToPoint( const vec3& point,
-                                const vec3& segm_p0, const vec3& segm_p1 );
+                                 const vec3& segm_p0, const vec3& segm_p1 );
 
 vec3 closestTrianglePointToPointOnPlane( const vec3& point,
-                                        const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2 );
+                                         const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2 );
 
 real_t distancePointToLine( const vec3& point,
                             const vec3& line_p0, const vec3& line_p1 );
@@ -113,7 +116,7 @@ real_t distancePointToTriangleOnPlane( const vec3& point,
 
 
 vec3 linesClosestPoint( const vec3& line0_p0, const vec3& line0_p1,
-                       const vec3& line1_p0, const vec3& line1_p1 );
+                        const vec3& line1_p0, const vec3& line1_p1 );
 
 real_t linesDistance( const vec3& line0_p0, const vec3& line0_p1,
                       const vec3& line1_p0, const vec3& line1_p1 );

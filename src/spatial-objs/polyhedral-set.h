@@ -50,7 +50,7 @@ public:
     void smoothMesh( size_t nItersVolume = 1, size_t nItersShell = 1 );
     void shellDelaunayPostP();
 
-    PolyMesh structurizeMesh() const;
+    PolyMesh mesh() const;
 
     Log log();
     std::string generateLogFileName() const;

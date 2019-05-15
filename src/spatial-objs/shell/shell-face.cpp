@@ -22,7 +22,7 @@ using pair_ee = std::pair<pmg::Edge*, pmg::Edge*>;
 #define SQRT3_2          static_cast<real_t>(0.8660254037844386)
 
 #define K_MIN_DIS              static_cast<real_t>(2e-1)
-#define EDGES_INTERS_DIST_COEF static_cast<real_t>(1e-4)
+#define C_EDGES_INTERS_DIST static_cast<real_t>(1e-4)
 
 #define K_MAXD static_cast<real_t>(0.3)
 #define K_D    static_cast<real_t>(0.5)
@@ -208,7 +208,7 @@ bool shell::Face::doesSegmentIntersectsWithFront(const vec3& v0, const vec3& v1)
     for (auto& fedge : m_frontEdges)
         if (spatalgs::segmentsDistance(
                 fedge->edge->verts[0]->pos(), fedge->edge->verts[1]->pos(),
-                v0, v1) < EDGES_INTERS_DIST_COEF * m_prefLen)
+                v0, v1) < C_EDGES_INTERS_DIST * m_prefLen)
             return true;
 
     return false;
@@ -224,7 +224,7 @@ bool shell::Face::doesSegmentIntersectsWithFront(const pmg::Vert* v0, const vec3
 
         if (spatalgs::segmentsDistance(
                 fedge->edge->verts[0]->pos(), fedge->edge->verts[1]->pos(),
-                v0->pos(), v1) < EDGES_INTERS_DIST_COEF * m_prefLen)
+                v0->pos(), v1) < C_EDGES_INTERS_DIST * m_prefLen)
             return true;
     }
 

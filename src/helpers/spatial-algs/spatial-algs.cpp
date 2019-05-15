@@ -14,7 +14,7 @@
 #define BETWEEN(p0_coor, p1_coor, p) \
         (std::min(p0_coor, p1_coor) - EPS < (p) && (p) < std::max(p0_coor, p1_coor) + EPS)
 
-#define INSIDE_RECTANGLE(corner0, corner1, point) \
+#define IN_RECTANGLE(corner0, corner1, point) \
         (BETWEEN(corner0.x[0], corner1.x[0], point.x[0]) && \
          BETWEEN(corner0.x[1], corner1.x[1], point.x[1]) && \
          BETWEEN(corner0.x[2], corner1.x[2], point.x[2]))
@@ -38,7 +38,7 @@ bool spatalgs::project(
 {
     vec3 res = segm_p0 + (point - segm_p0).project(segm_p1 - segm_p0);
 
-    if (INSIDE_RECTANGLE(
+    if (IN_RECTANGLE(
             segm_p0,
             segm_p1,
             res))
@@ -431,7 +431,7 @@ real_t spatalgs::distancePointToSegment(const vec3& point, const vec3& segm_p0, 
 {
     vec3 proj = project(point, segm_p0, segm_p1);
 
-    if (INSIDE_RECTANGLE(segm_p0, segm_p1, proj))
+    if (IN_RECTANGLE(segm_p0, segm_p1, proj))
     {
         return (proj - point).magnitude();
     }
@@ -483,7 +483,7 @@ vec3 spatalgs::closestSegmentPointToPoint(const vec3& point, const vec3& segm_p0
 {
     vec3 proj = project(point, segm_p0, segm_p1);
 
-    if (INSIDE_RECTANGLE(segm_p0, segm_p1, proj))
+    if (IN_RECTANGLE(segm_p0, segm_p1, proj))
     {
         return proj;
     }
@@ -568,4 +568,23 @@ vec3 spatalgs::closestTrianglePointToPointOnPlane(
     }
 
     return closest_points[min_i];
+}
+
+
+bool spatalgs::isPointInTetrahedron(
+        const vec3& point, const vec3& tetr_p0, const vec3& tetr_p1, const vec3& tetr_p2, const vec3& tetr_p3)
+{
+    vec3 vert_to_p0 = tetr_p0 - point;
+    vec3 vert_to_p1 = tetr_p1 - point;
+    vec3 vert_to_p2 = tetr_p2 - point;
+    vec3 vert_to_p3 = tetr_p3 - point;
+
+    std::array<real_t, 5> abs_mixed_prods;
+    abs_mixed_prods[0] = std::abs(vec3::mixed(vert_to_p0, vert_to_p2, vert_to_p3));
+    abs_mixed_prods[1] = std::abs(vec3::mixed(vert_to_p0, vert_to_p1, vert_to_p2));
+    abs_mixed_prods[2] = std::abs(vec3::mixed(vert_to_p0, vert_to_p1, vert_to_p3));
+    abs_mixed_prods[3] = std::abs(vec3::mixed(vert_to_p1, vert_to_p2, vert_to_p3));
+    abs_mixed_prods[4] = std::abs(vec3::mixed(tetr_p1 - tetr_p0, tetr_p2 - tetr_p0, tetr_p3 - tetr_p0));
+
+    return abs_mixed_prods[0] + abs_mixed_prods[1] + abs_mixed_prods[2] + abs_mixed_prods[3] < abs_mixed_prods[4];
 }

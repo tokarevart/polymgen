@@ -109,17 +109,17 @@ private:
     void removeFromFront( front::Face* fFace );
     void removeFromFront( front::Edge* fEdge );
 
-    bool vertInsideFrontCheck( const vec3& v ) const;
-    bool segmentGlobalIntersectionCheck( const vec3& v0, const vec3& v1 ) const;
-    bool segmentFrontIntersectionCheck( const vec3& v0, const vec3& v1 ) const;
-    bool segmentFrontIntersectionCheck( const Vert* v0, const vec3& v1 ) const;
-    bool segmentFrontIntersectionCheck( const Vert* v0, const Vert* v1 ) const;
-    bool edgeGlobalIntersectionCheck( const Edge* edge ) const;
-    bool edgeIntersectionCheck( front::Edge* fEdge ) const;
-    bool faceIntersectionCheck( const Vert* v0, const Vert* v1, const vec3&    v2 ) const;
-    bool faceIntersectionCheck( const Vert* v0, const Vert* v1, const Vert* v2 ) const;
-    bool facesIntersectionCheck( front::Edge* fEdge ) const;
-    bool insideTetrCheck( const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3, const vec3& vert ) const;
+    // This section is about various front intersection checks
+    // TODO: change methods names
+    bool segmentIntersectMesh( const vec3& v0, const vec3& v1 ) const;
+    bool segmentIntersectFront( const vec3& v0, const vec3& v1 ) const;
+    bool edgeIntersectFront( const Vert* v0, const vec3& v1 ) const;
+    bool edgeIntersectFront( const Vert* v0, const Vert* v1 ) const;
+    bool edgeIntersectAnyFace( const Edge* edge ) const;
+    bool potentialEdgeIntersectFront( front::Edge* fEdge ) const;
+    bool anyEdgeIntersectFace( const Vert* v0, const Vert* v1, const vec3& v2 ) const;
+    bool anyEdgeIntersectFace( const Vert* v0, const Vert* v1, const Vert* v2 ) const;
+    bool anyEdgeIntersectPotentialFaces( front::Edge* fEdge ) const;
     bool anyVertInsidePotentialTetrCheck( front::Edge* fEdge ) const;
     bool parallelFacesCheck( front::Edge* fEdge ) const;
     // TODO: add more proximity checks
