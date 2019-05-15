@@ -1,5 +1,5 @@
-# Polymgen
-Polymgen is a library for generating tetrahedral mesh of many polyhedrons. 
+# PolyMGen
+PolyMGen is a library for parallel generating tetrahedral mesh of many polyhedrons. 
 It is created with the purpose of use in solving boundary-value problems for polycrystal by the finite element method.
 ## Example:
 ```c++
