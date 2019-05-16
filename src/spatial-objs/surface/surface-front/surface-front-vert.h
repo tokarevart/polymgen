@@ -15,8 +15,8 @@ namespace front {
 
 class Vert
 {
-    using pair_ee  = std::pair<front::Edge*, front::Edge*>;
-    using pair_vv  = std::pair<pmg::Vert*, pmg::Vert*>;
+    using pair_ee = std::pair<front::Edge*, front::Edge*>;
+    using pair_vv = std::pair<pmg::Vert*, pmg::Vert*>;
 
 public:
     pmg::Vert* vert;
@@ -29,7 +29,7 @@ public:
     real_t computeComplexity();
 
     pair_ee findAdjEdges() const;
-    pair_vv oppVerts() const;
+    pair_vv oppVerts()     const;
 
     Vert(const surface::Face* relatedSurfaceFace, const pmg::Vert* vert);
 

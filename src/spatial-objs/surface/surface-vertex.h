@@ -21,14 +21,14 @@ public:
 
     const vec3& pos() const;
 
-    real_t&       operator[](unsigned axis);
-    const real_t& operator[](unsigned axis)  const;
-    vec3 operator-(const surface::Vert& other) const;
-    vec3 operator-(const     pmg::Vert& other) const;
+    real_t&       operator[]( unsigned axis );
+    const real_t& operator[]( unsigned axis )  const;
+    vec3 operator-( const surface::Vert& other ) const;
+    vec3 operator-( const     pmg::Vert& other ) const;
 
     Vert();
-    Vert(real_t x0, real_t x1, real_t x2);
-    Vert(const vec3& position);
+    Vert( real_t x0, real_t x1, real_t x2 );
+    Vert( const vec3& position );
 
 
 private:

@@ -9,7 +9,7 @@
 namespace pmg {
 namespace relations {
 
-pmg::Vert* adjacentByVert( const shell::front::Edge* fEdge0, const shell::front::Edge* fEdge1 );
+// TODO: replace with template <typename ByT> adjacent( ... ); and then template<> adjacent<each ByT> adjacent( ... );
 pmg::Edge* adjacentByEdge( const pmg::Face* face0, const pmg::Face* face1 );
 pmg::Vert* adjacentByVert( const pmg::Face* face0, const pmg::Face* face1 );
 pmg::Vert* adjacentByVert( const pmg::Face* face,  const pmg::Edge* edge  );

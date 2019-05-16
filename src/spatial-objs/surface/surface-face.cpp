@@ -187,7 +187,7 @@ void surface::Face::removeFromFront(sfront::Vert* fVert)
 bool surface::Face::anyVertInsidePotentialTriangCheck(sfront::Vert* fVert) const
 {
     auto opp_verts = fVert->oppVerts();
-    pmg::Vert* tr[3]
+    std::array<pmg::Vert*, 3> tr
     {
         fVert->vert,
         opp_verts.first,
@@ -242,7 +242,7 @@ vec3 surface::Face::computeNormalInTriang(sfront::Edge* fEdge, const vec3& oppVe
 
 bool surface::Face::tryComputeNewVertPosType2(sfront::Edge* fEdge, vec3& out_pos)
 {
-    sfront::Vert* main_f_verts[2];
+    std::array<sfront::Vert*, 2> main_f_verts;
     main_f_verts[0] = findFrontVert(fEdge->edge->verts[0]);
     main_f_verts[1] = findFrontVert(fEdge->edge->verts[1]);
 
