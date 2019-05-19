@@ -7,6 +7,7 @@
 #include "real-type.h"
 
 
+// TODO: try to make template and then make a benchmark
 struct vec3
 {
     using coordinate_t = real_t;

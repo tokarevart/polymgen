@@ -17,6 +17,7 @@ class Face
 {
 public:
     pmg::Face* face;
+    // TODO: specify when filling occurs
     std::array<front::Edge*, 3> fEdges = { nullptr, };
     vec3 normal;
 

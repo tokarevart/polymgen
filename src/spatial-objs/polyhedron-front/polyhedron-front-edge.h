@@ -49,7 +49,7 @@ public:
 
 private:
     Polyhedron* m_relatedPolyhedron;
-    pair_ff m_adjFFaces{ nullptr, nullptr };
+    pair_ff m_adjFFaces = { nullptr, nullptr }; // TODO: make std::array
 
     real_t m_angle;
     real_t m_complexity;
