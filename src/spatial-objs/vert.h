@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 #pragma once
-#include <stddef.h>
+#include <cstddef>
 #include <memory>
 #include "spatial-objs/shell/shell-face.h"
 #include "spatial-objs/shell/shell-edge.h"
@@ -18,7 +18,7 @@ namespace pmg {
 class Vert
 {
 public:
-    size_t globalIdx;
+    std::size_t globalIdx;
     real_t minAdjTetrVol = std::numeric_limits<real_t>::max();
     real_t maxAdjTetrVol = std::numeric_limits<real_t>::min();
 

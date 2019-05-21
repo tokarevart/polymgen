@@ -36,9 +36,9 @@ void PolyhedralSet::triangulateShell(genparams::Shell genParams)
     for (auto& sedge : m_shellEdges)
         sedge->segmentize(m_prefLen);
 
-    size_t n_shell_faces = m_shellFaces.size();
+    std::size_t n_shell_faces = m_shellFaces.size();
     #pragma omp parallel for
-    for (size_t i = 0; i < n_shell_faces; i++)
+    for (std::size_t i = 0; i < n_shell_faces; i++)
         m_shellFaces[i]->triangulate(m_prefLen, genParams);
 }
 
@@ -47,7 +47,7 @@ void PolyhedralSet::outputObj(std::string_view filename) const
 {
     std::ofstream file(filename.data());
 
-    size_t index = 1;
+    std::size_t index = 1;
     for (auto& svert : m_shellVerts)
     {
         file << "v " << (*svert)[0] << ' ' << (*svert)[1] << ' ' << (*svert)[2] << '\n';
@@ -86,7 +86,7 @@ void PolyhedralSet::outputObj(std::string_view filename) const
         {
             auto face = f_face->face;
 
-            std::vector<size_t> gl_nums;
+            std::vector<std::size_t> gl_nums;
             for (auto& edge : face->edges)
                 for (auto& vert : edge->verts)
                     if (std::find(gl_nums.begin(), gl_nums.end(), vert->globalIdx) == gl_nums.end())
@@ -100,7 +100,7 @@ void PolyhedralSet::outputObj(std::string_view filename) const
     {
         for (auto& face : sface->innerFaces())
         {
-            std::vector<size_t> gl_nums;
+            std::vector<std::size_t> gl_nums;
             for (auto& edge : face->edges)
                 for (auto& vert : edge->verts)
                     if (std::find(gl_nums.begin(), gl_nums.end(), vert->globalIdx) == gl_nums.end())
@@ -114,7 +114,7 @@ void PolyhedralSet::outputObj(std::string_view filename) const
     {
         for (auto& face : polyhedr->innerFaces())
         {
-            std::vector<size_t> gl_nums;
+            std::vector<std::size_t> gl_nums;
             for (auto& edge : face->edges)
                 for (auto& vert : edge->verts)
                     if (std::find(gl_nums.begin(), gl_nums.end(), vert->globalIdx) == gl_nums.end())
@@ -131,7 +131,7 @@ void PolyhedralSet::outputObj(std::string_view filename) const
 
 void PolyhedralSet::outputLSDynaKeyword_PART(std::ofstream& file) const
 {
-    for (size_t id = 1; id < m_polyhedrons.size() + 1; id++)
+    for (std::size_t id = 1; id < m_polyhedrons.size() + 1; id++)
     {
         file << "*PART\n"
             "$#     pid     secid       mid     eosid      hgid      grav    adpopt      tmid\n";
@@ -147,7 +147,7 @@ void PolyhedralSet::outputLSDynaKeyword_NODE(std::ofstream& file) const
 {
     file << "*NODE\n"
         "$#   nid               x               y               z      tc      rc\n";
-    size_t index = 1;
+    std::size_t index = 1;
     for (auto& svert : m_shellVerts)
     {
         svert->attachedVert->globalIdx = index++;
@@ -201,8 +201,8 @@ void PolyhedralSet::outputLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, unsig
 {
     file << "*ELEMENT_SOLID\n"
         "$#   eid     pid      n1      n2      n3      n4      n5      n6      n7      n8\n";
-    size_t pid = 1;
-    size_t eid = 10000000 * PolyhedralSetId + 1;
+    std::size_t pid = 1;
+    std::size_t eid = 10000000 * PolyhedralSetId + 1;
     for (auto& polyhedr : m_polyhedrons)
     {
         for (auto& tetr : polyhedr->innerTetrs())
@@ -249,7 +249,7 @@ std::string PolyhedralSet::generateLogFileName() const
 {
     std::stringstream ss;
     ss << "pmg_log_" << m_polyhedrons.size() << "_nph_";
-    size_t av_nfe = 0;
+    std::size_t av_nfe = 0;
     for (auto& polyhedr : m_polyhedrons)
         av_nfe += polyhedr->innerTetrs().size();
     av_nfe /= m_polyhedrons.size();
@@ -276,9 +276,9 @@ void PolyhedralSet::tetrahedralize(real_t preferredLength, genparams::Polyhedron
     double shell_triang_elapsed = static_cast<double>(std::clock() - shell_triang_start) / CLOCKS_PER_SEC;
 
     std::clock_t volume_exh_start = std::clock();
-    size_t n_polyhs = m_polyhedrons.size();
+    std::size_t n_polyhs = m_polyhedrons.size();
     #pragma omp parallel for
-    for (size_t i = 0; i < n_polyhs; i++)
+    for (std::size_t i = 0; i < n_polyhs; i++)
     {
         try
         {
@@ -300,16 +300,16 @@ void PolyhedralSet::tetrahedralize(real_t preferredLength, genparams::Polyhedron
 }
 
 
-void PolyhedralSet::smoothMesh(size_t nItersVolume, size_t nItersShell)
+void PolyhedralSet::smoothMesh(std::size_t nItersVolume, std::size_t nItersShell)
 {
-    size_t n_sfaces = m_shellFaces.size();
+    std::size_t n_sfaces = m_shellFaces.size();
     #pragma omp parallel for
-    for (size_t i = 0; i < n_sfaces; i++)
+    for (std::size_t i = 0; i < n_sfaces; i++)
         m_shellFaces[i]->smoothMesh(nItersShell);
 
-    size_t n_polyhs = m_polyhedrons.size();
+    std::size_t n_polyhs = m_polyhedrons.size();
     #pragma omp parallel for
-    for (size_t i = 0; i < n_polyhs; i++)
+    for (std::size_t i = 0; i < n_polyhs; i++)
         m_polyhedrons[i]->smoothMesh(nItersVolume);
 
     m_isLogged = false;
@@ -318,9 +318,9 @@ void PolyhedralSet::smoothMesh(size_t nItersVolume, size_t nItersShell)
 
 void PolyhedralSet::shellDelaunayPostP()
 {
-    size_t n_sfaces = m_shellFaces.size();
+    std::size_t n_sfaces = m_shellFaces.size();
     #pragma omp parallel for
-    for (size_t i = 0; i < n_sfaces; i++)
+    for (std::size_t i = 0; i < n_sfaces; i++)
         m_shellFaces[i]->delaunayPostP();
 
     m_isLogged = false;
@@ -332,20 +332,20 @@ PolyMesh PolyhedralSet::mesh() const
     PolyMesh mesh;
     mesh.polyhs.assign(m_polyhedrons.size(), std::vector<PolyMesh::TetrIdx>());
 
-    size_t n_verts = m_shellVerts.size();
+    std::size_t n_verts = m_shellVerts.size();
     for (auto& sedge : m_shellEdges)
         n_verts += sedge->innerVerts().size();
     for (auto& sface : m_shellFaces)
         n_verts += sface->innerVerts().size();
     for (auto& polyh : m_polyhedrons)
-        n_verts += static_cast<size_t>(std::count_if(
+        n_verts += static_cast<std::size_t>(std::count_if(
             polyh->innerVerts().begin(),
             polyh->innerVerts().end(),
             [](auto vert) { return static_cast<bool>(vert); }));
 
     mesh.verts.assign(n_verts, PolyMesh::Vert());
 
-    size_t vert_idx = 0;
+    std::size_t vert_idx = 0;
     for (auto& svert : m_shellVerts)
     {
         mesh.verts[vert_idx] = svert->pos().x;
@@ -365,8 +365,8 @@ PolyMesh PolyhedralSet::mesh() const
     for (auto& sface : m_shellFaces)  addVertsToLastMesh(sface->innerVerts());
     for (auto& polyh : m_polyhedrons) addVertsToLastMesh(polyh->innerVerts());
 
-    size_t n_tetrs = 0;
-    for (size_t i = 0; i < mesh.polyhs.size(); i++)
+    std::size_t n_tetrs = 0;
+    for (std::size_t i = 0; i < mesh.polyhs.size(); i++)
     {
         mesh.polyhs[i].assign(m_polyhedrons[i]->innerTetrs().size(), 0);
         n_tetrs += mesh.polyhs[i].size();
@@ -374,7 +374,7 @@ PolyMesh PolyhedralSet::mesh() const
 
     mesh.tetrs.assign(n_tetrs, { 0, 0, 0, 0 });
 
-    size_t tetr_idx = 0;
+    std::size_t tetr_idx = 0;
     for (auto& polyh : m_polyhedrons)
         for (auto& tetr : polyh->innerTetrs())
         {
@@ -402,7 +402,7 @@ PolyhedralSet::Log PolyhedralSet::log()
     if (m_isLogged)
         return m_log;
 
-    size_t n_elems = 0;
+    std::size_t n_elems = 0;
     real_t min_q = 1.0, av_q = 0.0;
     real_t min_g = 1.0, av_g = 0.0;
     for (auto& polyh : m_polyhedrons)
@@ -432,10 +432,10 @@ void PolyhedralSet::assign(std::string_view polyStructFileName)
 {
     std::ifstream input(polyStructFileName.data());
 
-    size_t nodes_num;
+    std::size_t nodes_num;
     input >> nodes_num;
 
-    for (size_t i = 0; i < nodes_num; i++)
+    for (std::size_t i = 0; i < nodes_num; i++)
     {
         real_t x[3];
         input >> x[0];
@@ -445,12 +445,12 @@ void PolyhedralSet::assign(std::string_view polyStructFileName)
         m_shellVerts.push_back(new shell::Vert(x[0], x[1], x[2]));
     }
 
-    size_t faces_num;
+    std::size_t faces_num;
     input >> faces_num;
 
-    for (size_t i = 0; i < faces_num; i++)
+    for (std::size_t i = 0; i < faces_num; i++)
     {
-        size_t face_nodes_inds[3];
+        std::size_t face_nodes_inds[3];
         input >> face_nodes_inds[0];
         input >> face_nodes_inds[1];
         input >> face_nodes_inds[2];
@@ -476,22 +476,22 @@ void PolyhedralSet::assign(std::string_view polyStructFileName)
             findShellEdge(m_shellVerts[face_nodes_inds[2]], m_shellVerts[face_nodes_inds[0]])));
     }
 
-    size_t polyhedrons_num;
+    std::size_t polyhedrons_num;
     input >> polyhedrons_num;
     m_polyhedrons.insert(m_polyhedrons.end(), polyhedrons_num, new Polyhedron);
 
-    size_t* polyhedrons_faces_nums = new size_t[polyhedrons_num];
-    for (size_t i = 0; i < polyhedrons_num; i++)
+    std::size_t* polyhedrons_faces_nums = new std::size_t[polyhedrons_num];
+    for (std::size_t i = 0; i < polyhedrons_num; i++)
         input >> polyhedrons_faces_nums[i];
 
-    for (size_t i = 0; i < polyhedrons_num; i++)
+    for (std::size_t i = 0; i < polyhedrons_num; i++)
     {
-        for (size_t j = 0; j < polyhedrons_faces_nums[i]; j++)
+        for (std::size_t j = 0; j < polyhedrons_faces_nums[i]; j++)
         {
-            size_t face_ind;
+            std::size_t face_ind;
             input >> face_ind;
 
-            for (size_t k = 0; k < 3; ++k)
+            for (std::size_t k = 0; k < 3; ++k)
             {
                 if (!m_polyhedrons[i]->shellContains(m_shellFaces[face_ind]->edges[k]))
                 {
@@ -516,7 +516,7 @@ void PolyhedralSet::assign(std::string_view polyStructFileName)
 
 void PolyhedralSet::assign(const psg::PolyShell& polyStruct)
 {
-    for (size_t i = 0; i < polyStruct.verts.size(); i++)
+    for (std::size_t i = 0; i < polyStruct.verts.size(); i++)
     {
         std::array<real_t, 3> x =
         {
@@ -552,15 +552,15 @@ void PolyhedralSet::assign(const psg::PolyShell& polyStruct)
     }
 
     m_polyhedrons.reserve(polyStruct.polyhs.size());
-    for (size_t i = 0; i < polyStruct.polyhs.size(); ++i)
+    for (std::size_t i = 0; i < polyStruct.polyhs.size(); ++i)
         m_polyhedrons.push_back(new Polyhedron(this));
 
-    for (size_t i = 0; i < polyStruct.polyhs.size(); ++i)
+    for (std::size_t i = 0; i < polyStruct.polyhs.size(); ++i)
     {
-        for (size_t j = 0; j < polyStruct.polyhs[i].size(); ++j)
+        for (std::size_t j = 0; j < polyStruct.polyhs[i].size(); ++j)
         {
-            size_t face_idx = polyStruct.polyhs[i][j];
-            for (size_t k = 0; k < 3; ++k)
+            std::size_t face_idx = polyStruct.polyhs[i][j];
+            for (std::size_t k = 0; k < 3; ++k)
             {
                 if (!m_polyhedrons[i]->shellContains(m_shellFaces[face_idx]->edges[k]))
                 {
@@ -587,7 +587,7 @@ std::string PolyhedralSet::generateOutputFilename(FileType filetype, std::string
 
     std::stringstream ss;
     ss << "phset_" << m_polyhedrons.size() << "_nph_";
-    size_t av_nfe = 0;
+    std::size_t av_nfe = 0;
     for (auto& polyhedr : m_polyhedrons)
         av_nfe += polyhedr->innerTetrs().size();
     av_nfe /= m_polyhedrons.size();
@@ -656,7 +656,7 @@ void PolyhedralSet::Log::write(std::ostream& stream) const
     logger << std::fixed;
     auto logWriteIfPositive = [&logger](std::string_view first, auto second, std::string_view third)
     {
-        if constexpr (std::is_same<decltype(second), size_t>())
+        if constexpr (std::is_same<decltype(second), std::size_t>())
         {
              logger << first.data() << second << third.data();
         }

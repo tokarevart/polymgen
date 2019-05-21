@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 #pragma once
-#include <stddef.h>
+#include <cstddef>
 #include <array>
 #include <vector>
 #include "real-type.h"
@@ -13,8 +13,8 @@ namespace psg {
 struct PolyShell
 {
     using coordinate_t = real_t;
-    using VertIdx = size_t;
-    using FaceIdx = size_t;
+    using VertIdx = std::size_t;
+    using FaceIdx = std::size_t;
     using Vert  = std::array<coordinate_t, 3>;
     using Face  = std::array<VertIdx, 3>;
     using Polyh = std::vector<FaceIdx>;

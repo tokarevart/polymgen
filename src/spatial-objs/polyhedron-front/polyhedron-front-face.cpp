@@ -25,7 +25,7 @@ vec3 front::Face::computeNormal()
                                                          static_cast<real_t>(-0.71123534278))
                                                      * static_cast<real_t>(1e-3);
 
-    size_t intersects_num = 0;
+    std::size_t intersects_num = 0;
     for (auto& fface : m_relatedPolyhedron->frontFaces())
     {
         if (fface == this)

@@ -15,14 +15,14 @@ void Logger::flush()
         m_endings.push_back("");
     }
 
-    size_t max_descriptions_size = 0;
-    for (size_t i = 0; i < m_descriptions.size(); i++)
+    std::size_t max_descriptions_size = 0;
+    for (std::size_t i = 0; i < m_descriptions.size(); i++)
         if (m_descriptions[i].size() > max_descriptions_size)
             max_descriptions_size = m_descriptions[i].size();
 
-    size_t extended_line_description_size = max_descriptions_size + 6;
+    std::size_t extended_line_description_size = max_descriptions_size + 6;
 
-    for (size_t i = 0; i < m_descriptions.size(); i++)
+    for (std::size_t i = 0; i < m_descriptions.size(); i++)
     {
         *m_stream <<  ">>  " + m_descriptions[i] + std::string(extended_line_description_size - m_descriptions[i].size(), '.')
                     + ">>  " + m_values[i] + ' ' + m_endings[i] + '\n';
@@ -316,8 +316,6 @@ Logger& Logger::operator<<(std::ostream& (*func)(std::ostream&))
         *m_bufiss << func;
     return *this;
 }
-
-
 
 
 template <Logger::IomanipType IomT>

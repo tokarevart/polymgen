@@ -105,7 +105,7 @@ FrSuEdge* front::Edge::findOppEdge()
 
     front::Edge* max_cos_fedge = nullptr;
     real_t max_cos = -1.0;
-    for (size_t i = 0; i < adj_ffaces_vec.size(); i++)
+    for (std::size_t i = 0; i < adj_ffaces_vec.size(); i++)
     {
         vec3 adj_opp_pos0 = adj_ffaces_vec[i].first->face->findVertNot(opp_fedges.front()->edge)->pos();
         vec3 adj_opp_pos1 = adj_ffaces_vec[i].second->face->findVertNot(opp_fedges.front()->edge)->pos();

@@ -2,13 +2,13 @@
 // Licensed under the MIT License.
 
 #pragma once
-#include <stddef.h>
+#include <cstddef>
 #include "data-structures/polyshell.h"
 
 
 namespace psg {
 
-PolyShell generateCuboids( size_t nX, size_t nY, size_t nZ,
+PolyShell generateCuboids( std::size_t nX, std::size_t nY, std::size_t nZ,
                            real_t dX = 1.0, real_t dY = 1.0, real_t dZ = 1.0 );
 
 } // namespace polygen

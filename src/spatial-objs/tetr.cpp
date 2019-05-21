@@ -18,10 +18,10 @@ real_t pmg::Tetr::computeVolume() const
 real_t pmg::Tetr::computeQuality() const
 {
     real_t sqr_prods[4];
-    for (size_t i = 0; i < 4; i++)
+    for (std::size_t i = 0; i < 4; i++)
     {
         sqr_prods[i] = static_cast<real_t>(1.0);
-        for (size_t j = 0; j < 4; j++)
+        for (std::size_t j = 0; j < 4; j++)
             if (j != i)
                 sqr_prods[i] *= (*verts[j] - *verts[i]).sqrMagnitude();
     }

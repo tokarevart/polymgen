@@ -494,7 +494,7 @@ bool Polyhedron::parallelFacesCheck(front::Edge* fEdge) const
             if (std::abs(std::abs(vec3::dot(f_normal, normal0)) - static_cast<real_t>(1.0)) < static_cast<real_t>(1e-6) ||
                 std::abs(std::abs(vec3::dot(f_normal, normal1)) - static_cast<real_t>(1.0)) < static_cast<real_t>(1e-6))
             {
-                size_t i = inters_reses[0] ? 0 : 1;
+                std::size_t i = inters_reses[0] ? 0 : 1;
 
                 std::array<vec3, 2> border_verts;
                 border_verts[0] = inters_reses[i]->verts[0]->pos();
@@ -738,14 +738,14 @@ void Polyhedron::setFEdgesInFrontSplit(const front::Edge* fEdge, std::array<fron
         return;
     }
 
-    size_t best_ofi;
+    std::size_t best_ofi;
     if (coses[0][0] > coses[0][1] && coses[1][0] > coses[1][1])
         best_ofi = 0;
     else
         // When coses[0][1] >= coses[0][0] && coses[1][1] >= coses[1][0]
         best_ofi = 1;
 
-    size_t worst_ofi = best_ofi == 0 ? 1 : 0;
+    std::size_t worst_ofi = best_ofi == 0 ? 1 : 0;
 
     std::array<front::Face*, 2> opp_ffaces = { oppFFaces.first, oppFFaces.second };
     if (coses[0][best_ofi] > coses[1][best_ofi])
@@ -974,7 +974,7 @@ void Polyhedron::exhaustWithoutNewVertOppEdgeExists(front::Edge* fEdge, front::E
     }
 
     std::array<front::Edge*, 3> new_tetr_fedges;
-    for (size_t i = 0; i < 3; i++)
+    for (std::size_t i = 0; i < 3; i++)
     {
         new_tetr_fedges[i] = main_ffaces[i]->findFEdgeNot(main_vert);
         new_tetr_fedges[i]->refreshAngleData();
@@ -1215,7 +1215,7 @@ bool Polyhedron::tryComputeNewVertPosType3(front::Face* fFace, vec3& out_pos)
     vec3 new_pos = spatalgs::lineIntersectPlane(v2_pos, e, v0_pos, v1_pos, v0_pos + e_mn2);
 
     std::array<real_t, 4> sum_magns;
-    size_t i = 0;
+    std::size_t i = 0;
     for (auto& fface : { fn0, fn1, fn2, fFace })
         sum_magns[i++] =  fface->face->edges[0]->magnitude()
                         + fface->face->edges[1]->magnitude()
@@ -1237,7 +1237,7 @@ bool Polyhedron::tryComputeNewVertPosType3(front::Face* fFace, vec3& out_pos)
 }
 
 
-bool Polyhedron::tryComputeNewVertPosType2(front::Face* fFace, vec3& out_pos, size_t smallAngleIdx0, size_t smallAngleIdx1)
+bool Polyhedron::tryComputeNewVertPosType2(front::Face* fFace, vec3& out_pos, std::size_t smallAngleIdx0, std::size_t smallAngleIdx1)
 {
     std::array<front::Edge*, 2> main_fedges;
     main_fedges[0] = fFace->fEdges[smallAngleIdx0];
@@ -1322,7 +1322,7 @@ bool Polyhedron::tryComputeNewVertPosType2(front::Face* fFace, vec3& out_pos, si
 }
 
 
-bool Polyhedron::tryComputeNewVertPosType1(front::Face* fFace, vec3& out_pos, size_t smallAngleIdx)
+bool Polyhedron::tryComputeNewVertPosType1(front::Face* fFace, vec3& out_pos, std::size_t smallAngleIdx)
 {
     auto main_f_edge = fFace->fEdges[smallAngleIdx];
     auto main_edge   = fFace->fEdges[smallAngleIdx]->edge;
@@ -1438,8 +1438,8 @@ bool Polyhedron::tryComputeNewVertPos(front::Face* fFace, vec3& out_pos)
         fFace->fEdges[1]->angle(),
         fFace->fEdges[2]->angle()
     };
-    std::array<size_t, 3> idces;
-    size_t n_small_angs = 0;
+    std::array<std::size_t, 3> idces;
+    std::size_t n_small_angs = 0;
     if (angs[0] < degToRad(140)) idces[n_small_angs++] = 0;
     if (angs[1] < degToRad(140)) idces[n_small_angs++] = 1;
     if (angs[2] < degToRad(140)) idces[n_small_angs++] = 2;
@@ -1705,14 +1705,14 @@ bool Polyhedron::globalIntersectionCheck()
 }
 
 
-void Polyhedron::smoothMesh(size_t nIters)
+void Polyhedron::smoothMesh(std::size_t nIters)
 {
-    for (size_t i = 0; i < nIters; i++)
+    for (std::size_t i = 0; i < nIters; i++)
     {
         for (auto& vert : m_innerVerts)
         {
             vec3 shift;
-            size_t n_delta_shifts = 0;
+            std::size_t n_delta_shifts = 0;
             for (auto& edge : m_innerEdges)
             {
                 if (vert == edge->verts[0])
@@ -1733,17 +1733,17 @@ void Polyhedron::smoothMesh(size_t nIters)
 }
 
 
-void Polyhedron::smoothNotFinisedMesh(size_t nIters)
+void Polyhedron::smoothNotFinisedMesh(std::size_t nIters)
 {
-    for (size_t i = 0; i < nIters; i++)
+    for (std::size_t i = 0; i < nIters; i++)
         for (auto &vert : m_innerVerts)
             smoothAroundFrontVert(vert);
 }
 
 
-void Polyhedron::smoothFront(size_t nIters)
+void Polyhedron::smoothFront(std::size_t nIters)
 {
-    for (size_t i = 0; i < nIters; i++)
+    for (std::size_t i = 0; i < nIters; i++)
         for (auto &vert : m_innerVerts)
             smoothAroundFrontVert(vert);
 }
@@ -1757,7 +1757,7 @@ void Polyhedron::smoothAroundFrontVert(Vert* fVert)
         return;
 
     vec3 shift;
-    size_t n_delta_shifts = 0;
+    std::size_t n_delta_shifts = 0;
     for (auto &edge : m_innerEdges)
     {
         vec3 d_shift;
@@ -1782,7 +1782,7 @@ pair_rr Polyhedron::analyzeMeshQuality(std::list<Tetr*>::iterator* out_minQualit
     if (m_isQualityAnalyzed)
         return m_meshQuality;
 
-    size_t n_tetrs = 0;
+    std::size_t n_tetrs = 0;
     real_t av_q = static_cast<real_t>(0.0);
     real_t min_q = static_cast<real_t>(1.0);
     std::list<Tetr*>::iterator min_q_tetr = m_innerTetrs.begin();

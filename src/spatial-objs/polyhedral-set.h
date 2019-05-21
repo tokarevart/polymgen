@@ -36,8 +36,8 @@ public:
         real_t avQuality      = static_cast<real_t>(-1.0);
         real_t minMeshAbsGrad = static_cast<real_t>(-1.0);
         real_t avMeshAbsGrad  = static_cast<real_t>(-1.0);
-        size_t nPolyhs        = 0;
-        size_t nElems         = 0;
+        std::size_t nPolyhs   = 0;
+        std::size_t nElems    = 0;
         real_t prefLen        = static_cast<real_t>(-1.0);
         double shellTrTime         = -1.0;
         double volumeExhTime       = -1.0;
@@ -47,7 +47,7 @@ public:
     };
 
     void tetrahedralize( real_t preferredLength, genparams::Polyhedron genParams = genparams::Polyhedron() );
-    void smoothMesh( size_t nItersVolume = 1, size_t nItersShell = 1 );
+    void smoothMesh( std::size_t nItersVolume = 1, std::size_t nItersShell = 1 );
     void shellDelaunayPostP();
 
     PolyMesh mesh() const;

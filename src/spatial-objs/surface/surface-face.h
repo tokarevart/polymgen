@@ -37,9 +37,9 @@ public:
 
     // Needs surface edges to be already segmentized.
     void triangulate( real_t preferredLen, genparams::Surface genParams = genparams::Surface() );
-    void smoothMesh( size_t nIters );
+    void smoothMesh( std::size_t nIters );
     void delaunayPostP();
-    void optimizeMesh( size_t nSmoothIters = 20, size_t nDelaunaySmoothIters = 3 );
+    void optimizeMesh( std::size_t nSmoothIters = 20, std::size_t nDelaunaySmoothIters = 3 );
 
     bool contains( const surface::Edge* sEdge ) const;
     bool contains( const surface::Vert* sVert ) const;
@@ -85,7 +85,7 @@ private:
     vec3 computeNormalInTriang( front::Edge* fEdge, pmg::Edge* oneOfRemainingEdges ); // Do i need it?
 
     bool tryComputeNewVertPosType2( front::Edge* fEdge, vec3& out_pos );
-    bool tryComputeNewVertPosType1( front::Edge* fEdge, vec3& out_pos, size_t smallAngleIdx );
+    bool tryComputeNewVertPosType1( front::Edge* fEdge, vec3& out_pos, std::size_t smallAngleIdx );
     bool tryComputeNewVertPosType0( front::Edge* fEdge, vec3& out_pos );
     bool tryComputeNewVertPos(      front::Edge* fEdge, vec3& out_pos );
 

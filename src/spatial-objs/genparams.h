@@ -1,5 +1,5 @@
 #pragma once
-#include <stddef.h>
+#include <cstddef>
 #include "../real-type.h"
 
 namespace pmg {
@@ -11,8 +11,8 @@ struct Surface
     real_t cMaxDef = static_cast<real_t>(0.3);
     real_t cDef    = static_cast<real_t>(0.5);
 
-    size_t nSmoothIters         = 20;
-    size_t nDelaunaySmoothIters =  3;
+    std::size_t nSmoothIters         = 20;
+    std::size_t nDelaunaySmoothIters =  3;
 };
 
 using Shell = Surface;
@@ -23,7 +23,7 @@ struct Volume
     real_t cMaxDef = static_cast<real_t>(0.3);
     real_t cDef    = static_cast<real_t>(0.4);
 
-    size_t nSmoothIters = 20;
+    std::size_t nSmoothIters = 20;
 };
 
 struct Polyhedron

@@ -273,7 +273,7 @@ bool surface::Face::tryComputeNewVertPosType2(sfront::Edge* fEdge, vec3& out_pos
 }
 
 
-bool surface::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, vec3& out_pos, size_t smallAngleIdx)
+bool surface::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, vec3& out_pos, std::size_t smallAngleIdx)
 {
     auto main_vert = fEdge->edge->verts[smallAngleIdx];
     auto sec_vert  = fEdge->edge->findNot(main_vert);
@@ -334,8 +334,8 @@ bool surface::Face::tryComputeNewVertPos(sfront::Edge* fEdge, vec3& out_pos)
         findFrontVert(fEdge->edge->verts[0])->angle(),
         findFrontVert(fEdge->edge->verts[1])->angle()
     };
-    std::array<size_t, 2> idces;
-    size_t n_small_angs = 0;
+    std::array<std::size_t, 2> idces;
+    std::size_t n_small_angs = 0;
     if (angs[0] < degToRad(120)) idces[n_small_angs++] = 0;
     if (angs[1] < degToRad(120)) idces[n_small_angs++] = 1;
 
@@ -534,7 +534,7 @@ surface::Face::ExhaustType surface::Face::computeExhaustionTypeQualityPriority(
 void surface::Face::processLastFace()
 {
     std::array<pmg::Edge*, 3> edges;
-    size_t i = 0;
+    std::size_t i = 0;
     for (auto& fedge : m_frontEdges)
         edges[i++] = fedge->edge;
 
@@ -625,9 +625,9 @@ void surface::Face::processAngles()
 }
 
 
-void surface::Face::smoothMesh(size_t nIters)
+void surface::Face::smoothMesh(std::size_t nIters)
 {
-    for (size_t i = 0; i < nIters; i++)
+    for (std::size_t i = 0; i < nIters; i++)
     {
         for (auto& vert : m_innerVerts)
         {
@@ -725,9 +725,9 @@ void surface::Face::delaunayPostP()
 }
 
 
-void surface::Face::optimizeMesh(size_t nSmoothIters, size_t nDelaunaySmoothIters)
+void surface::Face::optimizeMesh(std::size_t nSmoothIters, std::size_t nDelaunaySmoothIters)
 {
-    for (size_t i = 0; i < nDelaunaySmoothIters; i++)
+    for (std::size_t i = 0; i < nDelaunaySmoothIters; i++)
     {
         delaunayPostP();
         smoothMesh(nSmoothIters);

@@ -1,7 +1,7 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include <stddef.h>
+#include <cstddef>
 #include <iostream>
 #include <fstream>
 #include <memory>
@@ -13,7 +13,7 @@ int main()
     real_t preferredLength = static_cast<real_t>(0.5);
     
     std::cout << "Generating PolyShell...";
-    size_t n = 4;
+    std::size_t n = 4;
     psg::PolyShell shell = psg::generateCuboids(n, n, n);
     std::cout << std::string(7, ' ') + "done." << std::endl;
 

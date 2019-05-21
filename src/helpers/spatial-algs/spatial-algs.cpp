@@ -506,7 +506,7 @@ real_t spatalgs::computeMaxSqrsSum(const vec3& trngl_p0, const vec3& trngl_p1, c
     sqrs[1] = (trngl_p2 - trngl_p1).sqrMagnitude();
     sqrs[2] = (trngl_p0 - trngl_p2).sqrMagnitude();
 
-    size_t max_inds[2];
+    std::size_t max_inds[2];
     if (sqrs[0] < sqrs[1])
     {
         max_inds[0] = 1;
@@ -551,7 +551,7 @@ vec3 spatalgs::closestTrianglePointToPointOnPlane(
     sqrs[1] = (closest_points[1] - point).sqrMagnitude();
     sqrs[2] = (closest_points[2] - point).sqrMagnitude();
 
-    size_t min_i;
+    std::size_t min_i;
     if (sqrs[0] < sqrs[1])
     {
         if (sqrs[0] < sqrs[2])

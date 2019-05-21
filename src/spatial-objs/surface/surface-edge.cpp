@@ -23,7 +23,7 @@ const std::vector<Vert*>& surface::Edge::innerVerts() const
 
 void surface::Edge::segmentize(real_t preferredLen)
 {
-    size_t n_inner_verts = static_cast<size_t>(std::round(magnitude() / preferredLen)) - 1;
+    std::size_t n_inner_verts = static_cast<std::size_t>(std::round(magnitude() / preferredLen)) - 1;
     if (n_inner_verts == 0)
     {
         m_innerEdges.push_back(new pmg::Edge(verts[0]->attachedVert, verts[1]->attachedVert));
@@ -33,7 +33,7 @@ void surface::Edge::segmentize(real_t preferredLen)
     vec3 dir = (*verts[1] - *verts[0]) / (n_inner_verts + 1);
 
     vec3 cur_pos = verts[0]->pos();
-    for (size_t i = 0; i < n_inner_verts; i++)
+    for (std::size_t i = 0; i < n_inner_verts; i++)
     {
         cur_pos += dir;
         m_innerVerts.push_back(new pmg::Vert(cur_pos));
@@ -41,7 +41,7 @@ void surface::Edge::segmentize(real_t preferredLen)
 
     m_innerEdges.push_back(new pmg::Edge(verts[0]->attachedVert, m_innerVerts.front()));
 
-    for (size_t i = 0; i < m_innerVerts.size() - 1; i++)
+    for (std::size_t i = 0; i < m_innerVerts.size() - 1; i++)
         m_innerEdges.push_back(new pmg::Edge(m_innerVerts[i], m_innerVerts[i + 1]));
 
     m_innerEdges.push_back(new pmg::Edge(verts[1]->attachedVert, m_innerVerts.back()));

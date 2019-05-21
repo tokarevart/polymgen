@@ -53,7 +53,7 @@ public:
     pair_rr analyzeMeshQuality( std::list<Tetr*>::iterator* out_minQualityTetr = nullptr );
     pair_rr analyzeMeshAbsGrad();
     void    tetrahedralize( real_t preferredLength, genparams::Volume genParams = genparams::Volume() );
-    void    smoothMesh( size_t nIters );
+    void    smoothMesh( std::size_t nIters );
 
     Polyhedron();
     Polyhedron( PolyhedralSet* polyhset );
@@ -79,6 +79,8 @@ private:
 
     real_t m_prefLen;
 
+    // TODO: create and use separate Mesher (maybe template <std::size_t>)
+    // TODO: replace raw pointers with smart pointers and then make benchmark
     PolyhedralSet* m_polyhset = nullptr;
 
     // TODO: use Shell class instead
@@ -92,6 +94,7 @@ private:
     std::list<Edge*> m_innerEdges;
     std::list<Vert*> m_innerVerts;
 
+    // TODO: create and use Front class instead
     // TODO: add front::Vert class
     std::list<front::Face*> m_frontFaces;
     std::list<front::Edge*> m_frontEdges;
@@ -111,6 +114,7 @@ private:
     void removeFromFront( front::Edge* fEdge );
 
     // This section is about various front intersection checks
+    // TODO: move that and other methods to relations.h later
     // TODO: change methods names
     bool segmentIntersectMesh( const vec3& v0, const vec3& v1 ) const;
     bool segmentIntersectFront( const vec3& v0, const vec3& v1 ) const;
@@ -157,10 +161,10 @@ private:
             front::Face* fFace, vec3& out_pos );
     bool tryComputeNewVertPosType2(
             front::Face* frontFace, vec3& out_pos,
-            size_t smallAngleIdx0, size_t smallAngleIdx1 );
+            std::size_t smallAngleIdx0, std::size_t smallAngleIdx1 );
     bool tryComputeNewVertPosType1(
             front::Face* fFace, vec3& out_pos,
-            size_t smallAngleIdx);
+            std::size_t smallAngleIdx);
     bool tryComputeNewVertPosType0(
             front::Face* fFace, vec3& out_pos );
     bool tryComputeNewVertPos( front::Face* fFace, vec3& out_pos );
@@ -179,8 +183,8 @@ private:
 
     void debug();
 
-    void smoothNotFinisedMesh( size_t nIters );
-    void smoothFront(          size_t nIters );
+    void smoothNotFinisedMesh( std::size_t nIters );
+    void smoothFront(          std::size_t nIters );
     void smoothAroundFrontVert( Vert* frontVert );
 
     void flip( std::list<Tetr*>::iterator tetr );
