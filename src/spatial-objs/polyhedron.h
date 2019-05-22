@@ -79,7 +79,7 @@ private:
 
     real_t m_prefLen;
 
-    // TODO: create and use separate Mesher (maybe template <std::size_t>)
+    // TODO: create and use separate Mesher (maybe template <std::size_t Dim>)
     // TODO: replace raw pointers with smart pointers and then make benchmark
     PolyhedralSet* m_polyhset = nullptr;
 

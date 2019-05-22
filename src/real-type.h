@@ -2,4 +2,5 @@
 // Licensed under the MIT License.
 
 #pragma once
+// TODO: use templates instead
 using real_t = double;

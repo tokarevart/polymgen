@@ -155,7 +155,6 @@ pair_ff pmg::Edge::find2AdjFaces(const std::list<pmg::Face*>& facesList) const
 }
 
 
-// TODO: replace its usage with pmg::relations content
 bool pmg::Edge::contains(const pmg::Vert* vert) const
 {
     if (verts[0] == vert ||
@@ -166,7 +165,6 @@ bool pmg::Edge::contains(const pmg::Vert* vert) const
 }
 
 
-// TODO: replace its usage with pmg::relations content
 bool pmg::Edge::belongsToShell()
 {
     if ((verts[0]->belongsToSVert ||

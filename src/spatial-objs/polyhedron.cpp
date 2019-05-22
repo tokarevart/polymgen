@@ -222,7 +222,7 @@ bool Polyhedron::edgeIntersectFront(const Vert* v0, const vec3& v1) const
 {
     for (auto& fface : m_frontFaces)
     {
-        if (relations::contains(fface, v0))
+        if (fface->contains(v0))
             continue;
 
         if (spatalgs::doesSegmentIntersectTriangle(
@@ -241,8 +241,8 @@ bool Polyhedron::edgeIntersectFront(const Vert* v0, const Vert* v1) const
 {
     for (auto& fface : m_frontFaces)
     {
-        if (   relations::contains(fface, v0)
-            || relations::contains(fface, v1))
+        if (   fface->contains(v0)
+            || fface->contains(v1))
             continue;
 
         if (spatalgs::doesSegmentIntersectTriangle(

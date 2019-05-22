@@ -108,7 +108,6 @@ pmg::Edge* pmg::Face::longestEdge() const
 }
 
 
-// TODO: replace its usage with pmg::relations content
 bool pmg::Face::contains(const pmg::Edge* edge) const
 {
     for (auto& edge0 : edges)
@@ -119,7 +118,6 @@ bool pmg::Face::contains(const pmg::Edge* edge) const
 }
 
 
-// TODO: replace its usage with pmg::relations content
 bool pmg::Face::contains(const pmg::Vert* vert) const
 {
     for (auto& edge : edges)

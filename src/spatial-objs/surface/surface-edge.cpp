@@ -61,7 +61,6 @@ real_t surface::Edge::sqrMagnitude() const
 }
 
 
-// TODO: replace its usage with pmg::relations content
 bool surface::Edge::contains(const surface::Vert* sVert) const
 {
     if (verts[0] == sVert ||
@@ -72,7 +71,6 @@ bool surface::Edge::contains(const surface::Vert* sVert) const
 }
 
 
-// TODO: replace its usage with pmg::relations content
 bool surface::Edge::contains(const pmg::Edge* edge) const
 {
     if (std::find(m_innerEdges.begin(), m_innerEdges.end(), edge) != m_innerEdges.end())
@@ -82,7 +80,6 @@ bool surface::Edge::contains(const pmg::Edge* edge) const
 }
 
 
-// TODO: replace its usage with pmg::relations content
 bool surface::Edge::contains(const pmg::Vert* vert) const
 {
     if (verts[0]->attachedVert == vert ||

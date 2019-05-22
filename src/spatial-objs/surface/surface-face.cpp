@@ -105,7 +105,6 @@ void surface::Face::triangulate(real_t preferredLen, genparams::Surface genParam
 }
 
 
-// TODO: replace its usage with pmg::relations content
 bool surface::Face::contains(const surface::Edge* edge) const
 {
     for (auto& edge_ : edges)
@@ -116,7 +115,6 @@ bool surface::Face::contains(const surface::Edge* edge) const
 }
 
 
-// TODO: replace its usage with pmg::relations content
 bool surface::Face::contains(const surface::Vert* vert) const
 {
     for (auto& edge : edges)

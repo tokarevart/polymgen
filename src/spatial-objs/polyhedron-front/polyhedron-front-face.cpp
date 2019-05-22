@@ -132,6 +132,29 @@ bool front::Face::isFEdgesFull() const
 }
 
 
+bool front::Face::contains(const front::Edge* fEdge) const
+{
+    if (fEdges[0] == fEdge ||
+        fEdges[1] == fEdge ||
+        fEdges[2] == fEdge)
+        return true;
+
+    return false;
+}
+
+
+bool front::Face::contains(const pmg::Edge* edge) const
+{
+    return face->contains(edge);
+}
+
+
+bool front::Face::contains(const pmg::Vert* vert) const
+{
+    return face->contains(vert);
+}
+
+
 
 
 front::Face::Face(const Polyhedron* relatedPolyhedron, const pmg::Face* face)
