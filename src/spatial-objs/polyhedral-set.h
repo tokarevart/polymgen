@@ -56,7 +56,7 @@ public:
     Log log();
     std::string generateLogFileName() const;
 
-    // TODO: make mesh output with PolyMesh method instead and implement obj file writing using std::set (sort by address)
+    // TODO: make mesh output with PolyMesh method instead
     void output( FileType filetype = FileType::WavefrontObj, std::string_view filename = "_AUTO_", unsigned polyhedralSetId = 1u );
 
     PolyhedralSet();
