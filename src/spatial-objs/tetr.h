@@ -16,7 +16,7 @@ class Tetr
     using FaceV = std::array<pmg::Vert*, 3>;
 
 public:
-    // TODO: represent Tetr as a 4 Faces
+    // TODO: represent Tetr as a 4 Faces and then add method std::array<pmg::Vert*, 4> verts() const;
     std::array<pmg::Vert*, 4> verts;
 
     real_t computeVolume()  const;

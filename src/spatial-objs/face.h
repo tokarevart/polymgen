@@ -18,6 +18,8 @@ class Face
 public:
     std::array<pmg::Edge*, 3> edges;
 
+    // TODO: add method std::array<pmg::Vert*, 3> verts() const;
+
     vec3   computeCenter()  const;
     real_t computeQuality() const;
     real_t computeArea()    const;

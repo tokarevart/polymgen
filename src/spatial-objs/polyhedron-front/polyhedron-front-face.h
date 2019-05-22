@@ -21,6 +21,8 @@ public:
     std::array<front::Edge*, 3> fEdges = { nullptr, };
     vec3 normal;
 
+    // TODO: add method std::array<pmg::Vert*, 3> verts() const;
+
     vec3   computeNormal();
     vec3   computeCenter();
     real_t computeQuality();
