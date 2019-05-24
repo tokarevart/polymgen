@@ -4,6 +4,7 @@
 #pragma once
 #include <cstddef>
 #include <memory>
+// TODO: remove recursive class dependencies and then remove extra includes
 #include "spatial-objs/shell/shell-face.h"
 #include "spatial-objs/shell/shell-edge.h"
 #include "spatial-objs/shell/shell-vertex.h"
