@@ -89,26 +89,26 @@ private:
     std::vector<shell::Vert*> m_shellVerts;
 
     // TODO: create and use Volume class instead
-    std::list<Tetr*> m_innerTetrs;
-    std::list<Face*> m_innerFaces;
-    std::list<Edge*> m_innerEdges;
-    std::list<Vert*> m_innerVerts;
+    std::list<pmg::Tetr*> m_innerTetrs;
+    std::list<pmg::Face*> m_innerFaces;
+    std::list<pmg::Edge*> m_innerEdges;
+    std::list<pmg::Vert*> m_innerVerts;
 
     // TODO: create and use Front class instead
     // TODO: add front::Vert class
-    std::list<front::Face*> m_frontFaces;
-    std::list<front::Edge*> m_frontEdges;
+    std::list<front::Face*> m_frontFaces; // TODO: use std::set 'cause finding will be faster and m_frontEdges is also std::set
+    std::list<front::Edge*> m_frontEdges; // TODO: use std::set sorting by angle (first larger) instead
 
-    bool shellContains( const Vert* vert ) const;
+    bool shellContains( const pmg::Vert* vert ) const;
 
     shell::Edge* findShellEdge( const shell::Vert* v0, const shell::Vert* v1 ) const;
-    front::Face* findFrontFace( const Face* face ) const;
-    std::vector<front::Edge*> findFEdge( const Vert* v0, const Vert* v1 ) const;
-    std::vector<front::Edge*> findFEdge( const Edge* edge ) const;
+    front::Face* findFrontFace( const pmg::Face* face ) const;
+    std::vector<front::Edge*> findFEdge( const pmg::Vert* v0, const pmg::Vert* v1 ) const;
+    std::vector<front::Edge*> findFEdge( const pmg::Edge* edge ) const;
 
     // Adds new front Face and corresponding Face.
-    front::Face* addToFront( const Face* face, bool addInner = true );
-    front::Edge* addToFront( const Edge* edge, bool addInner = true );
+    front::Face* addToFront( const pmg::Face* face, bool addInner = true );
+    front::Edge* addToFront( const pmg::Edge* edge, bool addInner = true );
 
     void removeFromFront( front::Face* fFace );
     void removeFromFront( front::Edge* fEdge );
@@ -116,14 +116,14 @@ private:
     // This section is about various front intersection checks
     // TODO: move that and other methods to relations.h later
     // TODO: change methods names
-    bool segmentIntersectMesh( const vec3& v0, const vec3& v1 ) const;
+    bool segmentIntersectMesh(  const vec3& v0, const vec3& v1 ) const;
     bool segmentIntersectFront( const vec3& v0, const vec3& v1 ) const;
-    bool edgeIntersectFront( const Vert* v0, const vec3& v1 ) const;
-    bool edgeIntersectFront( const Vert* v0, const Vert* v1 ) const;
-    bool edgeIntersectAnyFace( const Edge* edge ) const;
+    bool edgeIntersectFront( const pmg::Vert* v0, const vec3&      v1 ) const;
+    bool edgeIntersectFront( const pmg::Vert* v0, const pmg::Vert* v1 ) const;
+    bool edgeIntersectAnyFace( const pmg::Edge* edge ) const;
     bool potentialEdgeIntersectFront( front::Edge* fEdge ) const;
-    bool anyEdgeIntersectFace( const Vert* v0, const Vert* v1, const vec3& v2 ) const;
-    bool anyEdgeIntersectFace( const Vert* v0, const Vert* v1, const Vert* v2 ) const;
+    bool anyEdgeIntersectFace( const pmg::Vert* v0, const pmg::Vert* v1, const vec3&      v2 ) const;
+    bool anyEdgeIntersectFace( const pmg::Vert* v0, const pmg::Vert* v1, const pmg::Vert* v2 ) const;
     bool anyEdgeIntersectPotentialFaces( front::Edge* fEdge ) const;
     bool anyVertInsidePotentialTetrCheck( front::Edge* fEdge ) const;
     bool parallelFacesCheck( front::Edge* fEdge ) const;
@@ -137,7 +137,7 @@ private:
     static real_t  computeTetrSimpleQuality(     const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3 );
     static real_t  computeTetrSimpleSqrQuality(  const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3 );
 
-    front::Edge* currentFrontEdge( real_t maxCompl ) const;
+    front::Edge* currentFrontEdge( real_t maxCompl ) const; // TODO: use std::map::upper_bound(...) method instead
     bool exhaustWithoutNewVertPriorityPredicate( front::Edge* fEdge );
     bool exhaustWithNewVertPriorityPredicate(    front::Edge* fEdge );
     ExhaustType computeExhaustionTypeQualityPriority(
@@ -183,11 +183,7 @@ private:
 
     void debug();
 
-    void smoothNotFinisedMesh( std::size_t nIters );
-    void smoothFront(          std::size_t nIters );
-    void smoothAroundFrontVert( Vert* frontVert );
-
-    void flip( std::list<Tetr*>::iterator tetr );
+    void flip( std::list<pmg::Tetr*>::iterator tetr );
     void flipWhile( real_t qualityLessThan );
 
     void computeFrontNormals();

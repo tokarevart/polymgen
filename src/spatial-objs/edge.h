@@ -27,9 +27,11 @@ public:
     pmg::Vert* findNot( const pmg::Edge* edge ) const;
     pmg::Vert* findNot( const pmg::Vert* vert ) const;
 
-    void flip(         std::list<Edge*>& edgesList, std::list<pmg::Face*>& facesList );
-    bool flipIfNeeded( std::list<Edge*>& edgesList, std::list<pmg::Face*>& facesList );
+    // TODO: move these methods to some file like surface/relations.h or somthing like that
+    void flip(         std::list<pmg::Edge*>& edgesList, std::list<pmg::Face*>& facesList );
+    bool flipIfNeeded( std::list<pmg::Edge*>& edgesList, std::list<pmg::Face*>& facesList );
     // Adj means adjacent.
+    // TODO: move these methods to pmg::relations
     std::list<pmg::Face*> findAdjFaces(  const std::list<pmg::Face*>& facesList ) const;
     pair_ff               find2AdjFaces( const std::list<pmg::Face*>& facesList ) const;
 

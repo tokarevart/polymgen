@@ -1733,50 +1733,6 @@ void Polyhedron::smoothMesh(std::size_t nIters)
 }
 
 
-void Polyhedron::smoothNotFinisedMesh(std::size_t nIters)
-{
-    for (std::size_t i = 0; i < nIters; i++)
-        for (auto &vert : m_innerVerts)
-            smoothAroundFrontVert(vert);
-}
-
-
-void Polyhedron::smoothFront(std::size_t nIters)
-{
-    for (std::size_t i = 0; i < nIters; i++)
-        for (auto &vert : m_innerVerts)
-            smoothAroundFrontVert(vert);
-}
-
-
-void Polyhedron::smoothAroundFrontVert(Vert* fVert)
-{
-    if (fVert->belongsToSFace ||
-        fVert->belongsToSEdge ||
-        fVert->belongsToSVert)
-        return;
-
-    vec3 shift;
-    std::size_t n_delta_shifts = 0;
-    for (auto &edge : m_innerEdges)
-    {
-        vec3 d_shift;
-        if (fVert == edge->verts[0])
-        {
-            d_shift = *edge->verts[1] - *fVert;
-        }
-        else if (fVert == edge->verts[1])
-        {
-            d_shift = *edge->verts[0] - *fVert;
-        }
-        shift += d_shift * (d_shift.magnitude() - m_prefLen);
-        n_delta_shifts++;
-    }
-    shift /= n_delta_shifts;
-    fVert->setPos(fVert->pos() + shift);
-}
-
-
 pair_rr Polyhedron::analyzeMeshQuality(std::list<Tetr*>::iterator* out_minQualityTetr)
 {
     if (m_isQualityAnalyzed)
