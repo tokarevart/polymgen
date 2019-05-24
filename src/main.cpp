@@ -5,7 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
-#include "spatial-objs/polyhedral-set.h"
+#include "core/polyhedral-set.h"
 #include "polysgen/polysgen.h"
 
 int main()

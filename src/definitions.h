@@ -3,7 +3,9 @@
 
 #pragma once
 
+namespace spt {
 struct vec3;
+} // namespace spt
 
 namespace pmg {
 class PolyhedralSet;
@@ -12,21 +14,24 @@ class Tetr;
 class Face;
 class Edge;
 class Vert;
+} // namespace pmg
 
-namespace front {
+namespace pmg::front {
 class Face;
 class Edge;
-} // namespace front
+} // namespace pmg::front
 
-namespace surface {
+namespace pmg::surface {
 class Face;
 class Edge;
 class Vert;
+} // namespace pmg::surface
 
-namespace front {
+namespace pmg::surface::front {
 class Edge;
 class Vert;
-} // namespace front
-} // namespace surface
+} // namespace pmg::surface::front
+
+namespace pmg {
 namespace shell = surface;
 } // namespace pmg
