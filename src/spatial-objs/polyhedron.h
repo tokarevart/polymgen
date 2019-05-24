@@ -149,7 +149,7 @@ private:
     vec3 computeNormalInTetr( const vec3& fFacePos0, const vec3& fFacePos1, const vec3& fFacePos2, const vec3& oppVertPos ) const;
 
     // TODO: add known neighbors initializations while creating new Tetr
-    void setFEdgesInFrontSplit( const front::Edge* fEdge, std::array<front::Edge*, 2> newOppFEdges, std::array<front::Face*, 2> newFFaces, pair_ff oppFFaces ) const;
+    void assignFEdgesInFrontSplit( const front::Edge* fEdge, std::array<front::Edge*, 2> newOppFEdges, std::array<front::Face*, 2> newFFaces, pair_ff oppFFaces ) const;
     void exhaustFrontCollapse( front::Edge* fEdge, front::Edge* oppFEdge );
     void exhaustFrontSplit( front::Edge* fEdge, front::Edge* oppFEdge );
     void exhaustWithoutNewVertOppEdgeExists( front::Edge* fEdge, front::Edge* oppFEdge );

@@ -131,7 +131,7 @@ FrSuEdge* front::Edge::findOppEdge()
 
 pair_ff front::Edge::adjFFaces()
 {
-    if (!isAdjFacesFull())
+    if (!adjFacesFull())
         fillAdjFFaces();
 
     return m_adjFFaces;
@@ -188,7 +188,7 @@ front::Edge::Edge(const Polyhedron* relatedPolyhedron, const pmg::Edge* edge)
 
 
 
-bool front::Edge::isAdjFacesFull()
+bool front::Edge::adjFacesFull()
 {
     return std::get<0>(m_adjFFaces) && std::get<1>(m_adjFFaces);
 }
@@ -204,12 +204,12 @@ pair_ff front::Edge::fillAdjFFaces()
                 continue;
 
             addAdjFFace(fface);
-            if (isAdjFacesFull())
+            if (adjFacesFull())
                 break;
         }
     }
 
-    if (!isAdjFacesFull())
+    if (!adjFacesFull())
         throw std::logic_error("pmg::front::Edge::fillAdjFFaces didn't find 2 adjacent front Faces.");
 
     return m_adjFFaces;

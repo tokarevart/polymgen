@@ -123,7 +123,7 @@ void front::Face::removeFEdge(const front::Edge* fEdge)
 }
 
 
-bool front::Face::isFEdgesFull() const
+bool front::Face::fEdgesFull() const
 {
     if (fEdges[0] && fEdges[1] && fEdges[2])
         return true;

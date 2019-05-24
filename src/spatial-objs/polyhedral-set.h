@@ -7,7 +7,6 @@
 #include <list>
 #include <vector>
 #include <memory>
-// TODO: rewrite classes in STL style using templates and generalized algorithms working with that classes
 #include "spatial-objs/polyhedron.h"
 #include "spatial-objs/shell/shell-face.h"
 #include "spatial-objs/shell/shell-edge.h"

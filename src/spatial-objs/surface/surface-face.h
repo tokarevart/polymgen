@@ -76,7 +76,6 @@ private:
     void removeFromFront( front::Edge* fEdge );
     void removeFromFront( front::Vert* fVert );
 
-    // TODO: change methods names
     bool anyVertInsidePotentialTriangCheck( front::Vert* fVert ) const;
     bool doesSegmentIntersectsWithFront( const vec3&      v0, const vec3& v1 ) const;
     bool doesSegmentIntersectsWithFront( const pmg::Vert* v0, const vec3& v1 ) const;

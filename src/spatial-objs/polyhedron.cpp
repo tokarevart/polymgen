@@ -690,7 +690,7 @@ vec3 Polyhedron::computeNormalInTetr(const vec3& fFacePos0, const vec3& fFacePos
 }
 
 
-void Polyhedron::setFEdgesInFrontSplit(const front::Edge* fEdge, std::array<front::Edge*, 2> newOppFEdges, std::array<front::Face*, 2> newFFaces, pair_ff oppFFaces) const
+void Polyhedron::assignFEdgesInFrontSplit(const front::Edge* fEdge, std::array<front::Edge*, 2> newOppFEdges, std::array<front::Face*, 2> newFFaces, pair_ff oppFFaces) const
 {
     pmg::Edge* opp_edge = newOppFEdges[0]->edge;
     std::array<vec3, 2> opp_verts_poses;
@@ -914,7 +914,7 @@ void Polyhedron::exhaustFrontSplit(front::Edge* fEdge, front::Edge* oppFEdge)
     new_ffaces[1]->normal = computeNormalInTetr(new_ffaces[1], fEdge->edge);
 
 
-    setFEdgesInFrontSplit(fEdge, { new_opp_fedges[0], new_opp_fedges[1] }, { new_ffaces[0], new_ffaces[1] }, opp_ffaces);
+    assignFEdgesInFrontSplit(fEdge, { new_opp_fedges[0], new_opp_fedges[1] }, { new_ffaces[0], new_ffaces[1] }, opp_ffaces);
 
 //    m_innerTetrs.push_back(new Tetr(
 //        fEdge->edge->verts[0],

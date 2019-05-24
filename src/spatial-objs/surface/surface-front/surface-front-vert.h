@@ -35,6 +35,7 @@ public:
 
 
 private:
+    // TODO: it's not good to store it
     surface::Face* m_relatedSurfaceFace;
 
     real_t m_angle;

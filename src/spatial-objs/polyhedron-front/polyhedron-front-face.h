@@ -17,7 +17,8 @@ class Face
 {
 public:
     pmg::Face* face;
-    // TODO: specify when filling occurs
+    // TODO: specify that filling must occur in method void assignFEdges( ... );
+    // TODO: add method to change 1 fEdge like bool changeFEdge( const front::Edge* oldFEdge, const front::Edge* newFEdge ); in case of front splitting
     std::array<front::Edge*, 3> fEdges = { nullptr, };
     vec3 normal;
 
@@ -32,16 +33,17 @@ public:
     front::Edge* findFEdgeNot( const pmg::Vert* vert ) const;
     void addFEdge(    const front::Edge* fEdge );
     void removeFEdge( const front::Edge* fEdge );
-    bool isFEdgesFull() const;
+    bool fEdgesFull() const;
 
     bool contains( const front::Edge* fEdge ) const;
     bool contains( const   pmg::Edge* edge  ) const;
     bool contains( const   pmg::Vert* vert  ) const;
 
-    Face(const Polyhedron* relatedPolyhedron, const pmg::Face* face);
+    Face( const Polyhedron* relatedPolyhedron, const pmg::Face* face );
 
 
 private:
+    // TODO: it's not good to store it
     Polyhedron* m_relatedPolyhedron;
 };
 

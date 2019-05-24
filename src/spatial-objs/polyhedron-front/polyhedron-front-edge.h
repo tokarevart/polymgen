@@ -32,8 +32,10 @@ public:
     real_t computeComplexity();
 
     // Opp means opposite.
-    // NOTE: maybe store oppVert or information that there is no oppVert
+    // TODO: rewrite these methods based on relations::opposite function
+    // NOTE: maybe store oppVerts
     pair_vv      oppVerts();
+    // NOTE: maybe store oppEdge and information of its existance
     front::Edge* findOppEdge();
 
     // Adj means adjacent.
@@ -43,12 +45,13 @@ public:
     bool removeAdjFFace(    const front::Face* fFace );
     bool adjFFacesContains( const front::Face* fFace ) const;
     void fillAdjFFaces( const front::Face* fFace0, const front::Face* fFace1 );
+    // TODO: add method std::size_t nAdjFFaces() const;
 
     Edge( const Polyhedron* relatedPolyhedron, const pmg::Edge* edge );
 
 
 private:
-    Polyhedron* m_relatedPolyhedron;
+    Polyhedron* m_relatedPolyhedron; // TODO: it's not good to store it
     pair_ff m_adjFFaces = { nullptr, nullptr }; // TODO: make std::array instead
 
     real_t m_angle;
@@ -57,7 +60,8 @@ private:
     bool m_needAngleProcessing      = true;
     bool m_needComplexityProcessing = true;
 
-    bool isAdjFacesFull();
+    bool adjFacesFull();
+    // TODO: remove this method and then before calling adjFFaces() adjacent faces must be assigned manually
     pair_ff fillAdjFFaces();
 };
 

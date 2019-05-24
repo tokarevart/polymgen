@@ -13,7 +13,6 @@ using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
 using pair_ee = std::pair<pmg::Edge*, pmg::Edge*>;
 
 
-// TODO: reduce the amount of defines
 #define DEG_1_IN_RAD static_cast<real_t>(0.0174532925199432957)
 #define PI           static_cast<real_t>(M_PI)
 
