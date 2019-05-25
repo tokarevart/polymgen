@@ -255,15 +255,15 @@ bool surface::Face::tryComputeNewVertPosType2(sfront::Edge* fEdge, vec3& out_pos
     auto v0 = main_f_verts[0]->vert;
     auto v1 = main_f_verts[1]->vert;
 
-    vec3 e0 = (vn0_pos - 2.0 * v0->pos() + main_f_verts[1]->vert->pos()).normalize();
-    vec3 e1 = (vn1_pos - 2.0 * v1->pos() + v0->pos()).normalize();
+    vec3 e0 = (vn0_pos - v0->pos() * 2.0 + main_f_verts[1]->vert->pos()).normalize();
+    vec3 e1 = (vn1_pos - v1->pos() * 2.0 + v0->pos()).normalize();
 
     vec3 new_pos = spt::algs::linesClosestPoint(v0->pos(), v0->pos() + e0, v1->pos(), v1->pos() + e1);
 
     vec3 v0_to_np = new_pos - v0->pos();
     vec3 v1_to_np = new_pos - v1->pos();
-    if (doesSegmentIntersectsWithFront(v0, new_pos + K_MIN_DIS * v0_to_np) ||
-        doesSegmentIntersectsWithFront(v1, new_pos + K_MIN_DIS * v1_to_np))
+    if (doesSegmentIntersectsWithFront(v0, new_pos + v0_to_np * K_MIN_DIS) ||
+        doesSegmentIntersectsWithFront(v1, new_pos + v1_to_np * K_MIN_DIS))
         return false;
 
     out_pos = new_pos;
@@ -281,20 +281,20 @@ bool surface::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, vec3& out_pos
     auto en = std::get<0>(adj_f_edges) == fEdge ? std::get<1>(adj_f_edges) : std::get<0>(adj_f_edges);
     auto vn = en->edge->findNot(main_vert);
 
-    vec3 e = (sec_vert->pos() - static_cast<real_t>(2.0) * main_vert->pos() + vn->pos()).normalize();
+    vec3 e = (sec_vert->pos() - main_vert->pos() * static_cast<real_t>(2.0) + vn->pos()).normalize();
 
     real_t av_magn = static_cast<real_t>(0.5) * (fEdge->edge->magnitude() + en->edge->magnitude());
     real_t raw_deform = K_D * (m_prefLen - av_magn);
     real_t deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
     real_t magn_d = av_magn + deform;
-    vec3 new_pos = main_vert->pos() + magn_d * e;
+    vec3 new_pos = main_vert->pos() + e * magn_d;
 
 //    vec3 new_pos = main_vert->pos() + av_magn * e;
 
     vec3 v0_to_np = new_pos - main_vert->pos();
     vec3 v1_to_np = new_pos - sec_vert->pos();
-    if (doesSegmentIntersectsWithFront(main_vert->pos(), new_pos + K_MIN_DIS * v0_to_np) ||
-        doesSegmentIntersectsWithFront(sec_vert->pos(),  new_pos + K_MIN_DIS * v1_to_np))
+    if (doesSegmentIntersectsWithFront(main_vert->pos(), new_pos + v0_to_np * K_MIN_DIS) ||
+        doesSegmentIntersectsWithFront(sec_vert->pos(),  new_pos + v1_to_np * K_MIN_DIS))
         return false;
 
     out_pos = new_pos;
@@ -308,7 +308,7 @@ bool surface::Face::tryComputeNewVertPosType0(sfront::Edge* fEdge, vec3& out_pos
     real_t raw_deform = K_D * (m_prefLen - magn);
     real_t deform = raw_deform < magn * K_MAXD ? raw_deform : magn * K_MAXD;
     real_t magn_d = magn + deform;
-    vec3 new_pos = fEdge->computeCenter() + static_cast<real_t>(0.5) * std::sqrt(static_cast<real_t>(4.0) * magn_d * magn_d - magn * magn) * fEdge->normal;
+    vec3 new_pos = fEdge->computeCenter() + fEdge->normal * (static_cast<real_t>(0.5) * std::sqrt(static_cast<real_t>(4.0) * magn_d * magn_d - magn * magn));
 
 //    vec3 new_pos = fEdge->computeCenter() + fEdge->normal * m_prefLen * SQRT3_2;
 

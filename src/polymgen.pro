@@ -7,7 +7,6 @@ SOURCES += \
     data-structs/polymesh.cpp \
     helpers/spatial/spatial-algs.cpp \
     helpers/logger.cpp \
-    helpers/spatial/spatial-vec.cpp \
     polysgen/polysgen.cpp \
     core/relations.cpp \
     core/edge.cpp \

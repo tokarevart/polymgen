@@ -1,7 +1,7 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "core/surface/surface-front/edge.h"
+#include "core/surface/front/edge.h"
 #include "helpers/spatial/algs.h"
 
 using namespace pmg::surface;
@@ -21,7 +21,7 @@ vec3 front::Edge::computeNormal()
 
 vec3 front::Edge::computeCenter()
 {
-    return static_cast<real_t>(0.5) * (edge->verts[0]->pos() + edge->verts[1]->pos());
+    return (edge->verts[0]->pos() + edge->verts[1]->pos()) * static_cast<real_t>(0.5);
 }
 
 

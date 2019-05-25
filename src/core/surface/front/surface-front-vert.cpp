@@ -1,7 +1,7 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "core/surface/surface-front/vert.h"
+#include "core/surface/front/vert.h"
 #include <stdexcept>
 #include "helpers/spatial/algs.h"
 

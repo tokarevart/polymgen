@@ -11,10 +11,9 @@ using spt::vec3;
 
 vec3 pmg::Face::computeCenter() const
 {
-    return ONE_3 * (
-        edges[0]->verts[0]->pos() +
-        edges[0]->verts[1]->pos() +
-        findVertNot(edges[0])->pos());
+    return (edges[0]->verts[0]->pos() +
+            edges[0]->verts[1]->pos() +
+            findVertNot(edges[0])->pos()) * ONE_3;
 }
 
 

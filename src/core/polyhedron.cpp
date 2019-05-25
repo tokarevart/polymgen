@@ -1293,7 +1293,7 @@ bool Polyhedron::tryComputeNewVertPosType2(front::Face* fFace, vec3& out_pos, st
     real_t raw_deform = C_D * (m_prefLen - av_magn);
     real_t deform = raw_deform < av_magn * C_MAXD ? raw_deform : av_magn * C_MAXD;
     real_t magn_d = av_magn + deform;
-    vec3 new_pos = v2_pos + magn_d * e;
+    vec3 new_pos = v2_pos + e * magn_d;
 
     if (edgeIntersectFront(v0, new_pos) ||
         edgeIntersectFront(v1, new_pos) ||
@@ -1305,7 +1305,7 @@ bool Polyhedron::tryComputeNewVertPosType2(front::Face* fFace, vec3& out_pos, st
     {
         // NOTE: do i really need it?
 
-        new_pos = new_pos = v2_pos + av_magn * e;
+        new_pos = new_pos = v2_pos + e * av_magn;
         if (edgeIntersectFront(v0, new_pos) ||
             edgeIntersectFront(v1, new_pos) ||
             edgeIntersectFront(v2, new_pos) ||
@@ -1347,7 +1347,7 @@ bool Polyhedron::tryComputeNewVertPosType1(front::Face* fFace, vec3& out_pos, st
     vec3 v2pr = spt::algs::project(v2_pos, v0_pos, v1_pos);
     vec3 vnpr = spt::algs::project(vn_pos, v0_pos, v1_pos);
 
-    vec3 c = static_cast<real_t>(0.25) * (v0_pos + v1_pos + v2pr + vnpr);
+    vec3 c = (v0_pos + v1_pos + v2pr + vnpr) * static_cast<real_t>(0.25);
     vec3 e = (fFace->normal + fn->normal).normalize();
     real_t me_magn = main_edge->magnitude();
     real_t l0 = (v2_pos - v0_pos).magnitude();
@@ -1359,7 +1359,7 @@ bool Polyhedron::tryComputeNewVertPosType1(front::Face* fFace, vec3& out_pos, st
     real_t raw_deform = C_D * (m_prefLen - av_magn);
     real_t deform = raw_deform < av_magn * C_MAXD ? raw_deform : av_magn * C_MAXD;
     real_t magn_d = av_magn + deform;
-    vec3 new_pos = c + std::sqrt(magn_d * magn_d - v0_c_dist * v0_c_dist) * e;
+    vec3 new_pos = c + e * std::sqrt(magn_d * magn_d - v0_c_dist * v0_c_dist);
 
     if (edgeIntersectFront(v0, new_pos) ||
         edgeIntersectFront(v1, new_pos) ||
@@ -1371,7 +1371,7 @@ bool Polyhedron::tryComputeNewVertPosType1(front::Face* fFace, vec3& out_pos, st
     {
         // NOTE: do i really need it?
 
-        new_pos = c + std::sqrt(av_magn * av_magn - v0_c_dist * v0_c_dist) * e;
+        new_pos = c + e * std::sqrt(av_magn * av_magn - v0_c_dist * v0_c_dist);
         if (edgeIntersectFront(v0, new_pos) ||
             edgeIntersectFront(v1, new_pos) ||
             edgeIntersectFront(v2, new_pos) ||
@@ -1397,7 +1397,7 @@ bool Polyhedron::tryComputeNewVertPosType0(front::Face* fFace, vec3& out_pos)
     real_t raw_deform = C_D * (m_prefLen - av_magn);
     real_t deform = raw_deform < av_magn * C_MAXD ? raw_deform : av_magn * C_MAXD;
     real_t magn_d = av_magn + deform;
-    vec3 new_pos = fFace->computeCenter() + std::sqrt(magn_d * magn_d - ONE_3 * av_magn * av_magn) * fFace->normal;
+    vec3 new_pos = fFace->computeCenter() + fFace->normal * std::sqrt(magn_d * magn_d - ONE_3 * av_magn * av_magn);
 
     auto v0 = fFace->face->edges[0]->verts[0];
     auto v1 = fFace->face->edges[0]->verts[1];
@@ -1413,7 +1413,7 @@ bool Polyhedron::tryComputeNewVertPosType0(front::Face* fFace, vec3& out_pos)
     {
         // NOTE: do i really need it?
 
-        new_pos = fFace->computeCenter() + std::sqrt(av_magn * av_magn - ONE_3 * av_magn * av_magn) * fFace->normal;
+        new_pos = fFace->computeCenter() + fFace->normal * std::sqrt(av_magn * av_magn - ONE_3 * av_magn * av_magn);
         if (edgeIntersectFront(v0, new_pos) ||
             edgeIntersectFront(v1, new_pos) ||
             edgeIntersectFront(v2, new_pos) ||

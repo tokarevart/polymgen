@@ -89,7 +89,7 @@ bool spt::algs::rayIntersectPlane(
     vec3 qvec = vec3::cross(tvec, edges[0]);
 
     real_t t = vec3::dot(edges[1], qvec) / det;
-    out_intersectPoint = origin + t * dir;
+    out_intersectPoint = origin + dir * t;
     return t > static_cast<real_t>(0.0);
 }
 
@@ -147,7 +147,7 @@ vec3 spt::algs::linesClosestPoint(const vec3& line0_p0, const vec3& line0_p1, co
         tc = DET(a, b, d, e) * inv_determ;
     }
 
-    return static_cast<real_t>(0.5) * (line0_p0 + sc * u + line1_p0 + tc * v);
+    return (line0_p0 + u * sc + line1_p0 + v * tc) * static_cast<real_t>(0.5);
 }
 
 
@@ -167,7 +167,7 @@ bool spt::algs::lineIntersectPlane(
     vec3 qvec = vec3::cross(tvec, edges[0]);
 
     real_t t = vec3::dot(edges[1], qvec) / det;
-    out_intersectPoint = line_point + t * line_dir;
+    out_intersectPoint = line_point + line_dir * t;
     return true;
 }
 
@@ -183,7 +183,7 @@ vec3 spt::algs::lineIntersectPlane(
     vec3 qvec = vec3::cross(tvec, edges[0]);
 
     real_t t = vec3::dot(edges[1], qvec) / vec3::dot(edges[0], pvec);
-    return line_point + t * line_dir;
+    return line_point + line_dir * t;
 }
 
 
@@ -235,7 +235,7 @@ bool spt::algs::segmentIntersectPlane(
     vec3 qvec = vec3::cross(tvec, edges[0]);
 
     real_t t = vec3::dot(edges[1], qvec) / det;
-    out_intersectPoint = p0 + t * dir;
+    out_intersectPoint = p0 + dir * t;
     return t < static_cast<real_t>(1.0) && t > static_cast<real_t>(0.0);
 }
 
@@ -297,7 +297,7 @@ real_t spt::algs::linesDistance(
         tc = DET(a, b, d, e) * inv_determ;
     }
 
-    vec3 diff_p = w + (sc * u) - (tc * v);
+    vec3 diff_p = w + (u * sc) - (v * tc);
 
     return diff_p.magnitude();
 }
@@ -385,7 +385,7 @@ real_t spt::algs::segmentsDistance(
     sc = std::abs(sn) < static_cast<real_t>(1e-6) ? static_cast<real_t>(0.0) : sn / sd;
     tc = std::abs(tn) < static_cast<real_t>(1e-6) ? static_cast<real_t>(0.0) : tn / td;
 
-    vec3 diff_p = w + (sc * u) - (tc * v);
+    vec3 diff_p = w + (u * sc) - (v * tc);
 
     return diff_p.magnitude();
 }
@@ -413,8 +413,8 @@ real_t spt::algs::cpaDistance(
     const vec3& start1, const vec3& vel1)
 {
     real_t cpa_time = cpaTime(start0, vel0, start1, vel1);
-    vec3 p0 = start0 + cpa_time * vel0;
-    vec3 p1 = start1 + cpa_time * vel1;
+    vec3 p0 = start0 + vel0 * cpa_time;
+    vec3 p1 = start1 + vel1 * cpa_time;
     return (p1 - p0).magnitude();
 }
 
