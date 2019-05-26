@@ -463,12 +463,12 @@ bool Polyhedron::parallelFacesCheck(front::Edge* fEdge) const
     opp_verts[1] = std::get<1>(adj_ffaces)->face->findVertNot(fEdge->edge);
 
     std::array<vec3, 2> plane0;
-    plane0[0] = *opp_verts[0] - *fEdge->edge->verts[0];
-    plane0[1] = *opp_verts[1] - *fEdge->edge->verts[0];
+    plane0[0] = opp_verts[0]->pos() - fEdge->edge->verts[0]->pos();
+    plane0[1] = opp_verts[1]->pos() - fEdge->edge->verts[0]->pos();
     vec3 normal0 = vec3::cross(plane0[0], plane0[1]).normalize();
     std::array<vec3, 2> plane1;
-    plane1[0] = *opp_verts[0] - *fEdge->edge->verts[1];
-    plane1[1] = *opp_verts[1] - *fEdge->edge->verts[1];
+    plane1[0] = opp_verts[0]->pos() - fEdge->edge->verts[1]->pos();
+    plane1[1] = opp_verts[1]->pos() - fEdge->edge->verts[1]->pos();
     vec3 normal1 = vec3::cross(plane1[0], plane1[1]).normalize();
 
     for (auto& fface : m_frontFaces)
@@ -488,8 +488,8 @@ bool Polyhedron::parallelFacesCheck(front::Edge* fEdge) const
             Vert* fface_from_vert = fface->face->findVertNot(fface->face->edges[0]);
 
             std::array<vec3, 2> f_plane;
-            f_plane[0] = *fface_to_verts[0] - *fface_from_vert;
-            f_plane[1] = *fface_to_verts[1] - *fface_from_vert;
+            f_plane[0] = fface_to_verts[0]->pos() - fface_from_vert->pos();
+            f_plane[1] = fface_to_verts[1]->pos() - fface_from_vert->pos();
             vec3 f_normal = vec3::cross(f_plane[0], f_plane[1]).normalize();
 
             if (std::abs(std::abs(vec3::dot(f_normal, normal0)) - static_cast<real_t>(1.0)) < static_cast<real_t>(1e-6) ||
@@ -601,7 +601,7 @@ bool Polyhedron::exhaustWithoutNewVertPriorityPredicate(front::Edge* curFEdge)
     if (curFEdge->findOppEdge() ||
         (curFEdge->angle() > degToRad(70) &&
          curFEdge->angle() < degToRad(100) &&
-         (*std::get<1>(opp_verts) - *std::get<0>(opp_verts)).sqrMagnitude() <= m_prefLen * m_prefLen))
+         (std::get<1>(opp_verts)->pos() - std::get<0>(opp_verts)->pos()).sqrMagnitude() <= m_prefLen * m_prefLen))
         return true;
 
     if (frontSplitCheck(curFEdge))
@@ -691,7 +691,7 @@ vec3 Polyhedron::computeNormalInTetr(const vec3& fFacePos0, const vec3& fFacePos
 }
 
 
-void Polyhedron::assignFEdgesInFrontSplit(const front::Edge* fEdge, std::array<front::Edge*, 2> newOppFEdges, std::array<front::Face*, 2> newFFaces, pair_ff oppFFaces) const
+void Polyhedron::setFEdgesInFrontSplit(const front::Edge* fEdge, std::array<front::Edge*, 2> newOppFEdges, std::array<front::Face*, 2> newFFaces, pair_ff oppFFaces) const
 {
     pmg::Edge* opp_edge = newOppFEdges[0]->edge;
     std::array<vec3, 2> opp_verts_poses;
@@ -915,7 +915,7 @@ void Polyhedron::exhaustFrontSplit(front::Edge* fEdge, front::Edge* oppFEdge)
     new_ffaces[1]->normal = computeNormalInTetr(new_ffaces[1], fEdge->edge);
 
 
-    assignFEdgesInFrontSplit(fEdge, { new_opp_fedges[0], new_opp_fedges[1] }, { new_ffaces[0], new_ffaces[1] }, opp_ffaces);
+    setFEdgesInFrontSplit(fEdge, { new_opp_fedges[0], new_opp_fedges[1] }, { new_ffaces[0], new_ffaces[1] }, opp_ffaces);
 
 //    m_innerTetrs.push_back(new Tetr(
 //        fEdge->edge->verts[0],
@@ -1459,8 +1459,8 @@ bool Polyhedron::tryComputeNewVertPos(front::Face* fFace, vec3& out_pos)
 
 real_t Polyhedron::sqr4FaceArea(const front::Face* fFace) const
 {
-    vec3 edge0_vec = *fFace->face->edges[0]->verts[1] - *fFace->face->edges[0]->verts[0];
-    vec3 edge1_vec = *fFace->face->edges[1]->verts[1] - *fFace->face->edges[1]->verts[0];
+    vec3 edge0_vec = fFace->face->edges[0]->verts[1]->pos() - fFace->face->edges[0]->verts[0]->pos();
+    vec3 edge1_vec = fFace->face->edges[1]->verts[1]->pos() - fFace->face->edges[1]->verts[0]->pos();
     return vec3::cross(edge0_vec, edge1_vec).sqrMagnitude();
 }
 
@@ -1718,17 +1718,17 @@ void Polyhedron::smoothMesh(std::size_t nIters)
             {
                 if (vert == edge->verts[0])
                 {
-                    shift += *edge->verts[1] - *vert;
+                    shift += edge->verts[1]->pos() - vert->pos();
                     n_delta_shifts++;
                 }
                 else if (vert == edge->verts[1])
                 {
-                    shift += *edge->verts[0] - *vert;
+                    shift += edge->verts[0]->pos() - vert->pos();
                     n_delta_shifts++;
                 }
             }
             shift /= n_delta_shifts;
-            vert->setPos(vert->pos() + shift);
+            vert->pos() = vert->pos() + shift;
         }
     }
 }

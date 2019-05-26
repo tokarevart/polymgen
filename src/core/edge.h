@@ -27,7 +27,7 @@ public:
     pmg::Vert* findNot( const pmg::Edge* edge ) const;
     pmg::Vert* findNot( const pmg::Vert* vert ) const;
 
-    // TODO: move these methods to some file like surface/relations.h or somthing like that
+    // TODO: move these methods to some file like surface/relations.h or something like that
     void flip(         std::list<pmg::Edge*>& edgesList, std::list<pmg::Face*>& facesList );
     bool flipIfNeeded( std::list<pmg::Edge*>& edgesList, std::list<pmg::Face*>& facesList );
     // Adj means adjacent.
@@ -37,6 +37,7 @@ public:
 
     bool contains( const pmg::Vert* vert ) const;
 
+    // TODO: move this method to pmg::relations
     bool belongsToShell();
 
     bool needToFlip( const std::list<pmg::Face*>& facesList );

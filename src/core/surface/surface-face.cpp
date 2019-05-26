@@ -635,17 +635,17 @@ void surface::Face::smoothMesh(std::size_t nIters)
             {
                 if (vert == edge->verts[0])
                 {
-                    shift += *edge->verts[1] - *vert;
+                    shift += edge->verts[1]->pos() - vert->pos();
                     delta_shifts_num++;
                 }
                 else if (vert == edge->verts[1])
                 {
-                    shift += *edge->verts[0] - *vert;
+                    shift += edge->verts[0]->pos() - vert->pos();
                     delta_shifts_num++;
                 }
             }
             shift /= delta_shifts_num;
-            vert->setPos(vert->pos() + shift);
+            vert->pos() = vert->pos() + shift;
         }
     }
 }
@@ -683,8 +683,8 @@ bool surface::Face::flipIfNeeded(pmg::Edge* edge)
     opp_nodes[0] = std::get<0>(around_faces)->findVertNot(edge);
     opp_nodes[1] = std::get<1>(around_faces)->findVertNot(edge);
 
-    real_t alpha = std::acos(vec3::cos(*edge->verts[0] - *opp_nodes[0], *edge->verts[1] - *opp_nodes[0]));
-    real_t beta  = std::acos(vec3::cos(*edge->verts[0] - *opp_nodes[1], *edge->verts[1] - *opp_nodes[1]));
+    real_t alpha = std::acos(vec3::cos(edge->verts[0]->pos() - opp_nodes[0]->pos(), edge->verts[1]->pos() - opp_nodes[0]->pos()));
+    real_t beta  = std::acos(vec3::cos(edge->verts[0]->pos() - opp_nodes[1]->pos(), edge->verts[1]->pos() - opp_nodes[1]->pos()));
 
     if (alpha + beta <= PI)
         return false;

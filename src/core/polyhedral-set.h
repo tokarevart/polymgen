@@ -26,7 +26,7 @@
 
 
 namespace pmg {
-
+// refactor class
 class PolyhedralSet
 {
 public:

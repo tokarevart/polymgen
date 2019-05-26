@@ -31,7 +31,7 @@ void surface::Edge::segmentize(real_t preferredLen)
         return;
     }
 
-    vec3 dir = (*verts[1] - *verts[0]) / (n_inner_verts + 1);
+    vec3 dir = (verts[1]->pos() - verts[0]->pos()) / (n_inner_verts + 1);
 
     vec3 cur_pos = verts[0]->pos();
     for (std::size_t i = 0; i < n_inner_verts; i++)
@@ -57,7 +57,7 @@ real_t surface::Edge::magnitude() const
 
 real_t surface::Edge::sqrMagnitude() const
 {
-    vec3 buf = *verts[1] - *verts[0];
+    vec3 buf = verts[1]->pos() - verts[0]->pos();
     return vec3::dot(buf, buf);
 }
 

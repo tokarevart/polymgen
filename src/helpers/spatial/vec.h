@@ -21,7 +21,7 @@ struct vec3
     {
         return vec0.x[0] * vec1.x[0] + vec0.x[1] * vec1.x[1] + vec0.x[2] * vec1.x[2];
     }
-    static vec3 cross( const vec3& vec0, const vec3& vec1 )
+    static vec3   cross( const vec3& vec0, const vec3& vec1 )
     {
         return vec3(vec0.x[1] * vec1.x[2] - vec0.x[2] * vec1.x[1],
                     vec0.x[2] * vec1.x[0] - vec0.x[0] * vec1.x[2],

@@ -16,7 +16,7 @@ class Face
 {
 public:
     pmg::Face* face;
-    // TODO: specify that filling must occur in method void assignFEdges( ... );
+    // TODO: specify that filling must occur in method void setFEdges( ... );
     // TODO: add method to change 1 fEdge like bool changeFEdge( const front::Edge* oldFEdge, const front::Edge* newFEdge ); in case of front splitting
     std::array<front::Edge*, 3> fEdges = { nullptr, };
     spt::vec3 normal;

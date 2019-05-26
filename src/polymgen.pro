@@ -15,13 +15,11 @@ SOURCES += \
     core/surface/surface-face.cpp \
     core/surface/front/surface-front-edge.cpp \
     core/surface/front/surface-front-vert.cpp \
-    core/surface/surface-vertex.cpp \
     core/surface/surface.cpp \
     core/tetr.cpp \
     main.cpp \
     core/polyhedron.cpp \
     core/face.cpp \
-    core/vert.cpp \
     core/front/polyhedron-front-edge.cpp \
     core/front/polyhedron-front-face.cpp \
     data-structs/polyshell.cpp

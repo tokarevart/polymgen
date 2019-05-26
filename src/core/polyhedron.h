@@ -25,7 +25,7 @@
 
 
 namespace pmg {
-
+// refactor class
 class Polyhedron
 {
     using pair_rr = std::pair<real_t, real_t>;
@@ -148,7 +148,7 @@ private:
     spt::vec3 computeNormalInTetr( const spt::vec3& fFacePos0, const spt::vec3& fFacePos1, const spt::vec3& fFacePos2, const spt::vec3& oppVertPos ) const;
 
     // TODO: add known neighbors initializations while creating new Tetr
-    void assignFEdgesInFrontSplit( const front::Edge* fEdge, std::array<front::Edge*, 2> newOppFEdges, std::array<front::Face*, 2> newFFaces, pair_ff oppFFaces ) const;
+    void setFEdgesInFrontSplit( const front::Edge* fEdge, std::array<front::Edge*, 2> newOppFEdges, std::array<front::Face*, 2> newFFaces, pair_ff oppFFaces ) const;
     void exhaustFrontCollapse( front::Edge* fEdge, front::Edge* oppFEdge );
     void exhaustFrontSplit( front::Edge* fEdge, front::Edge* oppFEdge );
     void exhaustWithoutNewVertOppEdgeExists( front::Edge* fEdge, front::Edge* oppFEdge );

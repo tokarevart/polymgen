@@ -29,23 +29,27 @@ public:
     shell::Edge* belongsToSEdge = nullptr;
     shell::Vert* belongsToSVert = nullptr;
 
-    const spt::vec3& pos() const;
-    void  setPos( const spt::vec3& newPos );
-    void  setPos( real_t coor0, real_t coor1, real_t coor2 );
+    const spt::vec3& pos() const
+    {
+        return *m_pos;
+    }
+    spt::vec3& pos()
+    {
+        return *m_pos;
+    }
 
-    real_t&       operator[]( unsigned axis );
-    const real_t& operator[]( unsigned axis ) const;
-    spt::vec3 operator-( const pmg::Vert&   other ) const;
-    spt::vec3 operator-( const shell::Vert& other ) const;
-    Vert& operator+=( const spt::vec3& other );
-    Vert& operator-=( const spt::vec3& other );
-
-    Vert();
-    Vert( real_t coor0, real_t coor1, real_t coor2 );
-    Vert( const spt::vec3& position );
+    Vert()
+    {
+        m_pos = std::make_unique<spt::vec3>();
+    }
+    Vert( const spt::vec3& position )
+    {
+        m_pos = std::make_unique<spt::vec3>(position);
+    }
 
 
 private:
+    // TODO: move this to public and make normal std::vec3 not ptr after fixing recursive include
     std::unique_ptr<spt::vec3> m_pos;
 };
 

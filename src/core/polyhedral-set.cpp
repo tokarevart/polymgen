@@ -51,14 +51,14 @@ void PolyhedralSet::outputObj(std::string_view filename) const
     std::size_t index = 1;
     for (auto& svert : m_shellVerts)
     {
-        file << "v " << (*svert)[0] << ' ' << (*svert)[1] << ' ' << (*svert)[2] << '\n';
+        file << "v " << svert->pos()[0] << ' ' << svert->pos()[1] << ' ' << svert->pos()[2] << '\n';
         svert->attachedVert->globalIdx = index++;
     }
     for (auto& sedge : m_shellEdges)
     {
         for (auto& vert : sedge->innerVerts())
         {
-            file << "v " << (*vert)[0] << ' ' << (*vert)[1] << ' ' << (*vert)[2] << '\n';
+            file << "v " << vert->pos()[0] << ' ' << vert->pos()[1] << ' ' << vert->pos()[2] << '\n';
             vert->globalIdx = index++;
         }
     }
@@ -66,7 +66,7 @@ void PolyhedralSet::outputObj(std::string_view filename) const
     {
         for (auto& vert : sface->innerVerts())
         {
-            file << "v " << (*vert)[0] << ' ' << (*vert)[1] << ' ' << (*vert)[2] << '\n';
+            file << "v " << vert->pos()[0] << ' ' << vert->pos()[1] << ' ' << vert->pos()[2] << '\n';
             vert->globalIdx = index++;
         }
     }
@@ -75,7 +75,7 @@ void PolyhedralSet::outputObj(std::string_view filename) const
     {
         for (auto& vert : polyhedr->innerVerts())
         {
-            file << "v " << (*vert)[0] << ' ' << (*vert)[1] << ' ' << (*vert)[2] << '\n';
+            file << "v " << vert->pos()[0] << ' ' << vert->pos()[1] << ' ' << vert->pos()[2] << '\n';
             vert->globalIdx = index++;
         }
     }
@@ -153,9 +153,9 @@ void PolyhedralSet::outputLSDynaKeyword_NODE(std::ofstream& file) const
     {
         svert->attachedVert->globalIdx = index++;
         file << std::setw(8)  << svert->attachedVert->globalIdx;
-        file << std::setw(16) << (*svert)[0];
-        file << std::setw(16) << (*svert)[1];
-        file << std::setw(16) << (*svert)[2];
+        file << std::setw(16) << svert->pos()[0];
+        file << std::setw(16) << svert->pos()[1];
+        file << std::setw(16) << svert->pos()[2];
         file << "       0       0\n";
     }
     for (auto& sedge : m_shellEdges)
@@ -164,9 +164,9 @@ void PolyhedralSet::outputLSDynaKeyword_NODE(std::ofstream& file) const
         {
             vert->globalIdx = index++;
             file << std::setw(8)  << vert->globalIdx;
-            file << std::setw(16) << (*vert)[0];
-            file << std::setw(16) << (*vert)[1];
-            file << std::setw(16) << (*vert)[2];
+            file << std::setw(16) << vert->pos()[0];
+            file << std::setw(16) << vert->pos()[1];
+            file << std::setw(16) << vert->pos()[2];
             file << "       0       0\n";
         }
     }
@@ -176,9 +176,9 @@ void PolyhedralSet::outputLSDynaKeyword_NODE(std::ofstream& file) const
         {
             vert->globalIdx = index++;
             file << std::setw(8)  << vert->globalIdx;
-            file << std::setw(16) << (*vert)[0];
-            file << std::setw(16) << (*vert)[1];
-            file << std::setw(16) << (*vert)[2];
+            file << std::setw(16) << vert->pos()[0];
+            file << std::setw(16) << vert->pos()[1];
+            file << std::setw(16) << vert->pos()[2];
             file << "       0       0\n";
         }
     }
@@ -189,9 +189,9 @@ void PolyhedralSet::outputLSDynaKeyword_NODE(std::ofstream& file) const
         {
             vert->globalIdx = index++;
             file << std::setw(8)  << vert->globalIdx;
-            file << std::setw(16) << (*vert)[0];
-            file << std::setw(16) << (*vert)[1];
-            file << std::setw(16) << (*vert)[2];
+            file << std::setw(16) << vert->pos()[0];
+            file << std::setw(16) << vert->pos()[1];
+            file << std::setw(16) << vert->pos()[2];
             file << "       0       0\n";
         }
     }
@@ -438,12 +438,12 @@ void PolyhedralSet::assign(std::string_view polyStructFileName)
 
     for (std::size_t i = 0; i < nodes_num; i++)
     {
-        real_t x[3];
-        input >> x[0];
-        input >> x[1];
-        input >> x[2];
+        spt::vec3 v;
+        input >> v.x[0];
+        input >> v.x[1];
+        input >> v.x[2];
 
-        m_shellVerts.push_back(new shell::Vert(x[0], x[1], x[2]));
+        m_shellVerts.push_back(new shell::Vert(v));
     }
 
     std::size_t faces_num;
@@ -451,7 +451,7 @@ void PolyhedralSet::assign(std::string_view polyStructFileName)
 
     for (std::size_t i = 0; i < faces_num; i++)
     {
-        std::size_t face_nodes_inds[3];
+        std::array<std::size_t, 3> face_nodes_inds;
         input >> face_nodes_inds[0];
         input >> face_nodes_inds[1];
         input >> face_nodes_inds[2];
@@ -519,14 +519,11 @@ void PolyhedralSet::assign(const psg::PolyShell& polyStruct)
 {
     for (std::size_t i = 0; i < polyStruct.verts.size(); i++)
     {
-        std::array<real_t, 3> x =
-        {
-            polyStruct.verts[i][0],
-            polyStruct.verts[i][1],
-            polyStruct.verts[i][2]
-        };
+        spt::vec3 v(polyStruct.verts[i][0],
+                    polyStruct.verts[i][1],
+                    polyStruct.verts[i][2]);
 
-        m_shellVerts.push_back(new shell::Vert(x[0], x[1], x[2]));
+        m_shellVerts.push_back(new shell::Vert(v));
     }
 
     for (const auto& face : polyStruct.faces)

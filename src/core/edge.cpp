@@ -22,13 +22,13 @@ using spt::vec3;
 
 real_t pmg::Edge::magnitude() const
 {
-    return (*verts[1] - *verts[0]).magnitude();
+    return (verts[1]->pos() - verts[0]->pos()).magnitude();
 }
 
 
 real_t pmg::Edge::sqrMagnitude() const
 {
-    return (*verts[1] - *verts[0]).sqrMagnitude();
+    return (verts[1]->pos() - verts[0]->pos()).sqrMagnitude();
 }
 
 
@@ -88,8 +88,8 @@ bool pmg::Edge::flipIfNeeded(std::list<pmg::Edge*>& edgesList, std::list<pmg::Fa
     opp_nodes[0] = std::get<0>(around_faces)->findVertNot(this);
     opp_nodes[1] = std::get<1>(around_faces)->findVertNot(this);
 
-    real_t alpha = std::acos(vec3::cos(*verts[0] - *opp_nodes[0], *verts[1] - *opp_nodes[0]));
-    real_t beta  = std::acos(vec3::cos(*verts[0] - *opp_nodes[1], *verts[1] - *opp_nodes[1]));
+    real_t alpha = std::acos(vec3::cos(verts[0]->pos() - opp_nodes[0]->pos(), verts[1]->pos() - opp_nodes[0]->pos()));
+    real_t beta  = std::acos(vec3::cos(verts[0]->pos() - opp_nodes[1]->pos(), verts[1]->pos() - opp_nodes[1]->pos()));
 
     if (alpha + beta <= PI)
         return false;
@@ -188,8 +188,8 @@ bool pmg::Edge::needToFlip(const std::list<pmg::Face*>& facesList)
     opp_nodes[0] = std::get<0>(around_faces)->findVertNot(this);
     opp_nodes[1] = std::get<1>(around_faces)->findVertNot(this);
 
-    real_t alpha = std::acos(vec3::cos(*verts[0] - *opp_nodes[0], *verts[1] - *opp_nodes[0]));
-    real_t beta  = std::acos(vec3::cos(*verts[0] - *opp_nodes[1], *verts[1] - *opp_nodes[1]));
+    real_t alpha = std::acos(vec3::cos(verts[0]->pos() - opp_nodes[0]->pos(), verts[1]->pos() - opp_nodes[0]->pos()));
+    real_t beta  = std::acos(vec3::cos(verts[0]->pos() - opp_nodes[1]->pos(), verts[1]->pos() - opp_nodes[1]->pos()));
 
     if (alpha + beta <= PI)
         return true;

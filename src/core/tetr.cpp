@@ -25,7 +25,7 @@ real_t pmg::Tetr::computeQuality() const
         sqr_prods[i] = static_cast<real_t>(1.0);
         for (std::size_t j = 0; j < 4; j++)
             if (j != i)
-                sqr_prods[i] *= (*verts[j] - *verts[i]).sqrMagnitude();
+                sqr_prods[i] *= (verts[j]->pos() - verts[i]->pos()).sqrMagnitude();
     }
     real_t max_sqr_prod = std::max({ sqr_prods[0], sqr_prods[1], sqr_prods[2], sqr_prods[3] });
 

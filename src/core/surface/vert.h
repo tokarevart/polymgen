@@ -18,19 +18,23 @@ class Vert
 public:
     pmg::Vert* attachedVert = nullptr;
 
-    const spt::vec3& pos() const;
+    const spt::vec3& pos() const
+    {
+        return *m_pos;
+    }
 
-    real_t&       operator[]( unsigned axis );
-    const real_t& operator[]( unsigned axis )  const;
-    spt::vec3 operator-( const surface::Vert& other ) const;
-    spt::vec3 operator-( const     pmg::Vert& other ) const;
-
-    Vert();
-    Vert( real_t x0, real_t x1, real_t x2 );
-    Vert( const spt::vec3& position );
+    Vert()
+    {
+        m_pos = std::make_unique<spt::vec3>();
+    }
+    Vert( const spt::vec3& position )
+    {
+        m_pos = std::make_unique<spt::vec3>(position);
+    }
 
 
 private:
+    // TODO: move this to public and make normal std::vec3 not ptr after fixing recursive include
     std::unique_ptr<spt::vec3> m_pos;
 };
 
