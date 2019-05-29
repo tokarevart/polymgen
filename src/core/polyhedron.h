@@ -26,36 +26,41 @@
 
 namespace pmg {
 // refactor class
-class Polyhedron
+class Polyhedron // TODO: rename to Mesher<3> or Mesher3
 {
     using pair_rr = std::pair<real_t, real_t>;
 
 public:    
     real_t preferredLength() const;
 
+    // TODO: remove these methods
     void addToShell( const shell::Face* shellFace );
     void addToShell( const shell::Edge* shellEdge );
     void addToShell( const shell::Vert* shellVert );
 
+    // TODO: remove these methods
     bool shellContains( const shell::Face* shellFace ) const;
     bool shellContains( const shell::Edge* shellEdge ) const;
     bool shellContains( const shell::Vert* shellVert ) const;
 
+    // TODO: remove "inner" in names and return not only inner things but on shell too
     const std::list<Tetr*>& innerTetrs() const;
     const std::list<Face*>& innerFaces() const;
     const std::list<Vert*>& innerVerts() const;
 
+    // NOTE: for debug
     const std::list<front::Face*>& frontFaces() const;
     const std::list<front::Edge*>& frontEdges() const;
 
     // Returns minimum and average tetrahedrons quality or absGrad.
     pair_rr analyzeMeshQuality( std::list<Tetr*>::iterator* out_minQualityTetr = nullptr );
     pair_rr analyzeMeshAbsGrad();
-    void    tetrahedralize( real_t preferredLength, genparams::Volume genParams = genparams::Volume() );
-    void    smoothMesh( std::size_t nIters );
+    void tetrahedralize( real_t preferredLength, genparams::Volume genParams = genparams::Volume() );
+    void smoothMesh( std::size_t nIters );
 
-    Polyhedron();
-    Polyhedron( PolyhedralSet* polyhset );
+    Polyhedron(); // TODO: delete default constructor (Polyhedron() = delete;)
+    // TODO: Polyhedron( Shell shell ) : Mesher(shell) {};
+    Polyhedron( PolyhedralSet* polyhset ); // NOTE: for debug
     ~Polyhedron();
 
 

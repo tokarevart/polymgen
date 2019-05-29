@@ -27,7 +27,7 @@
 
 namespace pmg {
 // refactor class
-class PolyhedralSet
+class PolyhedralSet // TODO: rename to PolyMesher<3> or PolyMesher3
 {
 public:
     struct Log
@@ -58,7 +58,7 @@ public:
     // TODO: make mesh output with PolyMesh method instead
     void output( FileType filetype = FileType::WavefrontObj, std::string_view filename = "_AUTO_", unsigned polyhedralSetId = 1u );
 
-    PolyhedralSet();
+    PolyhedralSet() = delete;
     PolyhedralSet( const psg::PolyShell& polyStruct );
     ~PolyhedralSet();
 
@@ -88,8 +88,8 @@ private:
 
     std::string generateOutputFilename( FileType filetype, std::string_view filename ) const;
 
-    void assign( std::string_view polyStructFileName ); // NOTE: deprecated
-    void assign( const psg::PolyShell& polyStruct );
+    void setPolyShell( std::string_view polyStructFileName ); // NOTE: deprecated
+    void setPolyShell( const psg::PolyShell& polyStruct );
 };
 
 } // namespace pmg

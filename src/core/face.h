@@ -20,9 +20,9 @@ public:
 
     // TODO: add method std::array<pmg::Vert*, 3> verts() const;
 
-    spt::vec3 computeCenter()  const;
+    spt::vec3 computeCenter() const;
     real_t computeQuality() const;
-    real_t computeArea()    const;
+    real_t computeArea() const;
 
 //    static pmg::Edge* adjByEdge( const pmg::Face* face0, const pmg::Face* face1 );
 
@@ -30,7 +30,7 @@ public:
     pmg::Edge* findEdgeNot( const pmg::Vert* vert ) const;
     pmg::Edge* findEdge( const pmg::Vert* vert0, const pmg::Vert* vert1 ) const;
     pmg::Edge* shortestEdge() const;
-    pmg::Edge* longestEdge()  const;
+    pmg::Edge* longestEdge() const;
 
     bool contains( const pmg::Edge* edge ) const;
     bool contains( const pmg::Vert* vert ) const;

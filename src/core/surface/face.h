@@ -17,6 +17,7 @@
 
 namespace pmg::surface {
 
+// TODO: separate Mesher<2>
 class Face
 {
 public:

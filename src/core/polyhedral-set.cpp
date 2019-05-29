@@ -429,7 +429,7 @@ PolyhedralSet::Log PolyhedralSet::log()
 }
 
 
-void PolyhedralSet::assign(std::string_view polyStructFileName)
+void PolyhedralSet::setPolyShell(std::string_view polyStructFileName)
 {
     std::ifstream input(polyStructFileName.data());
 
@@ -515,7 +515,7 @@ void PolyhedralSet::assign(std::string_view polyStructFileName)
 }
 
 
-void PolyhedralSet::assign(const psg::PolyShell& polyStruct)
+void PolyhedralSet::setPolyShell(const psg::PolyShell& polyStruct)
 {
     for (std::size_t i = 0; i < polyStruct.verts.size(); i++)
     {
@@ -623,12 +623,9 @@ void PolyhedralSet::output(FileType filetype, std::string_view filename, unsigne
 
 
 
-PolyhedralSet::PolyhedralSet() {}
-
-
 PolyhedralSet::PolyhedralSet(const psg::PolyShell& polyStruct)
 {
-    assign(polyStruct);
+    setPolyShell(polyStruct);
 }
 
 
