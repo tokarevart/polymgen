@@ -6,7 +6,7 @@
 #include <algorithm>
 #include "helpers/spatial/vec.h"
 
-
+// TODO: experiment with pass by value instead of reference and make benchmark
 namespace spt::algs {
 
 vec3 project( const vec3& point,
