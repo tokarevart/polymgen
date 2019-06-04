@@ -17,6 +17,7 @@ class Vert
     using pair_vv = std::pair<pmg::Vert*, pmg::Vert*>;
 
 public:
+    // TODO: maybe use std::reference_wrapper instead of pointer
     pmg::Vert* vert;
 
     void refreshAngleData();

@@ -21,6 +21,7 @@ class Edge
     using pair_ff = std::pair<front::Face*, front::Face*>;
 
 public:
+    // TODO: maybe use std::reference_wrapper instead of pointer
     pmg::Edge* edge;
 
     void refreshAngleData();

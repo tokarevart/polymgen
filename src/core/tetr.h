@@ -16,6 +16,7 @@ class Tetr
     using FaceV = std::array<pmg::Vert*, 3>;
 
 public:
+    // TODO: maybe use std::reference_wrapper instead of pointer
     // TODO: represent Tetr as a 4 Faces and then add method std::array<pmg::Vert*, 4> verts() const;
     std::array<pmg::Vert*, 4> verts;
 

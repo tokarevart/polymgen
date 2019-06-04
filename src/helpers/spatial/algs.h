@@ -12,6 +12,7 @@ namespace spt::algs {
 vec3 project( const vec3& point,
               const vec3& line_p0, const vec3& line_p1 );
 
+// TODO: return std::optional<vec3>
 bool project( vec3& out,
               const vec3& point,
               const vec3& segm_p0, const vec3& segm_p1 );
@@ -19,6 +20,7 @@ bool project( vec3& out,
 vec3 project( const vec3& point,
               const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2 );
 
+// TODO: return std::optional<vec3>
 bool project( vec3& out,
               const vec3& point,
               const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2 );
@@ -27,6 +29,7 @@ bool project( vec3& out,
 bool doesRayIntersectPlane( const vec3& dir,
                             const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2 );
 
+// TODO: return std::optional<vec3>
 bool rayIntersectPlane( vec3& out_intersectPoint,
                         const vec3& origin,   const vec3& dir,
                         const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2 );
@@ -35,6 +38,7 @@ bool rayIntersectPlane( vec3& out_intersectPoint,
 bool doesRayIntersectTriangle( const vec3& origin,   const vec3& dir,
                                const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2 );
 
+// TODO: return std::optional<vec3>
 bool rayIntersectTriangle( vec3& out_intersectPoint,
                            const vec3& origin, const vec3& dir,
                            const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2 );
@@ -43,6 +47,7 @@ bool rayIntersectTriangle( vec3& out_intersectPoint,
 bool doesLineIntersectPlane( const vec3& line_point, const vec3& line_dir,
                              const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2 );
 
+// TODO: return std::optional<vec3>
 bool lineIntersectPlane( vec3& out_intersectPoint,
                          const vec3& line_point, const vec3& line_dir,
                          const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2 );
@@ -54,6 +59,7 @@ vec3 lineIntersectPlane( const vec3& line_point, const vec3& line_dir,
 bool doesSegmentIntersectTriangle( const vec3& segm_p0, const vec3& segm_p1,
                                    const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2 );
 
+// TODO: return std::optional<vec3>
 bool segmentIntersectTriangle( vec3& out_intersectPoint,
                                const vec3& segm_p0,  const vec3& segm_p1,
                                const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2 );
@@ -62,6 +68,7 @@ bool segmentIntersectTriangle( vec3& out_intersectPoint,
 bool doesSegmentIntersectPlane( const vec3& segm_p0,  const vec3& segm_p1,
                                 const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2 );
 
+// TODO: return std::optional<vec3>
 bool segmentIntersectPlane( vec3& out_intersectPoint,
                             const vec3& segm_p0,  const vec3& segm_p1,
                             const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2 );
@@ -72,7 +79,6 @@ vec3 segmentIntersectPlane( const vec3& segm_p0,  const vec3& segm_p1,
 
 bool doesTriangleIntersectSphere( const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2,
                                   const vec3& center,   real_t radius );
-
 
 real_t computeSqrsSum( const vec3& point,
                        const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2 );
@@ -91,7 +97,6 @@ bool isPointOnTriangle( const vec3& point,
 
 bool isPointInTetrahedron( const vec3& point,
                            const vec3& tetr_p0, const vec3& tetr_p1, const vec3& tetr_p2, const vec3& tetr_p3 );
-
 
 vec3 closestSegmentPointToPoint( const vec3& point,
                                  const vec3& segm_p0, const vec3& segm_p1 );
@@ -114,7 +119,6 @@ real_t distancePointToTriangle( const vec3& point,
 real_t distancePointToTriangleOnPlane( const vec3& point,
                                        const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2 );
 
-
 vec3 linesClosestPoint( const vec3& line0_p0, const vec3& line0_p1,
                         const vec3& line1_p0, const vec3& line1_p1 );
 
@@ -123,7 +127,6 @@ real_t linesDistance( const vec3& line0_p0, const vec3& line0_p1,
 
 real_t segmentsDistance( const vec3& segm0_p0, const vec3& segm0_p1,
                          const vec3& segm1_p0, const vec3& segm1_p1 );
-
 
 // CPA - Closest vec3 of Approach.
 real_t cpaTime( const vec3& start0, const vec3& vel0,

@@ -14,6 +14,7 @@ namespace pmg::surface::front {
 class Edge
 {
 public:
+    // TODO: maybe use std::reference_wrapper instead of pointer
     pmg::Edge* edge;
     spt::vec3 normal;
 

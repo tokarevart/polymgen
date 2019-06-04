@@ -19,6 +19,7 @@ class Edge
     using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
 
 public:
+    // TODO: maybe use std::reference_wrapper instead of pointer
     std::array<pmg::Vert*, 2> verts;
 
     real_t magnitude()    const;

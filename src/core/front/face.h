@@ -15,6 +15,7 @@ namespace pmg::front {
 class Face
 {
 public:
+    // TODO: maybe use std::reference_wrapper instead of pointer
     pmg::Face* face;
     // TODO: specify that filling must occur in method void setFEdges( ... );
     // TODO: add method to change 1 fEdge like bool changeFEdge( const front::Edge* oldFEdge, const front::Edge* newFEdge ); in case of front splitting

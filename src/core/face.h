@@ -10,12 +10,13 @@
 
 #include "definitions.h"
 
-
+#include <functional>
 namespace pmg {
 
 class Face
 {
 public:
+    // TODO: maybe use std::reference_wrapper instead of pointer
     std::array<pmg::Edge*, 3> edges;
 
     // TODO: add method std::array<pmg::Vert*, 3> verts() const;

@@ -21,6 +21,7 @@ namespace pmg::surface {
 class Face
 {
 public:
+    // TODO: maybe use std::reference_wrapper instead of pointer
     // TODO: represent surface::Face as any number of surface::Edges instead
     std::array<surface::Edge*, 3> edges;
 
