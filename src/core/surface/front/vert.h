@@ -2,11 +2,11 @@
 // Licensed under the MIT License.
 
 #pragma once
-#include "core/surface/face.h"
-#include "helpers/spatial/vec.h"
-#include "real-type.h"
+#include "../face.h"
+#include "../../../helpers/spatial/vec.h"
+#include "../../../real-type.h"
 
-#include "definitions.h"
+#include "../../../definitions.h"
 
 
 namespace pmg::surface::front {
@@ -37,8 +37,8 @@ private:
     // TODO: it's not good to store it
     surface::Face* m_relatedSurfaceFace;
 
-    real_t m_angle;
-    real_t m_complexity;
+    real_t m_angle      = static_cast<real_t>(0.0);
+    real_t m_complexity = static_cast<real_t>(0.0);
 
     bool m_needAngleProcessing      = true;
     bool m_needComplexityProcessing = true;

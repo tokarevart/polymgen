@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 #pragma once
-#include "core/surface/edge.h"
+#include "../surface/edge.h"
 
 //#include "definitions.h"
 

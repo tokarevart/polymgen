@@ -1,10 +1,11 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "core/polyhedron.h"
+#include "polyhedron.h"
 #include <algorithm>
 #include <iostream>
-#include "helpers/spatial/algs.h"
+#include "../helpers/mathconsts.h"
+#include "../helpers/spatial/algs.h"
 
 
 using namespace pmg;
@@ -26,7 +27,6 @@ using spt::vec3;
 
 // TODO: reduce the amount of defines
 #define ALPHA_P      static_cast<real_t>(70.52877936550931)
-#define DEG_1_IN_RAD static_cast<real_t>( 0.0174532925199432957)
 
 #define ONE_3                static_cast<real_t>(0.3333333333333333)
 #define SQRT3_2              static_cast<real_t>(0.8660254037844386)
@@ -43,7 +43,7 @@ using spt::vec3;
 template <typename T>
 constexpr real_t degToRad( T value )
 {
-    return value * DEG_1_IN_RAD;
+    return value * DEG_IN_RAD;
 }
 
 
@@ -1031,7 +1031,7 @@ void Polyhedron::exhaustWithoutNewVertOppEdgeExists(front::Edge* fEdge, front::E
 
 void Polyhedron::exhaustWithoutNewVertOppEdgeDontExists(front::Edge* fEdge)
 {
-    // HACK: This volatile helps to avoid computational error.
+    // HACK: this volatile helps to avoid computational error.
     volatile auto adj_ffaces = fEdge->adjFFaces();
 
     std::array<Vert*, 2> opp_verts;

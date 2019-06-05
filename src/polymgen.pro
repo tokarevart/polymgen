@@ -39,6 +39,7 @@ HEADERS += \
     core/surface/front/vert.h \
     core/surface/vert.h \
     data-structs/polymesh.h \
+    helpers/mathconsts.h \
     helpers/spatial/algs.h \
     helpers/spatial/vec.h \
     helpers/logger.h \

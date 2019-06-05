@@ -2,11 +2,11 @@
 // Licensed under the MIT License.
 
 #pragma once
-#include "core/surface/face.h"
-#include "helpers/spatial/vec.h"
-#include "real-type.h"
+#include "../face.h"
+#include "../../../helpers/spatial/vec.h"
+#include "../../../real-type.h"
 
-#include "definitions.h"
+#include "../../../definitions.h"
 
 
 namespace pmg::surface::front {

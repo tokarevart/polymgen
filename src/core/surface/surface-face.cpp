@@ -1,9 +1,11 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "core/surface/face.h"
+#include "face.h"
 #include <algorithm>
-#include "helpers/spatial/algs.h"
+#include <cmath>
+#include "../../helpers/mathconsts.h"
+#include "../../helpers/spatial/algs.h"
 
 
 using namespace pmg;
@@ -13,9 +15,6 @@ using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
 using pair_ee = std::pair<pmg::Edge*, pmg::Edge*>;
 using spt::vec3;
 
-
-#define DEG_1_IN_RAD static_cast<real_t>(0.0174532925199432957)
-#define PI           static_cast<real_t>(M_PI)
 
 #define NINE_DIV_SIXTEEN static_cast<real_t>(0.5625)
 #define SIXTEEN_DIV_NINE static_cast<real_t>(1.7777777777777777)
@@ -31,7 +30,7 @@ using spt::vec3;
 template <typename T>
 constexpr real_t degToRad(T value)
 {
-    return value * DEG_1_IN_RAD;
+    return value * DEG_IN_RAD;
 }
 
 

@@ -1,10 +1,10 @@
 #pragma once
-#include "core/front/face.h"
-#include "core/front/edge.h"
-#include "core/face.h"
-#include "core/edge.h"
-#include "core/vert.h"
-#include "helpers/spatial/vec.h"
+#include "front/face.h"
+#include "front/edge.h"
+#include "face.h"
+#include "edge.h"
+#include "vert.h"
+#include "../helpers/spatial/vec.h"
 
 namespace pmg {
 namespace relations {

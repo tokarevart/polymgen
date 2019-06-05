@@ -1,11 +1,11 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "core/surface/front/vert.h"
+#include "vert.h"
 #include <stdexcept>
-#include "helpers/spatial/algs.h"
+#include "../../../helpers/mathconsts.h"
+#include "../../../helpers/spatial/algs.h"
 
-#define PI static_cast<real_t>(M_PI)
 
 #define K_ALPHA static_cast<real_t>(4.0)
 
@@ -94,5 +94,5 @@ pair_vv front::Vert::oppVerts() const
 
 
 
-front::Vert::Vert(const surface::Face* relatedSurfaceFace, const pmg::Vert* vert)
+front::Vert::Vert(const pmg::surface::Face* relatedSurfaceFace, const pmg::Vert* vert)
     : vert(const_cast<pmg::Vert*>(vert)), m_relatedSurfaceFace(const_cast<surface::Face*>(relatedSurfaceFace)) {}

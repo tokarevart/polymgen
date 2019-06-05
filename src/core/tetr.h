@@ -3,10 +3,10 @@
 
 #pragma once
 #include <algorithm>
-#include "core/vert.h"
-#include "real-type.h"
+#include "vert.h"
+#include "../real-type.h"
 
-#include "definitions.h"
+#include "../definitions.h"
 
 
 namespace pmg {

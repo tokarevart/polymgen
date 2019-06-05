@@ -2,12 +2,12 @@
 // Licensed under the MIT License.
 
 #pragma once
-#include "core/polyhedron.h"
-#include "core/front/edge.h"
-#include "helpers/spatial/vec.h"
-#include "real-type.h"
+#include "../polyhedron.h"
+#include "edge.h"
+#include "../../helpers/spatial/vec.h"
+#include "../../real-type.h"
 
-#include "definitions.h"
+#include "../../definitions.h"
 
 
 namespace pmg::front {

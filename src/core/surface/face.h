@@ -5,14 +5,14 @@
 #include <array>
 #include <list>
 #include <vector>
-#include "core/edge.h"
-#include "core/vert.h"
-#include "core/surface/front/edge.h"
-#include "core/surface/front/vert.h"
-#include "real-type.h"
-#include "core/genparams.h"
+#include "../edge.h"
+#include "../vert.h"
+#include "front/edge.h"
+#include "front/vert.h"
+#include "../../real-type.h"
+#include "../genparams.h"
 
-#include "definitions.h"
+#include "../../definitions.h"
 
 
 namespace pmg::surface {
@@ -60,7 +60,7 @@ private:
     using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
     using pair_ee = std::pair<pmg::Edge*, pmg::Edge*>;
 
-    real_t m_prefLen;
+    real_t m_prefLen = static_cast<real_t>(0.0);
 
     std::list<pmg::Face*> m_innerFaces;
     std::list<pmg::Edge*> m_innerEdges;

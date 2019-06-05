@@ -1,10 +1,11 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "core/edge.h"
+#include "edge.h"
 #include <algorithm>
 #include <iostream>
-#include "helpers/spatial/algs.h"
+#include "../helpers/mathconsts.h"
+#include "../helpers/spatial/algs.h"
 
 using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
 
@@ -12,8 +13,6 @@ using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
 #define EPS static_cast<real_t>(1e-10)
 #define BETWEEN(p0_coor, p1_coor, p) \
         (std::min(p0_coor, p1_coor) - EPS < p && p < std::max(p0_coor, p1_coor) + EPS)
-
-#define PI static_cast<real_t>(M_PI)
 
 #define K_ALPHA static_cast<real_t>(2.5)
 
@@ -90,7 +89,7 @@ bool pmg::Edge::flipIfNeeded(std::list<pmg::Edge*>& edgesList, std::list<pmg::Fa
 
     real_t alpha = std::acos(vec3::cos(verts[0]->pos() - opp_nodes[0]->pos(), verts[1]->pos() - opp_nodes[0]->pos()));
     real_t beta  = std::acos(vec3::cos(verts[0]->pos() - opp_nodes[1]->pos(), verts[1]->pos() - opp_nodes[1]->pos()));
-
+    
     if (alpha + beta <= PI)
         return false;
 

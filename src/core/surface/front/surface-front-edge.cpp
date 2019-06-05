@@ -1,8 +1,8 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "core/surface/front/edge.h"
-#include "helpers/spatial/algs.h"
+#include "edge.h"
+#include "../../../helpers/spatial/algs.h"
 
 using namespace pmg::surface;
 using spt::vec3;
@@ -27,5 +27,5 @@ vec3 front::Edge::computeCenter()
 
 
 
-front::Edge::Edge(const surface::Face* relatedSurfaceFace, const pmg::Edge* edge)
+front::Edge::Edge(const pmg::surface::Face* relatedSurfaceFace, const pmg::Edge* edge)
     : edge(const_cast<pmg::Edge*>(edge)), m_relatedSurfaceFace(const_cast<surface::Face*>(relatedSurfaceFace)) {}

@@ -3,7 +3,7 @@
 
 // With help of GeomAlgorithms.com website.
 
-#include "helpers/spatial/algs.h"
+#include "algs.h"
 
 
 #define EPS static_cast<real_t>(1e-6)

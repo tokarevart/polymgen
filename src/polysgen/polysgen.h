@@ -3,7 +3,7 @@
 
 #pragma once
 #include <cstddef>
-#include "data-structs/polyshell.h"
+#include "../data-structs/polyshell.h"
 
 
 namespace psg {

@@ -1,12 +1,11 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "core/front/edge.h"
+#include "edge.h"
 #include <cmath>
-#include "helpers/spatial/algs.h"
+#include "../../helpers/mathconsts.h"
+#include "../../helpers/spatial/algs.h"
 
-
-#define PI static_cast<real_t>(M_PI)
 
 #define K_ALPHA static_cast<real_t>(4.0)
 

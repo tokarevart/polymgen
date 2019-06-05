@@ -3,14 +3,14 @@
 
 #pragma once
 #include <array>
-#include "core/edge.h"
-#include "core/vert.h"
-#include "helpers/spatial/vec.h"
-#include "real-type.h"
+#include "edge.h"
+#include "vert.h"
+#include "../helpers/spatial/vec.h"
+#include "../real-type.h"
 
-#include "definitions.h"
+#include "../definitions.h"
 
-#include <functional>
+
 namespace pmg {
 
 class Face
