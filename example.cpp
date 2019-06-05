@@ -5,8 +5,8 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
-#include "core/polyhedral-set.h"
-#include "polysgen/polysgen.h"
+#include "src/core/polyhedral-set.h"
+#include "src/polysgen/polysgen.h"
 
 int main()
 {
