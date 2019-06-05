@@ -19,12 +19,12 @@ namespace pmg {
 class Vert
 {
 public:
-    // TODO: use std::map where i need instead
+    // TODO: use std::unordered_map where i need instead
     std::size_t globalIdx;
     real_t minAdjTetrVol = std::numeric_limits<real_t>::max();
     real_t maxAdjTetrVol = std::numeric_limits<real_t>::min();
 
-    // TODO: use std::map where i need instead
+    // TODO: use std::unordered_map where i need instead
     shell::Face* belongsToSFace = nullptr;
     shell::Edge* belongsToSEdge = nullptr;
     shell::Vert* belongsToSVert = nullptr;

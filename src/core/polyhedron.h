@@ -100,7 +100,7 @@ private:
 
     // TODO: create and use Front class instead
     // TODO: add front::Vert class
-    std::list<front::Face*> m_frontFaces; // TODO: use std::set 'cause finding will be faster and m_frontEdges is also std::set
+    std::list<front::Face*> m_frontFaces; // TODO: use std::unordered_set
     std::list<front::Edge*> m_frontEdges; // TODO: use std::set sorting by angle (first larger) instead
 
     bool shellContains( const pmg::Vert* vert ) const;
