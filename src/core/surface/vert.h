@@ -4,11 +4,11 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "core/vert.h"
-#include "helpers/spatial/vec.h"
-#include "real-type.h"
+#include "../vert.h"
+#include "../../helpers/spatial/vec.h"
+#include "../../real-type.h"
 
-#include "definitions.h"
+#include "../../definitions.h"
 
 
 namespace pmg::surface {

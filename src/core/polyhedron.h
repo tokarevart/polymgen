@@ -5,23 +5,23 @@
 #include <array>
 #include <list>
 #include <vector>
-#include "core/front/face.h"
-#include "core/front/edge.h"
-#include "core/shell/face.h"
-#include "core/shell/edge.h"
-#include "core/shell/vert.h"
-#include "core/tetr.h"
-#include "core/face.h"
-#include "core/edge.h"
-#include "core/vert.h"
-#include "helpers/spatial/vec.h"
-#include "core/relations.h"
-#include "real-type.h"
-#include "core/genparams.h"
+#include "front/face.h"
+#include "front/edge.h"
+#include "shell/face.h"
+#include "shell/edge.h"
+#include "shell/vert.h"
+#include "tetr.h"
+#include "face.h"
+#include "edge.h"
+#include "vert.h"
+#include "../helpers/spatial/vec.h"
+#include "relations.h"
+#include "../real-type.h"
+#include "genparams.h"
 
-#include "core/polyhedral-set.h"
+#include "polyhedral-set.h"
 
-#include "definitions.h"
+#include "../definitions.h"
 
 
 namespace pmg {
@@ -81,7 +81,7 @@ private:
     bool m_isQualityAnalyzed     = false;
     bool m_isMeshAbsGradAnalyzed = false;
 
-    real_t m_prefLen;
+    real_t m_prefLen = static_cast<real_t>(0.0);
 
     // TODO: create and use separate Mesher (maybe template <std::size_t Dim>)
     // TODO: replace raw pointers with smart pointers and then make benchmark

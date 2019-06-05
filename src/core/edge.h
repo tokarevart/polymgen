@@ -5,11 +5,11 @@
 #include <array>
 #include <list>
 #include <vector>
-#include "core/face.h"
-#include "core/vert.h"
-#include "real-type.h"
+#include "face.h"
+#include "vert.h"
+#include "../real-type.h"
 
-#include "definitions.h"
+#include "../definitions.h"
 
 
 namespace pmg {

@@ -1,9 +1,7 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "polysgen/polysgen.h"
-
-
+#include "polysgen.h"
 
 
 psg::PolyShell psg::generateCuboids(std::size_t nX, std::size_t nY, std::size_t nZ, real_t dX, real_t dY, real_t dZ)

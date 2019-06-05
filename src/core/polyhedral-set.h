@@ -7,22 +7,22 @@
 #include <list>
 #include <vector>
 #include <memory>
-#include "core/polyhedron.h"
-#include "core/shell/face.h"
-#include "core/shell/edge.h"
-#include "core/shell/vert.h"
-#include "core/tetr.h"
-#include "core/face.h"
-#include "core/edge.h"
-#include "core/vert.h"
-#include "data-structs/polymesh.h"
-#include "data-structs/polyshell.h"
-#include "helpers/logger.h"
-#include "real-type.h"
-#include "core/genparams.h"
-#include "core/filetype.h"
+#include "polyhedron.h"
+#include "shell/face.h"
+#include "shell/edge.h"
+#include "shell/vert.h"
+#include "tetr.h"
+#include "face.h"
+#include "edge.h"
+#include "vert.h"
+#include "../data-structs/polymesh.h"
+#include "../data-structs/polyshell.h"
+#include "../helpers/logger.h"
+#include "../real-type.h"
+#include "genparams.h"
+#include "filetype.h"
 
-#include "definitions.h"
+#include "../definitions.h"
 
 
 namespace pmg {

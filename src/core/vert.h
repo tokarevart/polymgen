@@ -5,13 +5,13 @@
 #include <cstddef>
 #include <memory>
 // TODO: remove recursive class dependencies and then remove extra includes
-#include "core/shell/face.h"
-#include "core/shell/edge.h"
-#include "core/shell/vert.h"
-#include "helpers/spatial/vec.h"
-#include "real-type.h"
+#include "shell/face.h"
+#include "shell/edge.h"
+#include "shell/vert.h"
+#include "../helpers/spatial/vec.h"
+#include "../real-type.h"
 
-#include "definitions.h"
+#include "../definitions.h"
 
 
 namespace pmg {

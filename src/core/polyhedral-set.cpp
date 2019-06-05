@@ -1,13 +1,13 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "core/polyhedral-set.h"
+#include "polyhedral-set.h"
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
 #include <iostream>
 #include <ctime>
-#include "helpers/spatial/algs.h"
+#include "../helpers/spatial/algs.h"
 
 using namespace pmg;
 using spt::vec3;

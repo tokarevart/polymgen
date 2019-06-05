@@ -4,13 +4,13 @@
 #pragma once
 #include <list>
 #include <vector>
-#include "core/polyhedron.h"
-#include "core/front/face.h"
-#include "core/vert.h"
-#include "core/relations.h"
-#include "real-type.h"
+#include "../polyhedron.h"
+#include "face.h"
+#include "../vert.h"
+#include "../relations.h"
+#include "../../real-type.h"
 
-#include "definitions.h"
+#include "../../definitions.h"
 
 // TODO: maybe rename front-edge to volume-front-edge and pmg::front to pmg::volume::front
 namespace pmg::front {
@@ -54,8 +54,8 @@ private:
     Polyhedron* m_relatedPolyhedron; // TODO: it's not good to store it
     pair_ff m_adjFFaces = { nullptr, nullptr }; // TODO: make std::array instead
 
-    real_t m_angle;
-    real_t m_complexity;
+    real_t m_angle      = static_cast<real_t>(0.0);
+    real_t m_complexity = static_cast<real_t>(0.0);
 
     bool m_needAngleProcessing      = true;
     bool m_needComplexityProcessing = true;

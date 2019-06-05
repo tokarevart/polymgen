@@ -4,7 +4,7 @@
 #pragma once
 #include <cmath>
 #include <algorithm>
-#include "helpers/spatial/vec.h"
+#include "vec.h"
 
 // TODO: experiment with pass by value instead of reference and make benchmark
 namespace spt::algs {

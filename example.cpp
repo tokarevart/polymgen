@@ -5,8 +5,10 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
-#include "core/polyhedral-set.h"
-#include "polysgen/polysgen.h"
+#include <filesystem>
+#include <string>
+#include "src/core/polyhedral-set.h"
+#include "src/polysgen/polysgen.h"
 
 int main()
 {
@@ -25,12 +27,12 @@ int main()
     std::cout << "Generating mesh...";
     polyhset.tetrahedralize(preferredLength);
     std::cout << std::string(12, ' ') + "done." << std::endl;
-
+    
     std::cout << "Outputting data to file...";
+
     polyhset.output(pmg::FileType::LsDynaKeyword);
     polyhset.output(pmg::FileType::WavefrontObj);
     std::cout << std::string(4, ' ') + "done." << std::endl << std::endl;
-
     std::ofstream log_file(polyhset.generateLogFileName());
     polyhset.log().write(log_file);
     std::cout << "Log:" << std::endl;

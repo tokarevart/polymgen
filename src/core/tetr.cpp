@@ -1,9 +1,9 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "core/tetr.h"
+#include "tetr.h"
 #include <cmath>
-#include "helpers/spatial/vec.h"
+#include "../helpers/spatial/vec.h"
 
 using spt::vec3;
 

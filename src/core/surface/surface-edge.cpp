@@ -1,10 +1,10 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "core/surface/edge.h"
+#include "edge.h"
 #include <cmath>
 #include <algorithm>
-#include "helpers/spatial/vec.h"
+#include "../../helpers/spatial/vec.h"
 
 using namespace pmg;
 using spt::vec3;

@@ -1,8 +1,8 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-#include "core/face.h"
-#include "helpers/spatial/algs.h"
+#include "face.h"
+#include "../helpers/spatial/algs.h"
 
 #define ONE_3 static_cast<real_t>(0.3333333333333333)
 

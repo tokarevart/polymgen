@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="polysgen">
+      <UniqueIdentifier>{84d6b903-0618-4a0e-9517-46ed41446a31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helpers">
+      <UniqueIdentifier>{6c9d7aff-5677-46f4-81cc-219f992cfc7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data-structs">
+      <UniqueIdentifier>{0fcb9bc0-6d57-48e1-b5b2-29961fd26149}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{4344676e-652b-4207-9ed0-d5220f464015}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\front">
+      <UniqueIdentifier>{7abcbc75-4e5e-47e0-a2d9-f2778952b392}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\shell">
+      <UniqueIdentifier>{35c53211-8f51-4971-8e4a-9645ab0487a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\surface">
+      <UniqueIdentifier>{33f779ac-c2e1-4097-8edf-922bc822063a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\surface\front">
+      <UniqueIdentifier>{c68f060f-bdc6-4c84-9d1b-ca819290276d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\shell\front">
+      <UniqueIdentifier>{f17fc5a5-b805-413a-b868-88ae68ccbcb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helpers\spatial">
+      <UniqueIdentifier>{2260fd77-e23a-432b-b887-737f456dd6b9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\definitions.h" />
+    <ClInclude Include="src\real-type.h" />
+    <ClInclude Include="src\core\edge.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\face.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\filetype.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\genparams.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\polyhedral-set.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\polyhedron.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\relations.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\tetr.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\vert.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\front\edge.h">
+      <Filter>core\front</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\front\face.h">
+      <Filter>core\front</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\surface\edge.h">
+      <Filter>core\surface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\surface\face.h">
+      <Filter>core\surface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\surface\surface.h">
+      <Filter>core\surface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\surface\vert.h">
+      <Filter>core\surface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\surface\front\edge.h">
+      <Filter>core\surface\front</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\surface\front\vert.h">
+      <Filter>core\surface\front</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\shell\edge.h">
+      <Filter>core\shell</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\shell\face.h">
+      <Filter>core\shell</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\shell\shell.h">
+      <Filter>core\shell</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\shell\vert.h">
+      <Filter>core\shell</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\shell\front\edge.h">
+      <Filter>core\shell\front</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\shell\front\vert.h">
+      <Filter>core\shell\front</Filter>
+    </ClInclude>
+    <ClInclude Include="src\data-structs\polymesh.h">
+      <Filter>data-structs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\data-structs\polyshell.h">
+      <Filter>data-structs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helpers\logger.h">
+      <Filter>helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helpers\spatial\algs.h">
+      <Filter>helpers\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helpers\spatial\vec.h">
+      <Filter>helpers\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="src\polysgen\polysgen.h">
+      <Filter>polysgen</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helpers\mathconsts.h">
+      <Filter>helpers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\core\edge.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\face.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\polyhedral-set.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\polyhedron.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\relations.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\tetr.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\front\polyhedron-front-edge.cpp">
+      <Filter>core\front</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\front\polyhedron-front-face.cpp">
+      <Filter>core\front</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\surface\surface.cpp">
+      <Filter>core\surface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\surface\surface-edge.cpp">
+      <Filter>core\surface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\surface\surface-face.cpp">
+      <Filter>core\surface</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\surface\front\surface-front-edge.cpp">
+      <Filter>core\surface\front</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\surface\front\surface-front-vert.cpp">
+      <Filter>core\surface\front</Filter>
+    </ClCompile>
+    <ClCompile Include="src\data-structs\polymesh.cpp">
+      <Filter>data-structs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\data-structs\polyshell.cpp">
+      <Filter>data-structs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\helpers\logger.cpp">
+      <Filter>helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\helpers\spatial\spatial-algs.cpp">
+      <Filter>helpers\spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="src\polysgen\polysgen.cpp">
+      <Filter>polysgen</Filter>
+    </ClCompile>
+    <ClCompile Include="example.cpp" />
+  </ItemGroup>
+</Project>

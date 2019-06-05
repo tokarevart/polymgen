@@ -4,7 +4,7 @@
 #pragma once
 #include <cmath>
 #include <array>
-#include "real-type.h"
+#include "../../real-type.h"
 
 // spt means spatial
 namespace spt {
