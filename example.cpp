@@ -6,6 +6,7 @@
 #include <fstream>
 #include <memory>
 #include <string>
+#include <filesystem>
 #include "src/core/polyhedral-set.h"
 #include "src/polysgen/polysgen.h"
 
@@ -26,12 +27,17 @@ int main()
     std::cout << "Generating mesh...";
     polyhset.tetrahedralize(preferredLength);
     std::cout << std::string(12, ' ') + "done." << std::endl;
-    
-    std::cout << "Outputting data to file...";
 
+    namespace fs = std::filesystem;
+    std::cout << "Outputting data to file...";
+    fs::create_directories(fs::current_path() / "out" / "meshes");
+    fs::current_path(fs::current_path() / "out" / "meshes");
     polyhset.output(pmg::FileType::LsDynaKeyword);
     polyhset.output(pmg::FileType::WavefrontObj);
     std::cout << std::string(4, ' ') + "done." << std::endl << std::endl;
+    fs::current_path(fs::current_path().parent_path());
+    fs::create_directory(fs::current_path() / "logs");
+    fs::current_path(fs::current_path() / "logs");
     std::ofstream log_file(polyhset.generateLogFileName());
     polyhset.log().write(log_file);
     std::cout << "Log:" << std::endl;
