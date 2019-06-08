@@ -9,7 +9,7 @@
 namespace pmg {
 namespace relations {
 
-// TODO: replace with template <typename By> By* adjacent( ... ); and then template<> By* adjacent<each By> adjacent( ... );
+// TODO: replace with template <typename By> By* adjacent( ... ); and then template<> inline By* adjacent<each By> adjacent( ... );
 pmg::Edge* adjacentByEdge( const pmg::Face* face0, const pmg::Face* face1 );
 pmg::Vert* adjacentByVert( const pmg::Face* face0, const pmg::Face* face1 );
 pmg::Vert* adjacentByVert( const pmg::Face* face,  const pmg::Edge* edge  );
