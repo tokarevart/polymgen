@@ -8,6 +8,7 @@
 
 
 using indices = std::vector<tinyobj::index_t>;
+using spt::vec3;
 
 
 #define TIME_TO_MS(time_t_var) \
@@ -125,8 +126,8 @@ void orientateMesh( const tinyobj::attrib_t& attrib, tinyobj::shape_t& shape, st
                                         shape.mesh.indices.begin() + idx_offset + 2 });
     }
 
-    for (auto& idces : indices_to_swap)
-        std::swap(*idces.first, *idces.second);
+    for (auto& [idx0, idx1] : indices_to_swap)
+        std::swap(*idx0, *idx1);
 }
 
 
@@ -157,6 +158,8 @@ void writeFile( const tinyobj::attrib_t& attrib, const tinyobj::shape_t& shape, 
 
 int main()
 {
+    auto filename = "phset_64_nph_171_phfe.obj";
+
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
@@ -164,7 +167,7 @@ int main()
     std::string warn;
     std::string err;
     time_t start = clock();
-    bool ret = tinyobj::load_obj(&attrib, &shapes, &materials, &warn, &err, "phset.obj");
+    bool ret = tinyobj::load_obj(&attrib, &shapes, &materials, &warn, &err, filename);
     time_t elapsed = clock() - start;
     std::cout << "Loading time: " << TIME_TO_MS(elapsed) << " ms\n";
 
@@ -180,7 +183,7 @@ int main()
     elapsed = clock() - start;
     std::cout << "Orientating time: " << TIME_TO_MS(elapsed) << " ms\n";
 
-    writeFile(attrib, shapes[0], dont_write_faces, "phset.obj");
+    writeFile(attrib, shapes[0], dont_write_faces, filename);
     std::cout << "done";
 
     return 0;

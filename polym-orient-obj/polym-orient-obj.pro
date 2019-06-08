@@ -4,8 +4,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
-    main.cpp \
-    vec.cpp
+    main.cpp
 
 HEADERS += \
     tiny_obj_loader.h \
