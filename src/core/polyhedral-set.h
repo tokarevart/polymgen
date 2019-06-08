@@ -26,8 +26,9 @@
 
 
 namespace pmg {
+
 // refactor class
-class PolyhedralSet // TODO: rename to PolyMesher<3> or PolyMesher3
+class PolyhedralSet
 {
 public:
     struct Log
@@ -56,6 +57,7 @@ public:
     std::string generateLogFileName() const;
 
     // TODO: make mesh output with PolyMesh method instead
+    // TODO: make method taking meshes of all the polyhedrons and remeshing them into one
     void output( FileType filetype = FileType::WavefrontObj, std::string_view filename = "_AUTO_", unsigned polyhedralSetId = 1u );
 
     PolyhedralSet() = delete;

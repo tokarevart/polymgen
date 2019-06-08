@@ -13,6 +13,7 @@
 
 namespace pmg {
 
+// TODO: generalize geom structures with templates (and no interfaces); use Polytope and so on; with static and dynamic num of subpolytopes
 class Face
 {
 public:
