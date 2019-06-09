@@ -98,6 +98,9 @@ bool isPointOnTriangle( const vec3& point,
 bool isPointInTetrahedron( const vec3& point,
                            const vec3& tetr_p0, const vec3& tetr_p1, const vec3& tetr_p2, const vec3& tetr_p3 );
 
+bool isPointInCylinder( const vec3& point,
+                        const vec3& cyl_p0, const vec3& cyl_p1, real_t radius);
+
 vec3 closestSegmentPointToPoint( const vec3& point,
                                  const vec3& segm_p0, const vec3& segm_p1 );
 
