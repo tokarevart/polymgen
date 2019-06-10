@@ -24,7 +24,7 @@
 
 #include "../definitions.h"
 
-
+// make STL naming in all the library
 namespace pmg {
 
 // refactor class
