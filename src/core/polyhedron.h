@@ -26,7 +26,7 @@
 
 namespace pmg {
 // refactor class
-class Polyhedron // TODO: rename to Mesher<3> or Mesher3
+class Polyhedron // TODO: make something like pmg::mesher<spt::polytope<3>>, spt::polytope<3> is pmg::polyhedron
 {
     using pair_rr = std::pair<real_t, real_t>;
 
