@@ -28,8 +28,6 @@ void Logger::flush()
 }
 
 
-
-
 Logger::Iomanip<Logger::IomanipType::Width> Logger::setw(std::streamsize new_width)
 {
     return Iomanip<IomanipType::Width>{ new_width };
@@ -39,8 +37,6 @@ Logger::Iomanip<Logger::IomanipType::Precision> Logger::setprecision(std::stream
 {
     return Iomanip<IomanipType::Precision>{ new_precision };
 }
-
-
 
 
 void Logger::open(std::ostream& stream)
@@ -91,8 +87,6 @@ std::ios::fmtflags Logger::setf(std::ios::fmtflags flags, std::ios::fmtflags mas
 {
     return m_bufiss->setf(flags, mask);
 }
-
-
 
 
 void Logger::istreamTypeOperatorHelper()

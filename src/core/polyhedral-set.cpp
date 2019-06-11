@@ -6,7 +6,7 @@
 #include <sstream>
 #include <iomanip>
 #include <iostream>
-#include <ctime>
+#include <chrono>
 #include "../helpers/spatial/algs.h"
 
 using namespace pmg;
@@ -264,7 +264,7 @@ void PolyhedralSet::tetrahedralize(real_t preferredLength, genparams::Polyhedron
 {
     m_prefLen = preferredLength;
 
-    std::clock_t shell_triang_start = std::clock();
+    auto shell_triang_start = std::chrono::steady_clock::now();
     try
     {
         triangulateShell(genParams.shell);
@@ -274,9 +274,10 @@ void PolyhedralSet::tetrahedralize(real_t preferredLength, genparams::Polyhedron
         output(FileType::WavefrontObj, "debug.obj");
         throw error;
     }
-    double shell_triang_elapsed = static_cast<double>(std::clock() - shell_triang_start) / CLOCKS_PER_SEC;
+    auto shell_triang_stop = std::chrono::steady_clock::now();
+    std::chrono::duration<double> shell_triang_elapsed = shell_triang_stop - shell_triang_start;
 
-    std::clock_t volume_exh_start = std::clock();
+    auto volume_exh_start = std::chrono::steady_clock::now();
     std::size_t n_polyhs = m_polyhedrons.size();
     #pragma omp parallel for
     for (std::size_t i = 0; i < n_polyhs; i++)
@@ -291,12 +292,13 @@ void PolyhedralSet::tetrahedralize(real_t preferredLength, genparams::Polyhedron
             throw error;
         }
     }
-    double volume_exh_elapsed = static_cast<double>(std::clock() - volume_exh_start) / CLOCKS_PER_SEC;
+    auto volume_exh_stop = std::chrono::steady_clock::now();
+    std::chrono::duration<double> volume_exh_elapsed = volume_exh_stop - volume_exh_start;
 
     m_log.nPolyhs = m_polyhedrons.size();
     m_log.prefLen = m_prefLen;
-    m_log.shellTrTime   = shell_triang_elapsed;
-    m_log.volumeExhTime = volume_exh_elapsed;
+    m_log.shellTrTime   = shell_triang_elapsed.count();
+    m_log.volumeExhTime = volume_exh_elapsed.count();
     m_isLogged = false;
 }
 
@@ -604,7 +606,7 @@ std::string PolyhedralSet::generateOutputFilename(FileType filetype, std::string
 
 void PolyhedralSet::output(FileType filetype, std::string_view filename, unsigned polyhedralSetId)
 {
-    std::clock_t start = std::clock();
+    auto start = std::chrono::steady_clock::now();
     switch (filetype)
     {
     case FileType::WavefrontObj:
@@ -615,9 +617,10 @@ void PolyhedralSet::output(FileType filetype, std::string_view filename, unsigne
         outputLSDynaKeyword(generateOutputFilename(FileType::LsDynaKeyword, filename), polyhedralSetId);
         break;
     }
-    double elapsed = static_cast<double>(std::clock() - start) / CLOCKS_PER_SEC;
+    auto stop = std::chrono::steady_clock::now();
+    std::chrono::duration<double> elapsed = stop - start;
 
-    m_log.meshFileWritingTime = elapsed;
+    m_log.meshFileWritingTime = elapsed.count();
 }
 
 
