@@ -1,5 +1,6 @@
 #pragma once
 #include <cstddef>
+#include <stdexcept>
 #include <array>
 #include <vector>
 #include "vec.h"
@@ -29,12 +30,17 @@ public:
     static constexpr auto dim = Dim;
     using real_type = Real;
 
-    const std::vector<facet<N - 1, Dim, Real>*> facets;
+    const std::vector<polytope<N - 1, Dim, Real>*> facets;
+
+    template <typename SubPolytope>
+    std::vector<SubPolytope*> all_of() const;
 
     template <typename SubPolytope>
     bool contains(const SubPolytope* subpt) const
     {
-        if constexpr (std::is_same<facet<N - 1, Dim, Real>, SubPolytope>())
+        if constexpr (SubPolytope::n >= n)
+            return false;
+        else if constexpr (std::is_same<polytope<N - 1, Dim, Real>, SubPolytope>())
             return std::find(facets.begin(), facets.end(), subpt) != facets.end();
         else
         {
@@ -47,12 +53,12 @@ public:
     }
 
     polytope() = delete;
-    polytope(const std::vector<facet<N - 1, Dim, Real>*>& facets)
+    polytope(const std::vector<polytope<N - 1, Dim, Real>*>& facets)
         : facets(facets) {}
-    polytope(std::vector<facet<N - 1, Dim, Real>*>&& facets) noexcept
+    polytope(std::vector<polytope<N - 1, Dim, Real>*>&& facets) noexcept
         : facets(std::move(facets)) {}
     template <std::size_t NFacets>
-    polytope(const std::array<facet<N - 1, Dim, Real>*, NFacets>& facets)
+    polytope(const std::array<polytope<N - 1, Dim, Real>*, NFacets>& facets)
         : facets(facets.begin(), facets.end()) {}
     template <typename... Facets>
     polytope(Facets... facets)

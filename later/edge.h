@@ -15,6 +15,15 @@ public:
     using real_type = Real;
 
     const std::array<vertex<Dim, Real>*, 2> facets;
+
+    template <typename SubPolytope>
+    std::array<SubPolytope*, 2> all_of() const
+    {
+        if constexpr (SubPolytope::n >= 1)
+            throw std::logic_error("SubPolytope::n must be less than this class n");
+        else
+            return facets;
+    }
     
     bool contains(const vertex<Dim, Real>* subpt) const
     {
