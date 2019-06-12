@@ -16,7 +16,7 @@ public:
     const std::array<simplex<N - 1, Dim, Real>*, N + 1> facets;
 
     template <typename SubPolytope>
-    std::array<SubPolytope*, /*How many? I feel there is a formula*/> all_of() const;
+    std::array<SubPolytope*, /*There is a formula*/> all_of() const;
 
     template <typename SubSimplex>
     bool contains(const SubSimplex* subsimp) const

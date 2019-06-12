@@ -12,7 +12,23 @@ struct mesh
 };
 
 template <typename Polytope>
-struct mesh<std::vector<Polytope*>>
+struct mesh<std::vector<Polytope>>
+{
+    using polytope_type = Polytope;
+
+    // ...
+};
+
+template <typename Polytope>
+struct raw_mesh
+{
+    using polytope_type = Polytope;
+
+    // ...
+};
+
+template <typename Polytope>
+struct raw_mesh<std::vector<Polytope>>
 {
     using polytope_type = Polytope;
 
