@@ -10,6 +10,7 @@
 #include "vec.h"
 
 
+using vec3 = spt::vec<3, double>;
 using indices = std::vector<tinyobj::index_t>;
 
 
@@ -73,29 +74,29 @@ std::optional<std::size_t> opp_vert(indices::const_iterator face, const tinyobj:
 }
 
 
-spt::vec3 vert_pos(std::size_t idx, const tinyobj::attrib_t& attrib)
+vec3 vert_pos(std::size_t idx, const tinyobj::attrib_t& attrib)
 {
-    return spt::vec3(attrib.vertices[3 * idx + 0],
+    return vec3(attrib.vertices[3 * idx + 0],
                      attrib.vertices[3 * idx + 1],
                      attrib.vertices[3 * idx + 2]);
 }
 
 
-spt::vec3 raw_normal(indices::const_iterator face, const tinyobj::attrib_t& attrib)
+vec3 raw_normal(indices::const_iterator face, const tinyobj::attrib_t& attrib)
 {
-    spt::vec3 v0(attrib.vertices[3 * (face + 0)->vertex_idx + 0],
+    vec3 v0(attrib.vertices[3 * (face + 0)->vertex_idx + 0],
                  attrib.vertices[3 * (face + 0)->vertex_idx + 1],
                  attrib.vertices[3 * (face + 0)->vertex_idx + 2]);
 
-    spt::vec3 v1(attrib.vertices[3 * (face + 1)->vertex_idx + 0],
+    vec3 v1(attrib.vertices[3 * (face + 1)->vertex_idx + 0],
                  attrib.vertices[3 * (face + 1)->vertex_idx + 1],
                  attrib.vertices[3 * (face + 1)->vertex_idx + 2]);
 
-    spt::vec3 v2(attrib.vertices[3 * (face + 2)->vertex_idx + 0],
+    vec3 v2(attrib.vertices[3 * (face + 2)->vertex_idx + 0],
                  attrib.vertices[3 * (face + 2)->vertex_idx + 1],
                  attrib.vertices[3 * (face + 2)->vertex_idx + 2]);
 
-    return spt::vec3::cross(v1 - v0, v2 - v0);
+    return vec3::cross(v1 - v0, v2 - v0);
 }
 
 
@@ -111,15 +112,15 @@ void orientate_mesh(const tinyobj::attrib_t& attrib, tinyobj::shape_t& shape, st
         if (!opp_vert_idx)
             #pragma omp critical
             dont_write_faces.push_back(idx_offset);
-        spt::vec3 opp_vert_pos = vert_pos(*opp_vert_idx, attrib);
+        vec3 opp_vert_pos = vert_pos(*opp_vert_idx, attrib);
 
-        spt::vec3 v0_to_opp = opp_vert_pos - spt::vec3(attrib.vertices[3 * shape.mesh.indices[idx_offset].vertex_idx + 0],
+        vec3 v0_to_opp = opp_vert_pos - vec3(attrib.vertices[3 * shape.mesh.indices[idx_offset].vertex_idx + 0],
                                                        attrib.vertices[3 * shape.mesh.indices[idx_offset].vertex_idx + 1],
                                                        attrib.vertices[3 * shape.mesh.indices[idx_offset].vertex_idx + 2]);
 
-        spt::vec3 raw_normal_l = raw_normal(shape.mesh.indices.begin() + idx_offset, attrib);
+        vec3 raw_normal_l = raw_normal(shape.mesh.indices.begin() + idx_offset, attrib);
 
-        spt::vec3::real_t dot_val = spt::vec3::dot(v0_to_opp, raw_normal_l);
+        vec3::real_type dot_val = vec3::dot(v0_to_opp, raw_normal_l);
         if (dot_val > 0.0)
             #pragma omp critical
             indices_to_swap.push_back({ shape.mesh.indices.begin() + idx_offset + 1,

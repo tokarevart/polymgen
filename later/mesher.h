@@ -9,55 +9,83 @@ namespace pmg {
 template <typename Polytope>
 class mesher
 {
+    using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::real_type>;
+    using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::real_type>;
+    using facet_type = spt::polytope<Polytope::n - 1, Polytope::dim, typename Polytope::real_type>;
+    using shell_mesh_type = pmg::mesh<spt::aggregate<facet_type>>;
+    using mesh_type = pmg::mesh<facet_type>;
+
 public:
     using polytope_type = Polytope;
+    using real_type = typename polytope_type::real_type;
 
-    mesher(
-        const pmg::raw_mesh<spt::polytope<
-            polytope_type::n - 1,
-            polytope_type::dim,
-            polytope_type::real_type>>& raw_mesh,
-        polytope_type::real_type preferred_length,
-        genparams<Polytope> gen_params = genparams<Polytope>())
-        : m_preferred_length(preferred_length), m_gen_params(gen_params)
+    void run(typename real_type preferred_length, 
+        const genparams<polytope_type>& gen_params = genparams<polytope_type>());
+
+    mesher(const shell_mesh_type* mesh)
     {
-        run();
+        copy_mesh(mesh);
+    }
+
+    mesher(const shell_mesh_type* mesh,
+        typename real_type preferred_length,
+        const genparams<polytope_type>& gen_params = genparams<polytope_type>())
+    {
+        copy_mesh(mesh);
+        run(preferred_length, gen_params);
     }
 
 
 private:
-    const polytope_type::real_type m_preferred_length;
-    const genparams<Polytope> m_gen_params;
-    genparams<Polytope> m_current_gen_params;
+    real_type m_preferred_length;
+    genparams<polytope_type> m_gen_params;
+    genparams<polytope_type> m_current_gen_params;
 
-    void run(polytope_type::real_type preferred_length, genparams<Polytope> gen_params = genparams<Polytope>());
+    shell_mesh_type m_shell; // or 
+    mesh_type m_mesh;
+
+    void copy_mesh(const raw_mesh_type& mesh);
 };
 
+
 template <typename Polytope>
-class mesher<std::vector<Polytope*>>
+class mesher<spt::aggregate<Polytope>>
 {
+    using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::real_type>;
+    using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::real_type>;
+    using facet_type = spt::polytope<Polytope::n - 1, Polytope::dim, typename Polytope::real_type>;
+    using mesh_type = pmg::mesh<facet_type>;
+
 public:
     using polytope_type = Polytope;
+    using real_type = typename polytope_type::real_type;
 
-    mesher(
-        const pmg::raw_mesh<std::vector<spt::polytope<
-            polytope_type::n - 1, 
-            polytope_type::dim, 
-            polytope_type::real_type>>>& raw_mesh,
-        polytope_type::real_type preferred_length,
-        genparams<Polytope> gen_params = genparams<Polytope>())
-        : m_preferred_length(preferred_length), m_gen_params(gen_params) 
+    void run(typename real_type preferred_length,
+        const genparams<polytope_type>& gen_params = genparams<polytope_type>());
+
+    mesher(const mesh_type* mesh)
     {
-        run();
+        copy_mesh(mesh);
+    }
+
+    mesher(const mesh_type* mesh,
+        typename real_type preferred_length,
+        const genparams<polytope_type>& gen_params = genparams<polytope_type>())
+    {
+        copy_mesh(mesh);
+        run(preferred_length, gen_params);
     }
 
 
 private:
-    const polytope_type::real_type m_preferred_length;
-    const genparams<Polytope> m_gen_params;
-    genparams<Polytope> m_current_gen_params;
+    real_type m_preferred_length;
+    genparams<polytope_type> m_gen_params;
+    genparams<polytope_type> m_current_gen_params;
 
-    void run(polytope_type::real_type preferred_length, genparams<Polytope> gen_params = genparams<Polytope>());
+    mesh_type m_shell; // or 
+    mesh_type m_mesh;
+
+    void copy_mesh(const raw_mesh_type& mesh);
 };
 
 } // namespace pmg

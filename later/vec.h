@@ -137,6 +137,7 @@ struct vec
         : x({ xs... }) {}
 };
 
+
 template <typename Real>
 struct vec<3, Real>
 {
@@ -284,6 +285,7 @@ struct vec<3, Real>
         x[2] = x2;
     }
 };
+
 
 template <typename Real>
 struct vec<2, Real>

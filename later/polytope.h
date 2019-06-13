@@ -9,28 +9,21 @@
 namespace spt {
 
 template <std::size_t N, std::size_t Dim = 3, typename Real = typename spt::vec<Dim>::real_type>
-class polytope;
+struct polytope;
 
-
-template <std::size_t N, std::size_t Dim = 3, typename Real = typename spt::vec<Dim>::real_type>
-using peak = polytope<N, Dim, Real>;
-
-template <std::size_t N, std::size_t Dim = 3, typename Real = typename spt::vec<Dim>::real_type>
-using ridge = polytope<N, Dim, Real>;
-
-template <std::size_t N, std::size_t Dim = 3, typename Real = typename spt::vec<Dim>::real_type>
-using facet = polytope<N, Dim, Real>;
+template <typename Polytope>
+struct aggregate;
 
 
 template <std::size_t N, std::size_t Dim, typename Real>
-class polytope
+struct polytope
 {
-public:
     static constexpr auto n = N;
     static constexpr auto dim = Dim;
     using real_type = Real;
+    using facet_type = polytope<N - 1, Dim, Real>;
 
-    const std::vector<polytope<N - 1, Dim, Real>*> facets;
+    const std::vector<facet_type*> facets;
 
     template <typename SubPolytope>
     std::vector<SubPolytope*> all_of() const;
@@ -53,16 +46,24 @@ public:
     }
 
     polytope() = delete;
-    polytope(const std::vector<polytope<N - 1, Dim, Real>*>& facets)
+    polytope(const std::vector<facet_type*>& facets)
         : facets(facets) {}
-    polytope(std::vector<polytope<N - 1, Dim, Real>*>&& facets) noexcept
+    polytope(std::vector<facet_type*>&& facets) noexcept
         : facets(std::move(facets)) {}
     template <std::size_t NFacets>
-    polytope(const std::array<polytope<N - 1, Dim, Real>*, NFacets>& facets)
+    polytope(const std::array<facet_type*, NFacets>& facets)
         : facets(facets.begin(), facets.end()) {}
     template <typename... Facets>
     polytope(Facets... facets)
         : facets({ facets... }) {}
+};
+
+
+template <typename Polytope>
+struct aggregate
+{
+    using polytope_type = Polytope;
+    aggregate() = delete;
 };
 
 } // namespace spt
