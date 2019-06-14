@@ -26,6 +26,19 @@ struct indexed_mesh<Polytope, elem_shape::simplex, N>
     std::vector<elem_type> elements;
 };
 
+template <typename Polytope, std::size_t N>
+struct indexed_mesh<spt::aggregate<Polytope>, elem_shape::simplex, N>
+{
+    using polytope_type = Polytope;
+    using index_type = std::size_t;
+    using vertex_type = spt::vec<polytope_type::dim, typename polytope_type::real_type>;
+    using elem_type = std::array<index_type, N + 1>;
+    using submesh_type = std::vector<elem_type>;
+
+    std::vector<vertex_type> vertices;
+    std::vector<submesh_type> meshes;
+};
+
 template <typename Polytope>
 struct indexed_mesh<Polytope, elem_shape::polytope, 1>
 {
@@ -69,20 +82,6 @@ struct indexed_mesh<Polytope, elem_shape::polytope, 3>
 };
 
 
-template <typename Polytope, std::size_t N>
-struct indexed_mesh<spt::aggregate<Polytope>, elem_shape::simplex, N>
-{
-    using polytope_type = Polytope;
-    using index_type = std::size_t;
-    using vertex_type = spt::vec<polytope_type::dim, typename polytope_type::real_type>;
-    using simplex_type = std::array<index_type, polytope_type::n + 1>;
-    using submesh_type = std::vector<simplex_type>;
-    
-    std::vector<vertex_type> vertices;
-    std::vector<submesh_type> meshes;
-};
-
-
 template <typename Polytope, elem_shape ElemShape, std::size_t N = Polytope::n>
 struct mesh;
 
@@ -92,8 +91,8 @@ struct mesh<Polytope, elem_shape::simplex, N>
     using polytope_type = Polytope;
     using vertex_type = spt::vertex<polytope_type::dim, typename polytope_type::real_type>;
     // ...
-    using facet_type = spt::simplex<polytope_type::n - 1, polytope_type::dim, typename polytope_type::real_type>;
-    using elem_type = spt::simplex<polytope_type::n, polytope_type::dim, typename polytope_type::real_type>;
+    using facet_type = spt::simplex<N - 1, polytope_type::dim, typename polytope_type::real_type>;
+    using elem_type = spt::simplex<N, polytope_type::dim, typename polytope_type::real_type>;
 
     std::vector<vertex_type*> vertices;
     // ...
@@ -107,8 +106,8 @@ struct mesh<Polytope, elem_shape::polytope, N>
     using polytope_type = Polytope;
     using vertex_type = spt::vertex<polytope_type::dim, typename polytope_type::real_type>;
     // ...
-    using facet_type = spt::polytope<polytope_type::n - 1, polytope_type::dim, typename polytope_type::real_type>;
-    using elem_type = spt::polytope<polytope_type::n, polytope_type::dim, typename polytope_type::real_type>;
+    using facet_type = spt::polytope<N - 1, polytope_type::dim, typename polytope_type::real_type>;
+    using elem_type = spt::polytope<N, polytope_type::dim, typename polytope_type::real_type>;
 
     std::vector<vertex_type*> vertices;
     // ...
@@ -121,7 +120,7 @@ template <typename Polytope, elem_shape ElemShape, std::size_t N>
 struct mesh<spt::aggregate<Polytope>, ElemShape, N>
 {
     using polytope_type = Polytope;
-    using submesh_type = mesh<polytope_type, ElemShape>;
+    using submesh_type = mesh<polytope_type, ElemShape, N>;
 
     std::vector<submesh_type*> meshes;
 };

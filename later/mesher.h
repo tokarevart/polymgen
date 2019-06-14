@@ -6,14 +6,17 @@
 
 namespace pmg {
 
-template <typename Polytope>
-class mesher
+template <typename Polytope, elem_shape ElemShape, std::size_t N = Polytope::n>
+class mesher;
+
+template <typename Polytope, std::size_t N>
+class mesher<Polytope, elem_shape::simplex, N>
 {
     using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::real_type>;
     using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::real_type>;
     using facet_type = spt::polytope<Polytope::n - 1, Polytope::dim, typename Polytope::real_type>;
-    using shell_mesh_type = pmg::mesh<spt::aggregate<facet_type>>;
-    using mesh_type = pmg::mesh<facet_type>;
+    using shell_mesh_type = pmg::mesh<spt::aggregate<facet_type>, elem_shape::simplex>;
+    using mesh_type = pmg::mesh<Polytope, elem_shape::simplex>;
 
 public:
     using polytope_type = Polytope;
@@ -41,20 +44,23 @@ private:
     genparams<polytope_type> m_gen_params;
     genparams<polytope_type> m_current_gen_params;
 
-    shell_mesh_type m_shell; // or 
+    shell_mesh_type m_shell;
     mesh_type m_mesh;
 
     void copy_mesh(const raw_mesh_type& mesh);
+
+    // methods...
 };
 
 
-template <typename Polytope>
-class mesher<spt::aggregate<Polytope>>
+template <typename Polytope, std::size_t N>
+class mesher<spt::aggregate<Polytope>, elem_shape::simplex, N>
 {
     using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::real_type>;
     using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::real_type>;
     using facet_type = spt::polytope<Polytope::n - 1, Polytope::dim, typename Polytope::real_type>;
-    using mesh_type = pmg::mesh<facet_type>;
+    using shell_mesh_type = pmg::mesh<spt::aggregate<facet_type>, elem_shape::simplex>;
+    using mesh_type = pmg::mesh<spt::aggregate<Polytope>, elem_shape::simplex>;
 
 public:
     using polytope_type = Polytope;
@@ -63,12 +69,12 @@ public:
     void run(typename real_type preferred_length,
         const genparams<polytope_type>& gen_params = genparams<polytope_type>());
 
-    mesher(const mesh_type* mesh)
+    mesher(const shell_mesh_type* mesh)
     {
         copy_mesh(mesh);
     }
 
-    mesher(const mesh_type* mesh,
+    mesher(const shell_mesh_type* mesh,
         typename real_type preferred_length,
         const genparams<polytope_type>& gen_params = genparams<polytope_type>())
     {
@@ -82,10 +88,12 @@ private:
     genparams<polytope_type> m_gen_params;
     genparams<polytope_type> m_current_gen_params;
 
-    mesh_type m_shell; // or 
-    mesh_type m_mesh;
+    shell_mesh_type m_shell;
+    mesh_type m_meshes;
 
     void copy_mesh(const raw_mesh_type& mesh);
+
+    // methods...
 };
 
 } // namespace pmg
