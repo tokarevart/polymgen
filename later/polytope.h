@@ -23,10 +23,15 @@ struct polytope
     using real_type = Real;
     using facet_type = polytope<N - 1, Dim, Real>;
 
-    const std::vector<facet_type*> facets;
+    std::vector<facet_type*> facets;
 
     template <typename SubPolytope>
     std::vector<SubPolytope*> all_of() const;
+
+    bool empty() const
+    {
+        return facets.empty();
+    }
 
     template <typename SubPolytope>
     bool contains(const SubPolytope* subpt) const
@@ -45,7 +50,14 @@ struct polytope
         }
     }
 
-    polytope() = delete;
+    polytope(const polytope& other)
+    {
+        facets = other.facets;
+    }
+    polytope(polytope&& other) noexcept
+    {
+        facets = std::move(other.facets);
+    }
     polytope(const std::vector<facet_type*>& facets)
         : facets(facets) {}
     polytope(std::vector<facet_type*>&& facets) noexcept

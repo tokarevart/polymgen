@@ -15,7 +15,12 @@ struct polytope<1, Dim, Real>
     using real_type = Real;
     using facet_type = spt::vertex<Dim, Real>;
 
-    const std::array<facet_type*, 2> facets;
+    std::array<facet_type*, 2> facets = { nullptr, };
+
+    bool empty() const
+    {
+        return !facets[0] && !facets[1];
+    }
 
     template <typename SubPolytope>
     std::array<SubPolytope*, 2> all_of() const
@@ -31,7 +36,10 @@ struct polytope<1, Dim, Real>
         return facets[0] == subpt || facets[1] == subpt;
     }
 
-    polytope() = delete;
+    polytope(const polytope& poly)
+    {
+        facets = poly.facets;
+    }
     polytope(const std::array<facet_type*, 2>& facets)
         : facets(facets) {}
     polytope(const facet_type* v0, const facet_type* v1, const facet_type* v2)

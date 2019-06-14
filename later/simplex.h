@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <vector>
 #include <array>
+#include <algorithm>
 #include "vertex.h"
 
 namespace spt {
@@ -14,10 +15,15 @@ struct simplex
     using real_type = Real;
     using facet_type = simplex<N - 1, Dim, Real>;
 
-    const std::array<facet_type*, N + 1> facets;
-
+    std::array<facet_type*, N + 1> facets;
+   
     template <typename SubPolytope>
     std::vector<SubPolytope*> all_of() const;
+
+    bool empty() const
+    {
+        return std::none_of(facets.begin(), facets.end(), [](auto x) -> bool { return x; });
+    }
 
     template <typename SubSimplex>
     bool contains(const SubSimplex* subsimp) const
@@ -36,7 +42,10 @@ struct simplex
         }
     }
 
-    simplex() = delete;
+    simplex(const simplex& other)
+    {
+        facets = other.facets;
+    }
     simplex(const std::array<facet_type*, N + 1>& facets)
         : facets(facets) {}
     template <typename... Facets>
@@ -53,19 +62,27 @@ struct simplex_v
     using real_type = Real;
     using vertex_type = spt::vertex<Dim, Real>;
 
-    const std::array<vertex_type*, N + 1> vertices;
+    std::array<vertex_type*, N + 1> vertices;
+
+    bool empty() const
+    {
+        return std::none_of(vertices.begin(), vertices.end(), [](auto x) -> bool { return x; });
+    }
 
     bool contains(const vertex_type* vert) const
     {
         return std::find(vertices.begin(), vertices.end(), vert) != vertices.end();
     }
 
-    simplex_v() = delete;
+    simplex_v(const simplex_v& other)
+    {
+        vertices = other.vertices;
+    }
     simplex_v(const std::array<vertex_type*, N + 1>& verts)
-        : facets(facets) {}
+        : vertices(vertices) {}
     template <typename... Vertices>
     simplex_v(Vertices... verts)
-        : facets({ verts... }) {}
+        : vertices({ verts... }) {}
 };
 
 } // namespace spt
