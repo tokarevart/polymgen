@@ -72,10 +72,6 @@ struct polytope
 
 
 template <typename Polytope>
-struct aggregate
-{
-    using polytope_type = Polytope;
-    aggregate() = delete;
-};
+using aggregate = std::vector<Polytope>;
 
 } // namespace spt
