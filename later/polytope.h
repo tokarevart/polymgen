@@ -12,7 +12,7 @@ template <std::size_t N, std::size_t Dim = 3, typename Real = typename spt::vec<
 struct polytope;
 
 template <typename Polytope>
-struct aggregate;
+using aggregate = std::vector<Polytope>;
 
 
 template <std::size_t N, std::size_t Dim, typename Real>
@@ -69,9 +69,5 @@ struct polytope
     polytope(Facets... facets)
         : facets({ facets... }) {}
 };
-
-
-template <typename Polytope>
-using aggregate = std::vector<Polytope>;
 
 } // namespace spt

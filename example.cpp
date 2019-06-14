@@ -10,8 +10,26 @@
 #include "src/core/polyhedral-set.h"
 #include "src/polysgen/polysgen.h"
 
+
+std::string rabbit()
+{
+    std::array<std::string, 4> lines =
+    {
+        "(\\_/)",
+        "(._.)",
+        "/   \\",
+        "-----"
+    };
+    std::string res;
+    for (auto&& line : lines)
+        res += line + '\n';
+    return res;
+}
+
 int main()
 {
+    std::cout << rabbit() << std::endl;
+
     real_t preferredLength = static_cast<real_t>(0.5);
     
     std::cout << "Generating PolyShell...";
