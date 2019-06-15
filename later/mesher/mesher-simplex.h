@@ -1,16 +1,11 @@
 #pragma once
-#include "polytope.h"
-#include "mesh.h"
-#include "genparams.h"
+#include "mesher-base.h"
 
 
 namespace pmg {
 
-template <typename Polytope, elem_shape ElemShape, std::size_t N = Polytope::n>
-class mesher;
-
 template <typename Polytope, std::size_t N>
-class mesher<Polytope, elem_shape::simplex, N>
+class mesher<Polytope, pmg::elem_shape::simplex, N>
 {
     using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::real_type>;
     using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::real_type>;
@@ -19,8 +14,8 @@ class mesher<Polytope, elem_shape::simplex, N>
 public:
     using polytope_type = Polytope;
     using shell_type = polytope_type;
-    using shell_mesh_type = pmg::mesh<spt::aggregate<facet_type*>, elem_shape::simplex>;
-    using mesh_type = pmg::mesh<polytope_type, elem_shape::simplex>;
+    using shell_mesh_type = pmg::mesh<spt::aggregate<facet_type*>, pmg::elem_shape::simplex>;
+    using mesh_type = pmg::mesh<polytope_type, pmg::elem_shape::simplex>;
     using real_type = typename polytope_type::real_type;
 
     void run(real_type preferred_length, 
@@ -42,7 +37,7 @@ public:
     mesher(const shell_type& shell)
     {
         m_shell = shell;
-        mesher<spt::aggregate<facet_type*>, elem_shape::simplex> sh_mesher(shell);
+        mesher<spt::aggregate<facet_type*>, pmg::elem_shape::simplex> sh_mesher(shell);
         // mesh the shell...
         m_shell_mesh = std::move(/*mesh*/);
     }
@@ -50,7 +45,7 @@ public:
     mesher(shell_type&& shell) noexcept
     {
         m_shell = std::move(shell);
-        mesher<spt::aggregate<facet_type*>, elem_shape::simplex> sh_mesher(shell);
+        mesher<spt::aggregate<facet_type*>, pmg::elem_shape::simplex> sh_mesher(shell);
         // mesh the shell...
         m_shell_mesh = std::move(/*mesh*/);
     }
@@ -75,7 +70,7 @@ private:
 
 
 template <typename Polytope, std::size_t N>
-class mesher<spt::aggregate<Polytope*>, elem_shape::simplex, N>
+class mesher<spt::aggregate<Polytope*>, pmg::elem_shape::simplex, N>
 {
     using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::real_type>;
     using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::real_type>;
@@ -84,8 +79,8 @@ class mesher<spt::aggregate<Polytope*>, elem_shape::simplex, N>
 public:
     using polytope_type = Polytope;
     using shell_type = spt::aggregate<polytope_type*>;
-    using shell_mesh_type = pmg::mesh<spt::aggregate<facet_type*>, elem_shape::simplex>;
-    using mesh_type = pmg::mesh<spt::aggregate<polytope_type*>, elem_shape::simplex>;
+    using shell_mesh_type = pmg::mesh<spt::aggregate<facet_type*>, pmg::elem_shape::simplex>;
+    using mesh_type = pmg::mesh<spt::aggregate<polytope_type*>, pmg::elem_shape::simplex>;
     using real_type = typename polytope_type::real_type;
 
     void run(real_type preferred_length, 
@@ -107,7 +102,7 @@ public:
     mesher(const shell_type& shell)
     {
         m_shell = shell;
-        mesher<spt::aggregate<facet_type*>, elem_shape::simplex> sh_mesher(shell);
+        mesher<spt::aggregate<facet_type*>, pmg::elem_shape::simplex> sh_mesher(shell);
         // mesh the shell...
         m_shell_mesh = std::move(/*mesh*/);
     }
@@ -115,7 +110,7 @@ public:
     mesher(shell_type&& shell) noexcept
     {
         m_shell = std::move(shell);
-        mesher<spt::aggregate<facet_type*>, elem_shape::simplex> sh_mesher(shell);
+        mesher<spt::aggregate<facet_type*>, pmg::elem_shape::simplex> sh_mesher(shell);
         // mesh the shell...
         m_shell_mesh = std::move(/*mesh*/);
     }
