@@ -1,6 +1,6 @@
 #pragma once
 #include "../polytope.h"
-#include "../genparams.h"
+#include "genparams.h"
 #include "../mesh/mesh.h"
 
 
