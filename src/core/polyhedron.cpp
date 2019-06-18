@@ -627,8 +627,7 @@ Polyhedron::ExhaustType Polyhedron::computeExhaustionTypeQualityPriority(
     if (frontSplitCheck(currentFrontEdge))
         return ExhaustType::WithoutNewVert;
     
-    if (parallelFacesCheck(currentFrontEdge) ||
-        potentialEdgeIntersectFront(currentFrontEdge) ||
+    if (parallelFacesCheck(currentFrontEdge) || // TODO: replace later with check if front is close to potential element
         anyEdgeIntersectPotentialFaces(currentFrontEdge) ||
         anyVertInsidePotentialTetrCheck(currentFrontEdge))
         return ExhaustType::WithNewVert;
@@ -1543,7 +1542,7 @@ void Polyhedron::exhaustWithNewVert(front::Face* fFace, const vec3& vertPos)
 bool Polyhedron::tryExhaustWithoutNewVert(front::Edge* fEdge)
 {
     // TODO: improve that checks
-    if (parallelFacesCheck(fEdge) ||
+    if (parallelFacesCheck(fEdge) || // TODO: replace later with check if front is close to potential element
         anyEdgeIntersectPotentialFaces(fEdge) ||
         anyVertInsidePotentialTetrCheck(fEdge))
         return false;
@@ -1555,6 +1554,7 @@ bool Polyhedron::tryExhaustWithoutNewVert(front::Edge* fEdge)
 
 bool Polyhedron::tryExhaustWithNewVert(front::Edge* frontEdge)
 {
+    // TODO: replace later with check if front is close to potential element
     if (parallelFacesCheck(frontEdge))
         return false;
 
