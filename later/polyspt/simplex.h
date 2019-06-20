@@ -53,16 +53,9 @@ struct simplex<3, Dim, Real>
             std::size_t idx = 0;
             for (const auto& face : faces)
                 for (const auto& edge : face->edges)
-                {
-                    if (idx == 4) 
-                        return verts;
-                    else
-                    {
-                        for (const auto& vert : edge->vertices)
-                            if (std::find(verts.begin(), verts.begin() + idx, vert) == verts.begin() + idx)
-                                verts[idx++] = vert;
-                    }
-                }
+                    for (const auto& vert : edge->vertices)
+                        if (std::find(verts.begin(), verts.begin() + idx, vert) == verts.begin() + idx)
+                            verts[idx++] = vert;
                     
             return verts;
         }
