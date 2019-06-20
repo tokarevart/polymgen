@@ -160,7 +160,7 @@ void write_file(const tinyobj::attrib_t& attrib, const tinyobj::shape_t& shape,
 
 int main()
 {
-    auto filename = "phset_64_nph_171_phfe.obj";
+    auto filename = "mesh-small.obj";
 
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;

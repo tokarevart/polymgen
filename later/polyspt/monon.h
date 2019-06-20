@@ -1,10 +1,10 @@
 #pragma once
-#include "polytope.h"
+#include "polytope-base.h"
 
 namespace spt {
 
 template <std::size_t Dim = 3, typename Real = typename spt::vec<Dim>::real_type>
-using vertex = polytope<0, Dim, Real>;
+using monon = polytope<0, Dim, Real>;
 
 
 template <std::size_t Dim, typename Real>

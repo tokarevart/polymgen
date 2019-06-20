@@ -4,7 +4,7 @@
 namespace spt {
 
 template <std::size_t Dim = 3, typename Real = typename spt::vec<Dim>::real_type>
-using edge = polytope<1, Dim, Real>;
+using dion = polytope<1, Dim, Real>;
 
 
 template <std::size_t Dim, typename Real>
@@ -30,7 +30,7 @@ struct polytope<1, Dim, Real>
         else
             return facets;
     }
-    
+
     bool contains(const facet_type* subpt) const
     {
         return facets[0] == subpt || facets[1] == subpt;
@@ -40,7 +40,7 @@ struct polytope<1, Dim, Real>
     {
         facets = poly.facets;
     }
-    polytope(const std::array<facet_type*, 2>& facets)
+    polytope(const std::array<facet_type*, 2> & facets)
         : facets(facets) {}
     polytope(const facet_type* v0, const facet_type* v1, const facet_type* v2)
         : facets({ v0, v1, v2 }) {}

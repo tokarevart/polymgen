@@ -1,4 +1,6 @@
 .vs
 x64
 out
-build-polym-orient-obj-Release
+polymori-obj/mesh-small.obj
+polymori-obj/mesh-big.obj
+polymori-obj/x64

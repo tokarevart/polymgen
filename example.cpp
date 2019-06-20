@@ -30,7 +30,7 @@ int main()
 {
     std::cout << rabbit() << std::endl;
 
-    real_t preferredLength = static_cast<real_t>(0.5);
+    real_t preferredLength = static_cast<real_t>(0.32);
     
     std::cout << "Generating PolyShell...";
     std::size_t n = 4;
@@ -45,26 +45,26 @@ int main()
     std::cout << "Generating mesh...";
     polyhset.tetrahedralize(preferredLength);
     std::cout << std::string(12, ' ') + "done." << std::endl;
+    std::cout << std::endl << polyhset.generateLogFileName();
+    //namespace fs = std::filesystem;
+    //std::cout << "Outputting data to file...";
 
-    namespace fs = std::filesystem;
-    std::cout << "Outputting data to file...";
+    //fs::create_directories(fs::current_path() / "out" / "meshes");
+    //fs::current_path(fs::current_path() / "out" / "meshes");
 
-    fs::create_directories(fs::current_path() / "out" / "meshes");
-    fs::current_path(fs::current_path() / "out" / "meshes");
+    //polyhset.output(pmg::FileType::LsDynaKeyword);
+    //polyhset.output(pmg::FileType::WavefrontObj);
+    //std::cout << std::string(4, ' ') + "done." << std::endl << std::endl;
 
-    polyhset.output(pmg::FileType::LsDynaKeyword);
-    polyhset.output(pmg::FileType::WavefrontObj);
-    std::cout << std::string(4, ' ') + "done." << std::endl << std::endl;
+    //fs::current_path(fs::current_path().parent_path());
+    //fs::create_directory(fs::current_path() / "logs");
+    //fs::current_path(fs::current_path() / "logs");
 
-    fs::current_path(fs::current_path().parent_path());
-    fs::create_directory(fs::current_path() / "logs");
-    fs::current_path(fs::current_path() / "logs");
-
-    std::ofstream log_file(polyhset.generateLogFileName());
-    polyhset.log().write(log_file);
-    std::cout << "Log:" << std::endl;
-    polyhset.log().write(std::cout);
-    log_file.close();
+    //std::ofstream log_file(polyhset.generateLogFileName());
+    //polyhset.log().write(log_file);
+    //std::cout << "Log:" << std::endl;
+    //polyhset.log().write(std::cout);
+    //log_file.close();
 
     return 0;
 }

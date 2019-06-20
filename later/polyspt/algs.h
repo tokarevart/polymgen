@@ -12,6 +12,8 @@ namespace spt::algs {
 // TODO: make template functions instead later
 using vec3 = spt::vec<3>;
 
+// Real volume(...
+
 vec3 project(
     const vec3& point,
     const vec3& line_p0, const vec3& line_p1);

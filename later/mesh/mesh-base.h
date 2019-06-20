@@ -1,5 +1,5 @@
 #pragma once
-#include "../simplex.h"
+#include "../polyspt/simplex.h"
 
 namespace pmg {
 
@@ -14,7 +14,7 @@ template <typename Polytope, elem_shape ElemShape, std::size_t N = Polytope::n>
 struct mesh;
 
 template <typename Polytope, elem_shape ElemShape, std::size_t N>
-struct mesh<spt::aggregate<Polytope*>, ElemShape, N>
+struct mesh<spt::aggregate<Polytope>, ElemShape, N>
 {
     using polytope_type = Polytope;
     using real_type = typename polytope_type::real_type;

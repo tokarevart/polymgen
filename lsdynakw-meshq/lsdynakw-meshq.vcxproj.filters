@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="polyspt">
+      <UniqueIdentifier>{cb390e96-4a64-43eb-becd-c92e2d503775}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="polyspt\algs.cpp">
+      <Filter>polyspt</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="polyspt\algs.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\cell.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\dion.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\edge.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\face.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\monon.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\polychoron.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\polygon.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\polyhedron.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\polytope-base.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\simplex.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\vec.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\vertex.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
