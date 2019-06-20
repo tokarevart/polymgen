@@ -1,0 +1,11 @@
+#pragma once
+#include "monon.h"
+#include "dion.h"
+#include "polygon.h"
+#include "polyhedron.h"
+#include "polychoron.h"
+#include "vertex.h"
+#include "edge.h"
+#include "face.h"
+#include "cell.h"
+#include "simplex.h"
