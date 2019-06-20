@@ -18,7 +18,7 @@ public:
     using mesh_type = pmg::mesh<polytope_type, pmg::elem_shape::simplex>;
     using real_type = typename polytope_type::real_type;
 
-    void run(real_type preferred_length, 
+    void run(real_type preferred_length,
         const genparams<polytope_type>& gen_params = genparams<polytope_type>());
 
 

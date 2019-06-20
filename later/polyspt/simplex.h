@@ -3,7 +3,7 @@
 #include <vector>
 #include <array>
 #include <algorithm>
-#include "vertex.h"
+#include "edge.h"
 
 namespace spt {
 
@@ -53,6 +53,48 @@ struct simplex
         : facets({ facets... }) {}
 };
 
+template <std::size_t Dim, typename Real>
+struct simplex<2, Dim, Real>
+{
+    static constexpr auto n = 2;
+    static constexpr auto dim = Dim;
+    using real_type = Real;
+    using facet_type = spt::edge<Dim, Real>;
+
+    std::array<facet_type*, 3> facets = { nullptr, };
+
+    bool empty() const
+    {
+        return !facets[0] && !facets[1] && !facets[2];
+    }
+
+    template <typename SubPolytope>
+    auto all_of() const
+    {
+        static_assert(SubPolytope::n == 1 || SubPolytope::n == 0);
+        if constexpr (SubPolytope::n == 1)
+            return facets;
+        else
+        {
+            std::array<SubPolytope*, 4> res = { nullptr, };
+            //
+        }
+    }
+
+    bool contains(const facet_type* subpt) const
+    {
+        return facets[0] == subpt || facets[1] == subpt || facets[2] == subpt;
+    }
+
+    simplex(const simplex& poly)
+    {
+        facets = poly.facets;
+    }
+    simplex(const std::array<facet_type*, 2>& facets)
+        : facets(facets) {}
+    simplex(const facet_type* f0, const facet_type* f1, const facet_type* f2)
+        : facets({ f0, f1, f2 }) {}
+};
 
 template <std::size_t N, std::size_t Dim = 3, typename Real = typename spt::vec<Dim>::real_type>
 struct simplex_v

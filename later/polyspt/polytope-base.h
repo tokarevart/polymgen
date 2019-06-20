@@ -1,6 +1,5 @@
 #pragma once
 #include <cstddef>
-#include <stdexcept>
 #include <array>
 #include <vector>
 #include "vec.h"
@@ -36,9 +35,8 @@ struct polytope
     template <typename SubPolytope>
     bool contains(const SubPolytope* subpt) const
     {
-        if constexpr (SubPolytope::n >= n)
-            return false;
-        else if constexpr (std::is_same<polytope<N - 1, Dim, Real>, SubPolytope>())
+        static_assert(SubPolytope::n < n);
+        if constexpr (std::is_same<polytope<N - 1, Dim, Real>, SubPolytope>())
             return std::find(facets.begin(), facets.end(), subpt) != facets.end();
         else
         {

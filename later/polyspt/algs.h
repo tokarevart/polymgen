@@ -4,15 +4,32 @@
 #pragma once
 #include <cmath>
 #include <algorithm>
-#include "vec.h"
+#include "simplex.h"
 
 // TODO: experiment with pass by value instead of reference and make benchmark
-namespace spt::algs {
+namespace spt {
 
 // TODO: make template functions instead later
 using vec3 = spt::vec<3>;
 
-// Real volume(...
+template <typename Polytope>
+typename Polytope::real_type volume(const Polytope* poly)
+{
+    static_assert(false);
+}
+
+template <typename Polytope>
+typename Polytope::real_type volume<Polytope, 1>(const Polytope* poly)
+{
+    return (poly->facets[1]->pos - poly->facets[0]->pos).magnitude();
+}
+
+template <std::size_t Dim, typename Real>
+Real volume<spt::simplex<2, Dim, Real>, 2>(const spt::simplex<2, Dim>* poly)
+{
+    //
+}
+
 
 vec3 project(
     const vec3& point,

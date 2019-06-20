@@ -25,10 +25,8 @@ struct polytope<1, Dim, Real>
     template <typename SubPolytope>
     std::array<SubPolytope*, 2> all_of() const
     {
-        if constexpr (SubPolytope::n >= 1)
-            throw std::logic_error("SubPolytope::n must be less than this class n");
-        else
-            return facets;
+        static_assert(SubPolytope::n == 0);
+        return facets;
     }
 
     bool contains(const facet_type* subpt) const
@@ -40,10 +38,10 @@ struct polytope<1, Dim, Real>
     {
         facets = poly.facets;
     }
-    polytope(const std::array<facet_type*, 2> & facets)
+    polytope(const std::array<facet_type*, 2>& facets)
         : facets(facets) {}
-    polytope(const facet_type* v0, const facet_type* v1, const facet_type* v2)
-        : facets({ v0, v1, v2 }) {}
+    polytope(const facet_type* f0, const facet_type* f1)
+        : facets({ f0, f1 }) {}
 };
 
 } // namespace spt

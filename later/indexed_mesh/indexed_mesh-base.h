@@ -1,5 +1,5 @@
 #pragma once
-#include "../simplex.h"
+#include "../polyspt/simplex.h"
 
 
 namespace pmg {

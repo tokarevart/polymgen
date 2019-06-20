@@ -20,10 +20,10 @@
          BETWEEN(corner0.x[2], corner1.x[2], point.x[2]))
 
 
-using spt::algs::vec3;
+using spt::vec3;
 
 
-vec3 spt::algs::project(
+vec3 spt::project(
         const vec3& point,
         const vec3& line_p0, const vec3& line_p1)
 {
@@ -31,7 +31,7 @@ vec3 spt::algs::project(
 }
 
 
-bool spt::algs::project(
+bool spt::project(
     vec3& out,
     const vec3& point,
     const vec3& segm_p0, const vec3& segm_p1)
@@ -51,7 +51,7 @@ bool spt::algs::project(
 }
 
 
-vec3 spt::algs::project(
+vec3 spt::project(
         const vec3& point,
         const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2)
 {
@@ -61,7 +61,7 @@ vec3 spt::algs::project(
 
 
 
-bool spt::algs::does_ray_intersect_plane(
+bool spt::does_ray_intersect_plane(
         const vec3& dir,
         const vec3& pl_p0, const vec3& pl_p1, const vec3& pl_p2)
 {
@@ -73,7 +73,7 @@ bool spt::algs::does_ray_intersect_plane(
 }
 
 
-bool spt::algs::ray_intersect_plane(
+bool spt::ray_intersect_plane(
     vec3& out_intersectPoint,
     const vec3& origin, const vec3& dir,
     const vec3& pl_p0, const vec3& pl_p1, const vec3& pl_p2)
@@ -94,7 +94,7 @@ bool spt::algs::ray_intersect_plane(
 }
 
 
-bool spt::algs::does_ray_intersect_triangle(
+bool spt::does_ray_intersect_triangle(
     const vec3& origin, const vec3& dir,
     const vec3& tr_p0, const vec3& tr_p1, const vec3& tr_p2)
 {
@@ -122,7 +122,7 @@ bool spt::algs::does_ray_intersect_triangle(
 }
 
 
-vec3 spt::algs::lines_closest_point(const vec3& line0_p0, const vec3& line0_p1, const vec3& line1_p0, const vec3& line1_p1)
+vec3 spt::lines_closest_point(const vec3& line0_p0, const vec3& line0_p1, const vec3& line1_p0, const vec3& line1_p1)
 {
     vec3 u = line0_p1 - line0_p0;
     vec3 v = line1_p1 - line1_p0;
@@ -151,7 +151,7 @@ vec3 spt::algs::lines_closest_point(const vec3& line0_p0, const vec3& line0_p1, 
 }
 
 
-bool spt::algs::line_intersect_plane(
+bool spt::line_intersect_plane(
     vec3& out_intersectPoint,
     const vec3& line_point, const vec3& line_dir,
     const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2)
@@ -172,7 +172,7 @@ bool spt::algs::line_intersect_plane(
 }
 
 
-vec3 spt::algs::line_intersect_plane(
+vec3 spt::line_intersect_plane(
     const vec3& line_point, const vec3& line_dir,
     const vec3& plane_p0, const vec3& plane_p1, const vec3& plane_p2)
 {
@@ -187,7 +187,7 @@ vec3 spt::algs::line_intersect_plane(
 }
 
 
-bool spt::algs::does_segment_intersect_triangle(
+bool spt::does_segment_intersect_triangle(
     const vec3& segm_p0, const vec3& segm_p1,
     const vec3& tr_p0, const vec3& tr_p1, const vec3& tr_p2)
 {
@@ -217,7 +217,7 @@ bool spt::algs::does_segment_intersect_triangle(
 }
 
 
-bool spt::algs::segment_intersect_plane(
+bool spt::segment_intersect_plane(
     vec3& out_intersectPoint,
     const vec3& p0, const vec3& p1,
     const vec3& pl_p0, const vec3& pl_p1, const vec3& pl_p2)
@@ -242,7 +242,7 @@ bool spt::algs::segment_intersect_plane(
 
 
 
-bool spt::algs::is_point_on_triangle(
+bool spt::is_point_on_triangle(
         const vec3& point,
         const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2)
 {
@@ -256,7 +256,7 @@ bool spt::algs::is_point_on_triangle(
 }
 
 
-bool spt::algs::is_point_on_triangle(
+bool spt::is_point_on_triangle(
         const vec3& point,
         const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2,
         vec3::real_type max_sqrs_sum)
@@ -270,7 +270,7 @@ bool spt::algs::is_point_on_triangle(
 
 
 
-vec3::real_type spt::algs::lines_distance(
+vec3::real_type spt::lines_distance(
         const vec3& line0_p0, const vec3& line0_p1,
         const vec3& line1_p0, const vec3& line1_p1)
 {
@@ -303,7 +303,7 @@ vec3::real_type spt::algs::lines_distance(
 }
 
 
-vec3::real_type spt::algs::segments_distance(
+vec3::real_type spt::segments_distance(
     const vec3& segm0_p0, const vec3& segm0_p1,
     const vec3& segm1_p0, const vec3& segm1_p1)
 {
@@ -393,7 +393,7 @@ vec3::real_type spt::algs::segments_distance(
 
 
 
-vec3::real_type spt::algs::cpa_time(
+vec3::real_type spt::cpa_time(
     const vec3& start0, const vec3& vel0,
     const vec3& start1, const vec3& vel1)
 {
@@ -408,7 +408,7 @@ vec3::real_type spt::algs::cpa_time(
 
 
 
-vec3::real_type spt::algs::cpa_distance(
+vec3::real_type spt::cpa_distance(
     const vec3& start0, const vec3& vel0,
     const vec3& start1, const vec3& vel1)
 {
@@ -421,13 +421,13 @@ vec3::real_type spt::algs::cpa_distance(
 
 
 
-vec3::real_type spt::algs::distance_point_to_line(const vec3& point, const vec3& line_p0, const vec3& line_p1)
+vec3::real_type spt::distance_point_to_line(const vec3& point, const vec3& line_p0, const vec3& line_p1)
 {
     return (project(point, line_p0, line_p1) - point).magnitude();
 }
 
 
-vec3::real_type spt::algs::distance_point_to_segment(const vec3& point, const vec3& segm_p0, const vec3& segm_p1)
+vec3::real_type spt::distance_point_to_segment(const vec3& point, const vec3& segm_p0, const vec3& segm_p1)
 {
     vec3 proj = project(point, segm_p0, segm_p1);
 
@@ -447,7 +447,7 @@ vec3::real_type spt::algs::distance_point_to_segment(const vec3& point, const ve
 }
 
 
-vec3::real_type spt::algs::distance_point_to_triangle_on_plane(
+vec3::real_type spt::distance_point_to_triangle_on_plane(
         const vec3& point, const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2)
 {
     std::array<vec3, 3> closest_points;
@@ -464,7 +464,7 @@ vec3::real_type spt::algs::distance_point_to_triangle_on_plane(
 }
 
 
-bool spt::algs::does_triangle_intersect_sphere(const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2,
+bool spt::does_triangle_intersect_sphere(const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2,
                                            const vec3& center,   vec3::real_type radius)
 {
     vec3 proj = project(center, trngl_p0, trngl_p1, trngl_p2);
@@ -479,7 +479,7 @@ bool spt::algs::does_triangle_intersect_sphere(const vec3& trngl_p0, const vec3&
 }
 
 
-vec3 spt::algs::closest_segment_point_to_point(const vec3& point, const vec3& segm_p0, const vec3& segm_p1)
+vec3 spt::closest_segment_point_to_point(const vec3& point, const vec3& segm_p0, const vec3& segm_p1)
 {
     vec3 proj = project(point, segm_p0, segm_p1);
 
@@ -499,7 +499,7 @@ vec3 spt::algs::closest_segment_point_to_point(const vec3& point, const vec3& se
 }
 
 
-vec3::real_type spt::algs::max_sqrs_sum(const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2)
+vec3::real_type spt::max_sqrs_sum(const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2)
 {
     std::array<vec3::real_type, 3> sqrs;
     sqrs[0] = (trngl_p1 - trngl_p0).sqrMagnitude();
@@ -528,7 +528,7 @@ vec3::real_type spt::algs::max_sqrs_sum(const vec3& trngl_p0, const vec3& trngl_
 }
 
 
-vec3::real_type spt::algs::sqrs_sum(const vec3& point, const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2)
+vec3::real_type spt::sqrs_sum(const vec3& point, const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2)
 {
     std::array<vec3::real_type, 3> sqrs;
     sqrs[0] = (trngl_p0 - point).sqrMagnitude();
@@ -538,7 +538,7 @@ vec3::real_type spt::algs::sqrs_sum(const vec3& point, const vec3& trngl_p0, con
 }
 
 
-vec3 spt::algs::closest_triangle_point_to_point_on_plane(
+vec3 spt::closest_triangle_point_to_point_on_plane(
         const vec3& point, const vec3& trngl_p0, const vec3& trngl_p1, const vec3& trngl_p2)
 {
     std::array<vec3, 3> closest_points;
@@ -571,7 +571,7 @@ vec3 spt::algs::closest_triangle_point_to_point_on_plane(
 }
 
 
-bool spt::algs::is_point_in_tetrahedron(
+bool spt::is_point_in_tetrahedron(
         const vec3& point, const vec3& tetr_p0, const vec3& tetr_p1, const vec3& tetr_p2, const vec3& tetr_p3)
 {
     vec3 vert_to_p0 = tetr_p0 - point;
