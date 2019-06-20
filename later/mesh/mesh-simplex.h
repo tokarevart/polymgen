@@ -3,15 +3,15 @@
 
 namespace pmg {
        
-template <typename Polytope, std::size_t N>
-struct mesh<Polytope, elem_shape::simplex, N>
+template <typename Polytope>
+struct mesh<Polytope, elem_shape::simplex>
 {
     using polytope_type = Polytope;
     using real_type = typename polytope_type::real_type;
     using vertex_type = spt::vertex<polytope_type::dim, real_type>;
     // ...
-    using facet_type = spt::simplex<N - 1, polytope_type::dim, real_type>;
-    using elem_type = spt::simplex<N, polytope_type::dim, real_type>;
+    using facet_type = spt::simplex<polytope_type::n - 1, polytope_type::dim, real_type>;
+    using elem_type = spt::simplex<polytope_type::n, polytope_type::dim, real_type>;
 
     std::vector<vertex_type*> vertices;
     // ...

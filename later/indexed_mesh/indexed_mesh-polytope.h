@@ -1,52 +1,54 @@
 #pragma once
+#include <vector>
 #include "indexed_mesh-base.h"
+#include "../polyspt/polyhedron.h"
 
 
 namespace pmg {
 
-template <typename Polytope>
-struct indexed_mesh<Polytope, pmg::elem_shape::polytope, 1>
+template <std::size_t Dim, typename Real>
+struct indexed_mesh<spt::dion<Dim, Real>, pmg::elem_shape::polytope>
 {
-    using polytope_type = Polytope;
-    using real_type = typename polytope_type::real_type;
+    using polytope_type = spt::dion<Dim, Real>;
+    using real_type = Real;
     using index_type = std::size_t;
-    using vertex_type = spt::vec<polytope_type::dim, real_type>;
-    using elem_type = std::array<index_type, 2>;
-
-    std::vector<vertex_type> vertices;
-    std::vector<elem_type> elements;
-};
-
-template <typename Polytope>
-struct indexed_mesh<Polytope, pmg::elem_shape::polytope, 2>
-{
-    using polytope_type = Polytope;
-    using real_type = typename polytope_type::real_type;
-    using index_type = std::size_t;
-    using vertex_type = spt::vec<polytope_type::dim, real_type>;
+    using vertex_type = spt::vec<Dim, real_type>;
     using edge_type = std::array<index_type, 2>;
-    using elem_type = std::vector<index_type>;
 
     std::vector<vertex_type> vertices;
     std::vector<edge_type> edges;
-    std::vector<elem_type> elements;
 };
 
-template <typename Polytope>
-struct indexed_mesh<Polytope, pmg::elem_shape::polytope, 3>
+template <std::size_t Dim, typename Real>
+struct indexed_mesh<spt::polygon<Dim, Real>, pmg::elem_shape::polytope>
 {
-    using polytope_type = Polytope;
-    using real_type = typename polytope_type::real_type;
+    using polytope_type = spt::polygon<Dim, Real>;
+    using real_type = Real;
     using index_type = std::size_t;
-    using vertex_type = spt::vec<polytope_type::dim, real_type>;
+    using vertex_type = spt::vec<Dim, real_type>;
     using edge_type = std::array<index_type, 2>;
     using face_type = std::vector<index_type>;
-    using elem_type = std::vector<index_type>;
 
     std::vector<vertex_type> vertices;
     std::vector<edge_type> edges;
     std::vector<face_type> faces;
-    std::vector<elem_type> elements;
+};
+
+template <std::size_t Dim, typename Real>
+struct indexed_mesh<spt::polyhedron<Dim, Real>, pmg::elem_shape::polytope>
+{
+    using polytope_type = spt::polyhedron<Dim, Real>;
+    using real_type = Real;
+    using index_type = std::size_t;
+    using vertex_type = spt::vec<Dim, Real>;
+    using edge_type = std::array<index_type, 2>;
+    using face_type = std::vector<index_type>;
+    using cell_type = std::vector<index_type>;
+
+    std::vector<vertex_type> vertices;
+    std::vector<edge_type> edges;
+    std::vector<face_type> faces;
+    std::vector<cell_type> cells;
 };
 
 } // namespace pmg
