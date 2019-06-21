@@ -12,6 +12,7 @@ namespace spt {
 template <std::size_t Dim, typename Real = double>
 struct vec
 {
+    static constexpr auto dim = Dim;
     using real_type = Real;
 
     std::array<real_type, Dim> x = { static_cast<real_type>(0.0), };
