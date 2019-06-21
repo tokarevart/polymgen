@@ -141,6 +141,7 @@ std::vector<spt::simplex_v<3>*> simplices_from_kw(std::istream& stream)
     }
 
     std::vector<spt::simplex_v<3>*> simplices;
+    simplices.reserve(elements_solid.size());
     for (const auto& elem_solid : elements_solid)
         simplices.push_back(new spt::simplex_v<3>(
             nodes[std::get<2>(elem_solid)[0]],
