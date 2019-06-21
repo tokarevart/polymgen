@@ -14,36 +14,33 @@ struct polytope<1, Dim, Real>
     static constexpr auto dim = Dim;
     using real_type = Real;
     using facet_type = spt::vertex<Dim, Real>;
+    using vertex_type = facet_type;
 
-    std::array<facet_type*, 2> facets = { nullptr, };
+    std::array<vertex_type*, 2> vertices = { nullptr, };
 
     bool empty() const
     {
-        return !facets[0] && !facets[1];
+        return !vertices[0] && !vertices[1];
     }
 
-    template <typename SubPolytope>
-    std::array<SubPolytope*, 2> all_of() const
+    real_type magnitude() const
     {
-        if constexpr (SubPolytope::n >= 1)
-            throw std::logic_error("SubPolytope::n must be less than this class n");
-        else
-            return facets;
+        return (vertices[1]->pos - vertices[0]->pos).magnitude();
     }
 
-    bool contains(const facet_type* subpt) const
+    bool contains(const facet_type* vert) const
     {
-        return facets[0] == subpt || facets[1] == subpt;
+        return vertices[0] == vert || vertices[1] == vert;
     }
 
     polytope(const polytope& poly)
     {
-        facets = poly.facets;
+        vertices = poly.vertices;
     }
-    polytope(const std::array<facet_type*, 2> & facets)
-        : facets(facets) {}
-    polytope(const facet_type* v0, const facet_type* v1, const facet_type* v2)
-        : facets({ v0, v1, v2 }) {}
+    polytope(const std::array<facet_type*, 2>& vertices)
+        : vertices(vertices) {}
+    polytope(const facet_type* v0, const facet_type* v1)
+        : vertices({ v0, v1 }) {}
 };
 
 } // namespace spt
