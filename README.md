@@ -1,5 +1,5 @@
 # PolyMGen
-PolyMGen is a library for parallel mesh generation of many polytopes, such as polygons and polyhedrons.  
+PolyMGen is a library for parallel quality mesh generation of many polytopes, such as polygons and polyhedrons.  
 It is created with the purpose of use in solving boundary-value problems for polycrystal by the finite element method.
 
 ## Example:
