@@ -4,6 +4,9 @@
     <Filter Include="polyspt">
       <UniqueIdentifier>{cb390e96-4a64-43eb-becd-c92e2d503775}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mesher">
+      <UniqueIdentifier>{b44ef386-459e-4e20-9c7a-f944b377a419}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="polyspt\algs.cpp">
@@ -30,9 +33,6 @@
     <ClInclude Include="polyspt\monon.h">
       <Filter>polyspt</Filter>
     </ClInclude>
-    <ClInclude Include="polyspt\polychoron.h">
-      <Filter>polyspt</Filter>
-    </ClInclude>
     <ClInclude Include="polyspt\polygon.h">
       <Filter>polyspt</Filter>
     </ClInclude>
@@ -50,6 +50,57 @@
     </ClInclude>
     <ClInclude Include="polyspt\vertex.h">
       <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\indexed_mesh.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\indexed_mesh-base.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\indexed_mesh-polytope.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\indexed_mesh-simplex.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\mesh.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\mesh-base.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\mesh-polytope.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\mesh-simplex.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\polytope.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="mesher\algs.h">
+      <Filter>mesher</Filter>
+    </ClInclude>
+    <ClInclude Include="mesher\front_edge.h">
+      <Filter>mesher</Filter>
+    </ClInclude>
+    <ClInclude Include="mesher\front_face.h">
+      <Filter>mesher</Filter>
+    </ClInclude>
+    <ClInclude Include="mesher\front_vertex.h">
+      <Filter>mesher</Filter>
+    </ClInclude>
+    <ClInclude Include="mesher\genparams.h">
+      <Filter>mesher</Filter>
+    </ClInclude>
+    <ClInclude Include="mesher\mesher.h">
+      <Filter>mesher</Filter>
+    </ClInclude>
+    <ClInclude Include="mesher\mesher-base.h">
+      <Filter>mesher</Filter>
+    </ClInclude>
+    <ClInclude Include="mesher\mesher-simplex.h">
+      <Filter>mesher</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

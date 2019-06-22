@@ -67,7 +67,7 @@ struct simplex<3, Dim, Real>
         return static_cast<real_type>(1.0 / 6.0) * 
             std::abs(vec<3>::mixed(
                 verts[1]->pos - verts[0]->pos, 
-                verts[2]->pos - verts[0]->pos, 
+                verts[2]->pos - verts[0]->pos,
                 verts[3]->pos - verts[0]->pos));
     }
 
@@ -104,8 +104,9 @@ struct simplex<3, Dim, Real>
     }
     simplex(const std::array<face_type*, 4>& faces)
         : faces(faces) {}
-    simplex(const face_type* f0, const face_type* f1, const face_type* f2, const face_type* f3)
-        : faces({ f0, f1, f2, f3 }) {}
+    template <typename... Faces>
+    simplex(Faces... faces)
+        : faces({ faces... }) {}
 };
 
 template <std::size_t Dim, typename Real>
@@ -167,8 +168,9 @@ struct simplex<2, Dim, Real>
     }
     simplex(const std::array<edge_type*, 3>& edges)
         : edges(edges) {}
-    simplex(const edge_type* e0, const edge_type* e1, const edge_type* e2)
-        : edges({ e0, e1, e2 }) {}
+    template <typename... Edges>
+    simplex(Edges... edges)
+        : edges({ edges... }) {}
 };
 
 template <std::size_t N, std::size_t Dim = 3, typename Real = typename spt::vec<Dim>::real_type>
@@ -200,6 +202,46 @@ struct simplex_v
     template <typename... Vertices>
     simplex_v(Vertices... verts)
         : vertices({ verts... }) {}
+};
+
+template <std::size_t Dim, typename Real>
+struct simplex_v<3, Dim, Real>
+{
+    static constexpr auto n = 3;
+    static constexpr auto dim = Dim;
+    using real_type = Real;
+    using vertex_type = spt::vertex<Dim, Real>;
+
+    std::array<vertex_type*, 4> vertices = { nullptr, nullptr, nullptr, nullptr };
+
+    bool empty() const
+    {
+        return std::none_of(vertices.begin(), vertices.end(), [](auto x)-> bool { return x; });
+    }
+
+    real_type volume() const
+    {
+        return static_cast<real_type>(1.0 / 6.0) *
+            std::abs(vec<3>::mixed(
+                vertices[1]->pos - vertices[0]->pos,
+                vertices[2]->pos - vertices[0]->pos,
+                vertices[3]->pos - vertices[0]->pos));
+    }
+
+    bool contains(const vertex_type* vert) const
+    {
+        return std::find(vertices.begin(), vertices.end(), vert) != vertices.end();
+    }
+
+    simplex_v(const simplex_v& other)
+    {
+        vertices = other.vertices;
+    }
+    simplex_v(const std::array<vertex_type*, 4>& verts)
+        : vertices(vertices) {}
+    template <typename... Vertices>
+    simplex_v(Vertices... verts)
+        : vertices{ verts... } {}
 };
 
 } // namespace spt

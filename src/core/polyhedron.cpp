@@ -1691,8 +1691,6 @@ void Polyhedron::tetrahedralize(real_t preferredLen, genparams::Volume genParams
 //        throw std::logic_error("Intersection error.\npmg::Polyhedron::globalIntersectionCheck returned true.");
 
     smoothMesh(genParams.nSmoothIters);
-
-    m_isQualityAnalyzed     = false;
 }
 
 
@@ -1736,9 +1734,6 @@ void Polyhedron::smoothMesh(std::size_t nIters)
 
 pair_rr Polyhedron::analyzeMeshQuality(std::list<Tetr*>::iterator* out_minQualityTetr)
 {
-    if (m_isQualityAnalyzed)
-        return m_meshQuality;
-
     std::size_t n_tetrs = 0;
     real_t av_q = static_cast<real_t>(0.0);
     real_t min_q = static_cast<real_t>(1.0);
@@ -1759,16 +1754,12 @@ pair_rr Polyhedron::analyzeMeshQuality(std::list<Tetr*>::iterator* out_minQualit
     if (out_minQualityTetr)
         *out_minQualityTetr = min_q_tetr;
 
-    m_isQualityAnalyzed = true;
     return m_meshQuality = { min_q, av_q };
 }
 
 
 pair_rr Polyhedron::analyzeMeshAbsGrad()
 {
-    if (m_isMeshAbsGradAnalyzed)
-        return m_meshAbsGrad;
-
     for (auto& tetr : m_innerTetrs)
     {
         real_t volume = tetr->computeVolume();
@@ -1789,7 +1780,6 @@ pair_rr Polyhedron::analyzeMeshAbsGrad()
     }
     av_abs_grad /= m_innerVerts.size();
 
-    m_isMeshAbsGradAnalyzed = true;
     return m_meshAbsGrad = { min_abs_grad, av_abs_grad };
 }
 

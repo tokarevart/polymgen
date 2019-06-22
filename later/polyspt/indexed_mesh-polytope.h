@@ -1,13 +1,13 @@
 #pragma once
 #include <vector>
 #include "indexed_mesh-base.h"
-#include "../polyspt/polyhedron.h"
+#include "polyhedron.h"
 
 
-namespace pmg {
+namespace spt {
 
 template <std::size_t Dim, typename Real>
-struct indexed_mesh<spt::dion<Dim, Real>, pmg::elem_shape::polytope>
+struct indexed_mesh<spt::dion<Dim, Real>, spt::elem_shape::polytope>
 {
     using polytope_type = spt::dion<Dim, Real>;
     using real_type = Real;
@@ -20,7 +20,7 @@ struct indexed_mesh<spt::dion<Dim, Real>, pmg::elem_shape::polytope>
 };
 
 template <std::size_t Dim, typename Real>
-struct indexed_mesh<spt::polygon<Dim, Real>, pmg::elem_shape::polytope>
+struct indexed_mesh<spt::polygon<Dim, Real>, spt::elem_shape::polytope>
 {
     using polytope_type = spt::polygon<Dim, Real>;
     using real_type = Real;
@@ -35,7 +35,7 @@ struct indexed_mesh<spt::polygon<Dim, Real>, pmg::elem_shape::polytope>
 };
 
 template <std::size_t Dim, typename Real>
-struct indexed_mesh<spt::polyhedron<Dim, Real>, pmg::elem_shape::polytope>
+struct indexed_mesh<spt::polyhedron<Dim, Real>, spt::elem_shape::polytope>
 {
     using polytope_type = spt::polyhedron<Dim, Real>;
     using real_type = Real;

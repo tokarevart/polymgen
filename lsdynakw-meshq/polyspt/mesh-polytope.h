@@ -1,7 +1,7 @@
 #pragma once
 #include "mesh-base.h"
 
-namespace pmg {
+namespace spt {
        
 template <typename Polytope>
 struct mesh<Polytope, elem_shape::polytope>

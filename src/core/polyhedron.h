@@ -78,8 +78,6 @@ private:
 
     pair_rr m_meshQuality;
     pair_rr m_meshAbsGrad;
-    bool m_isQualityAnalyzed     = false;
-    bool m_isMeshAbsGradAnalyzed = false;
 
     real_t m_prefLen = static_cast<real_t>(0.0);
 

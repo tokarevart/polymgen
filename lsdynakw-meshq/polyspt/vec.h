@@ -15,7 +15,7 @@ struct vec
     static constexpr auto dim = Dim;
     using real_type = Real;
 
-    std::array<real_type, Dim> x = { static_cast<real_type>(0.0), };
+    std::array<real_type, Dim> x;
 
 
     static real_type dot(const vec& vec0, const vec& vec1)
@@ -25,14 +25,14 @@ struct vec
    
     static real_type cos(const vec& vec0, const vec& vec1)
     {
-        return vec::dot(vec0, vec1) / std::sqrt(vec0.sqrMagnitude() * vec1.sqrMagnitude());
+        return vec::dot(vec0, vec1) / std::sqrt(vec0.sqr_magnitude() * vec1.sqr_magnitude());
     }
 
     real_type magnitude() const
     {
-        return std::sqrt(sqrMagnitude());
+        return std::sqrt(sqr_magnitude());
     }
-    real_type sqrMagnitude() const
+    real_type sqr_magnitude() const
     {
         return dot(*this, *this);
     }
@@ -45,7 +45,7 @@ struct vec
     }
     vec& project( const vec& vec )
     {
-        return *this = vec * (dot(*this, vec) / vec.sqrMagnitude());
+        return *this = vec * (dot(*this, vec) / vec.sqr_magnitude());
     }
     vec project( const vec& vec ) const
     {
@@ -126,7 +126,10 @@ struct vec
     }
 
     vec() 
-        : x({ static_cast<real_type>(0.0), }) {}
+    {
+        for (auto& coor : x)
+            coor = static_cast<real_type>(0.0);
+    }
     vec(const vec& vec)
     {
         x = vec.x;
@@ -142,9 +145,15 @@ struct vec
 template <typename Real>
 struct vec<3, Real>
 {
+    static constexpr auto dim = 3;
     using real_type = Real;
 
-    std::array<real_type, 3> x = { static_cast<real_type>(0.0), };
+    std::array<real_type, 3> x = 
+    { 
+        static_cast<real_type>(0.0), 
+        static_cast<real_type>(0.0), 
+        static_cast<real_type>(0.0)
+    };
 
 
     static real_type dot(const vec& vec0, const vec& vec1)
@@ -153,7 +162,8 @@ struct vec<3, Real>
     }
     static vec cross(const vec& vec0, const vec& vec1)
     {
-        return vec(vec0.x[1] * vec1.x[2] - vec0.x[2] * vec1.x[1],
+        return vec(
+            vec0.x[1] * vec1.x[2] - vec0.x[2] * vec1.x[1],
             vec0.x[2] * vec1.x[0] - vec0.x[0] * vec1.x[2],
             vec0.x[0] * vec1.x[1] - vec0.x[1] * vec1.x[0]);
     }
@@ -164,14 +174,14 @@ struct vec<3, Real>
 
     static real_type cos(const vec& vec0, const vec& vec1)
     {
-        return vec::dot(vec0, vec1) / std::sqrt(vec0.sqrMagnitude() * vec1.sqrMagnitude());
+        return vec::dot(vec0, vec1) / std::sqrt(vec0.sqr_magnitude() * vec1.sqr_magnitude());
     }
 
     real_type magnitude() const
     {
-        return std::sqrt(sqrMagnitude());
+        return std::sqrt(sqr_magnitude());
     }
-    real_type sqrMagnitude() const
+    real_type sqr_magnitude() const
     {
         return dot(*this, *this);
     }
@@ -186,7 +196,7 @@ struct vec<3, Real>
     }
     vec& project(const vec& vec)
     {
-        return *this = vec * (dot(*this, vec) / vec.sqrMagnitude());
+        return *this = vec * (dot(*this, vec) / vec.sqr_magnitude());
     }
     vec project(const vec& vec) const
     {
@@ -212,27 +222,31 @@ struct vec<3, Real>
     }
     vec operator+(const vec& right) const
     {
-        return vec(x[0] + right.x[0],
-                   x[1] + right.x[1],
-                   x[2] + right.x[2]);
+        return vec(
+            x[0] + right.x[0],
+            x[1] + right.x[1],
+            x[2] + right.x[2]);
     }
     vec operator-(const vec& right) const
     {
-        return vec(x[0] - right.x[0],
-                   x[1] - right.x[1],
-                   x[2] - right.x[2]);
+        return vec(
+            x[0] - right.x[0],
+            x[1] - right.x[1],
+            x[2] - right.x[2]);
     }
     vec operator*(real_type scalar) const
     {
-        return vec(x[0] * scalar,
-                   x[1] * scalar,
-                   x[2] * scalar);
+        return vec(
+            x[0] * scalar,
+            x[1] * scalar,
+            x[2] * scalar);
     }
     vec operator/(real_type scalar) const
     {
-        return vec(x[0] / scalar,
-                   x[1] / scalar,
-                   x[2] / scalar);
+        return vec(
+            x[0] / scalar,
+            x[1] / scalar,
+            x[2] / scalar);
     }
     vec& operator+=(const vec& right)
     {
@@ -271,8 +285,7 @@ struct vec<3, Real>
         return x[i];
     }
 
-    vec()
-        : x({ static_cast<real_type>(0.0), }) {}
+    vec() {}
     vec(const vec& vec)
     {
         x = vec.x;
@@ -291,9 +304,14 @@ struct vec<3, Real>
 template <typename Real>
 struct vec<2, Real>
 {
+    static constexpr auto dim = 2;
     using real_type = Real;
 
-    std::array<real_type, 2> x = { static_cast<real_type>(0.0), };
+    std::array<real_type, 2> x = 
+    { 
+        static_cast<real_type>(0.0), 
+        static_cast<real_type>(0.0) 
+    };
 
 
     static real_type dot(const vec& vec0, const vec& vec1)
@@ -307,14 +325,14 @@ struct vec<2, Real>
 
     static real_type cos(const vec& vec0, const vec& vec1)
     {
-        return vec::dot(vec0, vec1) / std::sqrt(vec0.sqrMagnitude() * vec1.sqrMagnitude());
+        return vec::dot(vec0, vec1) / std::sqrt(vec0.sqr_magnitude() * vec1.sqr_magnitude());
     }
 
     real_type magnitude() const
     {
-        return std::sqrt(sqrMagnitude());
+        return std::sqrt(sqr_magnitude());
     }
-    real_type sqrMagnitude() const
+    real_type sqr_magnitude() const
     {
         return dot(*this, *this);
     }
@@ -328,7 +346,7 @@ struct vec<2, Real>
     }
     vec& project(const vec& vec)
     {
-        return *this = vec * (dot(*this, vec) / vec.sqrMagnitude());
+        return *this = vec * (dot(*this, vec) / vec.sqr_magnitude());
     }
     vec project(const vec& vec) const
     {
@@ -346,24 +364,20 @@ struct vec<2, Real>
     }
     vec operator+(const vec& right) const
     {
-        return vec(x[0] + right.x[0],
-                   x[1] + right.x[1]);
+        return vec(x[0] + right.x[0], x[1] + right.x[1]);
     }
     vec operator-(const vec& right) const
     {
-        return vec(x[0] - right.x[0],
-                   x[1] - right.x[1]);
+        return vec(x[0] - right.x[0], x[1] - right.x[1]);
     }
     vec operator*(real_type scalar) const
     {
-        return vec(x[0] * scalar,
-                   x[1] * scalar);
+        return vec(x[0] * scalar, x[1] * scalar);
     }
     vec operator/(real_type scalar) const
     {
         real_type inv_scalar = static_cast<real_type>(1.0) / scalar;
-        return vec(x[0] * inv_scalar,
-                   x[1] * inv_scalar);
+        return vec(x[0] * inv_scalar, x[1] * inv_scalar);
     }
     vec& operator+=(const vec& right)
     {
@@ -398,8 +412,7 @@ struct vec<2, Real>
         return x[i];
     }
 
-    vec()
-        : x({ static_cast<real_type>(0.0), }) {}
+    vec() {}
     vec(const vec& vec)
     {
         x = vec.x;

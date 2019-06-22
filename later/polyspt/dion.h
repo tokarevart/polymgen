@@ -39,8 +39,9 @@ struct polytope<1, Dim, Real>
     }
     polytope(const std::array<facet_type*, 2>& vertices)
         : vertices(vertices) {}
-    polytope(const facet_type* v0, const facet_type* v1)
-        : vertices({ v0, v1 }) {}
+    template <typename... Vertices>
+    polytope(Vertices... verts)
+        : vertices{ verts... } {}
 };
 
 } // namespace spt

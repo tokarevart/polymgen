@@ -122,7 +122,8 @@ bool spt::does_ray_intersect_triangle(
 }
 
 
-vec<3> spt::lines_closest_point(const vec<3>& line0_p0, const vec<3>& line0_p1, const vec<3>& line1_p0, const vec<3>& line1_p1)
+vec<3> spt::lines_closest_point(
+    const vec<3>& line0_p0, const vec<3>& line0_p1, const vec<3>& line1_p0, const vec<3>& line1_p1)
 {
     vec<3> u = line0_p1 - line0_p0;
     vec<3> v = line1_p1 - line1_p0;
@@ -435,7 +436,7 @@ vec<3>::real_type spt::distance_point_to_segment(const vec<3>& point, const vec<
     {
         return (proj - point).magnitude();
     }
-    else if (vec<3>::real_type sqr_magns[2] { (segm_p0 - point).sqrMagnitude(), (segm_p1 - point).sqrMagnitude() };
+    else if (vec<3>::real_type sqr_magns[2] { (segm_p0 - point).sqr_magnitude(), (segm_p1 - point).sqr_magnitude() };
              sqr_magns[0] < sqr_magns[1])
     {
         return std::sqrt(sqr_magns[0]);
@@ -456,26 +457,27 @@ vec<3>::real_type spt::distance_point_to_triangle_on_plane(
     closest_points[2] = closest_segment_point_to_point(point, trngl_p2, trngl_p0);
 
     std::array<vec<3>::real_type, 3> sqrs;
-    sqrs[0] = (closest_points[0] - point).sqrMagnitude();
-    sqrs[1] = (closest_points[1] - point).sqrMagnitude();
-    sqrs[2] = (closest_points[2] - point).sqrMagnitude();
+    sqrs[0] = (closest_points[0] - point).sqr_magnitude();
+    sqrs[1] = (closest_points[1] - point).sqr_magnitude();
+    sqrs[2] = (closest_points[2] - point).sqr_magnitude();
 
     return std::min({ sqrs[0], sqrs[1], sqrs[2] });
 }
 
 
-bool spt::does_triangle_intersect_sphere(const vec<3>& trngl_p0, const vec<3>& trngl_p1, const vec<3>& trngl_p2,
-                                           const vec<3>& center,   vec<3>::real_type radius)
+bool spt::does_triangle_intersect_sphere(
+    const vec<3>& trngl_p0, const vec<3>& trngl_p1, const vec<3>& trngl_p2,
+    const vec<3>& center, vec<3>::real_type radius)
 {
     vec<3> proj = project(center, trngl_p0, trngl_p1, trngl_p2);
-    if ((proj - center).sqrMagnitude() > radius * radius)
+    if ((proj - center).sqr_magnitude() > radius * radius)
         return false;
 
     if (is_point_on_triangle(proj, trngl_p0, trngl_p1, trngl_p2, max_sqrs_sum(trngl_p0, trngl_p1, trngl_p2)))
         return true;
 
     vec<3> closest = closest_triangle_point_to_point_on_plane(proj, trngl_p0, trngl_p1, trngl_p2);
-    return (closest - center).sqrMagnitude() <= radius * radius;
+    return (closest - center).sqr_magnitude() <= radius * radius;
 }
 
 
@@ -487,7 +489,7 @@ vec<3> spt::closest_segment_point_to_point(const vec<3>& point, const vec<3>& se
     {
         return proj;
     }
-    else if (vec<3>::real_type sqr_magns[2] { (segm_p0 - point).sqrMagnitude(), (segm_p1 - point).sqrMagnitude() };
+    else if (vec<3>::real_type sqr_magns[2] { (segm_p0 - point).sqr_magnitude(), (segm_p1 - point).sqr_magnitude() };
              sqr_magns[0] < sqr_magns[1])
     {
         return segm_p0;
@@ -502,9 +504,9 @@ vec<3> spt::closest_segment_point_to_point(const vec<3>& point, const vec<3>& se
 vec<3>::real_type spt::max_sqrs_sum(const vec<3>& trngl_p0, const vec<3>& trngl_p1, const vec<3>& trngl_p2)
 {
     std::array<vec<3>::real_type, 3> sqrs;
-    sqrs[0] = (trngl_p1 - trngl_p0).sqrMagnitude();
-    sqrs[1] = (trngl_p2 - trngl_p1).sqrMagnitude();
-    sqrs[2] = (trngl_p0 - trngl_p2).sqrMagnitude();
+    sqrs[0] = (trngl_p1 - trngl_p0).sqr_magnitude();
+    sqrs[1] = (trngl_p2 - trngl_p1).sqr_magnitude();
+    sqrs[2] = (trngl_p0 - trngl_p2).sqr_magnitude();
 
     std::size_t max_inds[2];
     if (sqrs[0] < sqrs[1])
@@ -531,9 +533,9 @@ vec<3>::real_type spt::max_sqrs_sum(const vec<3>& trngl_p0, const vec<3>& trngl_
 vec<3>::real_type spt::sqrs_sum(const vec<3>& point, const vec<3>& trngl_p0, const vec<3>& trngl_p1, const vec<3>& trngl_p2)
 {
     std::array<vec<3>::real_type, 3> sqrs;
-    sqrs[0] = (trngl_p0 - point).sqrMagnitude();
-    sqrs[1] = (trngl_p1 - point).sqrMagnitude();
-    sqrs[2] = (trngl_p2 - point).sqrMagnitude();
+    sqrs[0] = (trngl_p0 - point).sqr_magnitude();
+    sqrs[1] = (trngl_p1 - point).sqr_magnitude();
+    sqrs[2] = (trngl_p2 - point).sqr_magnitude();
     return sqrs[0] + sqrs[1] + sqrs[2];
 }
 
@@ -547,9 +549,9 @@ vec<3> spt::closest_triangle_point_to_point_on_plane(
     closest_points[2] = closest_segment_point_to_point(point, trngl_p2, trngl_p0);
 
     std::array<vec<3>::real_type, 3> sqrs;
-    sqrs[0] = (closest_points[0] - point).sqrMagnitude();
-    sqrs[1] = (closest_points[1] - point).sqrMagnitude();
-    sqrs[2] = (closest_points[2] - point).sqrMagnitude();
+    sqrs[0] = (closest_points[0] - point).sqr_magnitude();
+    sqrs[1] = (closest_points[1] - point).sqr_magnitude();
+    sqrs[2] = (closest_points[2] - point).sqr_magnitude();
 
     std::size_t min_i;
     if (sqrs[0] < sqrs[1])

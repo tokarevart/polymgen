@@ -103,9 +103,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <ConformanceMode>false</ConformanceMode>
+      <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <OpenMPSupport>true</OpenMPSupport>
+      <OpenMPSupport>false</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,16 +131,32 @@
     <ClCompile Include="polyspt\algs.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="mesher\algs.h" />
+    <ClInclude Include="mesher\front_edge.h" />
+    <ClInclude Include="mesher\front_face.h" />
+    <ClInclude Include="mesher\front_vertex.h" />
+    <ClInclude Include="mesher\genparams.h" />
+    <ClInclude Include="mesher\mesher-base.h" />
+    <ClInclude Include="mesher\mesher-simplex.h" />
+    <ClInclude Include="mesher\mesher.h" />
     <ClInclude Include="polyspt\algs.h" />
     <ClInclude Include="polyspt\cell.h" />
     <ClInclude Include="polyspt\dion.h" />
     <ClInclude Include="polyspt\edge.h" />
     <ClInclude Include="polyspt\face.h" />
+    <ClInclude Include="polyspt\indexed_mesh-base.h" />
+    <ClInclude Include="polyspt\indexed_mesh-polytope.h" />
+    <ClInclude Include="polyspt\indexed_mesh-simplex.h" />
+    <ClInclude Include="polyspt\indexed_mesh.h" />
+    <ClInclude Include="polyspt\mesh-base.h" />
+    <ClInclude Include="polyspt\mesh-polytope.h" />
+    <ClInclude Include="polyspt\mesh-simplex.h" />
+    <ClInclude Include="polyspt\mesh.h" />
     <ClInclude Include="polyspt\monon.h" />
-    <ClInclude Include="polyspt\polychoron.h" />
     <ClInclude Include="polyspt\polygon.h" />
     <ClInclude Include="polyspt\polyhedron.h" />
     <ClInclude Include="polyspt\polytope-base.h" />
+    <ClInclude Include="polyspt\polytope.h" />
     <ClInclude Include="polyspt\simplex.h" />
     <ClInclude Include="polyspt\vec.h" />
     <ClInclude Include="polyspt\vertex.h" />

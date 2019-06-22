@@ -1,7 +1,6 @@
 #pragma once
 
-
-namespace pmg {
+namespace spt {
 
 enum class elem_shape
 {

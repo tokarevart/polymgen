@@ -203,7 +203,7 @@ void PolyhedralSet::outputLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, unsig
     file << "*ELEMENT_SOLID\n"
         "$#   eid     pid      n1      n2      n3      n4      n5      n6      n7      n8\n";
     std::size_t pid = 1;
-    std::size_t eid = 10000000 * PolyhedralSetId + 1;
+    std::size_t eid = 10000000ull * PolyhedralSetId + 1ull;
     for (auto& polyhedr : m_polyhedrons)
     {
         for (auto& tetr : polyhedr->innerTetrs())
