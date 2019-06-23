@@ -148,6 +148,7 @@
     <ClInclude Include="polyspt\indexed_mesh\indexed_mesh-base.h" />
     <ClInclude Include="polyspt\indexed_mesh\indexed_mesh-polytope.h" />
     <ClInclude Include="polyspt\indexed_mesh\indexed_mesh-simplex.h" />
+    <ClInclude Include="polyspt\mat.h" />
     <ClInclude Include="polyspt\mesh.h" />
     <ClInclude Include="polyspt\mesh\mesh-base.h" />
     <ClInclude Include="polyspt\mesh\mesh-polytope.h" />

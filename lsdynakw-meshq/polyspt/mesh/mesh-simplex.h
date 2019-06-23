@@ -19,6 +19,7 @@ struct mesh<Polytope, elem_shape::simplex>
     std::vector<elem_type*> elements;
 };
 
+
 template <typename Polytope>
 struct mesh_v<Polytope, elem_shape::simplex>
 {

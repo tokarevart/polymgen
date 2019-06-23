@@ -67,6 +67,7 @@ struct simplex<2, Dim, Real>
         : edges({ edges... }) {}
 };
 
+
 template <std::size_t Dim, typename Real>
 struct simplex_v<2, Dim, Real>
 {

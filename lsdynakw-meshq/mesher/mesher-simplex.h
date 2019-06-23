@@ -5,7 +5,7 @@
 namespace pmg {
 
 template <typename Polytope, std::size_t N>
-class mesher<Polytope, pmg::elem_shape::simplex, N>
+class mesher<Polytope, spt::elem_shape::simplex, N>
 {
     using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::real_type>;
     using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::real_type>;
@@ -70,7 +70,7 @@ private:
 
 
 template <typename Polytope, std::size_t N>
-class mesher<spt::aggregate<Polytope>, pmg::elem_shape::simplex, N>
+class mesher<spt::aggregate<Polytope>, spt::elem_shape::simplex, N>
 {
     using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::real_type>;
     using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::real_type>;

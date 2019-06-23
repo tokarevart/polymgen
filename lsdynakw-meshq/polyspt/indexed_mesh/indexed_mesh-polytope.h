@@ -19,6 +19,7 @@ struct indexed_mesh<spt::dion<Dim, Real>, spt::elem_shape::polytope>
     std::vector<edge_type> edges;
 };
 
+
 template <std::size_t Dim, typename Real>
 struct indexed_mesh<spt::polygon<Dim, Real>, spt::elem_shape::polytope>
 {
@@ -33,6 +34,7 @@ struct indexed_mesh<spt::polygon<Dim, Real>, spt::elem_shape::polytope>
     std::vector<edge_type> edges;
     std::vector<face_type> faces;
 };
+
 
 template <std::size_t Dim, typename Real>
 struct indexed_mesh<spt::polyhedron<Dim, Real>, spt::elem_shape::polytope>

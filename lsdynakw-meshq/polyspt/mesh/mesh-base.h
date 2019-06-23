@@ -1,5 +1,5 @@
 #pragma once
-#include "simplex.h"
+#include "../simplex.h"
 #include <vector>
 
 namespace spt {
@@ -14,8 +14,10 @@ enum class elem_shape
 template <typename Polytope, elem_shape ElemShape>
 struct mesh;
 
+
 template <typename Polytope, elem_shape ElemShape>
 struct mesh_v;
+
 
 template <typename Polytope, elem_shape ElemShape>
 struct mesh<spt::aggregate<Polytope>, ElemShape>
@@ -26,6 +28,7 @@ struct mesh<spt::aggregate<Polytope>, ElemShape>
 
     std::vector<submesh_type*> meshes;
 };
+
 
 template <typename Polytope, elem_shape ElemShape>
 struct mesh_v<spt::aggregate<Polytope>, ElemShape>

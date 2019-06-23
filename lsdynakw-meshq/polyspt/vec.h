@@ -3,10 +3,10 @@
 
 #pragma once
 #include <cmath>
+#include <cstdint>
 #include <numeric>
 #include <array>
 
-// spt means spatial
 namespace spt {
 
 template <std::size_t Dim, typename Real = double>
@@ -22,7 +22,6 @@ struct vec
     {
         return std::inner_product(vec0.x.begin(), vec0.x.end(), vec1.x.begin(), static_cast<real_type>(0.0));
     }
-   
     static real_type cos(const vec& vec0, const vec& vec1)
     {
         return vec::dot(vec0, vec1) / std::sqrt(vec0.sqr_magnitude() * vec1.sqr_magnitude());
@@ -116,11 +115,11 @@ struct vec
             x[i] /= scalar;
         return *this;
     }
-    real_type& operator[](std::size_t i)
+    real_type& operator[](std::uint8_t i)
     {
         return x[i];
     }
-    const real_type& operator[](std::size_t i) const
+    const real_type& operator[](std::uint8_t i) const
     {
         return x[i];
     }
@@ -171,7 +170,6 @@ struct vec<3, Real>
     {
         return dot(cross(vec0, vec1), vec2);
     }
-
     static real_type cos(const vec& vec0, const vec& vec1)
     {
         return vec::dot(vec0, vec1) / std::sqrt(vec0.sqr_magnitude() * vec1.sqr_magnitude());
@@ -276,11 +274,11 @@ struct vec<3, Real>
         x[2] /= scalar;
         return *this;
     }
-    real_type& operator[](std::size_t i)
+    real_type& operator[](std::uint8_t i)
     {
         return x[i];
     }
-    const real_type& operator[](std::size_t i) const
+    const real_type& operator[](std::uint8_t i) const
     {
         return x[i];
     }
@@ -322,7 +320,6 @@ struct vec<2, Real>
     {
         return vec0[0] * vec1[1] - vec0[1] * vec1[0];
     }
-
     static real_type cos(const vec& vec0, const vec& vec1)
     {
         return vec::dot(vec0, vec1) / std::sqrt(vec0.sqr_magnitude() * vec1.sqr_magnitude());
@@ -403,11 +400,11 @@ struct vec<2, Real>
         x[1] /= scalar;
         return *this;
     }
-    real_type& operator[](std::size_t i)
+    real_type& operator[](std::uint8_t i)
     {
         return x[i];
     }
-    const real_type& operator[](std::size_t i) const
+    const real_type& operator[](std::uint8_t i) const
     {
         return x[i];
     }

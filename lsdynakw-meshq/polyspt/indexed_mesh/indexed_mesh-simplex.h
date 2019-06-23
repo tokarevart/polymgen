@@ -18,6 +18,7 @@ struct indexed_mesh<Polytope, spt::elem_shape::simplex>
     std::vector<elem_type> elements;
 };
 
+
 template <typename Polytope>
 struct indexed_mesh<spt::aggregate<Polytope>, spt::elem_shape::simplex>
 {

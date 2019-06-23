@@ -120,5 +120,8 @@
     <ClInclude Include="polyspt\simplex\simplex-base.h">
       <Filter>polyspt\simplex</Filter>
     </ClInclude>
+    <ClInclude Include="polyspt\mat.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

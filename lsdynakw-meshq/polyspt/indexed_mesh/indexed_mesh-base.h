@@ -8,6 +8,7 @@ enum class elem_shape
     polytope
 };
 
+
 template <typename Polytope, elem_shape ElemShape>
 struct indexed_mesh;
 

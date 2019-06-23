@@ -103,6 +103,7 @@ struct simplex<3, Dim, Real>
         : faces({ faces... }) {}
 };
 
+
 template <std::size_t Dim, typename Real>
 struct simplex_v<3, Dim, Real>
 {
