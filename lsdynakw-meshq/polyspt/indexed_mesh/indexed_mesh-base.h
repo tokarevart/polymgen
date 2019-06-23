@@ -2,8 +2,7 @@
 
 namespace spt {
 
-enum class elem_shape
-{
+enum class elem_shape {
     simplex,
     polytope
 };

@@ -21,17 +21,14 @@ using node_t = std::pair<nid_t, spt::vertex<>*>;
 using element_solid_t = std::tuple<eid_t, pid_t, std::array<nid_t, 4>>;
 using mesh_t = spt::mesh_v<spt::polyhedron<>, spt::elem_shape::simplex>;
 
-enum class section
-{
+enum class section {
     node,
     element_solid
 };
 
 
-std::string section_head(section sect)
-{
-    switch (sect)
-    {
+std::string section_head(section sect) {
+    switch (sect) {
     case section::node:          return "*NODE";
     case section::element_solid: return "*ELEMENT_SOLID";
     default: return "";
@@ -42,8 +39,7 @@ template <typename SectionType>
 SectionType parse_line(const std::string& line);
 
 template <>
-node_t parse_line(const std::string& line)
-{
+node_t parse_line(const std::string& line) {
     std::string local_line = line;
     std::size_t pos_in_line;
     nid_t nid = std::stoull(local_line, &pos_in_line);
@@ -54,8 +50,7 @@ node_t parse_line(const std::string& line)
 }
 
 template <>
-element_solid_t parse_line(const std::string& line)
-{
+element_solid_t parse_line(const std::string& line) {
     std::string local_line = line;
     std::size_t pos_in_line;
     eid_t eid = std::stoull(local_line, &pos_in_line);
@@ -67,22 +62,18 @@ element_solid_t parse_line(const std::string& line)
 }
 
 template <typename SectionType>
-SectionType parse_line(std::istream& stream)
-{
+SectionType parse_line(std::istream& stream) {
     std::string line;
     std::getline(stream, line);
     return parse_line<SectionType>(line);
 }
 
-std::map<nid_t, spt::vertex<>*> parse_node_section(std::istream& stream)
-{
+std::map<nid_t, spt::vertex<>*> parse_node_section(std::istream& stream) {
     std::map<nid_t, spt::vertex<>*> res;
-    while (!stream.eof())
-    {
+    while (!stream.eof()) {
         if (stream.peek() == '*')
             break;
-        if (stream.peek() == '$')
-        {
+        if (stream.peek() == '$') {
             std::string line;
             std::getline(stream, line);
             continue;
@@ -93,15 +84,12 @@ std::map<nid_t, spt::vertex<>*> parse_node_section(std::istream& stream)
     return res;
 }
 
-std::vector<element_solid_t> parse_element_solid_section(std::istream& stream)
-{
+std::vector<element_solid_t> parse_element_solid_section(std::istream& stream) {
     std::vector<element_solid_t> res;
-    while (!stream.eof())
-    {
-        if (stream.peek() == '*') 
+    while (!stream.eof()) {
+        if (stream.peek() == '*')
             break;
-        if (stream.peek() == '$')
-        {
+        if (stream.peek() == '$') {
             std::string line;
             std::getline(stream, line);
             continue;
@@ -113,8 +101,7 @@ std::vector<element_solid_t> parse_element_solid_section(std::istream& stream)
 }
 
 template <std::size_t N>
-std::optional<section> find_any_section_of(std::istream& stream, const std::array<section, N>& sects)
-{
+std::optional<section> find_any_section_of(std::istream& stream, const std::array<section, N>& sects) {
     std::string line;
     while (std::getline(stream, line))
         if (line.front() == '*')
@@ -125,18 +112,15 @@ std::optional<section> find_any_section_of(std::istream& stream, const std::arra
     return std::nullopt;
 }
 
-mesh_t simplices_from_kw(std::istream & stream)
-{
+mesh_t simplices_from_kw(std::istream& stream) {
     std::map<nid_t, spt::vertex<>*> nodes;
     std::vector<element_solid_t> elements_solid;
-    while (!stream.eof())
-    {
+    while (!stream.eof()) {
         auto section_found = find_any_section_of(stream, std::array{ section::node, section::element_solid });
         if (!section_found)
             break;
 
-        switch (section_found.value())
-        {
+        switch (section_found.value()) {
         case section::node:
             nodes = parse_node_section(stream);
             break;
@@ -167,8 +151,7 @@ mesh_t simplices_from_kw(std::istream & stream)
 }
 
 // Returns minimum and average quality.
-std::pair<real_t, real_t> quality(const mesh_t& mesh)
-{
+std::pair<real_t, real_t> quality(const mesh_t& mesh) {
     std::vector<real_t> qualities(mesh.elements.size());
     std::transform(mesh.elements.begin(), mesh.elements.end(), qualities.begin(), pmg::quality<3, real_t>);
 
@@ -179,8 +162,7 @@ std::pair<real_t, real_t> quality(const mesh_t& mesh)
 }
 
 
-int main()
-{
+int main() {
     std::ifstream kw_file("heat.k");
 
     auto mesh = simplices_from_kw(kw_file);

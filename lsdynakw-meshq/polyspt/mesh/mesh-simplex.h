@@ -2,10 +2,9 @@
 #include "mesh-base.h"
 
 namespace spt {
-       
+
 template <typename Polytope>
-struct mesh<Polytope, elem_shape::simplex>
-{
+struct mesh<Polytope, elem_shape::simplex> {
     using polytope_type = Polytope;
     using real_type = typename polytope_type::real_type;
     using vertex_type = spt::vertex<polytope_type::dim, real_type>;
@@ -21,8 +20,7 @@ struct mesh<Polytope, elem_shape::simplex>
 
 
 template <typename Polytope>
-struct mesh_v<Polytope, elem_shape::simplex>
-{
+struct mesh_v<Polytope, elem_shape::simplex> {
     using polytope_type = Polytope;
     using real_type = typename polytope_type::real_type;
     using vertex_type = spt::vertex<polytope_type::dim, real_type>;

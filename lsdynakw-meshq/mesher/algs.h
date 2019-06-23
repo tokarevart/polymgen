@@ -5,10 +5,8 @@
 namespace pmg {
 
 template <std::size_t Dim, typename Real>
-Real quality(const spt::simplex_v<3, Dim, Real>* simp)
-{
-    std::array<Real, 4> sqr_prods =
-    {
+Real quality(const spt::simplex_v<3, Dim, Real>* simp) {
+    std::array<Real, 4> sqr_prods = {
         static_cast<Real>(1.0),
         static_cast<Real>(1.0),
         static_cast<Real>(1.0),

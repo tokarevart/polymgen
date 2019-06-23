@@ -7,8 +7,7 @@
 namespace spt {
 
 template <std::size_t Dim, typename Real>
-struct indexed_mesh<spt::dion<Dim, Real>, spt::elem_shape::polytope>
-{
+struct indexed_mesh<spt::dion<Dim, Real>, spt::elem_shape::polytope> {
     using polytope_type = spt::dion<Dim, Real>;
     using real_type = Real;
     using index_type = std::size_t;
@@ -21,8 +20,7 @@ struct indexed_mesh<spt::dion<Dim, Real>, spt::elem_shape::polytope>
 
 
 template <std::size_t Dim, typename Real>
-struct indexed_mesh<spt::polygon<Dim, Real>, spt::elem_shape::polytope>
-{
+struct indexed_mesh<spt::polygon<Dim, Real>, spt::elem_shape::polytope> {
     using polytope_type = spt::polygon<Dim, Real>;
     using real_type = Real;
     using index_type = std::size_t;
@@ -37,8 +35,7 @@ struct indexed_mesh<spt::polygon<Dim, Real>, spt::elem_shape::polytope>
 
 
 template <std::size_t Dim, typename Real>
-struct indexed_mesh<spt::polyhedron<Dim, Real>, spt::elem_shape::polytope>
-{
+struct indexed_mesh<spt::polyhedron<Dim, Real>, spt::elem_shape::polytope> {
     using polytope_type = spt::polyhedron<Dim, Real>;
     using real_type = Real;
     using index_type = std::size_t;

@@ -6,8 +6,7 @@
 namespace spt {
 
 template <typename Polytope>
-struct indexed_mesh<Polytope, spt::elem_shape::simplex>
-{
+struct indexed_mesh<Polytope, spt::elem_shape::simplex> {
     using polytope_type = Polytope;
     using real_type = typename polytope_type::real_type;
     using index_type = std::size_t;
@@ -20,8 +19,7 @@ struct indexed_mesh<Polytope, spt::elem_shape::simplex>
 
 
 template <typename Polytope>
-struct indexed_mesh<spt::aggregate<Polytope>, spt::elem_shape::simplex>
-{
+struct indexed_mesh<spt::aggregate<Polytope>, spt::elem_shape::simplex> {
     using polytope_type = Polytope;
     using real_type = typename polytope_type::real_type;
     using index_type = std::size_t;

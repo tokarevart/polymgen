@@ -9,8 +9,7 @@ using polygon = polytope<2, Dim, Real>;
 
 
 template <std::size_t Dim, typename Real>
-struct polytope<2, Dim, Real>
-{
+struct polytope<2, Dim, Real> {
     static constexpr std::size_t n = 2;
     static constexpr std::size_t dim = Dim;
     using real_type = Real;
@@ -20,21 +19,14 @@ struct polytope<2, Dim, Real>
 
     std::list<edge_type*> edges;
 
-    bool empty() const
-    {
-        return edges.empty();
-    }
-
     template <typename SubPolytope>
-    auto all_of() const
-    {
+    auto all_of() const {
         static_assert(
             std::is_same<edge_type, SubPolytope>() ||
             std::is_same<vertex_type, SubPolytope>());
         if constexpr (std::is_same<edge_type, SubPolytope>())
             return edges;
-        else
-        {
+        else {
             std::list<SubPolytope*> res;
             for (const auto& edge : edges)
                 for (const auto& vert : edge->vertices)
@@ -45,18 +37,18 @@ struct polytope<2, Dim, Real>
         }
     }
 
-    bool contains(const edge_type* edge) const
-    {
+    bool empty() const {
+        return edges.empty();
+    }
+    
+    bool contains(const edge_type* edge) const {
         return edges[0] == edge || edges[1] == edge || edges[2] == edge;
     }
-
-    bool contains(const vertex_type* vert) const
-    {
+    bool contains(const vertex_type* vert) const {
         return edges[0]->contains(vert) || edges[1]->contains(vert) || edges[2]->contains(vert);
     }
 
-    polytope(const polytope& poly)
-    {
+    polytope(const polytope& poly) {
         edges = poly.edges;
     }
     polytope(const std::list<edge_type*>& edges)

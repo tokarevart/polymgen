@@ -4,8 +4,7 @@
 
 namespace spt {
 
-enum class elem_shape
-{
+enum class elem_shape {
     simplex,
     polytope
 };
@@ -20,8 +19,7 @@ struct mesh_v;
 
 
 template <typename Polytope, elem_shape ElemShape>
-struct mesh<spt::aggregate<Polytope>, ElemShape>
-{
+struct mesh<spt::aggregate<Polytope>, ElemShape> {
     using polytope_type = Polytope;
     using real_type = typename polytope_type::real_type;
     using submesh_type = mesh<polytope_type, ElemShape>;
@@ -31,8 +29,7 @@ struct mesh<spt::aggregate<Polytope>, ElemShape>
 
 
 template <typename Polytope, elem_shape ElemShape>
-struct mesh_v<spt::aggregate<Polytope>, ElemShape>
-{
+struct mesh_v<spt::aggregate<Polytope>, ElemShape> {
     using polytope_type = Polytope;
     using real_type = typename polytope_type::real_type;
     using submesh_type = mesh_v<polytope_type, ElemShape>;

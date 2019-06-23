@@ -8,8 +8,7 @@ using monon = polytope<0, Dim, Real>;
 
 
 template <std::size_t Dim, typename Real>
-struct polytope<0, Dim, Real>
-{
+struct polytope<0, Dim, Real> {
     static constexpr std::size_t n = 0;
     static constexpr std::size_t dim = Dim;
     using real_type = Real;

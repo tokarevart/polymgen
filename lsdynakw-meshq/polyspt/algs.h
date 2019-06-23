@@ -8,14 +8,14 @@
 
 // TODO: experiment with pass by value instead of reference and make benchmark
 namespace spt {
-       
+
 vec<3> project(
     const vec<3>& point,
     const vec<3>& line_p0, const vec<3>& line_p1);
 
 // TODO: return std::optional<vec<3>>
 bool project(
-    vec<3>& out,
+    vec<3> & out,
     const vec<3>& point,
     const vec<3>& segm_p0, const vec<3>& segm_p1);
 
@@ -25,7 +25,7 @@ vec<3> project(
 
 // TODO: return std::optional<vec<3>>
 bool project(
-    vec<3>& out,
+    vec<3> & out,
     const vec<3>& point,
     const vec<3>& trngl_p0, const vec<3>& trngl_p1, const vec<3>& trngl_p2);
 
@@ -35,7 +35,7 @@ bool does_ray_intersect_plane(
 
 // TODO: return std::optional<vec<3>>
 bool ray_intersect_plane(
-    vec<3>& out_intersectPoint,
+    vec<3> & out_intersectPoint,
     const vec<3>& origin, const vec<3>& dir,
     const vec<3>& plane_p0, const vec<3>& plane_p1, const vec<3>& plane_p2);
 
@@ -45,7 +45,7 @@ bool does_ray_intersect_triangle(
 
 // TODO: return std::optional<vec<3>>
 bool ray_intersect_triangle(
-    vec<3>& out_intersectPoint,
+    vec<3> & out_intersectPoint,
     const vec<3>& origin, const vec<3>& dir,
     const vec<3>& trngl_p0, const vec<3>& trngl_p1, const vec<3>& trngl_p2);
 
@@ -55,7 +55,7 @@ bool does_line_intersect_plane(
 
 // TODO: return std::optional<vec<3>>
 bool line_intersect_plane(
-    vec<3>& out_intersectPoint,
+    vec<3> & out_intersectPoint,
     const vec<3>& line_point, const vec<3>& line_dir,
     const vec<3>& plane_p0, const vec<3>& plane_p1, const vec<3>& plane_p2);
 
@@ -69,7 +69,7 @@ bool does_segment_intersect_triangle(
 
 // TODO: return std::optional<vec<3>>
 bool segment_intersect_triangle(
-    vec<3>& out_intersectPoint,
+    vec<3> & out_intersectPoint,
     const vec<3>& segm_p0, const vec<3>& segm_p1,
     const vec<3>& trngl_p0, const vec<3>& trngl_p1, const vec<3>& trngl_p2);
 
@@ -79,7 +79,7 @@ bool does_segment_intersect_plane(
 
 // TODO: return std::optional<vec<3>>
 bool segment_intersect_plane(
-    vec<3>& out_intersectPoint,
+    vec<3> & out_intersectPoint,
     const vec<3>& segm_p0, const vec<3>& segm_p1,
     const vec<3>& plane_p0, const vec<3>& plane_p1, const vec<3>& plane_p2);
 

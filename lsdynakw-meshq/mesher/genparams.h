@@ -4,8 +4,7 @@
 namespace pmg {
 
 template <typename Polytope>
-struct genparams
-{
+struct genparams {
     using polytope_type = Polytope;
     using facet_type = typename polytope_type::facet_type;
 

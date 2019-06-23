@@ -9,36 +9,31 @@ using dion = polytope<1, Dim, Real>;
 
 
 template <std::size_t Dim, typename Real>
-struct polytope<1, Dim, Real>
-{
+struct polytope<1, Dim, Real> {
     static constexpr std::size_t n = 1;
     static constexpr std::size_t dim = Dim;
     using real_type = Real;
     using facet_type = spt::vertex<Dim, Real>;
     using vertex_type = facet_type;
 
-    std::array<vertex_type*, 2> vertices = { nullptr, };
+    std::array<vertex_type*, 2> vertices = { nullptr, nullptr };
 
-    bool empty() const
-    {
-        return !vertices[0] && !vertices[1];
-    }
-
-    real_type magnitude() const
-    {
+    real_type magnitude() const {
         return (vertices[1]->pos - vertices[0]->pos).magnitude();
     }
 
-    bool contains(const facet_type* vert) const
-    {
+    bool empty() const {
+        return !vertices[0] && !vertices[1];
+    }
+
+    bool contains(const facet_type* vert) const {
         return vertices[0] == vert || vertices[1] == vert;
     }
 
-    polytope(const polytope& poly)
-    {
+    polytope(const polytope& poly) {
         vertices = poly.vertices;
     }
-    polytope(const std::array<facet_type*, 2>& vertices)
+    polytope(const std::array<facet_type*, 2> & vertices)
         : vertices(vertices) {}
     template <typename... Vertices>
     polytope(Vertices... verts)
