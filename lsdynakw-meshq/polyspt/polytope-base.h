@@ -1,7 +1,5 @@
 #pragma once
 #include <cstddef>
-#include <array>
-#include <list>
 #include "vec.h"
 
 
@@ -11,6 +9,6 @@ template <std::size_t N, std::size_t Dim = 3, typename Real = typename spt::vec<
 struct polytope;
 
 template <typename Polytope>
-using aggregate = std::list<Polytope*>;
+struct aggregate;
 
 } // namespace spt

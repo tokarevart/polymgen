@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include "vertex.h"
 
 namespace spt {

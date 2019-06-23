@@ -1,3 +1,3 @@
 #pragma once
-#include "mesh-simplex.h"
-#include "mesh-polytope.h"
+#include "mesh/mesh-simplex.h"
+#include "mesh/mesh-polytope.h"

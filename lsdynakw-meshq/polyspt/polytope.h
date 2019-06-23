@@ -3,7 +3,6 @@
 #include "dion.h"
 #include "polygon.h"
 #include "polyhedron.h"
-#include "polychoron.h"
 #include "vertex.h"
 #include "edge.h"
 #include "face.h"

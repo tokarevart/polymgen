@@ -21,19 +21,19 @@ using node_t = std::pair<nid_t, spt::vertex<>*>;
 using element_solid_t = std::tuple<eid_t, pid_t, std::array<nid_t, 4>>;
 using mesh_t = spt::mesh_v<spt::polyhedron<>, spt::elem_shape::simplex>;
 
-enum class sections
+enum class section
 {
     node,
     element_solid
 };
 
 
-std::string section_head(sections section)
+std::string section_head(section sect)
 {
-    switch (section)
+    switch (sect)
     {
-    case sections::node:          return "*NODE";
-    case sections::element_solid: return "*ELEMENT_SOLID";
+    case section::node:          return "*NODE";
+    case section::element_solid: return "*ELEMENT_SOLID";
     default: return "";
     }
 }
@@ -113,7 +113,7 @@ std::vector<element_solid_t> parse_element_solid_section(std::istream& stream)
 }
 
 template <std::size_t N>
-std::optional<sections> find_any_section_of(std::istream& stream, const std::array<sections, N>& sects)
+std::optional<section> find_any_section_of(std::istream& stream, const std::array<section, N>& sects)
 {
     std::string line;
     while (std::getline(stream, line))
@@ -131,16 +131,16 @@ mesh_t simplices_from_kw(std::istream & stream)
     std::vector<element_solid_t> elements_solid;
     while (!stream.eof())
     {
-        auto section_found = find_any_section_of(stream, std::array{ sections::node, sections::element_solid });
+        auto section_found = find_any_section_of(stream, std::array{ section::node, section::element_solid });
         if (!section_found)
             break;
 
         switch (section_found.value())
         {
-        case sections::node:
+        case section::node:
             nodes = parse_node_section(stream);
             break;
-        case sections::element_solid:
+        case section::element_solid:
             elements_solid = parse_element_solid_section(stream);
             break;
         }

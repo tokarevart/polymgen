@@ -27,7 +27,7 @@ real_t pmg::Face::computeArea() const
 {
     vec3 vec0 = edges[0]->verts[1]->pos() - edges[0]->verts[0]->pos();
     vec3 vec1 = edges[1]->verts[1]->pos() - edges[1]->verts[0]->pos();
-    return static_cast<real_t>(0.5) * vec3::cross(vec0, vec1).magnitude();
+    return vec3::cross(vec0, vec1).magnitude() * static_cast<real_t>(0.5);
 }
 
 

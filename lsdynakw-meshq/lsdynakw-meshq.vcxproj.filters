@@ -7,6 +7,15 @@
     <Filter Include="mesher">
       <UniqueIdentifier>{b44ef386-459e-4e20-9c7a-f944b377a419}</UniqueIdentifier>
     </Filter>
+    <Filter Include="polyspt\mesh">
+      <UniqueIdentifier>{4f4dde17-5b64-438b-b7d8-691b364beabd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="polyspt\indexed_mesh">
+      <UniqueIdentifier>{33739631-19af-4a29-9720-664125dc661f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="polyspt\simplex">
+      <UniqueIdentifier>{f6f2d7d8-a7c9-4790-97e7-1ff0c7d648e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="polyspt\algs.cpp">
@@ -54,25 +63,7 @@
     <ClInclude Include="polyspt\indexed_mesh.h">
       <Filter>polyspt</Filter>
     </ClInclude>
-    <ClInclude Include="polyspt\indexed_mesh-base.h">
-      <Filter>polyspt</Filter>
-    </ClInclude>
-    <ClInclude Include="polyspt\indexed_mesh-polytope.h">
-      <Filter>polyspt</Filter>
-    </ClInclude>
-    <ClInclude Include="polyspt\indexed_mesh-simplex.h">
-      <Filter>polyspt</Filter>
-    </ClInclude>
     <ClInclude Include="polyspt\mesh.h">
-      <Filter>polyspt</Filter>
-    </ClInclude>
-    <ClInclude Include="polyspt\mesh-base.h">
-      <Filter>polyspt</Filter>
-    </ClInclude>
-    <ClInclude Include="polyspt\mesh-polytope.h">
-      <Filter>polyspt</Filter>
-    </ClInclude>
-    <ClInclude Include="polyspt\mesh-simplex.h">
       <Filter>polyspt</Filter>
     </ClInclude>
     <ClInclude Include="polyspt\polytope.h">
@@ -101,6 +92,33 @@
     </ClInclude>
     <ClInclude Include="mesher\mesher-simplex.h">
       <Filter>mesher</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\indexed_mesh\indexed_mesh-base.h">
+      <Filter>polyspt\indexed_mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\indexed_mesh\indexed_mesh-polytope.h">
+      <Filter>polyspt\indexed_mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\indexed_mesh\indexed_mesh-simplex.h">
+      <Filter>polyspt\indexed_mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\mesh\mesh-base.h">
+      <Filter>polyspt\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\mesh\mesh-polytope.h">
+      <Filter>polyspt\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\mesh\mesh-simplex.h">
+      <Filter>polyspt\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\simplex\simplex-2.h">
+      <Filter>polyspt\simplex</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\simplex\simplex-3.h">
+      <Filter>polyspt\simplex</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\simplex\simplex-base.h">
+      <Filter>polyspt\simplex</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
