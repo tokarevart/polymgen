@@ -3,14 +3,14 @@
 
 namespace spt {
 
-template <std::size_t Dim, typename Real = typename spt::vec<Dim>::real_type>
+template <std::size_t Dim, typename ValueType = typename spt::vec<Dim>::value_type>
 struct mat;
 
-template <typename Real>
-struct mat<3, Real> {
+template <typename ValueType>
+struct mat<3, ValueType> {
     static constexpr std::size_t dim = 3;
-    using real_type = Real;
-    using line_type = spt::vec<3, real_type>;
+    using value_type = ValueType;
+    using line_type = spt::vec<3, value_type>;
 
     std::array<line_type, 3> x;
 
@@ -25,9 +25,9 @@ struct mat<3, Real> {
     mat(const mat& other) {
         x = other.x;
     }
-    mat(const std::array<line_type, 3> & x)
+    mat(const std::array<line_type, 3>& x)
         : x(x) {}
-    mat(const std::array<real_type, 9> & x) {
+    mat(const std::array<value_type, 9>& x) {
         this->x[0] = line_type(x[0], x[1], x[2]);
         this->x[1] = line_type(x[3], x[4], x[5]);
         this->x[2] = line_type(x[6], x[7], x[8]);

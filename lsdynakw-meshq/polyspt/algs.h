@@ -89,13 +89,13 @@ vec<3> segment_intersect_plane(
 
 bool does_triangle_intersect_sphere(
     const vec<3>& trngl_p0, const vec<3>& trngl_p1, const vec<3>& trngl_p2,
-    const vec<3>& center, vec<3>::real_type radius);
+    const vec<3>& center, vec<3>::value_type radius);
 
-vec<3>::real_type sqrs_sum(
+vec<3>::value_type sqrs_sum(
     const vec<3>& point,
     const vec<3>& trngl_p0, const vec<3>& trngl_p1, const vec<3>& trngl_p2);
 
-vec<3>::real_type max_sqrs_sum(
+vec<3>::value_type max_sqrs_sum(
     const vec<3>& trngl_p0, const vec<3>& trngl_p1, const vec<3>& trngl_p2);
 
 bool is_point_on_plane(
@@ -109,7 +109,7 @@ bool is_point_on_triangle(
 bool is_point_on_triangle(
     const vec<3>& point,
     const vec<3>& trngl_p0, const vec<3>& trngl_p1, const vec<3>& trngl_p2,
-    vec<3>::real_type max_sqrs_sum);
+    vec<3>::value_type max_sqrs_sum);
 
 bool is_point_in_tetrahedron(
     const vec<3>& point,
@@ -123,23 +123,23 @@ vec<3> closest_triangle_point_to_point_on_plane(
     const vec<3>& point,
     const vec<3>& trngl_p0, const vec<3>& trngl_p1, const vec<3>& trngl_p2);
 
-vec<3>::real_type distance_point_to_line(
+vec<3>::value_type distance_point_to_line(
     const vec<3>& point,
     const vec<3>& line_p0, const vec<3>& line_p1);
 
-vec<3>::real_type distance_point_to_segment(
+vec<3>::value_type distance_point_to_segment(
     const vec<3>& point,
     const vec<3>& segm_p0, const vec<3>& segm_p1);
 
-vec<3>::real_type distance_point_to_plane(
+vec<3>::value_type distance_point_to_plane(
     const vec<3>& point,
     const vec<3>& plane_p0, const vec<3>& plane_p1, const vec<3>& plane_p2);
 
-vec<3>::real_type distance_point_to_triangle(
+vec<3>::value_type distance_point_to_triangle(
     const vec<3>& point,
     const vec<3>& trngl_p0, const vec<3>& trngl_p1, const vec<3>& trngl_p2);
 
-vec<3>::real_type distance_point_to_triangle_on_plane(
+vec<3>::value_type distance_point_to_triangle_on_plane(
     const vec<3>& point,
     const vec<3>& trngl_p0, const vec<3>& trngl_p1, const vec<3>& trngl_p2);
 
@@ -147,20 +147,20 @@ vec<3> lines_closest_point(
     const vec<3>& line0_p0, const vec<3>& line0_p1,
     const vec<3>& line1_p0, const vec<3>& line1_p1);
 
-vec<3>::real_type lines_distance(
+vec<3>::value_type lines_distance(
     const vec<3>& line0_p0, const vec<3>& line0_p1,
     const vec<3>& line1_p0, const vec<3>& line1_p1);
 
-vec<3>::real_type segments_distance(
+vec<3>::value_type segments_distance(
     const vec<3>& segm0_p0, const vec<3>& segm0_p1,
     const vec<3>& segm1_p0, const vec<3>& segm1_p1);
 
 // CPA - Closest Point of Approach.
-vec<3>::real_type cpa_time(
+vec<3>::value_type cpa_time(
     const vec<3>& start0, const vec<3>& vel0,
     const vec<3>& start1, const vec<3>& vel1);
 
-vec<3>::real_type cpa_distance(
+vec<3>::value_type cpa_distance(
     const vec<3>& start0, const vec<3>& vel0,
     const vec<3>& start1, const vec<3>& vel1);
 

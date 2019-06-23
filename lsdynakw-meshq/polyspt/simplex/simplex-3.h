@@ -3,21 +3,21 @@
 
 namespace spt {
 
-template <std::size_t Dim, typename Real>
-struct simplex<3, Dim, Real> {
+template <std::size_t Dim, typename ValueType>
+struct simplex<3, Dim, ValueType> {
     static constexpr std::size_t n = 3;
     static constexpr std::size_t dim = Dim;
-    using real_type = Real;
-    using facet_type = spt::face<Dim, Real>;
+    using value_type = ValueType;
+    using facet_type = spt::face<Dim, ValueType>;
     using face_type = facet_type;
     using edge_type = typename face_type::edge_type;
     using vertex_type = typename edge_type::vertex_type;
 
     std::array<face_type*, 4> faces = { nullptr, nullptr, nullptr, nullptr, };
 
-    real_type volume() const {
+    value_type volume() const {
         auto verts = all_of<vertex_type>();
-        return static_cast<real_type>(1.0 / 6.0) *
+        return static_cast<value_type>(1.0 / 6.0) *
             std::abs(vec<3>::mixed(
                 verts[1]->pos - verts[0]->pos,
                 verts[2]->pos - verts[0]->pos,
@@ -91,17 +91,17 @@ struct simplex<3, Dim, Real> {
 };
 
 
-template <std::size_t Dim, typename Real>
-struct simplex_v<3, Dim, Real> {
+template <std::size_t Dim, typename ValueType>
+struct simplex_v<3, Dim, ValueType> {
     static constexpr std::size_t n = 3;
     static constexpr std::size_t dim = Dim;
-    using real_type = Real;
-    using vertex_type = spt::vertex<Dim, Real>;
+    using value_type = ValueType;
+    using vertex_type = spt::vertex<Dim, ValueType>;
 
     std::array<vertex_type*, 4> vertices = { nullptr, nullptr, nullptr, nullptr };
 
-    real_type volume() const {
-        return static_cast<real_type>(1.0 / 6.0) *
+    value_type volume() const {
+        return static_cast<value_type>(1.0 / 6.0) *
             std::abs(vec<3>::mixed(
                 vertices[1]->pos - vertices[0]->pos,
                 vertices[2]->pos - vertices[0]->pos,

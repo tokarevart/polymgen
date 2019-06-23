@@ -6,11 +6,11 @@ namespace spt {
 template <typename Polytope>
 struct mesh<Polytope, elem_shape::polytope> {
     using polytope_type = Polytope;
-    using real_type = typename polytope_type::real_type;
-    using vertex_type = spt::vertex<polytope_type::dim, real_type>;
+    using value_type = typename polytope_type::value_type;
+    using vertex_type = spt::vertex<polytope_type::dim, value_type>;
     // ...
-    using facet_type = spt::polytope<polytope_type::n - 1, polytope_type::dim, real_type>;
-    using elem_type = spt::polytope<polytope_type::n, polytope_type::dim, real_type>;
+    using facet_type = spt::polytope<polytope_type::n - 1, polytope_type::dim, value_type>;
+    using elem_type = spt::polytope<polytope_type::n, polytope_type::dim, value_type>;
 
     std::vector<vertex_type*> vertices;
     // ...

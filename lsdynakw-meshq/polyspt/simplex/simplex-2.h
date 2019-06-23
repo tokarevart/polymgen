@@ -3,12 +3,12 @@
 
 namespace spt {
 
-template <std::size_t Dim, typename Real>
-struct simplex<2, Dim, Real> {
+template <std::size_t Dim, typename ValueType>
+struct simplex<2, Dim, ValueType> {
     static constexpr std::size_t n = 2;
     static constexpr std::size_t dim = Dim;
-    using real_type = Real;
-    using facet_type = spt::edge<Dim, Real>;
+    using value_type = ValueType;
+    using facet_type = spt::edge<Dim, ValueType>;
     using edge_type = facet_type;
     using vertex_type = typename edge_type::vertex_type;
 
@@ -31,10 +31,10 @@ struct simplex<2, Dim, Real> {
         }
     }
 
-    real_type area() const {
+    value_type area() const {
         vec<3> vec0 = edges[0]->vertices[1]->pos - edges[0]->vertices[0]->pos;
         vec<3> vec1 = edges[1]->vertices[1]->pos - edges[1]->vertices[0]->pos;
-        return static_cast<real_type>(0.5) * vec<3>::cross(vec0, vec1).magnitude();
+        return static_cast<value_type>(0.5) * vec<3>::cross(vec0, vec1).magnitude();
     }
 
     bool empty() const {
@@ -59,27 +59,27 @@ struct simplex<2, Dim, Real> {
 };
 
 
-template <std::size_t Dim, typename Real>
-struct simplex_v<2, Dim, Real> {
+template <std::size_t Dim, typename ValueType>
+struct simplex_v<2, Dim, ValueType> {
     static constexpr std::size_t n = 2;
     static constexpr std::size_t dim = Dim;
-    using real_type = Real;
-    using vertex_type = spt::vertex<Dim, Real>;
+    using value_type = ValueType;
+    using vertex_type = spt::vertex<Dim, ValueType>;
 
     std::array<vertex_type*, 3> vertices = { nullptr, nullptr, nullptr };
 
-    real_type area() const {
+    value_type area() const {
         vec<dim> vec0 = vertices[1]->pos - vertices[0]->pos;
         vec<dim> vec1 = vertices[2]->pos - vertices[0]->pos;
 
         auto cross = vec<dim>::cross(vec0, vec1);
-        real_type doubled_area;
+        value_type doubled_area;
         if constexpr (dim == 2)
             doubled_area = cross;
         else
             doubled_area = cross.magnitude();
 
-        return doubled_area * static_cast<real_type>(0.5);
+        return doubled_area * static_cast<value_type>(0.5);
     }
 
     bool empty() const {

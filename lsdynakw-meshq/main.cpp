@@ -13,13 +13,17 @@
 #include "polyspt/mesh.h"
 #include "mesher/algs.h"
 
-using real_t = spt::vec<3>::real_type;
+using real_t = float;
+using coordinate_t = real_t;
+using vec_t = spt::vec<3, coordinate_t>;
 using nid_t = std::size_t;
 using eid_t = std::size_t;
 using pid_t = std::size_t;
-using node_t = std::pair<nid_t, spt::vertex<>*>;
+using vertex_t = spt::vertex<3, coordinate_t>;
+using node_t = std::pair<nid_t, vertex_t*>;
+using tetrahedron_t = spt::simplex_v<3, 3, coordinate_t>;
 using element_solid_t = std::tuple<eid_t, pid_t, std::array<nid_t, 4>>;
-using mesh_t = spt::mesh_v<spt::polyhedron<>, spt::elem_shape::simplex>;
+using mesh_t = spt::mesh_v<spt::polyhedron<3, coordinate_t>, spt::elem_shape::simplex>;
 
 enum class section {
     node,
@@ -43,10 +47,10 @@ node_t parse_line(const std::string& line) {
     std::string local_line = line;
     std::size_t pos_in_line;
     nid_t nid = std::stoull(local_line, &pos_in_line);
-    spt::vec<3> pos;
+    vec_t pos;
     for (std::size_t i = 0; i < 3; i++)
         pos.x[i] = std::stof(local_line = local_line.substr(pos_in_line), &pos_in_line);
-    return { nid, new spt::vertex<>(pos) };
+    return { nid, new vertex_t(pos) };
 }
 
 template <>
@@ -68,8 +72,8 @@ SectionType parse_line(std::istream& stream) {
     return parse_line<SectionType>(line);
 }
 
-std::map<nid_t, spt::vertex<>*> parse_node_section(std::istream& stream) {
-    std::map<nid_t, spt::vertex<>*> res;
+std::map<nid_t, vertex_t*> parse_node_section(std::istream& stream) {
+    std::map<nid_t, vertex_t*> res;
     while (!stream.eof()) {
         if (stream.peek() == '*')
             break;
@@ -113,7 +117,7 @@ std::optional<section> find_any_section_of(std::istream& stream, const std::arra
 }
 
 mesh_t simplices_from_kw(std::istream& stream) {
-    std::map<nid_t, spt::vertex<>*> nodes;
+    std::map<nid_t, vertex_t*> nodes;
     std::vector<element_solid_t> elements_solid;
     while (!stream.eof()) {
         auto section_found = find_any_section_of(stream, std::array{ section::node, section::element_solid });
@@ -130,15 +134,15 @@ mesh_t simplices_from_kw(std::istream& stream) {
         }
     }
 
-    std::vector<spt::vertex<>*> vertices;
+    std::vector<vertex_t*> vertices;
     vertices.reserve(nodes.size());
     for (const auto& [key, val] : nodes)
         vertices.push_back(val);
 
-    std::vector<spt::simplex_v<3>*> simplices;
+    std::vector<tetrahedron_t*> simplices;
     simplices.reserve(elements_solid.size());
     for (const auto& elem_solid : elements_solid)
-        simplices.push_back(new spt::simplex_v<3>(
+        simplices.push_back(new tetrahedron_t(
             nodes[std::get<2>(elem_solid)[0]],
             nodes[std::get<2>(elem_solid)[1]],
             nodes[std::get<2>(elem_solid)[2]],

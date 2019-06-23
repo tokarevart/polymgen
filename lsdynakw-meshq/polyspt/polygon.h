@@ -1,23 +1,22 @@
 #pragma once
 #include "edge.h"
-#include <list>
 
 namespace spt {
 
-template <std::size_t Dim = 3, typename Real = typename spt::vec<Dim>::real_type>
-using polygon = polytope<2, Dim, Real>;
+template <std::size_t Dim = 3, typename ValueType = typename spt::vec<Dim>::value_type>
+using polygon = polytope<2, Dim, ValueType>;
 
 
-template <std::size_t Dim, typename Real>
-struct polytope<2, Dim, Real> {
+template <std::size_t Dim, typename ValueType>
+struct polytope<2, Dim, ValueType> {
     static constexpr std::size_t n = 2;
     static constexpr std::size_t dim = Dim;
-    using real_type = Real;
-    using vertex_type = spt::vertex<Dim, Real>;
-    using edge_type = spt::edge<Dim, Real>;
+    using value_type = ValueType;
+    using vertex_type = spt::vertex<Dim, ValueType>;
+    using edge_type = spt::edge<Dim, ValueType>;
     using facet_type = edge_type;
 
-    std::list<edge_type*> edges;
+    std::vector<edge_type*> edges;
 
     template <typename SubPolytope>
     auto all_of() const {
@@ -51,7 +50,10 @@ struct polytope<2, Dim, Real> {
     polytope(const polytope& poly) {
         edges = poly.edges;
     }
-    polytope(const std::list<edge_type*>& edges)
+    polytope(polytope&& poly) {
+        edges = std::move(poly.edges);
+    }
+    polytope(const std::vector<edge_type*>& edges)
         : edges(edges) {}
     template <typename... Edges>
     polytope(Edges... edges)

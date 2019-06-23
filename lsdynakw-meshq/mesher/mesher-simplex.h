@@ -6,18 +6,18 @@ namespace pmg {
 
 template <typename Polytope, std::size_t N>
 class mesher<Polytope, spt::elem_shape::simplex, N> {
-    using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::real_type>;
-    using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::real_type>;
-    using facet_type = spt::polytope<N - 1, Polytope::dim, typename Polytope::real_type>;
+    using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::value_type>;
+    using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::value_type>;
+    using facet_type = spt::polytope<N - 1, Polytope::dim, typename Polytope::value_type>;
 
 public:
     using polytope_type = Polytope;
     using shell_type = polytope_type;
     using shell_mesh_type = spt::mesh<spt::aggregate<facet_type*>, spt::elem_shape::simplex>;
     using mesh_type = spt::mesh<polytope_type, spt::elem_shape::simplex>;
-    using real_type = typename polytope_type::real_type;
+    using value_type = typename polytope_type::value_type;
 
-    void run(real_type preferred_length,
+    void run(value_type preferred_length,
              const genparams<polytope_type>& gen_params = genparams<polytope_type>());
 
 
@@ -47,7 +47,7 @@ public:
 
 
 private:
-    real_type m_preferred_length;
+    value_type m_preferred_length;
     genparams<polytope_type> m_gen_params;
     genparams<polytope_type> m_current_gen_params;
 
@@ -61,18 +61,18 @@ private:
 
 template <typename Polytope, std::size_t N>
 class mesher<spt::aggregate<Polytope>, spt::elem_shape::simplex, N> {
-    using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::real_type>;
-    using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::real_type>;
-    using facet_type = spt::polytope<N - 1, Polytope::dim, typename Polytope::real_type>;
+    using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::value_type>;
+    using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::value_type>;
+    using facet_type = spt::polytope<N - 1, Polytope::dim, typename Polytope::value_type>;
 
 public:
     using polytope_type = Polytope;
     using shell_type = spt::aggregate<polytope_type>;
     using shell_mesh_type = spt::mesh<spt::aggregate<facet_type>, spt::elem_shape::simplex>;
     using mesh_type = spt::mesh<spt::aggregate<polytope_type>, spt::elem_shape::simplex>;
-    using real_type = typename polytope_type::real_type;
+    using value_type = typename polytope_type::value_type;
 
-    void run(real_type preferred_length,
+    void run(value_type preferred_length,
              const genparams<polytope_type>& gen_params = genparams<polytope_type>());
 
 
@@ -102,7 +102,7 @@ public:
 
 
 private:
-    real_type m_preferred_length;
+    value_type m_preferred_length;
     genparams<polytope_type> m_gen_params;
     genparams<polytope_type> m_current_gen_params;
 

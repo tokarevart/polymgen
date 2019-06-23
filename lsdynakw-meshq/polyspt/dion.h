@@ -4,21 +4,21 @@
 
 namespace spt {
 
-template <std::size_t Dim = 3, typename Real = typename spt::vec<Dim>::real_type>
-using dion = polytope<1, Dim, Real>;
+template <std::size_t Dim = 3, typename ValueType = typename spt::vec<Dim>::value_type>
+using dion = polytope<1, Dim, ValueType>;
 
 
-template <std::size_t Dim, typename Real>
-struct polytope<1, Dim, Real> {
+template <std::size_t Dim, typename ValueType>
+struct polytope<1, Dim, ValueType> {
     static constexpr std::size_t n = 1;
     static constexpr std::size_t dim = Dim;
-    using real_type = Real;
-    using facet_type = spt::vertex<Dim, Real>;
-    using vertex_type = facet_type;
+    using value_type = ValueType;
+    using vertex_type = spt::vertex<Dim, ValueType>;
+    using facet_type = vertex_type;
 
     std::array<vertex_type*, 2> vertices = { nullptr, nullptr };
 
-    real_type magnitude() const {
+    value_type magnitude() const {
         return (vertices[1]->pos - vertices[0]->pos).magnitude();
     }
 
@@ -26,14 +26,14 @@ struct polytope<1, Dim, Real> {
         return !vertices[0] && !vertices[1];
     }
 
-    bool contains(const facet_type* vert) const {
+    bool contains(const vertex_type* vert) const {
         return vertices[0] == vert || vertices[1] == vert;
     }
 
     polytope(const polytope& poly) {
         vertices = poly.vertices;
     }
-    polytope(const std::array<facet_type*, 2> & vertices)
+    polytope(const std::array<vertex_type*, 2>& vertices)
         : vertices(vertices) {}
     template <typename... Vertices>
     polytope(Vertices... verts)

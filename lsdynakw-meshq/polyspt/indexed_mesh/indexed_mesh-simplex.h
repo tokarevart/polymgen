@@ -8,9 +8,9 @@ namespace spt {
 template <typename Polytope>
 struct indexed_mesh<Polytope, spt::elem_shape::simplex> {
     using polytope_type = Polytope;
-    using real_type = typename polytope_type::real_type;
+    using value_type = typename polytope_type::value_type;
     using index_type = std::size_t;
-    using vertex_type = spt::vec<polytope_type::dim, real_type>;
+    using vertex_type = spt::vec<polytope_type::dim, value_type>;
     using elem_type = std::array<index_type, polytope_type::n + 1>;
 
     std::vector<vertex_type> vertices;
@@ -21,9 +21,9 @@ struct indexed_mesh<Polytope, spt::elem_shape::simplex> {
 template <typename Polytope>
 struct indexed_mesh<spt::aggregate<Polytope>, spt::elem_shape::simplex> {
     using polytope_type = Polytope;
-    using real_type = typename polytope_type::real_type;
+    using value_type = typename polytope_type::value_type;
     using index_type = std::size_t;
-    using vertex_type = spt::vec<polytope_type::dim, real_type>;
+    using vertex_type = spt::vec<polytope_type::dim, value_type>;
     using elem_type = std::array<index_type, polytope_type::n + 1>;
     using submesh_type = std::vector<elem_type>;
 

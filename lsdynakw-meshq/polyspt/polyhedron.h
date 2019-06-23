@@ -3,20 +3,20 @@
 
 namespace spt {
 
-template <std::size_t Dim = 3, typename Real = typename spt::vec<Dim>::real_type>
-using polyhedron = polytope<3, Dim, Real>;
+template <std::size_t Dim = 3, typename ValueType = typename spt::vec<Dim>::value_type>
+using polyhedron = polytope<3, Dim, ValueType>;
 
-template <std::size_t Dim, typename Real>
-struct polytope<3, Dim, Real> {
+template <std::size_t Dim, typename ValueType>
+struct polytope<3, Dim, ValueType> {
     static constexpr std::size_t n = 3;
     static constexpr std::size_t dim = Dim;
-    using real_type = Real;
-    using vertex_type = spt::vertex<Dim, Real>;
-    using edge_type = spt::edge<Dim, Real>;
-    using face_type = spt::face<Dim, Real>;
+    using value_type = ValueType;
+    using vertex_type = spt::vertex<Dim, ValueType>;
+    using edge_type = spt::edge<Dim, ValueType>;
+    using face_type = spt::face<Dim, ValueType>;
     using facet_type = face_type;
 
-    std::list<face_type*> faces;
+    std::vector<face_type*> faces;
 
     template <typename SubPolytope>
     auto all_of() const {
@@ -63,7 +63,10 @@ struct polytope<3, Dim, Real> {
     polytope(const polytope& poly) {
         faces = poly.faces;
     }
-    polytope(const std::list<face_type*>& faces)
+    polytope(polytope&& poly) {
+        faces = std::move(poly.faces);
+    }
+    polytope(const std::vector<face_type*>& faces)
         : faces(faces) {}
     template <typename... Faces>
     polytope(Faces... faces)

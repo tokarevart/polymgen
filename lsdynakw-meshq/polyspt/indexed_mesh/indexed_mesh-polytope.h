@@ -6,12 +6,12 @@
 
 namespace spt {
 
-template <std::size_t Dim, typename Real>
-struct indexed_mesh<spt::dion<Dim, Real>, spt::elem_shape::polytope> {
-    using polytope_type = spt::dion<Dim, Real>;
-    using real_type = Real;
+template <std::size_t Dim, typename ValueType>
+struct indexed_mesh<spt::dion<Dim, ValueType>, spt::elem_shape::polytope> {
+    using polytope_type = spt::dion<Dim, ValueType>;
+    using value_type = ValueType;
     using index_type = std::size_t;
-    using vertex_type = spt::vec<Dim, real_type>;
+    using vertex_type = spt::vec<Dim, value_type>;
     using edge_type = std::array<index_type, 2>;
 
     std::vector<vertex_type> vertices;
@@ -19,12 +19,12 @@ struct indexed_mesh<spt::dion<Dim, Real>, spt::elem_shape::polytope> {
 };
 
 
-template <std::size_t Dim, typename Real>
-struct indexed_mesh<spt::polygon<Dim, Real>, spt::elem_shape::polytope> {
-    using polytope_type = spt::polygon<Dim, Real>;
-    using real_type = Real;
+template <std::size_t Dim, typename ValueType>
+struct indexed_mesh<spt::polygon<Dim, ValueType>, spt::elem_shape::polytope> {
+    using polytope_type = spt::polygon<Dim, ValueType>;
+    using value_type = ValueType;
     using index_type = std::size_t;
-    using vertex_type = spt::vec<Dim, real_type>;
+    using vertex_type = spt::vec<Dim, value_type>;
     using edge_type = std::array<index_type, 2>;
     using face_type = std::vector<index_type>;
 
@@ -34,12 +34,12 @@ struct indexed_mesh<spt::polygon<Dim, Real>, spt::elem_shape::polytope> {
 };
 
 
-template <std::size_t Dim, typename Real>
-struct indexed_mesh<spt::polyhedron<Dim, Real>, spt::elem_shape::polytope> {
-    using polytope_type = spt::polyhedron<Dim, Real>;
-    using real_type = Real;
+template <std::size_t Dim, typename ValueType>
+struct indexed_mesh<spt::polyhedron<Dim, ValueType>, spt::elem_shape::polytope> {
+    using polytope_type = spt::polyhedron<Dim, ValueType>;
+    using value_type = ValueType;
     using index_type = std::size_t;
-    using vertex_type = spt::vec<Dim, Real>;
+    using vertex_type = spt::vec<Dim, ValueType>;
     using edge_type = std::array<index_type, 2>;
     using face_type = std::vector<index_type>;
     using cell_type = std::vector<index_type>;

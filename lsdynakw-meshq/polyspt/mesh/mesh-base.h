@@ -21,7 +21,7 @@ struct mesh_v;
 template <typename Polytope, elem_shape ElemShape>
 struct mesh<spt::aggregate<Polytope>, ElemShape> {
     using polytope_type = Polytope;
-    using real_type = typename polytope_type::real_type;
+    using value_type = typename polytope_type::value_type;
     using submesh_type = mesh<polytope_type, ElemShape>;
 
     std::vector<submesh_type*> meshes;
@@ -31,7 +31,7 @@ struct mesh<spt::aggregate<Polytope>, ElemShape> {
 template <typename Polytope, elem_shape ElemShape>
 struct mesh_v<spt::aggregate<Polytope>, ElemShape> {
     using polytope_type = Polytope;
-    using real_type = typename polytope_type::real_type;
+    using value_type = typename polytope_type::value_type;
     using submesh_type = mesh_v<polytope_type, ElemShape>;
 
     std::vector<submesh_type*> meshes;
