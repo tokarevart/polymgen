@@ -1,5 +1,6 @@
 #pragma once
 #include "edge.h"
+#include <list>
 
 namespace spt {
 

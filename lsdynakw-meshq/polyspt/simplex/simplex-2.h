@@ -88,10 +88,11 @@ struct simplex_v<2, Dim, Real>
         vec<dim> vec1 = vertices[2]->pos - vertices[0]->pos;
 
         auto cross = vec<dim>::cross(vec0, vec1);
+        real_type doubled_area;
         if constexpr (dim == 2)
-            real_type doubled_area = cross;
+            doubled_area = cross;
         else
-            real_type doubled_area = cross.magnitude();
+            doubled_area = cross.magnitude();
 
         return doubled_area * static_cast<real_type>(0.5);
     }

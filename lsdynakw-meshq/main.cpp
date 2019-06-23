@@ -10,7 +10,7 @@
 #include <optional>
 #include "polyspt/polyhedron.h"
 #include "polyspt/simplex.h"
-#include "polyspt/mesh-simplex.h"
+#include "polyspt/mesh.h"
 #include "mesher/algs.h"
 
 using real_t = spt::vec<3>::real_type;
@@ -190,6 +190,11 @@ int main()
         << ">>  Minimum quality....>>  " << quality_min_av.first << std::endl
         << ">>  Average quality....>>  " << quality_min_av.second << std::endl
         << ">>  Elements number....>>  " << mesh.elements.size() << std::endl;
+
+    for (auto vert : mesh.vertices)
+        delete vert;
+    for (auto elem : mesh.elements)
+        delete elem;
 
     return 0;
 }
