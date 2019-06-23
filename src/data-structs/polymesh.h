@@ -10,8 +10,7 @@
 
 namespace pmg {
 
-struct PolyMesh
-{
+struct PolyMesh {
     using coordinate_t = real_t;
     using VertIdx = std::size_t;
     using TetrIdx = std::size_t;

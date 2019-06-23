@@ -9,10 +9,8 @@
 #include <memory>
 
 
-class Logger
-{
-    enum class IomanipType
-    {
+class Logger {
+    enum class IomanipType {
         Width,
         Precision
     };
@@ -21,49 +19,48 @@ class Logger
     struct Iomanip;
 
 public:
-    static Logger::Iomanip<IomanipType::Width>     setw        ( std::streamsize new_width );
-    static Logger::Iomanip<IomanipType::Precision> setprecision( std::streamsize new_precision );
+    static Logger::Iomanip<IomanipType::Width>     setw(std::streamsize new_width);
+    static Logger::Iomanip<IomanipType::Precision> setprecision(std::streamsize new_precision);
 
-    void open( std::ostream& stream );
+    void open(std::ostream& stream);
     void flush();
     void clear();
 
     std::streamsize width() const;
-    std::streamsize width( std::streamsize new_width );
+    std::streamsize width(std::streamsize new_width);
     std::streamsize precision() const;
-    std::streamsize precision( std::streamsize new_precision );
-    std::ios::fmtflags setf( std::ios::fmtflags flags );
-    std::ios::fmtflags setf( std::ios::fmtflags flags, std::ios::fmtflags mask );
+    std::streamsize precision(std::streamsize new_precision);
+    std::ios::fmtflags setf(std::ios::fmtflags flags);
+    std::ios::fmtflags setf(std::ios::fmtflags flags, std::ios::fmtflags mask);
 
-    Logger& operator<<( short value );
-    Logger& operator<<( unsigned short value );
-    Logger& operator<<( int value );
-    Logger& operator<<( unsigned int value );
-    Logger& operator<<( long value );
-    Logger& operator<<( unsigned long value );
-    Logger& operator<<( long long value );
-    Logger& operator<<( unsigned long long value );
-    Logger& operator<<( float value );
-    Logger& operator<<( double value );
-    Logger& operator<<( long double value );
-    Logger& operator<<( bool value );
-    Logger& operator<<( const void* value );
-    Logger& operator<<( const char* value );
-    Logger& operator<<( const std::string& str );
-    Logger& operator<<( std::ios_base& (*func)(std::ios_base&) );
-    Logger& operator<<( std::ostream&  (*func)(std::ostream&) );
+    Logger& operator<<(short value);
+    Logger& operator<<(unsigned short value);
+    Logger& operator<<(int value);
+    Logger& operator<<(unsigned int value);
+    Logger& operator<<(long value);
+    Logger& operator<<(unsigned long value);
+    Logger& operator<<(long long value);
+    Logger& operator<<(unsigned long long value);
+    Logger& operator<<(float value);
+    Logger& operator<<(double value);
+    Logger& operator<<(long double value);
+    Logger& operator<<(bool value);
+    Logger& operator<<(const void* value);
+    Logger& operator<<(const char* value);
+    Logger& operator<<(const std::string& str);
+    Logger& operator<<(std::ios_base& (*func)(std::ios_base&));
+    Logger& operator<<(std::ostream& (*func)(std::ostream&));
     template <IomanipType IomT>
-    Logger& operator<<( Logger::Iomanip<IomT> ioManip );
+    Logger& operator<<(Logger::Iomanip<IomT> ioManip);
 
     Logger();
-    Logger( std::ostream& stream );
+    Logger(std::ostream& stream);
     ~Logger();
 
 
 private:
     template <IomanipType IomT>
-    struct Iomanip
-    {
+    struct Iomanip {
         std::streamsize param;
     };
 

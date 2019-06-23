@@ -8,7 +8,7 @@
 
 namespace psg {
 
-PolyShell generateCuboids( std::size_t nX, std::size_t nY, std::size_t nZ,
-                           real_t dX = 1.0, real_t dY = 1.0, real_t dZ = 1.0 );
+PolyShell generateCuboids(std::size_t nX, std::size_t nY, std::size_t nZ,
+                          real_t dX = 1.0, real_t dY = 1.0, real_t dZ = 1.0);
 
 } // namespace polygen

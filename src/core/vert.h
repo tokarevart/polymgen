@@ -16,8 +16,7 @@
 
 namespace pmg {
 
-class Vert
-{
+class Vert {
 public:
     // TODO: use std::unordered_map where i need instead
     std::size_t globalIdx;
@@ -29,21 +28,17 @@ public:
     shell::Edge* belongsToSEdge = nullptr;
     shell::Vert* belongsToSVert = nullptr;
 
-    const spt::vec3& pos() const
-    {
+    const spt::vec3& pos() const {
         return *m_pos;
     }
-    spt::vec3& pos()
-    {
+    spt::vec3& pos() {
         return *m_pos;
     }
 
-    Vert()
-    {
+    Vert() {
         m_pos = std::make_unique<spt::vec3>();
     }
-    Vert( const spt::vec3& position )
-    {
+    Vert(const spt::vec3& position) {
         m_pos = std::make_unique<spt::vec3>(position);
     }
 

@@ -2,8 +2,7 @@
 
 namespace pmg {
 
-enum class FileType
-{
+enum class FileType {
     WavefrontObj,
     LsDynaKeyword
 };

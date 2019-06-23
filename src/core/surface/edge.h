@@ -12,8 +12,7 @@
 
 namespace pmg::surface {
 
-class Edge
-{
+class Edge {
 public:
     // TODO: maybe use std::reference_wrapper instead of pointer
     std::array<surface::Vert*, 2> verts;

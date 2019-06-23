@@ -13,22 +13,18 @@
 
 namespace pmg::surface {
 
-class Vert
-{
+class Vert {
 public:
     pmg::Vert* attachedVert = nullptr;
 
-    const spt::vec3& pos() const
-    {
+    const spt::vec3& pos() const {
         return *m_pos;
     }
 
-    Vert()
-    {
+    Vert() {
         m_pos = std::make_unique<spt::vec3>();
     }
-    Vert( const spt::vec3& position )
-    {
+    Vert(const spt::vec3& position) {
         m_pos = std::make_unique<spt::vec3>(position);
     }
 

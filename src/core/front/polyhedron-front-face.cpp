@@ -9,8 +9,7 @@ using namespace pmg;
 using spt::vec3;
 
 
-vec3 front::Face::computeNormal()
-{
+vec3 front::Face::computeNormal() {
     vec3 center = computeCenter();
     vec3 third_pos = face->findVertNot(face->edges[0])->pos();
     vec3 loc_normal = vec3::cross(
@@ -19,21 +18,20 @@ vec3 front::Face::computeNormal()
 
     // I don't know why it led to better(correct) result.
     vec3 test_normal_correct_intersect = loc_normal + vec3(static_cast<real_t>(2.1632737147),
-                                                         static_cast<real_t>(1.488313178),
-                                                         static_cast<real_t>(-0.71123534278))
-                                                     * static_cast<real_t>(1e-3);
+                                                           static_cast<real_t>(1.488313178),
+                                                           static_cast<real_t>(-0.71123534278))
+        * static_cast<real_t>(1e-3);
 
     std::size_t intersects_num = 0;
-    for (auto& fface : m_relatedPolyhedron->frontFaces())
-    {
+    for (auto& fface : m_relatedPolyhedron->frontFaces()) {
         if (fface == this)
             continue;
 
         if (spt::algs::doesRayIntersectTriangle(
-                center, test_normal_correct_intersect,
-                fface->face->edges[0]->verts[0]->pos(),
-                fface->face->edges[0]->verts[1]->pos(),
-                fface->face->findVertNot(fface->face->edges[0])->pos()))
+            center, test_normal_correct_intersect,
+            fface->face->edges[0]->verts[0]->pos(),
+            fface->face->edges[0]->verts[1]->pos(),
+            fface->face->findVertNot(fface->face->edges[0])->pos()))
             intersects_num++;
     }
 
@@ -44,24 +42,19 @@ vec3 front::Face::computeNormal()
 }
 
 
-
-
-vec3 front::Face::computeCenter()
-{
+vec3 front::Face::computeCenter() {
     return face->computeCenter();
 }
 
 
-real_t front::Face::computeQuality()
-{
+real_t front::Face::computeQuality() {
     return face->computeQuality();
 }
 
 
 
 
-front::Edge* front::Face::findFEdge(const pmg::Edge* edge) const
-{
+front::Edge* front::Face::findFEdge(const pmg::Edge* edge) const {
     for (auto& fedge : fEdges)
         if (fedge->edge == edge)
             return fedge;
@@ -70,8 +63,7 @@ front::Edge* front::Face::findFEdge(const pmg::Edge* edge) const
 }
 
 
-front::Edge* front::Face::findFEdge(const pmg::Vert* v0, const pmg::Vert* v1) const
-{
+front::Edge* front::Face::findFEdge(const pmg::Vert* v0, const pmg::Vert* v1) const {
     for (auto& fedge : fEdges)
         if ((fedge->edge->verts[0] == v0 && fedge->edge->verts[1] == v1) ||
             (fedge->edge->verts[0] == v1 && fedge->edge->verts[1] == v0))
@@ -81,8 +73,7 @@ front::Edge* front::Face::findFEdge(const pmg::Vert* v0, const pmg::Vert* v1) co
 }
 
 
-front::Edge* front::Face::findFEdgeNot(const pmg::Vert* vert) const
-{
+front::Edge* front::Face::findFEdgeNot(const pmg::Vert* vert) const {
     for (auto& fedge : fEdges)
         if (!fedge->edge->contains(vert))
             return fedge;
@@ -91,10 +82,7 @@ front::Edge* front::Face::findFEdgeNot(const pmg::Vert* vert) const
 }
 
 
-
-
-void front::Face::addFEdge(const front::Edge* fEdge)
-{
+void front::Face::addFEdge(const front::Edge* fEdge) {
     if (!fEdges[0])
         fEdges[0] = const_cast<front::Edge*>(fEdge);
     else if (!fEdges[1])
@@ -106,12 +94,9 @@ void front::Face::addFEdge(const front::Edge* fEdge)
 }
 
 
-void front::Face::removeFEdge(const front::Edge* fEdge)
-{
-    for (auto& fedge : fEdges)
-    {
-        if (fedge == fEdge)
-        {
+void front::Face::removeFEdge(const front::Edge* fEdge) {
+    for (auto& fedge : fEdges) {
+        if (fedge == fEdge) {
             fedge = nullptr;
             return;
         }
@@ -121,8 +106,7 @@ void front::Face::removeFEdge(const front::Edge* fEdge)
 }
 
 
-bool front::Face::fEdgesFull() const
-{
+bool front::Face::fEdgesFull() const {
     if (fEdges[0] && fEdges[1] && fEdges[2])
         return true;
 
@@ -130,8 +114,7 @@ bool front::Face::fEdgesFull() const
 }
 
 
-bool front::Face::contains(const front::Edge* fEdge) const
-{
+bool front::Face::contains(const front::Edge* fEdge) const {
     if (fEdges[0] == fEdge ||
         fEdges[1] == fEdge ||
         fEdges[2] == fEdge)
@@ -141,14 +124,12 @@ bool front::Face::contains(const front::Edge* fEdge) const
 }
 
 
-bool front::Face::contains(const pmg::Edge* edge) const
-{
+bool front::Face::contains(const pmg::Edge* edge) const {
     return face->contains(edge);
 }
 
 
-bool front::Face::contains(const pmg::Vert* vert) const
-{
+bool front::Face::contains(const pmg::Vert* vert) const {
     return face->contains(vert);
 }
 

@@ -4,8 +4,7 @@
 namespace pmg {
 
 // TODO: implement Surface class
-class Surface
-{
+class Surface {
 public:
 };
 

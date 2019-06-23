@@ -10,23 +10,19 @@ using namespace pmg;
 using spt::vec3;
 
 
-const std::vector<Edge*>& surface::Edge::innerEdges() const
-{
+const std::vector<Edge*>& surface::Edge::innerEdges() const {
     return m_innerEdges;
 }
 
 
-const std::vector<Vert*>& surface::Edge::innerVerts() const
-{
+const std::vector<Vert*>& surface::Edge::innerVerts() const {
     return m_innerVerts;
 }
 
 
-void surface::Edge::segmentize(real_t preferredLen)
-{
+void surface::Edge::segmentize(real_t preferredLen) {
     std::size_t n_inner_verts = static_cast<std::size_t>(std::round(magnitude() / preferredLen)) - 1;
-    if (n_inner_verts == 0)
-    {
+    if (n_inner_verts == 0) {
         m_innerEdges.push_back(new pmg::Edge(verts[0]->attachedVert, verts[1]->attachedVert));
         return;
     }
@@ -34,8 +30,7 @@ void surface::Edge::segmentize(real_t preferredLen)
     vec3 dir = (verts[1]->pos() - verts[0]->pos()) / (n_inner_verts + 1);
 
     vec3 cur_pos = verts[0]->pos();
-    for (std::size_t i = 0; i < n_inner_verts; i++)
-    {
+    for (std::size_t i = 0; i < n_inner_verts; i++) {
         cur_pos += dir;
         m_innerVerts.push_back(new pmg::Vert(cur_pos));
     }
@@ -49,21 +44,18 @@ void surface::Edge::segmentize(real_t preferredLen)
 }
 
 
-real_t surface::Edge::magnitude() const
-{
+real_t surface::Edge::magnitude() const {
     return std::sqrt(sqrMagnitude());
 }
 
 
-real_t surface::Edge::sqrMagnitude() const
-{
+real_t surface::Edge::sqrMagnitude() const {
     vec3 buf = verts[1]->pos() - verts[0]->pos();
     return vec3::dot(buf, buf);
 }
 
 
-bool surface::Edge::contains(const surface::Vert* sVert) const
-{
+bool surface::Edge::contains(const surface::Vert* sVert) const {
     if (verts[0] == sVert ||
         verts[1] == sVert)
         return true;
@@ -72,8 +64,7 @@ bool surface::Edge::contains(const surface::Vert* sVert) const
 }
 
 
-bool surface::Edge::contains(const pmg::Edge* edge) const
-{
+bool surface::Edge::contains(const pmg::Edge* edge) const {
     if (std::find(m_innerEdges.begin(), m_innerEdges.end(), edge) != m_innerEdges.end())
         return true;
 
@@ -81,8 +72,7 @@ bool surface::Edge::contains(const pmg::Edge* edge) const
 }
 
 
-bool surface::Edge::contains(const pmg::Vert* vert) const
-{
+bool surface::Edge::contains(const pmg::Vert* vert) const {
     if (verts[0]->attachedVert == vert ||
         verts[1]->attachedVert == vert ||
         std::find(m_innerVerts.begin(), m_innerVerts.end(), vert) != m_innerVerts.end())
@@ -94,8 +84,7 @@ bool surface::Edge::contains(const pmg::Vert* vert) const
 
 
 
-surface::Edge::Edge(const surface::Vert* vert0, const surface::Vert* vert1)
-{
+surface::Edge::Edge(const surface::Vert* vert0, const surface::Vert* vert1) {
     verts[0] = const_cast<surface::Vert*>(vert0);
     verts[1] = const_cast<surface::Vert*>(vert1);
 }

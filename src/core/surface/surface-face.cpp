@@ -28,48 +28,39 @@ using spt::vec3;
 
 
 template <typename T>
-constexpr real_t degToRad(T value)
-{
+constexpr real_t degToRad(T value) {
     return value * DEG_IN_RAD;
 }
 
 
-real_t surface::Face::preferredLength() const
-{
+real_t surface::Face::preferredLength() const {
     return m_prefLen;
 }
 
 
-const std::list<pmg::Face*>& surface::Face::innerFaces() const
-{
+const std::list<pmg::Face*>& surface::Face::innerFaces() const {
     return m_innerFaces;
 }
 
 
-const std::list<pmg::Edge*>& surface::Face::innerEdges() const
-{
+const std::list<pmg::Edge*>& surface::Face::innerEdges() const {
     return m_innerEdges;
 }
 
 
-const std::list<pmg::Vert*>& surface::Face::innerVerts() const
-{
+const std::list<pmg::Vert*>& surface::Face::innerVerts() const {
     return m_innerVerts;
 }
 
 
-const std::list<sfront::Edge*>& surface::Face::frontEdges() const
-{
+const std::list<sfront::Edge*>& surface::Face::frontEdges() const {
     return m_frontEdges;
 }
 
 
-surface::Vert* surface::Face::findVertNot(const surface::Edge* edge) const
-{
-    for (auto& face_edge : edges)
-    {
-        if (edge != face_edge)
-        {
+surface::Vert* surface::Face::findVertNot(const surface::Edge* edge) const {
+    for (auto& face_edge : edges) {
+        if (edge != face_edge) {
             if (!edge->contains(face_edge->verts[0]))
                 return face_edge->verts[0];
             else
@@ -81,8 +72,7 @@ surface::Vert* surface::Face::findVertNot(const surface::Edge* edge) const
 }
 
 
-surface::Edge* surface::Face::findSurfaceEdgeContaining(const pmg::Edge* edge) const
-{
+surface::Edge* surface::Face::findSurfaceEdgeContaining(const pmg::Edge* edge) const {
     for (auto& sedge : edges)
         if (sedge->contains(edge))
             return sedge;
@@ -91,8 +81,7 @@ surface::Edge* surface::Face::findSurfaceEdgeContaining(const pmg::Edge* edge) c
 }
 
 
-void surface::Face::triangulate(real_t preferredLen, genparams::Surface genParams)
-{
+void surface::Face::triangulate(real_t preferredLen, genparams::Surface genParams) {
     m_prefLen = preferredLen;
     initializeFront();
     computeFrontNormals();
@@ -104,8 +93,7 @@ void surface::Face::triangulate(real_t preferredLen, genparams::Surface genParam
 }
 
 
-bool surface::Face::contains(const surface::Edge* edge) const
-{
+bool surface::Face::contains(const surface::Edge* edge) const {
     for (auto& edge_ : edges)
         if (edge_ == edge)
             return true;
@@ -114,8 +102,7 @@ bool surface::Face::contains(const surface::Edge* edge) const
 }
 
 
-bool surface::Face::contains(const surface::Vert* vert) const
-{
+bool surface::Face::contains(const surface::Vert* vert) const {
     for (auto& edge : edges)
         if (edge->contains(vert))
             return true;
@@ -129,8 +116,7 @@ bool surface::Face::contains(const surface::Vert* vert) const
 surface::Face::Face(
     const surface::Edge* edge0,
     const surface::Edge* edge1,
-    const surface::Edge* edge2)
-{
+    const surface::Edge* edge2) {
     edges[0] = const_cast<surface::Edge*>(edge0);
     edges[1] = const_cast<surface::Edge*>(edge1);
     edges[2] = const_cast<surface::Edge*>(edge2);
@@ -139,8 +125,7 @@ surface::Face::Face(
 
 
 
-sfront::Vert* surface::Face::findFrontVert(const pmg::Vert* vert) const
-{
+sfront::Vert* surface::Face::findFrontVert(const pmg::Vert* vert) const {
     for (auto& fvert : m_frontVerts)
         if (fvert->vert == vert)
             return fvert;
@@ -149,8 +134,7 @@ sfront::Vert* surface::Face::findFrontVert(const pmg::Vert* vert) const
 }
 
 
-sfront::Edge* surface::Face::addToFront(const pmg::Edge* edge)
-{
+sfront::Edge* surface::Face::addToFront(const pmg::Edge* edge) {
     sfront::Edge* new_f_edge = new sfront::Edge(this, edge);
     m_frontEdges.push_back(new_f_edge);
     m_innerEdges.push_back(new_f_edge->edge);
@@ -158,8 +142,7 @@ sfront::Edge* surface::Face::addToFront(const pmg::Edge* edge)
 }
 
 
-sfront::Vert* surface::Face::addToFront(const pmg::Vert* vert)
-{
+sfront::Vert* surface::Face::addToFront(const pmg::Vert* vert) {
     sfront::Vert* new_f_vert = new sfront::Vert(this, vert);
     m_frontVerts.push_back(new_f_vert);
     m_innerVerts.push_back(new_f_vert->vert);
@@ -167,22 +150,19 @@ sfront::Vert* surface::Face::addToFront(const pmg::Vert* vert)
 }
 
 
-void surface::Face::removeFromFront(sfront::Edge* fEdge)
-{
+void surface::Face::removeFromFront(sfront::Edge* fEdge) {
     m_frontEdges.erase(std::find(m_frontEdges.begin(), m_frontEdges.end(), fEdge));
     delete fEdge;
 }
 
 
-void surface::Face::removeFromFront(sfront::Vert* fVert)
-{
+void surface::Face::removeFromFront(sfront::Vert* fVert) {
     m_frontVerts.erase(std::find(m_frontVerts.begin(), m_frontVerts.end(), fVert));
     delete fVert;
 }
 
 
-bool surface::Face::anyVertInsidePotentialTriangCheck(sfront::Vert* fVert) const
-{
+bool surface::Face::anyVertInsidePotentialTriangCheck(sfront::Vert* fVert) const {
     auto opp_verts = fVert->oppVerts();
     std::array<pmg::Vert*, 3> tr
     {
@@ -200,28 +180,25 @@ bool surface::Face::anyVertInsidePotentialTriangCheck(sfront::Vert* fVert) const
 }
 
 
-bool surface::Face::doesSegmentIntersectsWithFront(const vec3& v0, const vec3& v1) const
-{
+bool surface::Face::doesSegmentIntersectsWithFront(const vec3& v0, const vec3& v1) const {
     for (auto& fedge : m_frontEdges)
         if (spt::algs::segmentsDistance(
-                fedge->edge->verts[0]->pos(), fedge->edge->verts[1]->pos(),
-                v0, v1) < C_EDGES_INTERS_DIST * m_prefLen)
+            fedge->edge->verts[0]->pos(), fedge->edge->verts[1]->pos(),
+            v0, v1) < C_EDGES_INTERS_DIST * m_prefLen)
             return true;
 
     return false;
 }
 
 
-bool surface::Face::doesSegmentIntersectsWithFront(const pmg::Vert* v0, const vec3& v1) const
-{
-    for (auto& fedge : m_frontEdges)
-    {
+bool surface::Face::doesSegmentIntersectsWithFront(const pmg::Vert* v0, const vec3& v1) const {
+    for (auto& fedge : m_frontEdges) {
         if (fedge->edge->contains(v0))
             continue;
 
         if (spt::algs::segmentsDistance(
-                fedge->edge->verts[0]->pos(), fedge->edge->verts[1]->pos(),
-                v0->pos(), v1) < C_EDGES_INTERS_DIST * m_prefLen)
+            fedge->edge->verts[0]->pos(), fedge->edge->verts[1]->pos(),
+            v0->pos(), v1) < C_EDGES_INTERS_DIST * m_prefLen)
             return true;
     }
 
@@ -229,16 +206,14 @@ bool surface::Face::doesSegmentIntersectsWithFront(const pmg::Vert* v0, const ve
 }
 
 
-vec3 surface::Face::computeNormalInTriang(sfront::Edge* fEdge, const vec3& oppVertPos)
-{
+vec3 surface::Face::computeNormalInTriang(sfront::Edge* fEdge, const vec3& oppVertPos) {
     vec3 p0 = fEdge->edge->verts[0]->pos();
     vec3 p1 = fEdge->edge->verts[1]->pos();
     return (spt::algs::project(oppVertPos, p0, p1) - oppVertPos).normalize();
 }
 
 
-bool surface::Face::tryComputeNewVertPosType2(sfront::Edge* fEdge, vec3& out_pos)
-{
+bool surface::Face::tryComputeNewVertPosType2(sfront::Edge* fEdge, vec3& out_pos) {
     std::array<sfront::Vert*, 2> main_f_verts;
     main_f_verts[0] = findFrontVert(fEdge->edge->verts[0]);
     main_f_verts[1] = findFrontVert(fEdge->edge->verts[1]);
@@ -270,10 +245,9 @@ bool surface::Face::tryComputeNewVertPosType2(sfront::Edge* fEdge, vec3& out_pos
 }
 
 
-bool surface::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, vec3& out_pos, std::size_t smallAngleIdx)
-{
+bool surface::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, vec3& out_pos, std::size_t smallAngleIdx) {
     auto main_vert = fEdge->edge->verts[smallAngleIdx];
-    auto sec_vert  = fEdge->edge->findNot(main_vert);
+    auto sec_vert = fEdge->edge->findNot(main_vert);
     auto main_f_vert = findFrontVert(main_vert);
 
     auto adj_f_edges = main_f_vert->findAdjEdges();
@@ -293,7 +267,7 @@ bool surface::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, vec3& out_pos
     vec3 v0_to_np = new_pos - main_vert->pos();
     vec3 v1_to_np = new_pos - sec_vert->pos();
     if (doesSegmentIntersectsWithFront(main_vert->pos(), new_pos + v0_to_np * K_MIN_DIS) ||
-        doesSegmentIntersectsWithFront(sec_vert->pos(),  new_pos + v1_to_np * K_MIN_DIS))
+        doesSegmentIntersectsWithFront(sec_vert->pos(), new_pos + v1_to_np * K_MIN_DIS))
         return false;
 
     out_pos = new_pos;
@@ -301,8 +275,7 @@ bool surface::Face::tryComputeNewVertPosType1(sfront::Edge* fEdge, vec3& out_pos
 }
 
 
-bool surface::Face::tryComputeNewVertPosType0(sfront::Edge* fEdge, vec3& out_pos)
-{
+bool surface::Face::tryComputeNewVertPosType0(sfront::Edge* fEdge, vec3& out_pos) {
     real_t magn = fEdge->edge->magnitude();
     real_t raw_deform = K_D * (m_prefLen - magn);
     real_t deform = raw_deform < magn * K_MAXD ? raw_deform : magn * K_MAXD;
@@ -324,8 +297,7 @@ bool surface::Face::tryComputeNewVertPosType0(sfront::Edge* fEdge, vec3& out_pos
 }
 
 
-bool surface::Face::tryComputeNewVertPos(sfront::Edge* fEdge, vec3& out_pos)
-{
+bool surface::Face::tryComputeNewVertPos(sfront::Edge* fEdge, vec3& out_pos) {
     std::array<real_t, 2> angs
     {
         findFrontVert(fEdge->edge->verts[0])->angle(),
@@ -336,8 +308,7 @@ bool surface::Face::tryComputeNewVertPos(sfront::Edge* fEdge, vec3& out_pos)
     if (angs[0] < degToRad(120)) idces[n_small_angs++] = 0;
     if (angs[1] < degToRad(120)) idces[n_small_angs++] = 1;
 
-    switch (n_small_angs)
-    {
+    switch (n_small_angs) {
     case 0: return tryComputeNewVertPosType0(fEdge, out_pos);
     case 1: return tryComputeNewVertPosType1(fEdge, out_pos, idces[0]);
     case 2: return tryComputeNewVertPosType2(fEdge, out_pos);
@@ -347,17 +318,15 @@ bool surface::Face::tryComputeNewVertPos(sfront::Edge* fEdge, vec3& out_pos)
 }
 
 
-pair_rr surface::Face::computeMinMaxEdgesLengths(const vec3& p0, const vec3& p1, const vec3& p2)
-{
+pair_rr surface::Face::computeMinMaxEdgesLengths(const vec3& p0, const vec3& p1, const vec3& p2) {
     auto min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2);
-    min_max.first  = std::sqrt(min_max.first);
+    min_max.first = std::sqrt(min_max.first);
     min_max.second = std::sqrt(min_max.second);
     return min_max;
 }
 
 
-pair_rr surface::Face::computeMinMaxEdgesSqrLengths(const vec3& p0, const vec3& p1, const vec3& p2)
-{
+pair_rr surface::Face::computeMinMaxEdgesSqrLengths(const vec3& p0, const vec3& p1, const vec3& p2) {
     std::array<real_t, 3> sqr_magns;
     sqr_magns[0] = (p1 - p0).sqrMagnitude();
     sqr_magns[1] = (p2 - p0).sqrMagnitude();
@@ -366,30 +335,26 @@ pair_rr surface::Face::computeMinMaxEdgesSqrLengths(const vec3& p0, const vec3& 
 }
 
 
-real_t surface::Face::computeTriangSimpleQuality(const vec3& p0, const vec3& p1, const vec3& p2)
-{
+real_t surface::Face::computeTriangSimpleQuality(const vec3& p0, const vec3& p1, const vec3& p2) {
     auto sqr_min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2);
     return std::sqrt(sqr_min_max.first / sqr_min_max.second);
 }
 
 
-real_t surface::Face::computeTriangSimpleSqrQuality(const vec3& p0, const vec3& p1, const vec3& p2)
-{
+real_t surface::Face::computeTriangSimpleSqrQuality(const vec3& p0, const vec3& p1, const vec3& p2) {
     auto sqr_min_max = computeMinMaxEdgesSqrLengths(p0, p1, p2);
     return sqr_min_max.first / sqr_min_max.second;
 }
 
 
-sfront::Edge* surface::Face::chooseEdgeForExhaustionWithNewVert(sfront::Vert* fVert)
-{
+sfront::Edge* surface::Face::chooseEdgeForExhaustionWithNewVert(sfront::Vert* fVert) {
     auto adj_edges = fVert->findAdjEdges();
     return std::get<0>(adj_edges)->edge->sqrMagnitude() < std::get<1>(adj_edges)->edge->sqrMagnitude() ?
-                std::get<0>(adj_edges) : std::get<1>(adj_edges);
+        std::get<0>(adj_edges) : std::get<1>(adj_edges);
 }
 
 
-void surface::Face::exhaustWithNewVert(sfront::Edge* fEdge, const vec3& vertPos)
-{
+void surface::Face::exhaustWithNewVert(sfront::Edge* fEdge, const vec3& vertPos) {
     std::array<pmg::Vert*, 2> main_verts = { fEdge->edge->verts[0], fEdge->edge->verts[1] };
 
     pmg::Vert* new_vert = addToFront(new pmg::Vert(vertPos))->vert;
@@ -407,8 +372,7 @@ void surface::Face::exhaustWithNewVert(sfront::Edge* fEdge, const vec3& vertPos)
 }
 
 
-void surface::Face::exhaustWithoutNewVert(sfront::Vert* fVert)
-{
+void surface::Face::exhaustWithoutNewVert(sfront::Vert* fVert) {
     auto adj_edges = fVert->findAdjEdges();
     std::pair<pmg::Vert*, pmg::Vert*> opp_verts =
     {
@@ -430,8 +394,7 @@ void surface::Face::exhaustWithoutNewVert(sfront::Vert* fVert)
 }
 
 
-bool surface::Face::tryExhaustWithoutNewVert(sfront::Vert* fVert)
-{
+bool surface::Face::tryExhaustWithoutNewVert(sfront::Vert* fVert) {
     if (anyVertInsidePotentialTriangCheck(fVert))
         return false;
 
@@ -440,8 +403,7 @@ bool surface::Face::tryExhaustWithoutNewVert(sfront::Vert* fVert)
 }
 
 
-bool surface::Face::tryExhaustWithNewVert(sfront::Vert* fVert)
-{
+bool surface::Face::tryExhaustWithNewVert(sfront::Vert* fVert) {
     auto exhaust_f_edge = chooseEdgeForExhaustionWithNewVert(fVert);
     vec3 new_vert_pos;
     if (!tryComputeNewVertPos(exhaust_f_edge, new_vert_pos))
@@ -452,17 +414,14 @@ bool surface::Face::tryExhaustWithNewVert(sfront::Vert* fVert)
 }
 
 
-sfront::Vert* surface::Face::currentFrontVert(real_t maxCompl) const
-{
+sfront::Vert* surface::Face::currentFrontVert(real_t maxCompl) const {
     real_t cur_max_compl = 0.0;
     sfront::Vert* cur_max_f_edge = nullptr;
-    for (auto& f_vert : m_frontVerts)
-    {
+    for (auto& f_vert : m_frontVerts) {
         real_t cur_compl = f_vert->complexity();
-        if (   cur_compl > cur_max_compl
-            && cur_compl < maxCompl)
-        {
-            cur_max_compl  = cur_compl;
+        if (cur_compl > cur_max_compl
+            && cur_compl < maxCompl) {
+            cur_max_compl = cur_compl;
             cur_max_f_edge = f_vert;
         }
     }
@@ -471,8 +430,7 @@ sfront::Vert* surface::Face::currentFrontVert(real_t maxCompl) const
 }
 
 
-bool surface::Face::exhaustWithoutNewVertPriorityPredicate(sfront::Vert* fEdge)
-{
+bool surface::Face::exhaustWithoutNewVertPriorityPredicate(sfront::Vert* fEdge) {
     if (fEdge->angle() < degToRad(60))
         return true;
 
@@ -488,8 +446,7 @@ bool surface::Face::exhaustWithoutNewVertPriorityPredicate(sfront::Vert* fEdge)
 }
 
 
-bool surface::Face::exhaustWithNewVertPriorityPredicate(sfront::Vert* fEdge)
-{
+bool surface::Face::exhaustWithNewVertPriorityPredicate(sfront::Vert* fEdge) {
     if (fEdge->angle() > degToRad(100))
         return true;
 
@@ -498,8 +455,7 @@ bool surface::Face::exhaustWithNewVertPriorityPredicate(sfront::Vert* fEdge)
 
 
 surface::Face::ExhaustType surface::Face::computeExhaustionTypeQualityPriority(
-        sfront::Vert* fVert, sfront::Edge*& out_withNWFrontEdge, vec3*& out_withNWNewVertPos)
-{
+    sfront::Vert* fVert, sfront::Edge*& out_withNWFrontEdge, vec3*& out_withNWNewVertPos) {
     if (anyVertInsidePotentialTriangCheck(fVert))
         return ExhaustType::WithNewVert;
 
@@ -528,8 +484,7 @@ surface::Face::ExhaustType surface::Face::computeExhaustionTypeQualityPriority(
 }
 
 
-void surface::Face::processLastFace()
-{
+void surface::Face::processLastFace() {
     std::array<pmg::Edge*, 3> edges;
     std::size_t i = 0;
     for (auto& fedge : m_frontEdges)
@@ -547,59 +502,44 @@ void surface::Face::processLastFace()
 }
 
 
-void surface::Face::processAngles()
-{
+void surface::Face::processAngles() {
     if (m_frontEdges.size() < 3)
         throw std::logic_error("Wrong input data.\nError in function: pmg::surface::Face::processAngles");
 
-    if (m_frontEdges.size() == 3)
-    {
+    if (m_frontEdges.size() == 3) {
         processLastFace();
         return;
     }
 
     real_t max_compl = std::numeric_limits<real_t>::max();
-    for (sfront::Vert* cur_f_vert = currentFrontVert(max_compl);; cur_f_vert = currentFrontVert(max_compl))
-    {
+    for (sfront::Vert* cur_f_vert = currentFrontVert(max_compl);; cur_f_vert = currentFrontVert(max_compl)) {
         if (!cur_f_vert)
             throw std::logic_error("pmg::surface::Face::currentFrontVert returned nullptr");
 
-        if (exhaustWithoutNewVertPriorityPredicate(cur_f_vert))
-        {
-            if (!tryExhaustWithoutNewVert(cur_f_vert))
-            {
+        if (exhaustWithoutNewVertPriorityPredicate(cur_f_vert)) {
+            if (!tryExhaustWithoutNewVert(cur_f_vert)) {
                 max_compl = cur_f_vert->complexity();
                 continue;
             }
-        }
-        else if (exhaustWithNewVertPriorityPredicate(cur_f_vert))
-        {
-            if (!tryExhaustWithNewVert(cur_f_vert))
-            {
+        } else if (exhaustWithNewVertPriorityPredicate(cur_f_vert)) {
+            if (!tryExhaustWithNewVert(cur_f_vert)) {
                 max_compl = cur_f_vert->complexity();
                 continue;
             }
-        }
-        else
-        {
+        } else {
             sfront::Edge* exhaust_from_f_edge = nullptr;
             vec3* new_vert_pos = nullptr;
-            switch (computeExhaustionTypeQualityPriority(cur_f_vert, exhaust_from_f_edge, new_vert_pos))
-            {
+            switch (computeExhaustionTypeQualityPriority(cur_f_vert, exhaust_from_f_edge, new_vert_pos)) {
             case ExhaustType::WithoutNewVert:
                 exhaustWithoutNewVert(cur_f_vert);
                 break;
 
             case ExhaustType::WithNewVert:
-                if (new_vert_pos)
-                {
+                if (new_vert_pos) {
                     exhaustWithNewVert(exhaust_from_f_edge, *new_vert_pos);
                     delete new_vert_pos;
-                }
-                else
-                {
-                    if (!tryExhaustWithNewVert(cur_f_vert))
-                    {
+                } else {
+                    if (!tryExhaustWithNewVert(cur_f_vert)) {
                         max_compl = cur_f_vert->complexity();
                         continue;
                     }
@@ -613,8 +553,7 @@ void surface::Face::processAngles()
         }
         max_compl = std::numeric_limits<real_t>::max();
 
-        if (m_frontEdges.size() == 3)
-        {
+        if (m_frontEdges.size() == 3) {
             processLastFace();
             return;
         }
@@ -622,23 +561,16 @@ void surface::Face::processAngles()
 }
 
 
-void surface::Face::smoothMesh(std::size_t nIters)
-{
-    for (std::size_t i = 0; i < nIters; i++)
-    {
-        for (auto& vert : m_innerVerts)
-        {
+void surface::Face::smoothMesh(std::size_t nIters) {
+    for (std::size_t i = 0; i < nIters; i++) {
+        for (auto& vert : m_innerVerts) {
             vec3 shift;
             int delta_shifts_num = 0;
-            for (auto& edge : m_innerEdges)
-            {
-                if (vert == edge->verts[0])
-                {
+            for (auto& edge : m_innerEdges) {
+                if (vert == edge->verts[0]) {
                     shift += edge->verts[1]->pos() - vert->pos();
                     delta_shifts_num++;
-                }
-                else if (vert == edge->verts[1])
-                {
+                } else if (vert == edge->verts[1]) {
                     shift += edge->verts[0]->pos() - vert->pos();
                     delta_shifts_num++;
                 }
@@ -650,21 +582,15 @@ void surface::Face::smoothMesh(std::size_t nIters)
 }
 
 
-pair_ff surface::Face::find2AdjFaces(pmg::Edge* edge) const
-{
+pair_ff surface::Face::find2AdjFaces(pmg::Edge* edge) const {
     pair_ff res;
     bool not_found_yet = true;
-    for (auto& face : m_innerFaces)
-    {
-        if (face->contains(edge))
-        {
-            if (not_found_yet)
-            {
+    for (auto& face : m_innerFaces) {
+        if (face->contains(edge)) {
+            if (not_found_yet) {
                 res.first = face;
                 not_found_yet = false;
-            }
-            else
-            {
+            } else {
                 res.second = face;
                 return res;
             }
@@ -675,37 +601,36 @@ pair_ff surface::Face::find2AdjFaces(pmg::Edge* edge) const
 }
 
 
-bool surface::Face::flipIfNeeded(pmg::Edge* edge)
-{
+bool surface::Face::flipIfNeeded(pmg::Edge* edge) {
     std::array<pmg::Vert*, 2> opp_nodes;
     auto around_faces = find2AdjFaces(edge);
     opp_nodes[0] = std::get<0>(around_faces)->findVertNot(edge);
     opp_nodes[1] = std::get<1>(around_faces)->findVertNot(edge);
 
     real_t alpha = std::acos(vec3::cos(edge->verts[0]->pos() - opp_nodes[0]->pos(), edge->verts[1]->pos() - opp_nodes[0]->pos()));
-    real_t beta  = std::acos(vec3::cos(edge->verts[0]->pos() - opp_nodes[1]->pos(), edge->verts[1]->pos() - opp_nodes[1]->pos()));
+    real_t beta = std::acos(vec3::cos(edge->verts[0]->pos() - opp_nodes[1]->pos(), edge->verts[1]->pos() - opp_nodes[1]->pos()));
 
     if (alpha + beta <= PI)
         return false;
 
 
-    auto old_edge   = std::find(m_innerEdges.begin(), m_innerEdges.end(), edge);
+    auto old_edge = std::find(m_innerEdges.begin(), m_innerEdges.end(), edge);
     auto old_face0 = std::find(m_innerFaces.begin(), m_innerFaces.end(), std::get<0>(around_faces));
     auto old_face1 = std::find(m_innerFaces.begin(), m_innerFaces.end(), std::get<1>(around_faces));
 
     pmg::Edge* new_edge = new pmg::Edge(opp_nodes[0], opp_nodes[1]);
     pmg::Face* new_face0 = new pmg::Face(
-            std::get<0>(around_faces)->findEdge(opp_nodes[0], edge->verts[0]),
-            std::get<1>(around_faces)->findEdge(opp_nodes[1], edge->verts[0]),
-            new_edge);
+        std::get<0>(around_faces)->findEdge(opp_nodes[0], edge->verts[0]),
+        std::get<1>(around_faces)->findEdge(opp_nodes[1], edge->verts[0]),
+        new_edge);
     pmg::Face* new_face1 = new pmg::Face(
-            std::get<0>(around_faces)->findEdge(opp_nodes[0], edge->verts[1]),
-            std::get<1>(around_faces)->findEdge(opp_nodes[1], edge->verts[1]),
-            new_edge);
+        std::get<0>(around_faces)->findEdge(opp_nodes[0], edge->verts[1]),
+        std::get<1>(around_faces)->findEdge(opp_nodes[1], edge->verts[1]),
+        new_edge);
 
-    delete *old_edge;
-    delete *old_face0;
-    delete *old_face1;
+    delete* old_edge;
+    delete* old_face0;
+    delete* old_face1;
 
     *old_edge = new_edge;
     *old_face0 = new_face0;
@@ -715,32 +640,27 @@ bool surface::Face::flipIfNeeded(pmg::Edge* edge)
 }
 
 
-void surface::Face::delaunayPostP()
-{
+void surface::Face::delaunayPostP() {
     for (auto& edge : m_innerEdges)
         flipIfNeeded(edge);
 }
 
 
-void surface::Face::optimizeMesh(std::size_t nSmoothIters, std::size_t nDelaunaySmoothIters)
-{
-    for (std::size_t i = 0; i < nDelaunaySmoothIters; i++)
-    {
+void surface::Face::optimizeMesh(std::size_t nSmoothIters, std::size_t nDelaunaySmoothIters) {
+    for (std::size_t i = 0; i < nDelaunaySmoothIters; i++) {
         delaunayPostP();
         smoothMesh(nSmoothIters);
     }
 }
 
 
-void surface::Face::computeFrontNormals() const
-{
+void surface::Face::computeFrontNormals() const {
     for (auto& fedge : m_frontEdges)
         fedge->computeNormal();
 }
 
 
-void surface::Face::initializeFront()
-{
+void surface::Face::initializeFront() {
     std::vector<surface::Vert*> sverts;
     for (auto& this_edge : edges)
         for (auto& svert : this_edge->verts)

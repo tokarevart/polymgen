@@ -11,8 +11,7 @@
 #include "src/polysgen/polysgen.h"
 
 
-std::string rabbit()
-{
+std::string rabbit() {
     std::array<std::string, 4> lines =
     {
         "(\\_/)",
@@ -26,12 +25,11 @@ std::string rabbit()
     return res;
 }
 
-int main()
-{
+int main() {
     std::cout << rabbit() << std::endl;
 
     real_t preferredLength = static_cast<real_t>(0.5);
-    
+
     std::cout << "Generating PolyShell...";
     std::size_t n = 4;
     psg::PolyShell shell = psg::generateCuboids(n, n, n);

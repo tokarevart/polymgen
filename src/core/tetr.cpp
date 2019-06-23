@@ -8,8 +8,7 @@
 using spt::vec3;
 
 
-real_t pmg::Tetr::computeVolume() const
-{
+real_t pmg::Tetr::computeVolume() const {
     vec3 v0 = verts[0]->pos();
     return static_cast<real_t>(1.0 / 6.0) * std::abs(vec3::mixed(
         verts[1]->pos() - v0,
@@ -17,9 +16,8 @@ real_t pmg::Tetr::computeVolume() const
         verts[3]->pos() - v0));
 }
 
-real_t pmg::Tetr::computeQuality() const
-{
-    std::array<real_t, 4> sqr_prods = 
+real_t pmg::Tetr::computeQuality() const {
+    std::array<real_t, 4> sqr_prods =
     {
         static_cast<real_t>(1.0),
         static_cast<real_t>(1.0),
@@ -41,8 +39,7 @@ real_t pmg::Tetr::computeQuality() const
 
 
 
-pmg::Tetr::Tetr(const Vert* vert0, const Vert* vert1, const Vert* vert2, const Vert* vert3)
-{
+pmg::Tetr::Tetr(const Vert* vert0, const Vert* vert1, const Vert* vert2, const Vert* vert3) {
     verts[0] = const_cast<Vert*>(vert0);
     verts[1] = const_cast<Vert*>(vert1);
     verts[2] = const_cast<Vert*>(vert2);

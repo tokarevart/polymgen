@@ -10,8 +10,7 @@
 
 namespace psg {
 
-struct PolyShell
-{
+struct PolyShell {
     using coordinate_t = real_t;
     using VertIdx = std::size_t;
     using FaceIdx = std::size_t;

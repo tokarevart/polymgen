@@ -11,8 +11,7 @@
 
 namespace pmg {
 
-class Tetr
-{
+class Tetr {
     using FaceV = std::array<pmg::Vert*, 3>;
 
 public:
@@ -23,12 +22,12 @@ public:
     real_t computeVolume()  const;
     real_t computeQuality() const;
 
-    bool contains( const Vert* vert ) const;
+    bool contains(const Vert* vert) const;
 
-    Tetr( const pmg::Vert* vert0,
-          const pmg::Vert* vert1,
-          const pmg::Vert* vert2,
-          const pmg::Vert* vert3 );
+    Tetr(const pmg::Vert* vert0,
+         const pmg::Vert* vert1,
+         const pmg::Vert* vert2,
+         const pmg::Vert* vert3);
 };
 
 } // namespace pmg

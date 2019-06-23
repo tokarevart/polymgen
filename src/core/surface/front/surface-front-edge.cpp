@@ -8,8 +8,7 @@ using namespace pmg::surface;
 using spt::vec3;
 
 
-vec3 front::Edge::computeNormal()
-{
+vec3 front::Edge::computeNormal() {
     surface::Edge* related_sedge = m_relatedSurfaceFace->findSurfaceEdgeContaining(edge);
     vec3 opp_v_pos = m_relatedSurfaceFace->findVertNot(related_sedge)->pos();
     vec3 p0 = related_sedge->verts[0]->pos();
@@ -19,8 +18,7 @@ vec3 front::Edge::computeNormal()
 }
 
 
-vec3 front::Edge::computeCenter()
-{
+vec3 front::Edge::computeCenter() {
     return (edge->verts[0]->pos() + edge->verts[1]->pos()) * static_cast<real_t>(0.5);
 }
 

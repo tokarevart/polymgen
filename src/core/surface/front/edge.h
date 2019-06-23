@@ -11,8 +11,7 @@
 
 namespace pmg::surface::front {
 
-class Edge
-{
+class Edge {
 public:
     // TODO: maybe use std::reference_wrapper instead of pointer
     pmg::Edge* edge;
@@ -21,7 +20,7 @@ public:
     spt::vec3 computeNormal();
     spt::vec3 computeCenter();
 
-    Edge( const surface::Face* relatedSurfaceFace, const pmg::Edge* edge );
+    Edge(const surface::Face* relatedSurfaceFace, const pmg::Edge* edge);
 
 
 private:

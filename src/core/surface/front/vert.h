@@ -11,8 +11,7 @@
 
 namespace pmg::surface::front {
 
-class Vert
-{
+class Vert {
     using pair_ee = std::pair<front::Edge*, front::Edge*>;
     using pair_vv = std::pair<pmg::Vert*, pmg::Vert*>;
 
@@ -37,10 +36,10 @@ private:
     // TODO: it's not good to store it
     surface::Face* m_relatedSurfaceFace;
 
-    real_t m_angle      = static_cast<real_t>(0.0);
+    real_t m_angle = static_cast<real_t>(0.0);
     real_t m_complexity = static_cast<real_t>(0.0);
 
-    bool m_needAngleProcessing      = true;
+    bool m_needAngleProcessing = true;
     bool m_needComplexityProcessing = true;
 };
 
