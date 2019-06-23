@@ -12,7 +12,7 @@ namespace spt {
 template <std::size_t Dim, typename Real = double>
 struct vec
 {
-    static constexpr auto dim = Dim;
+    static constexpr std::size_t dim = Dim;
     using real_type = Real;
 
     std::array<real_type, Dim> x;
@@ -144,7 +144,7 @@ struct vec
 template <typename Real>
 struct vec<3, Real>
 {
-    static constexpr auto dim = 3;
+    static constexpr std::size_t dim = 3;
     using real_type = Real;
 
     std::array<real_type, 3> x = 
@@ -302,7 +302,7 @@ struct vec<3, Real>
 template <typename Real>
 struct vec<2, Real>
 {
-    static constexpr auto dim = 2;
+    static constexpr std::size_t dim = 2;
     using real_type = Real;
 
     std::array<real_type, 2> x = 

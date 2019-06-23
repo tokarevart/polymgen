@@ -10,7 +10,7 @@ struct mat;
 template <typename Real>
 struct mat<3, Real>
 {
-    static constexpr auto dim = 3;
+    static constexpr std::size_t dim = 3;
     using real_type = Real;
     using line_type = spt::vec<3, real_type>;
 

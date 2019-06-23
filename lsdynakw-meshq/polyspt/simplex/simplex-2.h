@@ -6,8 +6,8 @@ namespace spt {
 template <std::size_t Dim, typename Real>
 struct simplex<2, Dim, Real>
 {
-    static constexpr auto n = 2;
-    static constexpr auto dim = Dim;
+    static constexpr std::size_t n = 2;
+    static constexpr std::size_t dim = Dim;
     using real_type = Real;
     using facet_type = spt::edge<Dim, Real>;
     using edge_type = facet_type;
@@ -71,8 +71,8 @@ struct simplex<2, Dim, Real>
 template <std::size_t Dim, typename Real>
 struct simplex_v<2, Dim, Real>
 {
-    static constexpr auto n = 2;
-    static constexpr auto dim = Dim;
+    static constexpr std::size_t n = 2;
+    static constexpr std::size_t dim = Dim;
     using real_type = Real;
     using vertex_type = spt::vertex<Dim, Real>;
 

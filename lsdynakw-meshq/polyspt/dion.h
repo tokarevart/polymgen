@@ -11,8 +11,8 @@ using dion = polytope<1, Dim, Real>;
 template <std::size_t Dim, typename Real>
 struct polytope<1, Dim, Real>
 {
-    static constexpr auto n = 1;
-    static constexpr auto dim = Dim;
+    static constexpr std::size_t n = 1;
+    static constexpr std::size_t dim = Dim;
     using real_type = Real;
     using facet_type = spt::vertex<Dim, Real>;
     using vertex_type = facet_type;
