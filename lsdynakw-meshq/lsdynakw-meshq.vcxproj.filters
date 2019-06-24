@@ -120,5 +120,11 @@
     <ClInclude Include="polyspt\mat.h">
       <Filter>polyspt</Filter>
     </ClInclude>
+    <ClInclude Include="polyspt\tetrahedron.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
+    <ClInclude Include="polyspt\triangle.h">
+      <Filter>polyspt</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

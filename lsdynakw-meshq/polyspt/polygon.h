@@ -1,5 +1,6 @@
 #pragma once
 #include "edge.h"
+#include <vector>
 
 namespace spt {
 
@@ -11,7 +12,7 @@ template <std::size_t Dim, typename ValueType>
 struct polytope<2, Dim, ValueType> {
     static constexpr std::size_t n = 2;
     static constexpr std::size_t dim = Dim;
-    using value_type = ValueType;
+    using real_type = ValueType;
     using vertex_type = spt::vertex<Dim, ValueType>;
     using edge_type = spt::edge<Dim, ValueType>;
     using facet_type = edge_type;
@@ -26,7 +27,7 @@ struct polytope<2, Dim, ValueType> {
         if constexpr (std::is_same<edge_type, SubPolytope>())
             return edges;
         else {
-            std::list<SubPolytope*> res;
+            std::vector<SubPolytope*> res;
             for (const auto& edge : edges)
                 for (const auto& vert : edge->vertices)
                     if (std::find(res.begin(), res.end(), vert) == res.end())
@@ -57,7 +58,7 @@ struct polytope<2, Dim, ValueType> {
         : edges(edges) {}
     template <typename... Edges>
     polytope(Edges... edges)
-        : edges{ edges... } {}
+        : edges{ const_cast<edge_type*>(edges)... } {}
 };
 
 } // namespace spt

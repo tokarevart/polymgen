@@ -2,13 +2,10 @@
 
 namespace spt {
 
-enum class elem_shape {
-    simplex,
-    polytope
-};
-
-
-template <typename Polytope, elem_shape ElemShape>
+template <typename ElemType>
 struct indexed_mesh;
 
-} // namespace pmg
+template <typename ElemType>
+struct indexed_mesh_composition;
+
+} // namespace spt

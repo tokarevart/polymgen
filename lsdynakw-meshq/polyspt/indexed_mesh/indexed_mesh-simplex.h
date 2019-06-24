@@ -1,34 +1,53 @@
 #pragma once
 #include <vector>
 #include "indexed_mesh-base.h"
+#include "../simplex.h"
 
 
 namespace spt {
 
-template <typename Polytope>
-struct indexed_mesh<Polytope, spt::elem_shape::simplex> {
-    using polytope_type = Polytope;
-    using value_type = typename polytope_type::value_type;
+template <std::size_t N, std::size_t Dim, typename Real>
+struct indexed_mesh<spt::simplex<N, Dim, Real>> {
+    using real_type = Real;
     using index_type = std::size_t;
-    using vertex_type = spt::vec<polytope_type::dim, value_type>;
-    using elem_type = std::array<index_type, polytope_type::n + 1>;
+    using vertex_type = spt::vec<Dim, real_type>;
+    using elem_type = std::array<index_type, N + 1>;
 
     std::vector<vertex_type> vertices;
     std::vector<elem_type> elements;
+
+    indexed_mesh() {}
+    indexed_mesh(const indexed_mesh& other) {
+        vertices = other.vertices;
+        elements = other.elements;
+    }
+    indexed_mesh(indexed_mesh&& other) noexcept {
+        vertices = std::move(other.vertices);
+        elements = std::move(other.elements);
+    }
 };
 
 
-template <typename Polytope>
-struct indexed_mesh<spt::aggregate<Polytope>, spt::elem_shape::simplex> {
-    using polytope_type = Polytope;
-    using value_type = typename polytope_type::value_type;
+template <std::size_t N, std::size_t Dim, typename Real>
+struct indexed_mesh_composition<spt::simplex<N, Dim, Real>> {
+    using real_type = Real;
     using index_type = std::size_t;
-    using vertex_type = spt::vec<polytope_type::dim, value_type>;
-    using elem_type = std::array<index_type, polytope_type::n + 1>;
-    using submesh_type = std::vector<elem_type>;
+    using vertex_type = spt::vec<Dim, real_type>;
+    using elem_type = std::array<index_type, N + 1>;
+    using mesh_type = std::vector<elem_type>;
 
     std::vector<vertex_type> vertices;
-    std::vector<submesh_type> meshes;
+    std::vector<mesh_type> meshes;
+
+    indexed_mesh_composition() {}
+    indexed_mesh_composition(const indexed_mesh_composition& other) {
+        vertices = other.vertices;
+        meshes = other.meshes;
+    }
+    indexed_mesh_composition(indexed_mesh_composition&& other) noexcept {
+        vertices = std::move(other.vertices);
+        meshes = std::move(other.meshes);
+    }
 };
 
-} // namespace pmg
+} // namespace spt

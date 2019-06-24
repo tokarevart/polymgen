@@ -6,10 +6,15 @@
 #pragma once
 #include <cmath>
 #include <algorithm>
-#include "vec.h"
+#include "mat.h"
 
 // TODO: experiment with pass by value instead of reference and make benchmark
 namespace spt {
+
+template <typename T>
+constexpr T epsilon = T(1e-6);
+template <>
+constexpr auto epsilon<double> = 1e-6;
 
 namespace helpers {
 template <typename T>
@@ -31,10 +36,22 @@ bool in_rectangle(T corner0, T corner1, T point) {
 }
 } // namespace helpers
 
-template <typename T>
-constexpr auto epsilon = T(1e-6);
-template <>
-constexpr auto epsilon<double> = 1e-6;
+template <typename Real>
+mat<3, Real> dot(const mat<3, Real>& mat0, const mat<3, Real>& mat1) {
+    std::array mat1_cols{ 
+        vec<3, Real>{ mat1[0][0], mat1[1][0], mat1[2][0] },
+        vec<3, Real>{ mat1[0][1], mat1[1][1], mat1[2][1] },
+        vec<3, Real>{ mat1[0][2], mat1[1][2], mat1[2][2] } };
+    return { 
+        { dot(mat0[0], mat1_cols[0]), dot(mat0[0], mat1_cols[1]), dot(mat0[0], mat1_cols[2]) },
+        { dot(mat0[1], mat1_cols[0]), dot(mat0[1], mat1_cols[1]), dot(mat0[1], mat1_cols[2]) },
+        { dot(mat0[2], mat1_cols[0]), dot(mat0[2], mat1_cols[1]), dot(mat0[2], mat1_cols[2]) } };
+}
+
+template <typename Real>
+vec<3, Real> dot(const mat<3, Real>& matr, const vec<3, Real>& vect) {
+    return { dot(matr[0], vect), dot(matr[1], vect), dot(matr[2], vect) };
+}
 
 template <typename Real>
 Real dot(const vec<3, Real>& vec0, const vec<3, Real>& vec1) {
@@ -55,12 +72,22 @@ vec<3, Real> cross(const vec<3, Real>& vec0, const vec<3, Real>& vec1) {
 }
 
 template <typename Real>
+Real cross(const vec<2, Real>& vec0, const vec<2, Real>& vec1) {
+    return vec0[0] * vec1[1] - vec0[1] * vec1[0];
+}
+
+template <typename Real>
 Real mixed(const vec<3, Real>& vec0, const vec<3, Real>& vec1, const vec<3, Real>& vec2) {
     return dot(cross(vec0, vec1), vec2);
 }
 
 template <typename Real>
 Real cos(const vec<3, Real>& vec0, const vec<3, Real>& vec1) {
+    return dot(vec0, vec1) / std::sqrt(vec0.sqr_magnitude() * vec1.sqr_magnitude());
+}
+
+template <typename Real>
+Real cos(const vec<2, Real>& vec0, const vec<2, Real>& vec1) {
     return dot(vec0, vec1) / std::sqrt(vec0.sqr_magnitude() * vec1.sqr_magnitude());
 }
 

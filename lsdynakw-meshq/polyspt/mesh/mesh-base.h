@@ -1,40 +1,26 @@
 #pragma once
 #include "../simplex.h"
 #include <vector>
+#include <memory>
 
 namespace spt {
 
-enum class elem_shape {
-    simplex,
-    polytope
-};
+template <typename ElemType>
+struct mesh_base;
 
+template <typename ElemType>
+using unique_mesh = mesh_base<std::unique_ptr<ElemType>>;
 
-template <typename Polytope, elem_shape ElemShape>
-struct mesh;
+template <typename ElemType>
+using raw_mesh = mesh_base<ElemType*>;
 
+template <typename MeshType>
+using mesh_composition_base = std::vector<MeshType>;
 
-template <typename Polytope, elem_shape ElemShape>
-struct mesh_v;
+template <typename ElemType>
+using unique_mesh_composition = mesh_composition_base<std::unique_ptr<unique_mesh<ElemType>>>;
 
-
-template <typename Polytope, elem_shape ElemShape>
-struct mesh<spt::aggregate<Polytope>, ElemShape> {
-    using polytope_type = Polytope;
-    using value_type = typename polytope_type::value_type;
-    using submesh_type = mesh<polytope_type, ElemShape>;
-
-    std::vector<submesh_type*> meshes;
-};
-
-
-template <typename Polytope, elem_shape ElemShape>
-struct mesh_v<spt::aggregate<Polytope>, ElemShape> {
-    using polytope_type = Polytope;
-    using value_type = typename polytope_type::value_type;
-    using submesh_type = mesh_v<polytope_type, ElemShape>;
-
-    std::vector<submesh_type*> meshes;
-};
+template <typename ElemType>
+using raw_mesh_composition = mesh_composition_base<raw_mesh<ElemType>*>;
 
 } // namespace pmg

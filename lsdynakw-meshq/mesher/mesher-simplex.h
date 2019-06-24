@@ -4,11 +4,11 @@
 
 namespace pmg {
 
-template <typename Polytope, std::size_t N>
-class mesher<Polytope, spt::elem_shape::simplex, N> {
+template <typename Polytope>
+class mesher<Polytope, spt::elem_shape::simplex> {
     using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::value_type>;
     using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::value_type>;
-    using facet_type = spt::polytope<N - 1, Polytope::dim, typename Polytope::value_type>;
+    using facet_type = spt::polytope<Polytope::n - 1, Polytope::dim, typename Polytope::value_type>;
 
 public:
     using polytope_type = Polytope;
@@ -59,8 +59,8 @@ private:
 };
 
 
-template <typename Polytope, std::size_t N>
-class mesher<spt::aggregate<Polytope>, spt::elem_shape::simplex, N> {
+template <typename Polytope>
+class mesher<spt::composition<Polytope>, spt::elem_shape::simplex> {
     using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::value_type>;
     using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::value_type>;
     using facet_type = spt::polytope<N - 1, Polytope::dim, typename Polytope::value_type>;

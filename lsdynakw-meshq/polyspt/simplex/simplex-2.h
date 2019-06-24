@@ -7,20 +7,20 @@ template <std::size_t Dim, typename ValueType>
 struct simplex<2, Dim, ValueType> {
     static constexpr std::size_t n = 2;
     static constexpr std::size_t dim = Dim;
-    using value_type = ValueType;
-    using facet_type = spt::edge<Dim, ValueType>;
-    using edge_type = facet_type;
-    using vertex_type = typename edge_type::vertex_type;
+    using real_type = ValueType;
+    using edge_type = spt::edge<Dim, ValueType>;
+    using vertex_type = spt::vertex<Dim, ValueType>;
+    using facet_type = edge_type;
 
-    std::array<edge_type*, 3> edges = { nullptr, nullptr, nullptr };
+    std::array<edge_type*, 3> edges{ nullptr, nullptr, nullptr };
 
-    template <typename SubPolytope>
+    template <typename SubSimplex>
     auto all_of() const {
-        static_assert(std::is_same<edge_type, SubPolytope>() || std::is_same<vertex_type, SubPolytope>());
-        if constexpr (std::is_same<edge_type, SubPolytope>()) {
+        static_assert(std::is_same<edge_type, SubSimplex>() || std::is_same<vertex_type, SubSimplex>());
+        if constexpr (std::is_same<edge_type, SubSimplex>())
             return edges;
-        } else {
-            std::array<SubPolytope*, 4> verts = { nullptr, };
+        else {
+            std::array<SubSimplex*, 4> verts = { nullptr, };
             std::size_t idx = 0;
             for (const auto& edge : edges)
                 for (const auto& vert : edge->vertices)
@@ -31,10 +31,10 @@ struct simplex<2, Dim, ValueType> {
         }
     }
 
-    value_type area() const {
+    real_type area() const {
         vec<3> vec0 = edges[0]->vertices[1]->pos - edges[0]->vertices[0]->pos;
         vec<3> vec1 = edges[1]->vertices[1]->pos - edges[1]->vertices[0]->pos;
-        return static_cast<value_type>(0.5) * spt::cross(vec0, vec1).magnitude();
+        return static_cast<real_type>(0.5) * spt::cross(vec0, vec1).magnitude();
     }
 
     bool empty() const {
@@ -51,11 +51,11 @@ struct simplex<2, Dim, ValueType> {
     simplex(const simplex& simp) {
         edges = simp.edges;
     }
-    simplex(const std::array<edge_type*, 3> & edges)
+    simplex(const std::array<edge_type*, 3>& edges)
         : edges(edges) {}
     template <typename... Edges>
     simplex(Edges... edges)
-        : edges({ edges... }) {}
+        : edges{ const_cast<edge_type*>(edges)... } {}
 };
 
 
@@ -63,23 +63,23 @@ template <std::size_t Dim, typename ValueType>
 struct simplex_v<2, Dim, ValueType> {
     static constexpr std::size_t n = 2;
     static constexpr std::size_t dim = Dim;
-    using value_type = ValueType;
+    using real_type = ValueType;
     using vertex_type = spt::vertex<Dim, ValueType>;
 
-    std::array<vertex_type*, 3> vertices = { nullptr, nullptr, nullptr };
+    std::array<vertex_type*, 3> vertices{ nullptr, nullptr, nullptr };
 
-    value_type area() const {
+    real_type area() const {
         vec<dim> vec0 = vertices[1]->pos - vertices[0]->pos;
         vec<dim> vec1 = vertices[2]->pos - vertices[0]->pos;
 
         auto cross = vec<dim>::cross(vec0, vec1);
-        value_type doubled_area;
+        real_type doubled_area;
         if constexpr (dim == 2)
             doubled_area = cross;
         else
             doubled_area = cross.magnitude();
 
-        return doubled_area * static_cast<value_type>(0.5);
+        return doubled_area * static_cast<real_type>(0.5);
     }
 
     bool empty() const {
@@ -93,11 +93,11 @@ struct simplex_v<2, Dim, ValueType> {
     simplex_v(const simplex_v& other) {
         vertices = other.vertices;
     }
-    simplex_v(const std::array<vertex_type*, 3> & verts)
+    simplex_v(const std::array<vertex_type*, 3>& verts)
         : vertices(vertices) {}
     template <typename... Vertices>
     simplex_v(Vertices... verts)
-        : vertices{ verts... } {}
+        : vertices{ const_cast<vertex_type*>(verts)... } {}
 };
 
 } // namespace spt

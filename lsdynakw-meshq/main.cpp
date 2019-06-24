@@ -8,6 +8,7 @@
 #include <map>
 #include <tuple>
 #include <optional>
+#include <memory>
 #include "polyspt/polyhedron.h"
 #include "polyspt/simplex.h"
 #include "polyspt/mesh.h"
@@ -20,10 +21,10 @@ using nid_t = std::size_t;
 using eid_t = std::size_t;
 using pid_t = std::size_t;
 using vertex_t = spt::vertex<3, coordinate_t>;
-using node_t = std::pair<nid_t, vertex_t*>;
-using tetrahedron_t = spt::simplex_v<3, 3, coordinate_t>;
+using node_t = std::pair<nid_t, std::unique_ptr<vertex_t>>;
+using tetrahedron_t = spt::tetrahedron_v<3, coordinate_t>;
 using element_solid_t = std::tuple<eid_t, pid_t, std::array<nid_t, 4>>;
-using mesh_t = spt::mesh_v<spt::polyhedron<3, coordinate_t>, spt::elem_shape::simplex>;
+using mesh_t = spt::unique_mesh<tetrahedron_t>;
 
 enum class section {
     node,
@@ -50,7 +51,7 @@ node_t parse_line(const std::string& line) {
     vec_t pos;
     for (std::size_t i = 0; i < 3; i++)
         pos.x[i] = std::stof(local_line = local_line.substr(pos_in_line), &pos_in_line);
-    return { nid, new vertex_t(pos) };
+    return { nid, std::make_unique<vertex_t>(pos) };
 }
 
 template <>
@@ -72,8 +73,8 @@ SectionType parse_line(std::istream& stream) {
     return parse_line<SectionType>(line);
 }
 
-std::map<nid_t, vertex_t*> parse_node_section(std::istream& stream) {
-    std::map<nid_t, vertex_t*> res;
+std::map<nid_t, std::unique_ptr<vertex_t>> parse_node_section(std::istream& stream) {
+    std::map<nid_t, std::unique_ptr<vertex_t>> res;
     while (!stream.eof()) {
         if (stream.peek() == '*')
             break;
@@ -117,7 +118,7 @@ std::optional<section> find_any_section_of(std::istream& stream, const std::arra
 }
 
 mesh_t simplices_from_kw(std::istream& stream) {
-    std::map<nid_t, vertex_t*> nodes;
+    std::map<nid_t, std::unique_ptr<vertex_t>> nodes;
     std::vector<element_solid_t> elements_solid;
     while (!stream.eof()) {
         auto section_found = find_any_section_of(stream, std::array{ section::node, section::element_solid });
@@ -134,19 +135,19 @@ mesh_t simplices_from_kw(std::istream& stream) {
         }
     }
 
-    std::vector<vertex_t*> vertices;
-    vertices.reserve(nodes.size());
-    for (const auto& [key, val] : nodes)
-        vertices.push_back(val);
-
-    std::vector<tetrahedron_t*> simplices;
+    std::vector<std::unique_ptr<tetrahedron_t>> simplices;
     simplices.reserve(elements_solid.size());
     for (const auto& elem_solid : elements_solid)
-        simplices.push_back(new tetrahedron_t(
-            nodes[std::get<2>(elem_solid)[0]],
-            nodes[std::get<2>(elem_solid)[1]],
-            nodes[std::get<2>(elem_solid)[2]],
-            nodes[std::get<2>(elem_solid)[3]]));
+        simplices.push_back(std::make_unique<tetrahedron_t>(
+            nodes[std::get<2>(elem_solid)[0]].get(),
+            nodes[std::get<2>(elem_solid)[1]].get(),
+            nodes[std::get<2>(elem_solid)[2]].get(),
+            nodes[std::get<2>(elem_solid)[3]].get()));
+
+    std::vector<std::unique_ptr<vertex_t>> vertices;
+    vertices.reserve(nodes.size());
+    for (auto&& [key, val] : nodes)
+        vertices.push_back(std::move(val));
 
     mesh_t res;
     res.vertices = std::move(vertices);
@@ -157,7 +158,8 @@ mesh_t simplices_from_kw(std::istream& stream) {
 // Returns minimum and average quality.
 std::pair<real_t, real_t> quality(const mesh_t& mesh) {
     std::vector<real_t> qualities(mesh.elements.size());
-    std::transform(mesh.elements.begin(), mesh.elements.end(), qualities.begin(), pmg::quality<3, real_t>);
+    std::transform(mesh.elements.begin(), mesh.elements.end(), qualities.begin(), 
+                   [](const auto& elem) { return pmg::quality(elem.get()); });
 
     real_t min_q = *std::min_element(qualities.begin(), qualities.end());
     real_t sum_q = std::accumulate(qualities.begin(), qualities.end(), static_cast<real_t>(0.0));
@@ -176,13 +178,10 @@ int main() {
         << ">>  Minimum quality....>>  " << quality_min_av.first << std::endl
         << ">>  Average quality....>>  " << quality_min_av.second << std::endl
         << ">>  Elements number....>>  " << mesh.elements.size() << std::endl;
-
-    for (auto vert : mesh.vertices)
-        delete vert;
-    for (auto elem : mesh.elements)
-        delete elem;
-    
-    std::cout << spt::dot(spt::vec<3>(0, 0, 1), spt::vec<3>(0, 0, 2));
+        
+    std::cout << spt::dot(spt::vec<3>(0, 1, 1), spt::vec<3>(0, 1, 2)) << std::endl;
+    std::cout << spt::dot(spt::mat<3>::identity(), spt::vec<3>(0, 1, 2)).magnitude() << std::endl;
+    std::cout << spt::dot(spt::mat<3>::identity().inversed(), spt::mat<3>::identity().transposed() * 2)[1].magnitude();
 
     return 0;
 }

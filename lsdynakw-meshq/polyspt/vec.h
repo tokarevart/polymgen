@@ -19,7 +19,7 @@ struct vec<3, ValueType> {
     static constexpr std::size_t dim = 3;
     using value_type = ValueType;
 
-    std::array<value_type, 3> x = {
+    std::array<value_type, 3> x{
         static_cast<value_type>(0),
         static_cast<value_type>(0),
         static_cast<value_type>(0)
@@ -60,28 +60,24 @@ struct vec<3, ValueType> {
         return vec(-x[0], -x[1], -x[2]);
     }
     vec operator+(const vec& right) const {
-        return vec(
-            x[0] + right.x[0],
-            x[1] + right.x[1],
-            x[2] + right.x[2]);
+        return vec(x[0] + right.x[0],
+                   x[1] + right.x[1],
+                   x[2] + right.x[2]);
     }
     vec operator-(const vec& right) const {
-        return vec(
-            x[0] - right.x[0],
-            x[1] - right.x[1],
-            x[2] - right.x[2]);
+        return vec(x[0] - right.x[0],
+                   x[1] - right.x[1],
+                   x[2] - right.x[2]);
     }
     vec operator*(value_type scalar) const {
-        return vec(
-            x[0] * scalar,
-            x[1] * scalar,
-            x[2] * scalar);
+        return vec(x[0] * scalar,
+                   x[1] * scalar,
+                   x[2] * scalar);
     }
     vec operator/(value_type scalar) const {
-        return vec(
-            x[0] / scalar,
-            x[1] / scalar,
-            x[2] / scalar);
+        return vec(x[0] / scalar,
+                   x[1] / scalar,
+                   x[2] / scalar);
     }
     vec& operator+=(const vec& right) {
         x[0] += right.x[0];
@@ -118,13 +114,10 @@ struct vec<3, ValueType> {
     vec(const vec& other) {
         x = other.x;
     }
-    vec(const std::array<value_type, 3> & x)
+    vec(const std::array<value_type, 3>& x)
         : x(x) {}
-    vec(value_type x0, value_type x1, value_type x2) {
-        x[0] = x0;
-        x[1] = x1;
-        x[2] = x2;
-    }
+    vec(value_type x0, value_type x1, value_type x2) 
+        : x{ x0, x1, x2 } {}
 };
 
 
@@ -133,21 +126,10 @@ struct vec<2, ValueType> {
     static constexpr std::size_t dim = 2;
     using value_type = ValueType;
 
-    std::array<value_type, 2> x =
-    {
+    std::array<value_type, 2> x{
         static_cast<value_type>(0),
         static_cast<value_type>(0)
     };
-
-    static value_type dot(const vec& vec0, const vec& vec1) {
-        return vec0.x[0] * vec1.x[0] + vec0.x[1] * vec1.x[1];
-    }
-    static value_type cross(const vec& vec0, const vec& vec1) {
-        return vec0[0] * vec1[1] - vec0[1] * vec1[0];
-    }
-    static value_type cos(const vec& vec0, const vec& vec1) {
-        return vec::dot(vec0, vec1) / std::sqrt(vec0.sqr_magnitude() * vec1.sqr_magnitude());
-    }
 
     value_type magnitude() const {
         return std::sqrt(sqr_magnitude());
@@ -220,12 +202,10 @@ struct vec<2, ValueType> {
     vec(const vec& other) {
         x = other.x;
     }
-    vec(const std::array<value_type, 2> & x)
+    vec(const std::array<value_type, 2>& x)
         : x(x) {}
-    vec(value_type x0, value_type x1) {
-        x[0] = x0;
-        x[1] = x1;
-    }
+    vec(value_type x0, value_type x1)
+        : x{ x0, x1 } {}
 };
 
 } // namespace spt

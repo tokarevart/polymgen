@@ -10,7 +10,7 @@ template <std::size_t Dim, typename ValueType>
 struct polytope<3, Dim, ValueType> {
     static constexpr std::size_t n = 3;
     static constexpr std::size_t dim = Dim;
-    using value_type = ValueType;
+    using real_type = ValueType;
     using vertex_type = spt::vertex<Dim, ValueType>;
     using edge_type = spt::edge<Dim, ValueType>;
     using face_type = spt::face<Dim, ValueType>;
@@ -70,7 +70,7 @@ struct polytope<3, Dim, ValueType> {
         : faces(faces) {}
     template <typename... Faces>
     polytope(Faces... faces)
-        : faces{ faces... } {}
+        : faces{ const_cast<face_type*>(faces)... } {}
 };
 
 } // namespace spt

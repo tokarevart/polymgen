@@ -12,13 +12,13 @@ template <std::size_t Dim, typename ValueType>
 struct polytope<1, Dim, ValueType> {
     static constexpr std::size_t n = 1;
     static constexpr std::size_t dim = Dim;
-    using value_type = ValueType;
+    using real_type = ValueType;
     using vertex_type = spt::vertex<Dim, ValueType>;
     using facet_type = vertex_type;
 
     std::array<vertex_type*, 2> vertices = { nullptr, nullptr };
 
-    value_type magnitude() const {
+    real_type magnitude() const {
         return (vertices[1]->pos - vertices[0]->pos).magnitude();
     }
 
@@ -37,7 +37,7 @@ struct polytope<1, Dim, ValueType> {
         : vertices(vertices) {}
     template <typename... Vertices>
     polytope(Vertices... verts)
-        : vertices{ verts... } {}
+        : vertices{ const_cast<vertex_type*>(verts)... } {}
 };
 
 } // namespace spt

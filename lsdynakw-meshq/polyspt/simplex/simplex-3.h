@@ -1,5 +1,5 @@
 #pragma once
-#include "simplex-base.h"
+#include "simplex-2.h"
 #include "../algs.h"
 
 namespace spt {
@@ -8,32 +8,32 @@ template <std::size_t Dim, typename ValueType>
 struct simplex<3, Dim, ValueType> {
     static constexpr std::size_t n = 3;
     static constexpr std::size_t dim = Dim;
-    using value_type = ValueType;
-    using facet_type = spt::face<Dim, ValueType>;
-    using face_type = facet_type;
-    using edge_type = typename face_type::edge_type;
-    using vertex_type = typename edge_type::vertex_type;
+    using real_type = ValueType;
+    using face_type = spt::simplex<2, Dim, ValueType>;
+    using edge_type = spt::edge<Dim, ValueType>;
+    using vertex_type = spt::vertex<Dim, ValueType>;
+    using facet_type = face_type;
 
     std::array<face_type*, 4> faces = { nullptr, nullptr, nullptr, nullptr, };
 
-    value_type volume() const {
+    real_type volume() const {
         auto verts = all_of<vertex_type>();
-        return static_cast<value_type>(1.0 / 6.0) *
+        return static_cast<real_type>(1.0 / 6.0) *
             std::abs(spt::mixed(
                 verts[1]->pos - verts[0]->pos,
                 verts[2]->pos - verts[0]->pos,
                 verts[3]->pos - verts[0]->pos));
     }
 
-    template <typename SubPolytope>
+    template <typename SubSimplex>
     auto all_of() const {
         static_assert(
-            std::is_same<face_type, SubPolytope>() ||
-            std::is_same<edge_type, SubPolytope>() ||
-            std::is_same<vertex_type, SubPolytope>());
-        if constexpr (std::is_same<face_type, SubPolytope>())
+            std::is_same<face_type, SubSimplex>() ||
+            std::is_same<edge_type, SubSimplex>() ||
+            std::is_same<vertex_type, SubSimplex>());
+        if constexpr (std::is_same<face_type, SubSimplex>())
             return faces;
-        else if constexpr (std::is_same<edge_type, SubPolytope>()) {
+        else if constexpr (std::is_same<edge_type, SubSimplex>()) {
             std::array<edge_type*, 6> edges = { nullptr, };
             std::size_t idx = 0;
             for (const auto& face : faces)
@@ -84,11 +84,11 @@ struct simplex<3, Dim, ValueType> {
     simplex(const simplex& simp) {
         faces = simp.faces;
     }
-    simplex(const std::array<face_type*, 4> & faces)
+    simplex(const std::array<face_type*, 4>& faces)
         : faces(faces) {}
     template <typename... Faces>
     simplex(Faces... faces)
-        : faces({ faces... }) {}
+        : faces{ const_cast<face_type*>(faces)... } {}
 };
 
 
@@ -96,13 +96,13 @@ template <std::size_t Dim, typename ValueType>
 struct simplex_v<3, Dim, ValueType> {
     static constexpr std::size_t n = 3;
     static constexpr std::size_t dim = Dim;
-    using value_type = ValueType;
+    using real_type = ValueType;
     using vertex_type = spt::vertex<Dim, ValueType>;
 
     std::array<vertex_type*, 4> vertices = { nullptr, nullptr, nullptr, nullptr };
 
-    value_type volume() const {
-        return static_cast<value_type>(1.0 / 6.0) *
+    real_type volume() const {
+        return static_cast<real_type>(1.0 / 6.0) *
             std::abs(spt::mixed(
                 vertices[1]->pos - vertices[0]->pos,
                 vertices[2]->pos - vertices[0]->pos,
@@ -124,7 +124,7 @@ struct simplex_v<3, Dim, ValueType> {
         : vertices(vertices) {}
     template <typename... Vertices>
     simplex_v(Vertices... verts)
-        : vertices{ verts... } {}
+        : vertices{ const_cast<vertex_type*>(verts)... } {}
 };
 
 } // namespace spt

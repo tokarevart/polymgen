@@ -161,6 +161,8 @@
     <ClInclude Include="polyspt\simplex\simplex-2.h" />
     <ClInclude Include="polyspt\simplex\simplex-3.h" />
     <ClInclude Include="polyspt\simplex\simplex-base.h" />
+    <ClInclude Include="polyspt\tetrahedron.h" />
+    <ClInclude Include="polyspt\triangle.h" />
     <ClInclude Include="polyspt\vec.h" />
     <ClInclude Include="polyspt\vertex.h" />
   </ItemGroup>
