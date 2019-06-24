@@ -14,6 +14,8 @@ struct mat<3, ValueType> {
 
     std::array<line_type, 3> x;
 
+
+
     line_type& operator[](std::uint8_t i) {
         return x[i];
     }

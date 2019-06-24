@@ -17,9 +17,9 @@ struct simplex<2, Dim, ValueType> {
     template <typename SubPolytope>
     auto all_of() const {
         static_assert(std::is_same<edge_type, SubPolytope>() || std::is_same<vertex_type, SubPolytope>());
-        if constexpr (std::is_same<edge_type, SubPolytope>())
+        if constexpr (std::is_same<edge_type, SubPolytope>()) {
             return edges;
-        else {
+        } else {
             std::array<SubPolytope*, 4> verts = { nullptr, };
             std::size_t idx = 0;
             for (const auto& edge : edges)
@@ -34,7 +34,7 @@ struct simplex<2, Dim, ValueType> {
     value_type area() const {
         vec<3> vec0 = edges[0]->vertices[1]->pos - edges[0]->vertices[0]->pos;
         vec<3> vec1 = edges[1]->vertices[1]->pos - edges[1]->vertices[0]->pos;
-        return static_cast<value_type>(0.5) * vec<3>::cross(vec0, vec1).magnitude();
+        return static_cast<value_type>(0.5) * spt::cross(vec0, vec1).magnitude();
     }
 
     bool empty() const {

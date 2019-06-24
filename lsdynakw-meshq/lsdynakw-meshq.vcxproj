@@ -128,7 +128,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="polyspt\algs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mesher\algs.h" />

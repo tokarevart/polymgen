@@ -19,28 +19,11 @@ struct vec<3, ValueType> {
     static constexpr std::size_t dim = 3;
     using value_type = ValueType;
 
-    std::array<value_type, 3> x =
-    {
+    std::array<value_type, 3> x = {
         static_cast<value_type>(0),
         static_cast<value_type>(0),
         static_cast<value_type>(0)
     };
-
-    static value_type dot(const vec& vec0, const vec& vec1) {
-        return vec0.x[0] * vec1.x[0] + vec0.x[1] * vec1.x[1] + vec0.x[2] * vec1.x[2];
-    }
-    static vec cross(const vec& vec0, const vec& vec1) {
-        return vec(
-            vec0.x[1] * vec1.x[2] - vec0.x[2] * vec1.x[1],
-            vec0.x[2] * vec1.x[0] - vec0.x[0] * vec1.x[2],
-            vec0.x[0] * vec1.x[1] - vec0.x[1] * vec1.x[0]);
-    }
-    static value_type mixed(const vec& vec0, const vec& vec1, const vec& vec2) {
-        return dot(cross(vec0, vec1), vec2);
-    }
-    static auto cos(const vec& vec0, const vec& vec1) {
-        return vec::dot(vec0, vec1) / std::sqrt(vec0.sqr_magnitude() * vec1.sqr_magnitude());
-    }
 
     value_type magnitude() const {
         return std::sqrt(sqr_magnitude());

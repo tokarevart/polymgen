@@ -13,7 +13,7 @@
 #include "polyspt/mesh.h"
 #include "mesher/algs.h"
 
-using real_t = float;
+using real_t = double;
 using coordinate_t = real_t;
 using vec_t = spt::vec<3, coordinate_t>;
 using nid_t = std::size_t;
@@ -181,6 +181,8 @@ int main() {
         delete vert;
     for (auto elem : mesh.elements)
         delete elem;
+    
+    std::cout << spt::dot(spt::vec<3>(0, 0, 1), spt::vec<3>(0, 0, 2));
 
     return 0;
 }

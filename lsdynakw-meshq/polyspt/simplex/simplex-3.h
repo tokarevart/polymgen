@@ -1,5 +1,6 @@
 #pragma once
 #include "simplex-base.h"
+#include "../algs.h"
 
 namespace spt {
 
@@ -18,7 +19,7 @@ struct simplex<3, Dim, ValueType> {
     value_type volume() const {
         auto verts = all_of<vertex_type>();
         return static_cast<value_type>(1.0 / 6.0) *
-            std::abs(vec<3>::mixed(
+            std::abs(spt::mixed(
                 verts[1]->pos - verts[0]->pos,
                 verts[2]->pos - verts[0]->pos,
                 verts[3]->pos - verts[0]->pos));
@@ -102,7 +103,7 @@ struct simplex_v<3, Dim, ValueType> {
 
     value_type volume() const {
         return static_cast<value_type>(1.0 / 6.0) *
-            std::abs(vec<3>::mixed(
+            std::abs(spt::mixed(
                 vertices[1]->pos - vertices[0]->pos,
                 vertices[2]->pos - vertices[0]->pos,
                 vertices[3]->pos - vertices[0]->pos));
