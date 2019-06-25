@@ -4,7 +4,7 @@
 namespace spt {
 
 template <
-    template <typename ElemType, typename... Args> typename Pointer, 
+    template <typename... Args> typename Pointer, 
     std::size_t N, std::size_t Dim, typename Real>
 struct mesh_base<Pointer, spt::polytope<N, Dim, Real>> {
     using real_type = Real;

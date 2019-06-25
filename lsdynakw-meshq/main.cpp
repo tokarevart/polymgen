@@ -167,19 +167,6 @@ std::pair<real_t, real_t> quality(const mesh_t& mesh) {
     return { min_q, av_q };
 }
 
-template <template <typename Arg> typename T, typename Arg>
-struct A;
-
-template <template <typename Arg> typename T>
-struct A<T, int> {
-    T<int> a;
-};
-
-template <typename T>
-using raw_ptr = T*;
-
-template <typename Arg>
-using Araw = A<raw_ptr, Arg>;
 
 int main() {
     std::ifstream kw_file("heat.k");
@@ -195,9 +182,6 @@ int main() {
     std::cout << spt::dot(spt::vec<3>(0, 1, 1), spt::vec<3>(0, 1, 2)) << std::endl;
     std::cout << spt::dot(spt::mat<3>::identity(), spt::vec<3>(0, 1, 2)).magnitude() << std::endl;
     std::cout << spt::dot(spt::mat<3>::identity().inversed(), spt::mat<3>::identity().transposed() * 2)[1].magnitude() << std::endl;
-    A<raw_ptr, int> kek;
-    kek.a = new int(42);
-    std::cout << *kek.a << std::endl;
 
     return 0;
 }

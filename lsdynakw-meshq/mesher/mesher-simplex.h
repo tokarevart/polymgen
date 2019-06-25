@@ -4,19 +4,19 @@
 
 namespace pmg {
 
-template <typename Polytope>
-class mesher<Polytope, spt::simplex> {
+template <typename Polytope, template <typename... Args> typename Pointer>
+class mesher<spt::single<Polytope>, spt::simplex, Pointer> {
     using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::real_type>;
     using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::real_type>;
     using facet_type = spt::polytope<Polytope::n - 1, Polytope::dim, typename Polytope::real_type>;
 
 public:
     using polytope_type = Polytope;
-    using shell_type = polytope_type;
+    using shell_type = spt::mesh_base<Pointer, facet_type>;
     using shell_mesh_unit_type = spt::simplex<Polytope::n - 1, Polytope::dim, typename Polytope::real_type>;
-    using shell_mesh_type = spt::raw_mesh<shell_mesh_unit_type, spt::composition>;
+    using shell_mesh_type = spt::mesh_base<Pointer, shell_mesh_unit_type, spt::multi>;
     using mesh_unit_type = spt::simplex<Polytope::n, Polytope::dim, typename Polytope::real_type>;
-    using mesh_type = spt::raw_mesh<mesh_unit_type>;
+    using mesh_type = spt::mesh_base<Pointer, mesh_unit_type>;
     using real_type = typename polytope_type::real_type;
 
     void run(real_type preferred_length,
@@ -32,18 +32,21 @@ public:
     }
     mesher(const shell_type& shell) {
         m_shell = shell;
-        mesher<spt::composition<facet_type>, spt::simplex> sh_mesher(shell);
+        mesher<spt::multi<facet_type>, spt::simplex> sh_mesher(shell);
         // mesh the shell...
         m_shell_mesh = std::move(/*mesh*/);
     }
     mesher(shell_type&& shell) noexcept {
         m_shell = std::move(shell);
-        mesher<spt::composition<facet_type>, spt::simplex> sh_mesher(shell);
+        mesher<spt::multi<facet_type>, spt::simplex> sh_mesher(shell);
         // mesh the shell...
         m_shell_mesh = std::move(/*mesh*/);
     }
     mesher(const shell_mesh_type& mesh) {
         m_shell_mesh = mesh;
+    }
+    mesher(shell_mesh_type&& mesh) {
+        m_shell_mesh = std::move(mesh);
     }
 
 
@@ -60,19 +63,19 @@ private:
 };
 
 
-template <typename Polytope>
-class mesher<spt::composition<Polytope>, spt::simplex> {
+template <typename Polytope, template <typename... Args> typename Pointer>
+class mesher<spt::multi<Polytope>, spt::simplex, Pointer> {
     using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::real_type>;
     using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::real_type>;
     using facet_type = spt::polytope<N - 1, Polytope::dim, typename Polytope::real_type>;
 
 public:
     using polytope_type = Polytope;
-    using shell_type = spt::raw_mesh<facet_type, spt::composition>;
+    using shell_type = spt::mesh_base<Pointer, facet_type, spt::multi>;
     using shell_mesh_unit_type = spt::simplex<Polytope::n - 1, Polytope::dim, typename Polytope::real_type>;
-    using shell_mesh_type = spt::raw_mesh<shell_mesh_unit_type, spt::composition>;
+    using shell_mesh_type = spt::raw_mesh<shell_mesh_unit_type, spt::multi>;
     using mesh_unit_type = spt::simplex<Polytope::n, Polytope::dim, typename Polytope::real_type>;
-    using mesh_type = spt::raw_mesh<mesh_unit_type, spt::composition>;
+    using mesh_type = spt::raw_mesh<mesh_unit_type, spt::multi>;
     using real_type = typename polytope_type::real_type;
 
     void run(real_type preferred_length,
@@ -88,13 +91,13 @@ public:
     }
     mesher(const shell_type& shell) {
         m_shell = shell;
-        mesher<spt::composition<facet_type>, spt::simplex> sh_mesher(shell);
+        mesher<spt::multi<facet_type>, spt::simplex> sh_mesher(shell);
         // mesh the shell...
         m_shell_mesh = std::move(/*mesh*/);
     }
     mesher(shell_type&& shell) noexcept {
         m_shell = std::move(shell);
-        mesher<spt::composition<facet_type>, spt::simplex> sh_mesher(shell);
+        mesher<spt::multi<facet_type>, spt::simplex> sh_mesher(shell);
         // mesh the shell...
         m_shell_mesh = std::move(/*mesh*/);
     }
@@ -114,5 +117,16 @@ private:
 
     // methods...
 };
+
+
+template <
+    typename Polytope,
+    template <std::size_t N, std::size_t Dim, typename Real> typename ElemType,
+    std::size_t N, std::size_t Dim, typename Real,
+    template <typename... Args> typename Pointer,
+    template <typename Polytope> typename HowManyPolytopes>
+mesher(spt::mesh_base<Pointer, spt::polytope<N - 1, Dim, Real>, HowManyPolytopes>&& poly,
+       spt::mesh_base<Pointer, ElemType<N, Dim, Real>, spt::multi>&& shell_mesh)
+    ->mesher<HowManyPolytopes<Polytope>, ElemType, Pointer>;
 
 } // namespace pmg
