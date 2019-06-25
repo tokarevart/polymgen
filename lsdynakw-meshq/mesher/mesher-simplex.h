@@ -14,7 +14,7 @@ public:
     using polytope_type = Polytope;
     using shell_type = polytope_type;
     using shell_mesh_unit_type = spt::simplex<Polytope::n - 1, Polytope::dim, typename Polytope::real_type>;
-    using shell_mesh_type = spt::raw_mesh_composition<shell_mesh_unit_type>;
+    using shell_mesh_type = spt::raw_mesh<shell_mesh_unit_type, spt::composition>;
     using mesh_unit_type = spt::simplex<Polytope::n, Polytope::dim, typename Polytope::real_type>;
     using mesh_type = spt::raw_mesh<mesh_unit_type>;
     using real_type = typename polytope_type::real_type;
@@ -68,11 +68,11 @@ class mesher<spt::composition<Polytope>, spt::simplex> {
 
 public:
     using polytope_type = Polytope;
-    using shell_type = spt::raw_mesh_composition<facet_type>;
+    using shell_type = spt::raw_mesh<facet_type, spt::composition>;
     using shell_mesh_unit_type = spt::simplex<Polytope::n - 1, Polytope::dim, typename Polytope::real_type>;
-    using shell_mesh_type = spt::raw_mesh_composition<shell_mesh_unit_type>;
+    using shell_mesh_type = spt::raw_mesh<shell_mesh_unit_type, spt::composition>;
     using mesh_unit_type = spt::simplex<Polytope::n, Polytope::dim, typename Polytope::real_type>;
-    using mesh_type = spt::raw_mesh_composition<mesh_unit_type>;
+    using mesh_type = spt::raw_mesh<mesh_unit_type, spt::composition>;
     using real_type = typename polytope_type::real_type;
 
     void run(real_type preferred_length,

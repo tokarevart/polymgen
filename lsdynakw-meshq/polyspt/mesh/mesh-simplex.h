@@ -1,5 +1,6 @@
 #pragma once
 #include "mesh-base.h"
+#include "../simplex.h"
 
 namespace spt {
 

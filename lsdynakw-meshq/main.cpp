@@ -197,7 +197,6 @@ int main() {
     std::cout << spt::dot(spt::mat<3>::identity().inversed(), spt::mat<3>::identity().transposed() * 2)[1].magnitude() << std::endl;
     A<raw_ptr, int> kek;
     kek.a = new int(42);
-    //kek.a = std::make_shared<int>(42);
     std::cout << *kek.a << std::endl;
 
     return 0;
