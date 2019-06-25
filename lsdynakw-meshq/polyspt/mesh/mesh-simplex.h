@@ -3,41 +3,18 @@
 
 namespace spt {
 
-template <std::size_t N, std::size_t Dim, typename Real>
-struct mesh_base<std::unique_ptr<spt::simplex<N, Dim, Real>>> {
+template <template <typename ElemType, typename... Args> typename Pointer, std::size_t N, std::size_t Dim, typename Real>
+struct mesh_base<Pointer, spt::simplex<N, Dim, Real>> {
     using real_type = Real;
     using vertex_type = spt::vertex<Dim, real_type>;
     // ...
     using facet_type = spt::simplex<N - 1, Dim, real_type>;
     using elem_type = spt::simplex<N, Dim, real_type>;
 
-    std::vector<std::unique_ptr<vertex_type>> vertices;
+    std::vector<Pointer<vertex_type>> vertices;
     // ...
-    std::vector<std::unique_ptr<facet_type>> facets;
-    std::vector<std::unique_ptr<elem_type>> elements;
-
-    mesh_base() {}
-    mesh_base(mesh_base&& other) noexcept {
-        vertices = std::move(other.vertices);
-        // ...
-        facets = std::move(other.facets);
-        elements = std::move(other.elements);
-    }
-};
-
-
-template <std::size_t N, std::size_t Dim, typename Real>
-struct mesh_base<spt::simplex<N, Dim, Real>*> {
-    using real_type = Real;
-    using vertex_type = spt::vertex<Dim, real_type>;
-    // ...
-    using facet_type = spt::simplex<N - 1, Dim, real_type>;
-    using elem_type = spt::simplex<N, Dim, real_type>;
-
-    std::vector<vertex_type*> vertices;
-    // ...
-    std::vector<facet_type*> facets;
-    std::vector<elem_type*> elements;
+    std::vector<Pointer<facet_type>> facets;
+    std::vector<Pointer<elem_type>> elements;
 
     mesh_base() {}
     mesh_base(const mesh_base& other) {
@@ -55,30 +32,14 @@ struct mesh_base<spt::simplex<N, Dim, Real>*> {
 };
 
 
-template <std::size_t N, std::size_t Dim, typename Real>
-struct mesh_base<std::unique_ptr<spt::simplex_v<N, Dim, Real>>> {
+template <template <typename ElemType, typename... Args> typename Pointer, std::size_t N, std::size_t Dim, typename Real>
+struct mesh_base<Pointer, spt::simplex_v<N, Dim, Real>> {
     using real_type = Real;
     using vertex_type = spt::vertex<Dim, real_type>;
     using elem_type = spt::simplex_v<N, Dim, real_type>;
 
-    std::vector<std::unique_ptr<vertex_type>> vertices;
-    std::vector<std::unique_ptr<elem_type>> elements;
-
-    mesh_base() {}
-    mesh_base(mesh_base&& other) noexcept {
-        vertices = std::move(other.vertices);
-        elements = std::move(other.elements);
-    }
-};
-
-template <std::size_t N, std::size_t Dim, typename Real>
-struct mesh_base<spt::simplex_v<N, Dim, Real>*> {
-    using real_type = Real;
-    using vertex_type = spt::vertex<Dim, real_type>;
-    using elem_type = spt::simplex_v<N, Dim, real_type>;
-
-    std::vector<vertex_type*> vertices;
-    std::vector<elem_type*> elements;
+    std::vector<Pointer<vertex_type>> vertices;
+    std::vector<Pointer<elem_type>> elements;
 
     mesh_base() {}
     mesh_base(const mesh_base& other) {
