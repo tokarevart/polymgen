@@ -4,7 +4,9 @@
 
 namespace spt {
 
-template <template <typename ElemType, typename... Args> typename Pointer, std::size_t N, std::size_t Dim, typename Real>
+template <
+    template <typename ElemType, typename... Args> typename Pointer, 
+    std::size_t N, std::size_t Dim, typename Real>
 struct mesh_base<Pointer, spt::simplex<N, Dim, Real>> {
     using real_type = Real;
     using vertex_type = spt::vertex<Dim, real_type>;
@@ -33,7 +35,9 @@ struct mesh_base<Pointer, spt::simplex<N, Dim, Real>> {
 };
 
 
-template <template <typename ElemType, typename... Args> typename Pointer, std::size_t N, std::size_t Dim, typename Real>
+template <
+    template <typename ElemType, typename... Args> typename Pointer, 
+    std::size_t N, std::size_t Dim, typename Real>
 struct mesh_base<Pointer, spt::simplex_v<N, Dim, Real>> {
     using real_type = Real;
     using vertex_type = spt::vertex<Dim, real_type>;
