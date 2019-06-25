@@ -4,14 +4,14 @@
 
 namespace spt {
 
-template <std::size_t Dim, typename ValueType>
-struct simplex<3, Dim, ValueType> {
+template <std::size_t Dim, typename Real>
+struct simplex<3, Dim, Real> {
     static constexpr std::size_t n = 3;
     static constexpr std::size_t dim = Dim;
-    using real_type = ValueType;
-    using face_type = spt::simplex<2, Dim, ValueType>;
-    using edge_type = spt::edge<Dim, ValueType>;
-    using vertex_type = spt::vertex<Dim, ValueType>;
+    using real_type = Real;
+    using face_type = spt::simplex<2, Dim, Real>;
+    using edge_type = spt::edge<Dim, Real>;
+    using vertex_type = spt::vertex<Dim, Real>;
     using facet_type = face_type;
 
     std::array<face_type*, 4> faces = { nullptr, nullptr, nullptr, nullptr, };
@@ -92,12 +92,12 @@ struct simplex<3, Dim, ValueType> {
 };
 
 
-template <std::size_t Dim, typename ValueType>
-struct simplex_v<3, Dim, ValueType> {
+template <std::size_t Dim, typename Real>
+struct simplex_v<3, Dim, Real> {
     static constexpr std::size_t n = 3;
     static constexpr std::size_t dim = Dim;
-    using real_type = ValueType;
-    using vertex_type = spt::vertex<Dim, ValueType>;
+    using real_type = Real;
+    using vertex_type = spt::vertex<Dim, Real>;
 
     std::array<vertex_type*, 4> vertices = { nullptr, nullptr, nullptr, nullptr };
 

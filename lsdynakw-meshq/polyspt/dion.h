@@ -4,16 +4,16 @@
 
 namespace spt {
 
-template <std::size_t Dim = 3, typename ValueType = typename spt::vec<Dim>::value_type>
-using dion = polytope<1, Dim, ValueType>;
+template <std::size_t Dim = 3, typename Real = typename spt::vec<Dim>::value_type>
+using dion = polytope<1, Dim, Real>;
 
 
-template <std::size_t Dim, typename ValueType>
-struct polytope<1, Dim, ValueType> {
+template <std::size_t Dim, typename Real>
+struct polytope<1, Dim, Real> {
     static constexpr std::size_t n = 1;
     static constexpr std::size_t dim = Dim;
-    using real_type = ValueType;
-    using vertex_type = spt::vertex<Dim, ValueType>;
+    using real_type = Real;
+    using vertex_type = spt::vertex<Dim, Real>;
     using facet_type = vertex_type;
 
     std::array<vertex_type*, 2> vertices = { nullptr, nullptr };

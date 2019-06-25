@@ -121,10 +121,10 @@ struct vec<3, ValueType> {
 };
 
 
-template <typename ValueType>
-struct vec<2, ValueType> {
+template <typename Real>
+struct vec<2, Real> {
     static constexpr std::size_t dim = 2;
-    using value_type = ValueType;
+    using value_type = Real;
 
     std::array<value_type, 2> x{
         static_cast<value_type>(0),

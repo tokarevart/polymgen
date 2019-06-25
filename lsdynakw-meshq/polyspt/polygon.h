@@ -4,17 +4,17 @@
 
 namespace spt {
 
-template <std::size_t Dim = 3, typename ValueType = typename spt::vec<Dim>::value_type>
-using polygon = polytope<2, Dim, ValueType>;
+template <std::size_t Dim = 3, typename Real = typename spt::vec<Dim>::value_type>
+using polygon = polytope<2, Dim, Real>;
 
 
-template <std::size_t Dim, typename ValueType>
-struct polytope<2, Dim, ValueType> {
+template <std::size_t Dim, typename Real>
+struct polytope<2, Dim, Real> {
     static constexpr std::size_t n = 2;
     static constexpr std::size_t dim = Dim;
-    using real_type = ValueType;
-    using vertex_type = spt::vertex<Dim, ValueType>;
-    using edge_type = spt::edge<Dim, ValueType>;
+    using real_type = Real;
+    using vertex_type = spt::vertex<Dim, Real>;
+    using edge_type = spt::edge<Dim, Real>;
     using facet_type = edge_type;
 
     std::vector<edge_type*> edges;

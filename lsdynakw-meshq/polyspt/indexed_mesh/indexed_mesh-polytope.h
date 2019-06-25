@@ -6,9 +6,9 @@
 
 namespace spt {
 
-template <std::size_t Dim, typename ValueType>
-struct indexed_mesh<spt::edge<Dim, ValueType>> {
-    using real_type = ValueType;
+template <std::size_t Dim, typename Real>
+struct indexed_mesh<spt::edge<Dim, Real>> {
+    using real_type = Real;
     using index_type = std::size_t;
     using vertex_type = spt::vec<Dim, real_type>;
     using edge_type = std::array<index_type, 2>;
@@ -28,9 +28,9 @@ struct indexed_mesh<spt::edge<Dim, ValueType>> {
 };
 
 
-template <std::size_t Dim, typename ValueType>
-struct indexed_mesh<spt::face<Dim, ValueType>> {
-    using real_type = ValueType;
+template <std::size_t Dim, typename Real>
+struct indexed_mesh<spt::face<Dim, Real>> {
+    using real_type = Real;
     using index_type = std::size_t;
     using vertex_type = spt::vec<Dim, real_type>;
     using edge_type = std::array<index_type, 2>;
@@ -54,9 +54,9 @@ struct indexed_mesh<spt::face<Dim, ValueType>> {
 };
 
 
-template <std::size_t Dim, typename ValueType>
-struct indexed_mesh<spt::cell<Dim, ValueType>> {
-    using real_type = ValueType;
+template <std::size_t Dim, typename Real>
+struct indexed_mesh<spt::cell<Dim, Real>> {
+    using real_type = Real;
     using index_type = std::size_t;
     using vertex_type = spt::vec<Dim, real_type>;
     using edge_type = std::array<index_type, 2>;
