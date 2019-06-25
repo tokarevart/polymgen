@@ -22,7 +22,6 @@ public:
     void run(real_type preferred_length,
              const genparams<polytope_type>& gen_params = genparams<polytope_type>());
 
-
     mesher(const shell_type& shell, const shell_mesh_type& mesh) {
         m_shell = shell;
         m_shell_mesh = mesh;
@@ -78,7 +77,6 @@ public:
 
     void run(real_type preferred_length,
              const genparams<polytope_type>& gen_params = genparams<polytope_type>());
-
 
     mesher(const shell_type& shell, const shell_mesh_type& mesh) {
         m_shell = shell;
