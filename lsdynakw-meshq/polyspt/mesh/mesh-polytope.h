@@ -18,18 +18,25 @@ struct mesh_base<Pointer, spt::polytope<N, Dim, Real>> {
     std::vector<Pointer<facet_type>> facets;
     std::vector<Pointer<elem_type>> elements;
 
-    mesh_base() {}
-    mesh_base(const mesh_base& other) {
+    mesh_base& operator=(const mesh_base& other) {
         vertices = other.vertices;
         // ...
         facets = other.facets;
         elements = other.elements;
     }
-    mesh_base(mesh_base&& other) noexcept {
+    mesh_base& operator=(mesh_base&& other) noexcept {
         vertices = std::move(other.vertices);
         // ...
         facets = std::move(other.facets);
         elements = std::move(other.elements);
+    }
+
+    mesh_base() {}
+    mesh_base(const mesh_base& other) {
+        *this = other;
+    }
+    mesh_base(mesh_base&& other) noexcept {
+        *this = std::move(other);
     }
 };
 

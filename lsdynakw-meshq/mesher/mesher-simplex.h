@@ -67,7 +67,7 @@ template <typename Polytope, template <typename... Args> typename Pointer>
 class mesher<spt::multi<Polytope>, spt::simplex, Pointer> {
     using vertex_type = spt::polytope<0, Polytope::dim, typename Polytope::real_type>;
     using edge_type = spt::polytope<1, Polytope::dim, typename Polytope::real_type>;
-    using facet_type = spt::polytope<N - 1, Polytope::dim, typename Polytope::real_type>;
+    using facet_type = spt::polytope<Polytope::n - 1, Polytope::dim, typename Polytope::real_type>;
 
 public:
     using polytope_type = Polytope;
@@ -126,7 +126,7 @@ template <
     template <typename... Args> typename Pointer,
     template <typename Polytope> typename HowManyPolytopes>
 mesher(spt::mesh_base<Pointer, spt::polytope<N - 1, Dim, Real>, HowManyPolytopes>&& poly,
-       spt::mesh_base<Pointer, ElemType<N, Dim, Real>, spt::multi>&& shell_mesh)
+       spt::mesh_base<Pointer, ElemType<N - 1, Dim, Real>, spt::multi>&& shell_mesh)
     ->mesher<HowManyPolytopes<Polytope>, ElemType, Pointer>;
 
 } // namespace pmg
