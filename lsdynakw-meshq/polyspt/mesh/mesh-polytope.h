@@ -23,12 +23,14 @@ struct mesh_base<Pointer, spt::polytope<N, Dim, Real>> {
         // ...
         facets = other.facets;
         elements = other.elements;
+        return *this;
     }
     mesh_base& operator=(mesh_base&& other) noexcept {
         vertices = std::move(other.vertices);
         // ...
         facets = std::move(other.facets);
         elements = std::move(other.elements);
+        return *this;
     }
 
     mesh_base() {}

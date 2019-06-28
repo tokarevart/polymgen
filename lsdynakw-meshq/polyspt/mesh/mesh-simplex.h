@@ -56,10 +56,12 @@ struct mesh_base<Pointer, spt::simplex_v<N, Dim, Real>> {
     mesh_base& operator=(const mesh_base& other) {
         vertices = other.vertices;
         elements = other.elements;
+        return *this;
     }
     mesh_base& operator=(mesh_base&& other) noexcept {
         vertices = std::move(other.vertices);
         elements = std::move(other.elements);
+        return *this;
     }
 
     mesh_base() {}

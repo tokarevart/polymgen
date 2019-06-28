@@ -120,13 +120,21 @@ private:
 
 
 template <
-    typename Polytope,
     template <std::size_t N, std::size_t Dim, typename Real> typename ElemType,
-    std::size_t N, std::size_t Dim, typename Real,
+    std::size_t N_Minus_1, std::size_t Dim, typename Real,
     template <typename... Args> typename Pointer,
-    template <typename Polytope> typename HowManyPolytopes>
-mesher(spt::mesh_base<Pointer, spt::polytope<N - 1, Dim, Real>, HowManyPolytopes>&& poly,
-       spt::mesh_base<Pointer, ElemType<N - 1, Dim, Real>, spt::multi>&& shell_mesh)
-    ->mesher<HowManyPolytopes<Polytope>, ElemType, Pointer>;
+    template <typename Polytope> typename HowMany>
+mesher(const spt::mesh_base<Pointer, spt::polytope<N_Minus_1, Dim, Real>, HowMany>& shell,
+       const spt::mesh_base<Pointer, ElemType<N_Minus_1, Dim, Real>, spt::multi>& shell_mesh)
+    ->mesher<HowMany<spt::polytope<N_Minus_1 + 1, Dim, Real>>, ElemType, Pointer>;
+
+template <
+    template <std::size_t N, std::size_t Dim, typename Real> typename ElemType,
+    std::size_t N_Minus_1, std::size_t Dim, typename Real,
+    template <typename... Args> typename Pointer,
+    template <typename Polytope> typename HowMany>
+mesher(spt::mesh_base<Pointer, spt::polytope<N_Minus_1, Dim, Real>, HowMany>&& shell,
+       spt::mesh_base<Pointer, ElemType<N_Minus_1, Dim, Real>, spt::multi>&& shell_mesh)
+    ->mesher<HowMany<spt::polytope<N_Minus_1 + 1, Dim, Real>>, ElemType, Pointer>;
 
 } // namespace pmg

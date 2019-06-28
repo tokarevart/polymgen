@@ -184,9 +184,9 @@ int main() {
     std::cout << spt::dot(spt::mat<3>::identity(), spt::vec<3>(0, 1, 2)).magnitude() << std::endl;
     std::cout << spt::dot(spt::mat<3>::identity().inversed(), spt::mat<3>::identity().transposed() * 2)[1].magnitude() << std::endl;
 
-    spt::mesh_base<spt::raw_ptr, spt::polytope<2, 3, double>, spt::single> shell;
-    spt::mesh_base<spt::raw_ptr, spt::simplex<2, 3, double>, spt::multi> shell_mesh;
-    pmg::mesher<spt::single<spt::polyhedron<3, double>>, spt::simplex, spt::raw_ptr> mesher(shell, shell_mesh);
+    spt::raw_mesh<spt::polytope<2>> shell;
+    spt::raw_mesh<spt::simplex<2>, spt::multi> shell_mesh;
+    pmg::mesher mesher(shell, shell_mesh);
 
     return 0;
 }
