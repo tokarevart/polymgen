@@ -22,7 +22,7 @@ public:
     std::array<pmg::Vert*, 2> verts;
 
     real_t magnitude()    const;
-    real_t sqrMagnitude() const;
+    real_t sqr_magnitude() const;
 
     pmg::Vert* findNot(const pmg::Edge* edge) const;
     pmg::Vert* findNot(const pmg::Vert* vert) const;

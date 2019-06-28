@@ -24,22 +24,22 @@ public:
     // TODO: represent surface::Face as any number of surface::Edges instead
     std::array<surface::Edge*, 3> edges;
 
-    real_t preferredLength() const;
+    real_t preferred_length() const;
 
-    const std::list<pmg::Face*>& innerFaces() const;
-    const std::list<pmg::Edge*>& innerEdges() const;
-    const std::list<pmg::Vert*>& innerVerts() const;
+    const std::list<pmg::Face*>& inner_faces() const;
+    const std::list<pmg::Edge*>& inner_edges() const;
+    const std::list<pmg::Vert*>& inner_verts() const;
 
-    const std::list<front::Edge*>& frontEdges() const;
+    const std::list<front::Edge*>& front_edges() const;
 
-    surface::Vert* findVertNot(const surface::Edge* sEdge) const;
-    surface::Edge* findSurfaceEdgeContaining(const pmg::Edge* edge) const;
+    surface::Vert* find_vert_not(const surface::Edge* sEdge) const;
+    surface::Edge* find_surface_edge_containing(const pmg::Edge* edge) const;
 
     // Needs surface edges to be already segmentized.
-    void triangulate(real_t preferredLen, genparams::Surface genParams = genparams::Surface());
-    void smoothMesh(std::size_t nIters);
-    void delaunayPostP();
-    void optimizeMesh(std::size_t nSmoothIters = 20, std::size_t nDelaunaySmoothIters = 3);
+    void triangulate(real_t preferredLen, genparams::Surface gen_params = genparams::Surface());
+    void smooth_mesh(std::size_t nIters);
+    void delaunay_postp();
+    void optimize_mesh(std::size_t nSmoothIters = 20, std::size_t nDelaunaySmoothIters = 3);
 
     bool contains(const surface::Edge* sEdge) const;
     bool contains(const surface::Vert* sVert) const;
@@ -57,43 +57,44 @@ private:
     using pair_rr = std::pair<real_t, real_t>;
     using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
     using pair_ee = std::pair<pmg::Edge*, pmg::Edge*>;
+    using vec3 = spt::vec<3, real_t>;
 
     real_t m_prefLen = static_cast<real_t>(0.0);
 
-    std::list<pmg::Face*> m_innerFaces;
-    std::list<pmg::Edge*> m_innerEdges;
-    std::list<pmg::Vert*> m_innerVerts;
+    std::list<pmg::Face*> m_inner_faces;
+    std::list<pmg::Edge*> m_inner_edges;
+    std::list<pmg::Vert*> m_inner_verts;
 
-    std::list<front::Edge*> m_frontEdges;
-    std::list<front::Vert*> m_frontVerts;
+    std::list<front::Edge*> m_front_edges;
+    std::list<front::Vert*> m_front_verts;
 
-    front::Vert* findFrontVert(const pmg::Vert* vert) const;
+    front::Vert* find_front_vert(const pmg::Vert* vert) const;
 
-    front::Edge* addToFront(const pmg::Edge* edge);
-    front::Vert* addToFront(const pmg::Vert* vert);
+    front::Edge* add_to_front(const pmg::Edge* edge);
+    front::Vert* add_to_front(const pmg::Vert* vert);
 
-    void removeFromFront(front::Edge* fEdge);
-    void removeFromFront(front::Vert* fVert);
+    void remove_from_front(front::Edge* front_edge);
+    void remove_from_front(front::Vert* fVert);
 
-    bool anyVertInsidePotentialTriangCheck(front::Vert* fVert) const;
-    bool doesSegmentIntersectsWithFront(const spt::vec3& v0, const spt::vec3& v1) const;
-    bool doesSegmentIntersectsWithFront(const pmg::Vert* v0, const spt::vec3& v1) const;
+    bool any_vert_inside_potential_triangle_check(front::Vert* fVert) const;
+    bool does_segment_intersects_with_front(const vec3& v0, const vec3& v1) const;
+    bool does_segment_intersects_with_front(const pmg::Vert* v0, const vec3& v1) const;
 
-    spt::vec3 computeNormalInTriang(front::Edge* fEdge, const spt::vec3& oppVertPos);
-    spt::vec3 computeNormalInTriang(front::Edge* fEdge, pmg::Edge* oneOfRemainingEdges); // Do i need it?
+    vec3 normal_in_triangle(front::Edge* front_edge, const vec3& opp_vert_pos);
+    vec3 normal_in_triangle(front::Edge* front_edge, pmg::Edge* one_of_remaining_edges); // Do i need it?
 
-    bool tryComputeNewVertPosType2(front::Edge* fEdge, spt::vec3& out_pos);
-    bool tryComputeNewVertPosType1(front::Edge* fEdge, spt::vec3& out_pos, std::size_t smallAngleIdx);
-    bool tryComputeNewVertPosType0(front::Edge* fEdge, spt::vec3& out_pos);
-    bool tryComputeNewVertPos(front::Edge* fEdge, spt::vec3& out_pos);
+    bool tryComputeNewVertPosType2(front::Edge* front_edge, vec3& out_pos);
+    bool tryComputeNewVertPosType1(front::Edge* front_edge, vec3& out_pos, std::size_t smallAngleIdx);
+    bool tryComputeNewVertPosType0(front::Edge* front_edge, vec3& out_pos);
+    bool tryComputeNewVertPos(front::Edge* front_edge, vec3& out_pos);
 
-    static pair_rr computeMinMaxEdgesLengths(const spt::vec3& p0, const spt::vec3& p1, const spt::vec3& p2);
-    static pair_rr computeMinMaxEdgesSqrLengths(const spt::vec3& p0, const spt::vec3& p1, const spt::vec3& p2);
-    static real_t  computeTriangSimpleQuality(const spt::vec3& p0, const spt::vec3& p1, const spt::vec3& p2);
-    static real_t  computeTriangSimpleSqrQuality(const spt::vec3& p0, const spt::vec3& p1, const spt::vec3& p2);
+    static pair_rr computeMinMaxEdgesLengths(const vec3& p0, const vec3& p1, const vec3& p2);
+    static pair_rr computeMinMaxEdgesSqrLengths(const vec3& p0, const vec3& p1, const vec3& p2);
+    static real_t  computeTriangSimpleQuality(const vec3& p0, const vec3& p1, const vec3& p2);
+    static real_t  computeTriangSimpleSqrQuality(const vec3& p0, const vec3& p1, const vec3& p2);
 
     front::Edge* chooseEdgeForExhaustionWithNewVert(front::Vert* fVert);
-    void exhaustWithNewVert(front::Edge* fEdge, const spt::vec3& vertPos);
+    void exhaustWithNewVert(front::Edge* front_edge, const vec3& vertPos);
     void exhaustWithoutNewVert(front::Vert* fVert);
 
     bool tryExhaustWithoutNewVert(front::Vert* fVert);
@@ -102,11 +103,11 @@ private:
     bool globalIntersectionCheck() const;
 
     front::Vert* currentFrontVert(real_t maxCompl) const;
-    bool exhaustWithoutNewVertPriorityPredicate(front::Vert* fEdge);
-    bool exhaustWithNewVertPriorityPredicate(front::Vert* fEdge);
+    bool exhaustWithoutNewVertPriorityPredicate(front::Vert* front_edge);
+    bool exhaustWithNewVertPriorityPredicate(front::Vert* front_edge);
     ExhaustType computeExhaustionTypeQualityPriority(
         front::Vert* fVert,
-        front::Edge*& out_withNWFrontEdge, spt::vec3*& out_withNWNewVertPos);
+        front::Edge*& out_withNWFrontEdge, vec3*& out_withNWNewVertPos);
 
     void processLastFace();
     void processAngles();

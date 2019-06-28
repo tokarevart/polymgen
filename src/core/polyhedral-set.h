@@ -32,65 +32,65 @@ namespace pmg {
 class PolyhedralSet {
 public:
     struct Log {
-        real_t minQuality = static_cast<real_t>(-1.0);
-        real_t avQuality = static_cast<real_t>(-1.0);
-        real_t minMeshAbsGrad = static_cast<real_t>(-1.0);
-        real_t avMeshAbsGrad = static_cast<real_t>(-1.0);
-        std::size_t nPolyhs = 0;
-        std::size_t nElems = 0;
-        real_t prefLen = static_cast<real_t>(-1.0);
-        double shellTrTime = -1.0;
-        double volumeExhTime = -1.0;
-        double meshFileWritingTime = -1.0;
+        real_t min_quality = static_cast<real_t>(-1.0);
+        real_t av_quality = static_cast<real_t>(-1.0);
+        real_t min_mesh_abs_grad = static_cast<real_t>(-1.0);
+        real_t av_mesh_abs_grad = static_cast<real_t>(-1.0);
+        std::size_t n_polyhs = 0;
+        std::size_t n_elems = 0;
+        real_t pref_len = static_cast<real_t>(-1.0);
+        double shell_tr_time = -1.0;
+        double volume_exh_time = -1.0;
+        double mesh_file_writing_time = -1.0;
 
         void write(std::ostream& stream) const;
     };
 
-    void tetrahedralize(real_t preferredLength, genparams::Polyhedron genParams = genparams::Polyhedron());
-    void smoothMesh(std::size_t nItersVolume = 1, std::size_t nItersShell = 1);
-    void shellDelaunayPostP();
+    void tetrahedralize(real_t preferred_length, genparams::Polyhedron gen_params = genparams::Polyhedron());
+    void smooth_mesh(std::size_t nItersVolume = 1, std::size_t nItersShell = 1);
+    void shell_delaunay_postp();
 
     PolyMesh mesh() const;
 
     Log log();
-    std::string generateLogFileName() const;
+    std::string log_file_name() const;
 
     // TODO: make mesh output with PolyMesh method instead
     // TODO: make method taking meshes of all the polyhedrons and remeshing them into one
-    void output(FileType filetype = FileType::WavefrontObj, std::string_view filename = "_AUTO_", unsigned polyhedralSetId = 1u);
+    void output(FileType filetype = FileType::WavefrontObj, std::string_view filename = "_AUTO_", unsigned polyhedral_set_id = 1u);
 
     PolyhedralSet() = delete;
-    PolyhedralSet(const psg::PolyShell& polyStruct);
+    PolyhedralSet(const psg::PolyShell& poly_struct);
     ~PolyhedralSet();
 
 
 private:
     Log m_log;
-    bool m_isLogged = false;
+    bool m_is_logged = false;
 
     real_t m_prefLen;
 
     std::vector<Polyhedron*> m_polyhedrons;
 
     // TODO: use Shell class instead
-    std::vector<shell::Face*> m_shellFaces;
-    std::vector<shell::Edge*> m_shellEdges;
-    std::vector<shell::Vert*> m_shellVerts;
+    std::vector<shell::Face*> m_shell_faces;
+    std::vector<shell::Edge*> m_shell_edges;
+    std::vector<shell::Vert*> m_shell_verts;
 
-    shell::Edge* findShellEdge(const shell::Vert* v0, const shell::Vert* v1) const;
+    shell::Edge* find_shell_edge(const shell::Vert* v0, const shell::Vert* v1) const;
 
-    void triangulateShell(genparams::Shell genParams);
+    void triangulate_shell(genparams::Shell gen_params);
 
-    void outputObj(std::string_view filename) const;
-    void outputLSDynaKeyword_PART(std::ofstream& file) const;
-    void outputLSDynaKeyword_NODE(std::ofstream& file) const;
-    void outputLSDynaKeyword_ELEMENT_SOLID(std::ofstream& file, std::uint8_t PolyhedralSetId = 1u) const;
-    void outputLSDynaKeyword(const std::string& filename, std::uint8_t PolyhedralSetId = 1u) const;
+    void output_obj(std::string_view filename) const;
+    void output_lsdynakw_part_section(std::ofstream& file) const;
+    void output_lsdynakw_node_section(std::ofstream& file) const;
+    void output_lsdynakw_element_solid_section(std::ofstream& file, std::uint8_t PolyhedralSetId = 1u) const;
+    void output_lsdynakw(const std::string& filename, std::uint8_t PolyhedralSetId = 1u) const;
 
-    std::string generateOutputFilename(FileType filetype, std::string_view filename) const;
+    std::string output_filename(FileType filetype, std::string_view filename) const;
 
-    void setPolyShell(std::string_view polyStructFileName); // NOTE: deprecated
-    void setPolyShell(const psg::PolyShell& polyStruct);
+    void set_poly_shell(std::string_view poly_struct_filename); // NOTE: deprecated
+    void set_poly_shell(const psg::PolyShell& poly_struct);
 };
 
 } // namespace pmg

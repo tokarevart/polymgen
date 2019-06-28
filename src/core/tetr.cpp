@@ -4,19 +4,20 @@
 #include "tetr.h"
 #include <cmath>
 #include "../helpers/spatial/vec.h"
+#include "../helpers/spatial/algs.h"
 
-using spt::vec3;
+using vec3 = spt::vec<3, real_t>;
 
 
-real_t pmg::Tetr::computeVolume() const {
+real_t pmg::Tetr::volume() const {
     vec3 v0 = verts[0]->pos();
-    return static_cast<real_t>(1.0 / 6.0) * std::abs(vec3::mixed(
+    return static_cast<real_t>(1.0 / 6.0) * std::abs(spt::mixed(
         verts[1]->pos() - v0,
         verts[2]->pos() - v0,
         verts[3]->pos() - v0));
 }
 
-real_t pmg::Tetr::computeQuality() const {
+real_t pmg::Tetr::quality() const {
     std::array<real_t, 4> sqr_prods =
     {
         static_cast<real_t>(1.0),
@@ -27,13 +28,13 @@ real_t pmg::Tetr::computeQuality() const {
     for (std::size_t i = 0; i < 4; i++)
         for (std::size_t j = 0; j < 4; j++)
             if (j != i)
-                sqr_prods[i] *= (verts[j]->pos() - verts[i]->pos()).sqrMagnitude();
+                sqr_prods[i] *= (verts[j]->pos() - verts[i]->pos()).sqr_magnitude();
 
     real_t max_sqr_prod = std::max({ sqr_prods[0], sqr_prods[1], sqr_prods[2], sqr_prods[3] });
 
     constexpr auto CONST_12_SQRT2 = static_cast<real_t>(8.4852813742385702928101323452582);
 
-    return CONST_12_SQRT2 * computeVolume() / std::sqrt(max_sqr_prod);
+    return CONST_12_SQRT2 * volume() / std::sqrt(max_sqr_prod);
 }
 
 

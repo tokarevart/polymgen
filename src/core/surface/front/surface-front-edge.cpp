@@ -5,20 +5,20 @@
 #include "../../../helpers/spatial/algs.h"
 
 using namespace pmg::surface;
-using spt::vec3;
+using vec3 = spt::vec<3, real_t>;
 
 
-vec3 front::Edge::computeNormal() {
-    surface::Edge* related_sedge = m_relatedSurfaceFace->findSurfaceEdgeContaining(edge);
-    vec3 opp_v_pos = m_relatedSurfaceFace->findVertNot(related_sedge)->pos();
+vec3 front::Edge::compute_normal() {
+    surface::Edge* related_sedge = m_related_surface_face->find_surface_edge_containing(edge);
+    vec3 opp_v_pos = m_related_surface_face->find_vert_not(related_sedge)->pos();
     vec3 p0 = related_sedge->verts[0]->pos();
     vec3 p1 = related_sedge->verts[1]->pos();
 
-    return normal = (opp_v_pos - spt::algs::project(opp_v_pos, p0, p1)).normalize();
+    return normal = (opp_v_pos - spt::project(opp_v_pos, p0, p1)).normalize();
 }
 
 
-vec3 front::Edge::computeCenter() {
+vec3 front::Edge::center() {
     return (edge->verts[0]->pos() + edge->verts[1]->pos()) * static_cast<real_t>(0.5);
 }
 
@@ -26,4 +26,4 @@ vec3 front::Edge::computeCenter() {
 
 
 front::Edge::Edge(const pmg::surface::Face* relatedSurfaceFace, const pmg::Edge* edge)
-    : edge(const_cast<pmg::Edge*>(edge)), m_relatedSurfaceFace(const_cast<surface::Face*>(relatedSurfaceFace)) {}
+    : edge(const_cast<pmg::Edge*>(edge)), m_related_surface_face(const_cast<surface::Face*>(relatedSurfaceFace)) {}

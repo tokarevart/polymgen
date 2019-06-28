@@ -125,6 +125,9 @@
     <ClInclude Include="src\helpers\mathconsts.h">
       <Filter>helpers</Filter>
     </ClInclude>
+    <ClInclude Include="src\helpers\spatial\mat.h">
+      <Filter>helpers\spatial</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\edge.cpp">
@@ -174,9 +177,6 @@
     </ClCompile>
     <ClCompile Include="src\helpers\logger.cpp">
       <Filter>helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\helpers\spatial\spatial-algs.cpp">
-      <Filter>helpers\spatial</Filter>
     </ClCompile>
     <ClCompile Include="src\polysgen\polysgen.cpp">
       <Filter>polysgen</Filter>

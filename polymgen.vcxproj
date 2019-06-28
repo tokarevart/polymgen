@@ -48,6 +48,7 @@
     <ClInclude Include="src\helpers\mathconsts.h" />
     <ClInclude Include="src\helpers\logger.h" />
     <ClInclude Include="src\helpers\spatial\algs.h" />
+    <ClInclude Include="src\helpers\spatial\mat.h" />
     <ClInclude Include="src\helpers\spatial\vec.h" />
     <ClInclude Include="src\polysgen\polysgen.h" />
     <ClInclude Include="src\real-type.h" />
@@ -70,7 +71,6 @@
     <ClCompile Include="src\data-structs\polymesh.cpp" />
     <ClCompile Include="src\data-structs\polyshell.cpp" />
     <ClCompile Include="src\helpers\logger.cpp" />
-    <ClCompile Include="src\helpers\spatial\spatial-algs.cpp" />
     <ClCompile Include="src\polysgen\polysgen.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

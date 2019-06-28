@@ -23,45 +23,45 @@ public:
     // TODO: maybe use std::reference_wrapper instead of pointer
     pmg::Edge* edge;
 
-    void refreshAngleData();
+    void refresh_angle_data();
 
     real_t angle();
     real_t complexity();
-    real_t computeAngle();
-    real_t computeComplexity();
+    real_t compute_angle();
+    real_t compute_complexity();
 
     // Opp means opposite.
     // TODO: rewrite these methods based on relations::opposite function
-    // NOTE: maybe store oppVerts
-    pair_vv      oppVerts();
+    // NOTE: maybe store opp_verts
+    pair_vv opp_verts();
     // NOTE: maybe store oppEdge and information of its existance
-    front::Edge* findOppEdge();
+    front::Edge* find_opp_edge();
 
     // Adj means adjacent.
-    pair_ff adjFFaces();
+    pair_ff adj_ffaces();
 
-    bool addAdjFFace(const front::Face* fFace);
-    bool removeAdjFFace(const front::Face* fFace);
-    bool adjFFacesContains(const front::Face* fFace) const;
-    void fillAdjFFaces(const front::Face* fFace0, const front::Face* fFace1);
+    bool add_adj_fface(const front::Face* fFace);
+    bool remove_adj_fface(const front::Face* fFace);
+    bool adj_ffaces_contains(const front::Face* fFace) const;
+    void fill_adj_ffaces(const front::Face* fFace0, const front::Face* fFace1);
     // TODO: add method std::size_t nAdjFFaces() const;
 
-    Edge(const Polyhedron* relatedPolyhedron, const pmg::Edge* edge);
+    Edge(const Polyhedron* related_polyhedron, const pmg::Edge* edge);
 
 
 private:
-    Polyhedron* m_relatedPolyhedron; // TODO: it's not good to store it
-    pair_ff m_adjFFaces = { nullptr, nullptr }; // TODO: make std::array instead
+    Polyhedron* m_related_polyhedron; // TODO: it's not good to store it
+    pair_ff m_adj_ffaces = { nullptr, nullptr }; // TODO: make std::array instead
 
     real_t m_angle = static_cast<real_t>(0.0);
     real_t m_complexity = static_cast<real_t>(0.0);
 
-    bool m_needAngleProcessing = true;
-    bool m_needComplexityProcessing = true;
+    bool m_need_angle_processing = true;
+    bool m_need_complexity_processing = true;
 
-    bool adjFacesFull();
-    // TODO: remove this method and then before calling adjFFaces() adjacent faces must be assigned manually
-    pair_ff fillAdjFFaces();
+    bool adj_faces_full();
+    // TODO: remove this method and then before calling adj_ffaces() adjacent faces must be assigned manually
+    pair_ff fill_adj_ffaces();
 };
 
 } // namespace pmg::front

@@ -8,15 +8,7 @@
 #include "../helpers/spatial/algs.h"
 
 using pair_ff = std::pair<pmg::Face*, pmg::Face*>;
-
-
-#define EPS static_cast<real_t>(1e-10)
-#define BETWEEN(p0_coor, p1_coor, p) \
-        (std::min(p0_coor, p1_coor) - EPS < p && p < std::max(p0_coor, p1_coor) + EPS)
-
-#define K_ALPHA static_cast<real_t>(2.5)
-
-using spt::vec3;
+using vec3 = spt::vec<3, real_t>;
 
 
 real_t pmg::Edge::magnitude() const {
@@ -24,8 +16,8 @@ real_t pmg::Edge::magnitude() const {
 }
 
 
-real_t pmg::Edge::sqrMagnitude() const {
-    return (verts[1]->pos() - verts[0]->pos()).sqrMagnitude();
+real_t pmg::Edge::sqr_magnitude() const {
+    return (verts[1]->pos() - verts[0]->pos()).sqr_magnitude();
 }
 
 
@@ -48,8 +40,8 @@ pmg::Vert* pmg::Edge::findNot(const pmg::Vert* vert) const {
 void pmg::Edge::flip(std::list<pmg::Edge*>& edgesList, std::list<pmg::Face*>& facesList) {
     std::array<pmg::Vert*, 2> opp_nodes;
     auto around_faces = find2AdjFaces(facesList);
-    opp_nodes[0] = std::get<0>(around_faces)->findVertNot(this);
-    opp_nodes[1] = std::get<1>(around_faces)->findVertNot(this);
+    opp_nodes[0] = std::get<0>(around_faces)->find_vert_not(this);
+    opp_nodes[1] = std::get<1>(around_faces)->find_vert_not(this);
 
     auto old_edge = std::find(edgesList.begin(), edgesList.end(), this);
     auto old_face0 = std::find(facesList.begin(), facesList.end(), std::get<0>(around_faces));
@@ -78,11 +70,11 @@ void pmg::Edge::flip(std::list<pmg::Edge*>& edgesList, std::list<pmg::Face*>& fa
 bool pmg::Edge::flipIfNeeded(std::list<pmg::Edge*>& edgesList, std::list<pmg::Face*>& facesList) {
     std::array<pmg::Vert*, 2> opp_nodes;
     auto around_faces = find2AdjFaces(facesList);
-    opp_nodes[0] = std::get<0>(around_faces)->findVertNot(this);
-    opp_nodes[1] = std::get<1>(around_faces)->findVertNot(this);
-
-    real_t alpha = std::acos(vec3::cos(verts[0]->pos() - opp_nodes[0]->pos(), verts[1]->pos() - opp_nodes[0]->pos()));
-    real_t beta = std::acos(vec3::cos(verts[0]->pos() - opp_nodes[1]->pos(), verts[1]->pos() - opp_nodes[1]->pos()));
+    opp_nodes[0] = std::get<0>(around_faces)->find_vert_not(this);
+    opp_nodes[1] = std::get<1>(around_faces)->find_vert_not(this);
+    
+    real_t alpha = std::acos(spt::cos(verts[0]->pos() - opp_nodes[0]->pos(), verts[1]->pos() - opp_nodes[0]->pos()));
+    real_t beta = std::acos(spt::cos(verts[0]->pos() - opp_nodes[1]->pos(), verts[1]->pos() - opp_nodes[1]->pos()));
 
     if (alpha + beta <= PI)
         return false;
@@ -168,11 +160,11 @@ bool pmg::Edge::belongsToShell() {
 bool pmg::Edge::needToFlip(const std::list<pmg::Face*>& facesList) {
     std::array<pmg::Vert*, 2> opp_nodes;
     auto around_faces = find2AdjFaces(facesList);
-    opp_nodes[0] = std::get<0>(around_faces)->findVertNot(this);
-    opp_nodes[1] = std::get<1>(around_faces)->findVertNot(this);
+    opp_nodes[0] = std::get<0>(around_faces)->find_vert_not(this);
+    opp_nodes[1] = std::get<1>(around_faces)->find_vert_not(this);
 
-    real_t alpha = std::acos(vec3::cos(verts[0]->pos() - opp_nodes[0]->pos(), verts[1]->pos() - opp_nodes[0]->pos()));
-    real_t beta = std::acos(vec3::cos(verts[0]->pos() - opp_nodes[1]->pos(), verts[1]->pos() - opp_nodes[1]->pos()));
+    real_t alpha = std::acos(spt::cos(verts[0]->pos() - opp_nodes[0]->pos(), verts[1]->pos() - opp_nodes[0]->pos()));
+    real_t beta = std::acos(spt::cos(verts[0]->pos() - opp_nodes[1]->pos(), verts[1]->pos() - opp_nodes[1]->pos()));
 
     if (alpha + beta <= PI)
         return true;

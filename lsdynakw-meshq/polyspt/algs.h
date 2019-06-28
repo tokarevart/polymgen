@@ -12,7 +12,7 @@
 namespace spt {
 
 template <typename T>
-constexpr T epsilon = T(1e-6);
+constexpr T epsilon = T(0);
 template <>
 constexpr auto epsilon<double> = 1e-6;
 
@@ -24,8 +24,8 @@ T det(T a, T b, T c, T d) {
 template <typename T>
 bool between(T boundary0, T boundary1, T value) {
     return 
-        (value > std::min(boundary0, boundary1) - epsilon) &&
-        (value < std::max(boundary0, boundary1) + epsilon);
+        (value > std::min(boundary0, boundary1) - epsilon<T>) &&
+        (value < std::max(boundary0, boundary1) + epsilon<T>);
 }
 template <typename T>
 bool in_rectangle(T corner0, T corner1, T point) {

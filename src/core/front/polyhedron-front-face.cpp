@@ -6,13 +6,13 @@
 #include "../../helpers/spatial/algs.h"
 
 using namespace pmg;
-using spt::vec3;
+using vec3 = spt::vec<3, real_t>;
 
 
-vec3 front::Face::computeNormal() {
-    vec3 center = computeCenter();
-    vec3 third_pos = face->findVertNot(face->edges[0])->pos();
-    vec3 loc_normal = vec3::cross(
+vec3 front::Face::compute_normal() {
+    vec3 center = this->center();
+    vec3 third_pos = face->find_vert_not(face->edges[0])->pos();
+    vec3 loc_normal = spt::cross(
         face->edges[0]->verts[0]->pos() - third_pos,
         face->edges[0]->verts[1]->pos() - third_pos).normalize();
 
@@ -23,101 +23,101 @@ vec3 front::Face::computeNormal() {
         * static_cast<real_t>(1e-3);
 
     std::size_t intersects_num = 0;
-    for (auto& fface : m_relatedPolyhedron->frontFaces()) {
+    for (auto& fface : m_related_polyhedron->front_faces()) {
         if (fface == this)
             continue;
 
-        if (spt::algs::doesRayIntersectTriangle(
+        if (spt::does_ray_intersect_triangle(
             center, test_normal_correct_intersect,
             fface->face->edges[0]->verts[0]->pos(),
             fface->face->edges[0]->verts[1]->pos(),
-            fface->face->findVertNot(fface->face->edges[0])->pos()))
+            fface->face->find_vert_not(fface->face->edges[0])->pos()))
             intersects_num++;
     }
 
-    if (loc_normal.sqrMagnitude() < static_cast<real_t>(1e-6))
+    if (loc_normal.sqr_magnitude() < static_cast<real_t>(1e-6))
         throw std::exception();
 
     return normal = intersects_num % 2 == 1 ? loc_normal : -loc_normal;
 }
 
 
-vec3 front::Face::computeCenter() {
-    return face->computeCenter();
+vec3 front::Face::center() {
+    return face->center();
 }
 
 
-real_t front::Face::computeQuality() {
-    return face->computeQuality();
+real_t front::Face::quality() {
+    return face->quality();
 }
 
 
 
 
 front::Edge* front::Face::findFEdge(const pmg::Edge* edge) const {
-    for (auto& fedge : fEdges)
-        if (fedge->edge == edge)
-            return fedge;
+    for (auto& f_edge : front_edges)
+        if (f_edge->edge == edge)
+            return f_edge;
 
     return nullptr;
 }
 
 
 front::Edge* front::Face::findFEdge(const pmg::Vert* v0, const pmg::Vert* v1) const {
-    for (auto& fedge : fEdges)
-        if ((fedge->edge->verts[0] == v0 && fedge->edge->verts[1] == v1) ||
-            (fedge->edge->verts[0] == v1 && fedge->edge->verts[1] == v0))
-            return fedge;
+    for (auto& f_edge : front_edges)
+        if ((f_edge->edge->verts[0] == v0 && f_edge->edge->verts[1] == v1) ||
+            (f_edge->edge->verts[0] == v1 && f_edge->edge->verts[1] == v0))
+            return f_edge;
 
     return nullptr;
 }
 
 
 front::Edge* front::Face::findFEdgeNot(const pmg::Vert* vert) const {
-    for (auto& fedge : fEdges)
-        if (!fedge->edge->contains(vert))
-            return fedge;
+    for (auto& f_edge : front_edges)
+        if (!f_edge->edge->contains(vert))
+            return f_edge;
 
     return nullptr;
 }
 
 
-void front::Face::addFEdge(const front::Edge* fEdge) {
-    if (!fEdges[0])
-        fEdges[0] = const_cast<front::Edge*>(fEdge);
-    else if (!fEdges[1])
-        fEdges[1] = const_cast<front::Edge*>(fEdge);
-    else if (!fEdges[2])
-        fEdges[2] = const_cast<front::Edge*>(fEdge);
+void front::Face::addFEdge(const front::Edge* front_edge) {
+    if (!front_edges[0])
+        front_edges[0] = const_cast<front::Edge*>(front_edge);
+    else if (!front_edges[1])
+        front_edges[1] = const_cast<front::Edge*>(front_edge);
+    else if (!front_edges[2])
+        front_edges[2] = const_cast<front::Edge*>(front_edge);
     else
-        throw std::logic_error("pmg::front::Face::addFEdge can't add fEdge when fEdges already full.");
+        throw std::logic_error("pmg::front::Face::addFEdge can't add front_edge when front_edges already full.");
 }
 
 
-void front::Face::removeFEdge(const front::Edge* fEdge) {
-    for (auto& fedge : fEdges) {
-        if (fedge == fEdge) {
-            fedge = nullptr;
+void front::Face::removeFEdge(const front::Edge* front_edge) {
+    for (auto& f_edge : front_edges) {
+        if (f_edge == front_edge) {
+            f_edge = nullptr;
             return;
         }
     }
 
-    throw std::logic_error("pmg::front::Face::removeFEdge can't remove fEdge because there is no one.");
+    throw std::logic_error("pmg::front::Face::removeFEdge can't remove front_edge because there is no one.");
 }
 
 
 bool front::Face::fEdgesFull() const {
-    if (fEdges[0] && fEdges[1] && fEdges[2])
+    if (front_edges[0] && front_edges[1] && front_edges[2])
         return true;
 
     return false;
 }
 
 
-bool front::Face::contains(const front::Edge* fEdge) const {
-    if (fEdges[0] == fEdge ||
-        fEdges[1] == fEdge ||
-        fEdges[2] == fEdge)
+bool front::Face::contains(const front::Edge* front_edge) const {
+    if (front_edges[0] == front_edge ||
+        front_edges[1] == front_edge ||
+        front_edges[2] == front_edge)
         return true;
 
     return false;
@@ -136,5 +136,5 @@ bool front::Face::contains(const pmg::Vert* vert) const {
 
 
 
-front::Face::Face(const Polyhedron* relatedPolyhedron, const pmg::Face* face)
-    : face(const_cast<pmg::Face*>(face)), m_relatedPolyhedron(const_cast<Polyhedron*>(relatedPolyhedron)) {}
+front::Face::Face(const Polyhedron* related_polyhedron, const pmg::Face* face)
+    : face(const_cast<pmg::Face*>(face)), m_related_polyhedron(const_cast<Polyhedron*>(related_polyhedron)) {}

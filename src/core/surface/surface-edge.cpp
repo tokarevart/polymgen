@@ -4,26 +4,26 @@
 #include "edge.h"
 #include <cmath>
 #include <algorithm>
-#include "../../helpers/spatial/vec.h"
+#include "../../helpers/spatial/algs.h"
 
 using namespace pmg;
-using spt::vec3;
+using vec3 = spt::vec<3, real_t>;
 
 
-const std::vector<Edge*>& surface::Edge::innerEdges() const {
-    return m_innerEdges;
+const std::vector<Edge*>& surface::Edge::inner_edges() const {
+    return m_inner_edges;
 }
 
 
-const std::vector<Vert*>& surface::Edge::innerVerts() const {
-    return m_innerVerts;
+const std::vector<Vert*>& surface::Edge::inner_verts() const {
+    return m_inner_verts;
 }
 
 
 void surface::Edge::segmentize(real_t preferredLen) {
     std::size_t n_inner_verts = static_cast<std::size_t>(std::round(magnitude() / preferredLen)) - 1;
     if (n_inner_verts == 0) {
-        m_innerEdges.push_back(new pmg::Edge(verts[0]->attachedVert, verts[1]->attachedVert));
+        m_inner_edges.push_back(new pmg::Edge(verts[0]->attached_vert, verts[1]->attached_vert));
         return;
     }
 
@@ -32,26 +32,26 @@ void surface::Edge::segmentize(real_t preferredLen) {
     vec3 cur_pos = verts[0]->pos();
     for (std::size_t i = 0; i < n_inner_verts; i++) {
         cur_pos += dir;
-        m_innerVerts.push_back(new pmg::Vert(cur_pos));
+        m_inner_verts.push_back(new pmg::Vert(cur_pos));
     }
 
-    m_innerEdges.push_back(new pmg::Edge(verts[0]->attachedVert, m_innerVerts.front()));
+    m_inner_edges.push_back(new pmg::Edge(verts[0]->attached_vert, m_inner_verts.front()));
 
-    for (std::size_t i = 0; i < m_innerVerts.size() - 1; i++)
-        m_innerEdges.push_back(new pmg::Edge(m_innerVerts[i], m_innerVerts[i + 1]));
+    for (std::size_t i = 0; i < m_inner_verts.size() - 1; i++)
+        m_inner_edges.push_back(new pmg::Edge(m_inner_verts[i], m_inner_verts[i + 1]));
 
-    m_innerEdges.push_back(new pmg::Edge(verts[1]->attachedVert, m_innerVerts.back()));
+    m_inner_edges.push_back(new pmg::Edge(verts[1]->attached_vert, m_inner_verts.back()));
 }
 
 
 real_t surface::Edge::magnitude() const {
-    return std::sqrt(sqrMagnitude());
+    return std::sqrt(sqr_magnitude());
 }
 
 
-real_t surface::Edge::sqrMagnitude() const {
+real_t surface::Edge::sqr_magnitude() const {
     vec3 buf = verts[1]->pos() - verts[0]->pos();
-    return vec3::dot(buf, buf);
+    return spt::dot(buf, buf);
 }
 
 
@@ -65,7 +65,7 @@ bool surface::Edge::contains(const surface::Vert* sVert) const {
 
 
 bool surface::Edge::contains(const pmg::Edge* edge) const {
-    if (std::find(m_innerEdges.begin(), m_innerEdges.end(), edge) != m_innerEdges.end())
+    if (std::find(m_inner_edges.begin(), m_inner_edges.end(), edge) != m_inner_edges.end())
         return true;
 
     return false;
@@ -73,9 +73,9 @@ bool surface::Edge::contains(const pmg::Edge* edge) const {
 
 
 bool surface::Edge::contains(const pmg::Vert* vert) const {
-    if (verts[0]->attachedVert == vert ||
-        verts[1]->attachedVert == vert ||
-        std::find(m_innerVerts.begin(), m_innerVerts.end(), vert) != m_innerVerts.end())
+    if (verts[0]->attached_vert == vert ||
+        verts[1]->attached_vert == vert ||
+        std::find(m_inner_verts.begin(), m_inner_verts.end(), vert) != m_inner_verts.end())
         return true;
 
     return false;

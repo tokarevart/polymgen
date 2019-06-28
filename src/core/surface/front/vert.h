@@ -19,28 +19,28 @@ public:
     // TODO: maybe use std::reference_wrapper instead of pointer
     pmg::Vert* vert;
 
-    void refreshAngleData();
+    void refresh_angle_data();
 
     real_t angle();
     real_t complexity();
-    real_t computeAngle();
-    real_t computeComplexity();
+    real_t compute_angle();
+    real_t compute_complexity();
 
     pair_ee findAdjEdges() const;
-    pair_vv oppVerts()     const;
+    pair_vv opp_verts()     const;
 
     Vert(const surface::Face* relatedSurfaceFace, const pmg::Vert* vert);
 
 
 private:
     // TODO: it's not good to store it
-    surface::Face* m_relatedSurfaceFace;
+    surface::Face* m_related_surface_face;
 
     real_t m_angle = static_cast<real_t>(0.0);
     real_t m_complexity = static_cast<real_t>(0.0);
 
-    bool m_needAngleProcessing = true;
-    bool m_needComplexityProcessing = true;
+    bool m_need_angle_processing = true;
+    bool m_need_complexity_processing = true;
 };
 
 } // namespace pmg::surface::front

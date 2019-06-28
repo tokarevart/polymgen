@@ -12,20 +12,22 @@
 namespace pmg::surface::front {
 
 class Edge {
+    using vec3 = spt::vec<3, real_t>;
+
 public:
     // TODO: maybe use std::reference_wrapper instead of pointer
     pmg::Edge* edge;
-    spt::vec3 normal;
+    vec3 normal;
 
-    spt::vec3 computeNormal();
-    spt::vec3 computeCenter();
+    vec3 compute_normal();
+    vec3 center();
 
     Edge(const surface::Face* relatedSurfaceFace, const pmg::Edge* edge);
 
 
 private:
     // TODO: it's not good to store it
-    surface::Face* m_relatedSurfaceFace;
+    surface::Face* m_related_surface_face;
 };
 
 } // namespace pmg::surface::front

@@ -28,11 +28,11 @@ std::string rabbit() {
 int main() {
     std::cout << rabbit() << std::endl;
 
-    real_t preferredLength = static_cast<real_t>(0.5);
+    real_t preferred_length = static_cast<real_t>(0.5);
 
     std::cout << "Generating PolyShell...";
     std::size_t n = 4;
-    psg::PolyShell shell = psg::generateCuboids(n, n, n);
+    psg::PolyShell shell = psg::cuboids(n, n, n);
     std::cout << std::string(7, ' ') + "done." << std::endl;
 
     std::cout << "Initializing PolyhedralSet...";
@@ -41,10 +41,10 @@ int main() {
     shell.clear();
 
     std::cout << "Generating mesh...";
-    polyhset.tetrahedralize(preferredLength);
+    polyhset.tetrahedralize(preferred_length);
     std::cout << std::string(12, ' ') + "done." << std::endl;
 
-    //std::cout << std::endl << polyhset.generateLogFileName();
+    //std::cout << std::endl << polyhset.log_file_name();
 
     namespace fs = std::filesystem;
     std::cout << "Outputting data to file...";
@@ -60,7 +60,7 @@ int main() {
     fs::create_directory(fs::current_path() / "logs");
     fs::current_path(fs::current_path() / "logs");
 
-    std::ofstream log_file(polyhset.generateLogFileName());
+    std::ofstream log_file(polyhset.log_file_name());
     polyhset.log().write(log_file);
     std::cout << "Log:" << std::endl;
     polyhset.log().write(std::cout);

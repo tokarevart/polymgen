@@ -6,29 +6,29 @@
 
 #define ONE_3 static_cast<real_t>(0.3333333333333333)
 
-using spt::vec3;
+using vec3 = spt::vec<3, real_t>;
 
 
-vec3 pmg::Face::computeCenter() const {
+vec3 pmg::Face::center() const {
     return (edges[0]->verts[0]->pos() +
             edges[0]->verts[1]->pos() +
-            findVertNot(edges[0])->pos()) * ONE_3;
+            find_vert_not(edges[0])->pos()) * ONE_3;
 }
 
 
-real_t pmg::Face::computeQuality() const {
-    return shortestEdge()->sqrMagnitude() / longestEdge()->sqrMagnitude();
+real_t pmg::Face::quality() const {
+    return shortestEdge()->sqr_magnitude() / longestEdge()->sqr_magnitude();
 }
 
 
 real_t pmg::Face::computeArea() const {
     vec3 vec0 = edges[0]->verts[1]->pos() - edges[0]->verts[0]->pos();
     vec3 vec1 = edges[1]->verts[1]->pos() - edges[1]->verts[0]->pos();
-    return vec3::cross(vec0, vec1).magnitude() * static_cast<real_t>(0.5);
+    return spt::cross(vec0, vec1).magnitude() * static_cast<real_t>(0.5);
 }
 
 
-pmg::Vert* pmg::Face::findVertNot(const pmg::Edge* edge) const {
+pmg::Vert* pmg::Face::find_vert_not(const pmg::Edge* edge) const {
     for (auto& face_edge : edges) {
         if (edge != face_edge) {
             if (!edge->contains(face_edge->verts[0]))
@@ -64,13 +64,13 @@ pmg::Edge* pmg::Face::findEdge(const pmg::Vert* vert0, const pmg::Vert* vert1) c
 
 
 pmg::Edge* pmg::Face::shortestEdge() const {
-    if (edges[0]->sqrMagnitude() < edges[1]->sqrMagnitude()) {
-        if (edges[0]->sqrMagnitude() < edges[2]->sqrMagnitude())
+    if (edges[0]->sqr_magnitude() < edges[1]->sqr_magnitude()) {
+        if (edges[0]->sqr_magnitude() < edges[2]->sqr_magnitude())
             return edges[0];
         else
             return edges[2];
     } else {
-        if (edges[1]->sqrMagnitude() < edges[2]->sqrMagnitude())
+        if (edges[1]->sqr_magnitude() < edges[2]->sqr_magnitude())
             return edges[1];
         else
             return edges[2];
@@ -79,13 +79,13 @@ pmg::Edge* pmg::Face::shortestEdge() const {
 
 
 pmg::Edge* pmg::Face::longestEdge() const {
-    if (edges[0]->sqrMagnitude() > edges[1]->sqrMagnitude()) {
-        if (edges[0]->sqrMagnitude() > edges[2]->sqrMagnitude())
+    if (edges[0]->sqr_magnitude() > edges[1]->sqr_magnitude()) {
+        if (edges[0]->sqr_magnitude() > edges[2]->sqr_magnitude())
             return edges[0];
         else
             return edges[2];
     } else {
-        if (edges[1]->sqrMagnitude() > edges[2]->sqrMagnitude())
+        if (edges[1]->sqr_magnitude() > edges[2]->sqr_magnitude())
             return edges[1];
         else
             return edges[2];

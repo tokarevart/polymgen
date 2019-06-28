@@ -4,7 +4,7 @@
 #include "polysgen.h"
 
 
-psg::PolyShell psg::generateCuboids(std::size_t nX, std::size_t nY, std::size_t nZ, real_t dX, real_t dY, real_t dZ) {
+psg::PolyShell psg::cuboids(std::size_t nX, std::size_t nY, std::size_t nZ, real_t dX, real_t dY, real_t dZ) {
     const std::size_t w = nX;
     const std::size_t t = nY;
     const std::size_t h = nZ;

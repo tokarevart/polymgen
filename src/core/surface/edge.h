@@ -17,13 +17,13 @@ public:
     // TODO: maybe use std::reference_wrapper instead of pointer
     std::array<surface::Vert*, 2> verts;
 
-    const std::vector<pmg::Edge*>& innerEdges() const;
-    const std::vector<pmg::Vert*>& innerVerts() const;
+    const std::vector<pmg::Edge*>& inner_edges() const;
+    const std::vector<pmg::Vert*>& inner_verts() const;
 
     void segmentize(real_t preferredLen);
 
     real_t magnitude()    const;
-    real_t sqrMagnitude() const;
+    real_t sqr_magnitude() const;
 
     bool contains(const surface::Vert* sVert) const;
     bool contains(const     pmg::Edge* edge)  const;
@@ -33,8 +33,8 @@ public:
 
 
 private:
-    std::vector<pmg::Edge*> m_innerEdges;
-    std::vector<pmg::Vert*> m_innerVerts;
+    std::vector<pmg::Edge*> m_inner_edges;
+    std::vector<pmg::Vert*> m_inner_verts;
 };
 
 } // namespace pmg::surface

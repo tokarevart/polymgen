@@ -12,15 +12,13 @@
 namespace pmg {
 
 class Tetr {
-    using FaceV = std::array<pmg::Vert*, 3>;
-
 public:
     // TODO: maybe use std::reference_wrapper instead of pointer
     // TODO: represent Tetr as a 4 Faces and then add method std::array<pmg::Vert*, 4> verts() const;
     std::array<pmg::Vert*, 4> verts;
 
-    real_t computeVolume()  const;
-    real_t computeQuality() const;
+    real_t volume()  const;
+    real_t quality() const;
 
     bool contains(const Vert* vert) const;
 
