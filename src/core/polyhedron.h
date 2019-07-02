@@ -121,17 +121,17 @@ private:
     bool segmentIntersectFront(const vec3& v0, const vec3& v1) const;
     bool edge_intersect_front(const pmg::Vert* v0, const vec3& v1) const;
     bool edge_intersect_front(const pmg::Vert* v0, const pmg::Vert* v1) const;
-    bool edgeIntersectAnyFace(const pmg::Edge* edge) const;
-    bool potentialEdgeIntersectFront(front::Edge* fedge) const;
+    bool edge_intersect_any_face(const pmg::Edge* edge) const;
+    bool will_edge_intersect_front(front::Edge* fedge) const;
     bool any_edge_intersect_face(const pmg::Vert* v0, const pmg::Vert* v1, const vec3& v2) const;
     bool any_edge_intersect_face(const pmg::Vert* v0, const pmg::Vert* v1, const pmg::Vert* v2) const;
-    bool anyEdgeIntersectPotentialFaces(front::Edge* fedge) const;
-    bool anyVertInsidePotentialTetrCheck(front::Edge* fedge) const;
-    bool parallelFacesCheck(front::Edge* fedge) const;
+    bool will_any_edge_intersect_faces(front::Edge* fedge) const;
+    bool will_any_vert_inside_tetr(front::Edge* fedge) const;
+    bool will_parallel_faces(front::Edge* fedge) const;
     // TODO: add more proximity checks
     bool does_front_intersect_sphere(const vec3& center, real_t radius) const;
-    bool frontSplitCheck(front::Edge* fedge, front::Edge* opp_fedge = nullptr) const;
-    bool frontCollapseCheck(front::Edge* fedge, front::Edge* opp_fedge = nullptr) const;
+    bool will_front_split(front::Edge* fedge, front::Edge* opp_fedge = nullptr) const;
+    bool will_front_collapse(front::Edge* fedge, front::Edge* opp_fedge = nullptr) const;
 
     static pair_rr min_max_edges_lengths(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3);
     static pair_rr min_max_edges_sqr_lengths(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3);
@@ -145,47 +145,49 @@ private:
         front::Edge* fedge,
         front::Face*& out_withNWFFace, vec3*& out_with_nv_new_vert_pos);
 
-    vec3 computeNormalInTetr(const front::Face* fface, const vec3& opp_vert_pos) const;
-    vec3 computeNormalInTetr(const front::Face* fface, const pmg::Edge* one_of_remaining_edges) const;
-    vec3 computeNormalInTetr(const vec3& fFacePos0, const vec3& fFacePos1, const vec3& fFacePos2, const vec3& opp_vert_pos) const;
+    vec3 compute_normal_in_tetr(const front::Face* fface, const vec3& opp_vert_pos) const;
+    vec3 compute_normal_in_tetr(const front::Face* fface, const pmg::Edge* one_of_remaining_edges) const;
+    vec3 compute_normal_in_tetr(const vec3& fface_pos0, const vec3& fface_pos1, const vec3& fface_pos2, const vec3& opp_vert_pos) const;
 
     // TODO: add known neighbors initializations while creating new Tetr
-    void setFEdgesInFrontSplit(const front::Edge* fedge, std::array<front::Edge*, 2> newOppFEdges, std::array<front::Face*, 2> newFFaces, pair_ff oppFFaces) const;
-    void exhaustFrontCollapse(front::Edge* fedge, front::Edge* opp_fedge);
-    void exhaustFrontSplit(front::Edge* fedge, front::Edge* opp_fedge);
-    void exhaustWithoutNewVertOppEdgeExists(front::Edge* fedge, front::Edge* opp_fedge);
-    void exhaustWithoutNewVertOppEdgeDontExists(front::Edge* fedge);
-    void exhaust_without_new_vert(front::Edge* fedge, bool doesOppEdgeExists = true, front::Edge* opp_fedge = nullptr);
+    void set_front_edges_in_front_split(
+        const front::Edge* fedge, std::array<front::Edge*, 2> new_opp_fedges, 
+        std::array<front::Face*, 2> new_ffaces, pair_ff opp_ffaces) const;
+    void exhaust_front_collapse(front::Edge* fedge, front::Edge* opp_fedge);
+    void exhaust_front_split(front::Edge* fedge, front::Edge* opp_fedge);
+    void exhaust_without_new_vert_opp_edge_exists(front::Edge* fedge, front::Edge* opp_fedge);
+    void exhaust_without_new_vert_opp_edge_dont_exists(front::Edge* fedge);
+    void exhaust_without_new_vert(front::Edge* fedge, bool does_opp_edge_exists = true, front::Edge* opp_fedge = nullptr);
 
 
-    bool tryComputeNewVertPosType3(
+    bool try_compute_new_vert_pos_type3(
         front::Face* fface, vec3& out_pos);
     bool try_compute_new_vert_pos_type2(
-        front::Face* frontFace, vec3& out_pos,
-        std::size_t smallAngleIdx0, std::size_t smallAngleIdx1);
+        front::Face* fface, vec3& out_pos,
+        std::size_t small_angle_idx0, std::size_t small_angle_idx1);
     bool try_compute_new_vert_pos_type1(
         front::Face* fface, vec3& out_pos,
-        std::size_t smallAngleIdx);
+        std::size_t small_angle_idx);
     bool try_compute_new_vert_pos_type0(
         front::Face* fface, vec3& out_pos);
     bool try_compute_new_vert_pos(front::Face* fface, vec3& out_pos);
 
-    real_t sqr4FaceArea(const front::Face* fface) const;
-    front::Face* chooseFaceForExhaustionWithNewVert(front::Edge* fedge);
-    void         exhaust_with_new_vert(front::Face* fface, const vec3& vertPos);
+    real_t sqr_face_4areas(const front::Face* fface) const;
+    front::Face* choose_face_for_exhaustion_with_new_vert(front::Edge* fedge);
+    void         exhaust_with_new_vert(front::Face* fface, const vec3& vert_pos);
 
     bool try_exhaust_without_new_vert(front::Edge* fedge);
     bool try_exhaust_with_new_vert(front::Edge* fedge);
 
     bool global_intersection();
 
-    bool isFrontExhausted();
+    bool front_exhausted();
     void process_angles();
 
     void debug();
 
     void compute_front_normals();
-    void initializeFFaceFEdges(front::Face* fface) const;
+    void initialize_fface_fedges(front::Face* fface) const;
     void initialize_front();
 };
 

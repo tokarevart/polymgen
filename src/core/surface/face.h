@@ -84,7 +84,7 @@ private:
     vec3 normal_in_triangle(front::Edge* fedge, pmg::Edge* one_of_remaining_edges); // Do i need it?
 
     bool try_compute_new_vert_pos_type2(front::Edge* fedge, vec3& out_pos);
-    bool try_compute_new_vert_pos_type1(front::Edge* fedge, vec3& out_pos, std::size_t smallAngleIdx);
+    bool try_compute_new_vert_pos_type1(front::Edge* fedge, vec3& out_pos, std::size_t small_angle_idx);
     bool try_compute_new_vert_pos_type0(front::Edge* fedge, vec3& out_pos);
     bool try_compute_new_vert_pos(front::Edge* fedge, vec3& out_pos);
 
@@ -94,7 +94,7 @@ private:
     static real_t  triangle_simple_sqr_quality(const vec3& p0, const vec3& p1, const vec3& p2);
 
     front::Edge* choose_edge_for_exhaustion_with_new_vert(front::Vert* fvert);
-    void exhaust_with_new_vert(front::Edge* fedge, const vec3& vertPos);
+    void exhaust_with_new_vert(front::Edge* fedge, const vec3& vert_pos);
     void exhaust_without_new_vert(front::Vert* fvert);
 
     bool try_exhaust_without_new_vert(front::Vert* fvert);

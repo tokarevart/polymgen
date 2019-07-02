@@ -135,23 +135,24 @@ sfront::Vert* surface::Face::find_front_vert(const pmg::Vert* vert) const {
 
 
 sfront::Edge* surface::Face::add_to_front(const pmg::Edge* edge) {
-    sfront::Edge* new_f_edge = new sfront::Edge(this, edge);
-    m_front_edges.push_back(new_f_edge);
-    m_inner_edges.push_back(new_f_edge->x);
-    return new_f_edge;
+    sfront::Edge* new_fedge = new sfront::Edge(this, edge);
+    m_front_edges.push_back(new_fedge); // TODO: when push_front there is strange behavior
+    m_inner_edges.push_back(new_fedge->x);
+    return new_fedge;
 }
 
 
 sfront::Vert* surface::Face::add_to_front(const pmg::Vert* vert) {
-    sfront::Vert* new_f_vert = new sfront::Vert(this, vert);
-    m_front_verts.push_back(new_f_vert);
-    m_inner_verts.push_back(new_f_vert->x);
-    return new_f_vert;
+    sfront::Vert* new_fvert = new sfront::Vert(this, vert);
+    m_front_verts.push_back(new_fvert);
+    m_inner_verts.push_back(new_fvert->x);
+    return new_fvert;
 }
 
 
 void surface::Face::remove_from_front(sfront::Edge* fedge) {
     m_front_edges.erase(std::find(m_front_edges.begin(), m_front_edges.end(), fedge));
+    // TODO: WAAAGH!
     //auto rem_iter = std::find(m_front_edges.begin(), m_front_edges.end(), fedge);
     //*rem_iter = m_front_edges.back();
     //m_front_edges.pop_back();
@@ -160,7 +161,10 @@ void surface::Face::remove_from_front(sfront::Edge* fedge) {
 
 
 void surface::Face::remove_from_front(sfront::Vert* fvert) {
-    m_front_verts.erase(std::find(m_front_verts.begin(), m_front_verts.end(), fvert));
+    //m_front_verts.erase(std::find(m_front_verts.begin(), m_front_verts.end(), fvert));
+    auto rem_iter = std::find(m_front_verts.begin(), m_front_verts.end(), fvert);
+    *rem_iter = m_front_verts.back();
+    m_front_verts.pop_back();
     delete fvert;
 }
 
@@ -248,8 +252,8 @@ bool surface::Face::try_compute_new_vert_pos_type2(sfront::Edge* fedge, vec3& ou
 }
 
 
-bool surface::Face::try_compute_new_vert_pos_type1(sfront::Edge* fedge, vec3& out_pos, std::size_t smallAngleIdx) {
-    auto main_vert = fedge->x->verts[smallAngleIdx];
+bool surface::Face::try_compute_new_vert_pos_type1(sfront::Edge* fedge, vec3& out_pos, std::size_t small_angle_idx) {
+    auto main_vert = fedge->x->verts[small_angle_idx];
     auto sec_vert = fedge->x->vert_not(main_vert);
     auto main_f_vert = find_front_vert(main_vert);
 
@@ -357,16 +361,15 @@ sfront::Edge* surface::Face::choose_edge_for_exhaustion_with_new_vert(sfront::Ve
 }
 
 
-void surface::Face::exhaust_with_new_vert(sfront::Edge* fedge, const vec3& vertPos) {
+void surface::Face::exhaust_with_new_vert(sfront::Edge* fedge, const vec3& vert_pos) {
     std::array<pmg::Vert*, 2> main_verts = { fedge->x->verts[0], fedge->x->verts[1] };
 
-    pmg::Vert* new_vert = add_to_front(new pmg::Vert(vertPos))->x;
-    auto new_f_edge0 = add_to_front(new pmg::Edge(main_verts[0], new_vert));
-    auto new_f_edge1 = add_to_front(new pmg::Edge(main_verts[1], new_vert));
-    new_f_edge0->normal = normal_in_triangle(new_f_edge0, fedge->x->vert_not(new_f_edge0->x)->pos());
-    new_f_edge1->normal = normal_in_triangle(new_f_edge1, fedge->x->vert_not(new_f_edge1->x)->pos());
-
-    m_inner_faces.push_back(new pmg::Face(fedge->x, new_f_edge0->x, new_f_edge1->x));
+    pmg::Vert* new_vert = add_to_front(new pmg::Vert(vert_pos))->x;
+    auto new_fedge0 = add_to_front(new pmg::Edge(main_verts[0], new_vert));
+    auto new_fedge1 = add_to_front(new pmg::Edge(main_verts[1], new_vert));
+    new_fedge0->normal = normal_in_triangle(new_fedge0, fedge->x->vert_not(new_fedge0->x)->pos());
+    new_fedge1->normal = normal_in_triangle(new_fedge1, fedge->x->vert_not(new_fedge1->x)->pos());
+    m_inner_faces.push_back(new pmg::Face(fedge->x, new_fedge0->x, new_fedge1->x));
 
     find_front_vert(main_verts[0])->refresh_angle_data();
     find_front_vert(main_verts[1])->refresh_angle_data();
@@ -377,16 +380,14 @@ void surface::Face::exhaust_with_new_vert(sfront::Edge* fedge, const vec3& vertP
 
 void surface::Face::exhaust_without_new_vert(sfront::Vert* fvert) {
     auto adj_edges = fvert->adj_edges();
-    std::pair<pmg::Vert*, pmg::Vert*> l_opp_verts =
-    {
+    std::pair<pmg::Vert*, pmg::Vert*> l_opp_verts {
         adj_edges.first->x->vert_not(fvert->x),
         adj_edges.second->x->vert_not(fvert->x)
     };
 
-    auto new_f_edge = add_to_front(new pmg::Edge(l_opp_verts.first, l_opp_verts.second));
-    new_f_edge->normal = normal_in_triangle(new_f_edge, fvert->x->pos());
-
-    m_inner_faces.push_back(new pmg::Face(adj_edges.first->x, adj_edges.second->x, new_f_edge->x));
+    auto new_fedge = add_to_front(new pmg::Edge(l_opp_verts.first, l_opp_verts.second));
+    new_fedge->normal = normal_in_triangle(new_fedge, fvert->x->pos());
+    m_inner_faces.push_back(new pmg::Face(adj_edges.first->x, adj_edges.second->x, new_fedge->x));
 
     find_front_vert(l_opp_verts.first)->refresh_angle_data();
     find_front_vert(l_opp_verts.second)->refresh_angle_data();
@@ -419,17 +420,17 @@ bool surface::Face::try_exhaust_with_new_vert(sfront::Vert* fvert) {
 
 sfront::Vert* surface::Face::current_front_vert(real_t max_compl) const {
     real_t cur_max_compl = static_cast<real_t>(0);
-    sfront::Vert* cur_max_fvert = nullptr;
+    sfront::Vert* max_fvert = nullptr;
     for (auto& l_fvert : m_front_verts) {
         real_t cur_compl = l_fvert->complexity();
         if (cur_compl > cur_max_compl && 
             cur_compl < max_compl) {
             cur_max_compl = cur_compl;
-            cur_max_fvert = l_fvert;
+            max_fvert = l_fvert;
         }
     }
 
-    return cur_max_fvert;
+    return max_fvert;
 }
 
 
