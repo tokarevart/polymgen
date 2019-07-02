@@ -17,11 +17,11 @@ vec3 pmg::Face::center() const {
 
 
 real_t pmg::Face::quality() const {
-    return shortestEdge()->sqr_magnitude() / longestEdge()->sqr_magnitude();
+    return shortest_edge()->sqr_magnitude() / longest_edge()->sqr_magnitude();
 }
 
 
-real_t pmg::Face::computeArea() const {
+real_t pmg::Face::area() const {
     vec3 vec0 = edges[0]->verts[1]->pos() - edges[0]->verts[0]->pos();
     vec3 vec1 = edges[1]->verts[1]->pos() - edges[1]->verts[0]->pos();
     return spt::cross(vec0, vec1).magnitude() * static_cast<real_t>(0.5);
@@ -42,7 +42,7 @@ pmg::Vert* pmg::Face::find_vert_not(const pmg::Edge* edge) const {
 }
 
 
-pmg::Edge* pmg::Face::findEdgeNot(const pmg::Vert* vert) const {
+pmg::Edge* pmg::Face::find_edge_not(const pmg::Vert* vert) const {
     for (auto& edge : edges)
         if (!edge->contains(vert))
             return edge;
@@ -51,7 +51,7 @@ pmg::Edge* pmg::Face::findEdgeNot(const pmg::Vert* vert) const {
 }
 
 
-pmg::Edge* pmg::Face::findEdge(const pmg::Vert* vert0, const pmg::Vert* vert1) const {
+pmg::Edge* pmg::Face::find_edge(const pmg::Vert* vert0, const pmg::Vert* vert1) const {
     for (auto& edge : edges)
         if ((edge->verts[0] == vert0 &&
              edge->verts[1] == vert1) ||
@@ -63,7 +63,7 @@ pmg::Edge* pmg::Face::findEdge(const pmg::Vert* vert0, const pmg::Vert* vert1) c
 }
 
 
-pmg::Edge* pmg::Face::shortestEdge() const {
+pmg::Edge* pmg::Face::shortest_edge() const {
     if (edges[0]->sqr_magnitude() < edges[1]->sqr_magnitude()) {
         if (edges[0]->sqr_magnitude() < edges[2]->sqr_magnitude())
             return edges[0];
@@ -78,7 +78,7 @@ pmg::Edge* pmg::Face::shortestEdge() const {
 }
 
 
-pmg::Edge* pmg::Face::longestEdge() const {
+pmg::Edge* pmg::Face::longest_edge() const {
     if (edges[0]->sqr_magnitude() > edges[1]->sqr_magnitude()) {
         if (edges[0]->sqr_magnitude() > edges[2]->sqr_magnitude())
             return edges[0];

@@ -52,8 +52,8 @@ int main() {
     fs::create_directories(fs::current_path() / "out" / "meshes");
     fs::current_path(fs::current_path() / "out" / "meshes");
 
-    polyhset.output(pmg::FileType::LsDynaKeyword);
-    polyhset.output(pmg::FileType::WavefrontObj);
+    polyhset.output(pmg::filetype::lsdyna_keyword);
+    polyhset.output(pmg::filetype::wavefront_obj);
     std::cout << std::string(4, ' ') + "done." << std::endl << std::endl;
 
     fs::current_path(fs::current_path().parent_path());

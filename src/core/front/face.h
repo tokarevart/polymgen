@@ -17,9 +17,9 @@ class Face {
 
 public:
     // TODO: maybe use std::reference_wrapper instead of pointer
-    pmg::Face* face;
+    pmg::Face* x;
     // TODO: specify that filling must occur in method void setFEdges( ... );
-    // TODO: add method to change 1 front_edge like bool changeFEdge( const front::Edge* oldFEdge, const front::Edge* newFEdge ); in case of front splitting
+    // TODO: add method to change 1 fedge like bool changeFEdge( const front::Edge* oldFEdge, const front::Edge* newFEdge ); in case of front splitting
     std::array<front::Edge*, 3> front_edges = { nullptr, nullptr, nullptr };
     vec3 normal;
 
@@ -29,14 +29,14 @@ public:
     vec3 center();
     real_t quality();
 
-    front::Edge* findFEdge(const pmg::Edge* edge) const;
-    front::Edge* findFEdge(const pmg::Vert* v0, const pmg::Vert* v1) const;
-    front::Edge* findFEdgeNot(const pmg::Vert* vert) const;
-    void addFEdge(const front::Edge* front_edge);
-    void removeFEdge(const front::Edge* front_edge);
-    bool fEdgesFull() const;
+    front::Edge* find_front_edge(const pmg::Edge* edge) const;
+    front::Edge* find_front_edge(const pmg::Vert* v0, const pmg::Vert* v1) const;
+    front::Edge* find_front_edge_not(const pmg::Vert* vert) const;
+    void add_front_edge(const front::Edge* fedge);
+    void remove_front_edge(const front::Edge* fedge);
+    bool front_edges_full() const;
 
-    bool contains(const front::Edge* front_edge) const;
+    bool contains(const front::Edge* fedge) const;
     bool contains(const   pmg::Edge* edge) const;
     bool contains(const   pmg::Vert* vert) const;
 

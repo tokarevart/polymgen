@@ -73,50 +73,50 @@ private:
     front::Edge* add_to_front(const pmg::Edge* edge);
     front::Vert* add_to_front(const pmg::Vert* vert);
 
-    void remove_from_front(front::Edge* front_edge);
-    void remove_from_front(front::Vert* fVert);
+    void remove_from_front(front::Edge* fedge);
+    void remove_from_front(front::Vert* fvert);
 
-    bool any_vert_inside_potential_triangle_check(front::Vert* fVert) const;
+    bool any_vert_inside_potential_triangle_check(front::Vert* fvert) const;
     bool does_segment_intersects_with_front(const vec3& v0, const vec3& v1) const;
     bool does_segment_intersects_with_front(const pmg::Vert* v0, const vec3& v1) const;
 
-    vec3 normal_in_triangle(front::Edge* front_edge, const vec3& opp_vert_pos);
-    vec3 normal_in_triangle(front::Edge* front_edge, pmg::Edge* one_of_remaining_edges); // Do i need it?
+    vec3 normal_in_triangle(front::Edge* fedge, const vec3& opp_vert_pos);
+    vec3 normal_in_triangle(front::Edge* fedge, pmg::Edge* one_of_remaining_edges); // Do i need it?
 
-    bool tryComputeNewVertPosType2(front::Edge* front_edge, vec3& out_pos);
-    bool tryComputeNewVertPosType1(front::Edge* front_edge, vec3& out_pos, std::size_t smallAngleIdx);
-    bool tryComputeNewVertPosType0(front::Edge* front_edge, vec3& out_pos);
-    bool tryComputeNewVertPos(front::Edge* front_edge, vec3& out_pos);
+    bool try_compute_new_vert_pos_type2(front::Edge* fedge, vec3& out_pos);
+    bool try_compute_new_vert_pos_type1(front::Edge* fedge, vec3& out_pos, std::size_t smallAngleIdx);
+    bool try_compute_new_vert_pos_type0(front::Edge* fedge, vec3& out_pos);
+    bool try_compute_new_vert_pos(front::Edge* fedge, vec3& out_pos);
 
-    static pair_rr computeMinMaxEdgesLengths(const vec3& p0, const vec3& p1, const vec3& p2);
-    static pair_rr computeMinMaxEdgesSqrLengths(const vec3& p0, const vec3& p1, const vec3& p2);
-    static real_t  computeTriangSimpleQuality(const vec3& p0, const vec3& p1, const vec3& p2);
-    static real_t  computeTriangSimpleSqrQuality(const vec3& p0, const vec3& p1, const vec3& p2);
+    static pair_rr min_max_edges_lengths(const vec3& p0, const vec3& p1, const vec3& p2);
+    static pair_rr min_max_edges_sqr_lengths(const vec3& p0, const vec3& p1, const vec3& p2);
+    static real_t  triangle_simple_quality(const vec3& p0, const vec3& p1, const vec3& p2);
+    static real_t  triangle_simple_sqr_quality(const vec3& p0, const vec3& p1, const vec3& p2);
 
-    front::Edge* chooseEdgeForExhaustionWithNewVert(front::Vert* fVert);
-    void exhaustWithNewVert(front::Edge* front_edge, const vec3& vertPos);
-    void exhaustWithoutNewVert(front::Vert* fVert);
+    front::Edge* choose_edge_for_exhaustion_with_new_vert(front::Vert* fvert);
+    void exhaust_with_new_vert(front::Edge* fedge, const vec3& vertPos);
+    void exhaust_without_new_vert(front::Vert* fvert);
 
-    bool tryExhaustWithoutNewVert(front::Vert* fVert);
-    bool tryExhaustWithNewVert(front::Vert* fVert);
+    bool try_exhaust_without_new_vert(front::Vert* fvert);
+    bool try_exhaust_with_new_vert(front::Vert* fvert);
 
-    bool globalIntersectionCheck() const;
+    bool global_intersection() const;
 
-    front::Vert* currentFrontVert(real_t maxCompl) const;
-    bool exhaustWithoutNewVertPriorityPredicate(front::Vert* front_edge);
-    bool exhaustWithNewVertPriorityPredicate(front::Vert* front_edge);
-    ExhaustType computeExhaustionTypeQualityPriority(
-        front::Vert* fVert,
-        front::Edge*& out_withNWFrontEdge, vec3*& out_withNWNewVertPos);
+    front::Vert* current_front_vert(real_t maxCompl) const;
+    bool exhaust_without_new_vert_priority_predicate(front::Vert* fedge);
+    bool exhaust_with_new_vert_priority_predicate(front::Vert* fedge);
+    ExhaustType exhaustion_type_quality_priority(
+        front::Vert* fvert,
+        front::Edge*& out_with_nv_fedge, vec3*& out_with_nv_new_vert_pos); // TODO: maybe *& -> &
 
-    void processLastFace();
-    void processAngles();
+    void process_last_face();
+    void process_angles();
 
-    pair_ff find2AdjFaces(pmg::Edge* edge) const;
-    bool flipIfNeeded(pmg::Edge* edge);
+    pair_ff adj_2_faces(pmg::Edge* edge) const;
+    bool flip_if_needed(pmg::Edge* edge);
 
-    void computeFrontNormals() const;
-    void initializeFront();
+    void compute_front_normals() const;
+    void initialize_front();
 };
 
 } // namespace pmg::surface

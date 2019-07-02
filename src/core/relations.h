@@ -9,11 +9,11 @@
 namespace pmg::relations {
 
 // TODO: replace with template <typename By> By* adjacent( ... ); and then template<> inline By* adjacent<each By> adjacent( ... );
-pmg::Edge* adjacentByEdge(const pmg::Face* face0, const pmg::Face* face1);
-pmg::Vert* adjacentByVert(const pmg::Face* face0, const pmg::Face* face1);
-pmg::Vert* adjacentByVert(const pmg::Face* face, const pmg::Edge* edge);
-pmg::Vert* adjacentByVert(const pmg::Edge* edge, const pmg::Face* face);
-pmg::Vert* adjacentByVert(const pmg::Edge* edge0, const pmg::Edge* edge1);
+pmg::Edge* adjacent_by_edge(const pmg::Face* face0, const pmg::Face* face1);
+pmg::Vert* adjacent_by_vert(const pmg::Face* face0, const pmg::Face* face1);
+pmg::Vert* adjacent_by_vert(const pmg::Face* face, const pmg::Edge* edge);
+pmg::Vert* adjacent_by_vert(const pmg::Edge* edge, const pmg::Face* face);
+pmg::Vert* adjacent_by_vert(const pmg::Edge* edge0, const pmg::Edge* edge1);
 // TODO: place all the functions related to front, surface and volume in the corresponding files (NOT HERE)
 
 template <typename Opp> std::array<Opp*, 2> opposite(const pmg::Edge * edge); // or {}, i don't remember

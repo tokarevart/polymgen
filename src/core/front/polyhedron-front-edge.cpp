@@ -41,7 +41,7 @@ real_t front::Edge::angle() {
 
 real_t front::Edge::compute_complexity() {
     m_need_complexity_processing = false;
-    return m_complexity = m_related_polyhedron->preferred_length() / edge->magnitude() + K_ALPHA * PI / angle();
+    return m_complexity = m_related_polyhedron->preferred_length() / x->magnitude() + K_ALPHA * PI / angle();
 }
 
 
@@ -61,20 +61,20 @@ real_t front::Edge::compute_angle() {
 pair_vv front::Edge::opp_verts() {
     auto adj_faces = adj_ffaces();
 
-    return { std::get<0>(adj_faces)->face->find_vert_not(edge),
-             std::get<1>(adj_faces)->face->find_vert_not(edge) };
+    return { std::get<0>(adj_faces)->x->find_vert_not(x),
+             std::get<1>(adj_faces)->x->find_vert_not(x) };
 }
 
 
 FrSuEdge* front::Edge::find_opp_edge() {
-    auto opp_verts_l = opp_verts();
+    auto l_opp_verts = opp_verts();
     std::vector<front::Edge*> opp_fedges;
-    for (auto& f_edge : m_related_polyhedron->front_edges()) {
-        if (((f_edge->edge->verts[0] == std::get<0>(opp_verts_l) &&
-              f_edge->edge->verts[1] == std::get<1>(opp_verts_l)) ||
-              (f_edge->edge->verts[1] == std::get<0>(opp_verts_l) &&
-               f_edge->edge->verts[0] == std::get<1>(opp_verts_l)))) {
-            opp_fedges.push_back(f_edge);
+    for (auto& l_fedge : m_related_polyhedron->front_edges()) {
+        if (((l_fedge->x->verts[0] == std::get<0>(l_opp_verts) &&
+              l_fedge->x->verts[1] == std::get<1>(l_opp_verts)) ||
+              (l_fedge->x->verts[1] == std::get<0>(l_opp_verts) &&
+               l_fedge->x->verts[0] == std::get<1>(l_opp_verts)))) {
+            opp_fedges.push_back(l_fedge);
         }
     }
 
@@ -83,20 +83,20 @@ FrSuEdge* front::Edge::find_opp_edge() {
 
     std::vector<pair_ff> adj_ffaces_vec;
     adj_ffaces_vec.reserve(opp_fedges.size());
-    for (auto& f_edge : opp_fedges)
-        adj_ffaces_vec.push_back(f_edge->adj_ffaces());
+    for (auto& l_fedge : opp_fedges)
+        adj_ffaces_vec.push_back(l_fedge->adj_ffaces());
 
-    vec3 main_vert_pos = edge->verts[0]->pos();
-    vec3 main_vert_proj = spt::project(main_vert_pos, opp_verts_l.first->pos(), opp_verts_l.second->pos());
+    vec3 main_vert_pos = x->verts[0]->pos();
+    vec3 main_vert_proj = spt::project(main_vert_pos, l_opp_verts.first->pos(), l_opp_verts.second->pos());
     vec3 main_vec = main_vert_pos - main_vert_proj;
 
     front::Edge* max_cos_fedge = nullptr;
     real_t max_cos = -1.0;
     for (std::size_t i = 0; i < adj_ffaces_vec.size(); i++) {
-        vec3 adj_opp_pos0 = adj_ffaces_vec[i].first->face->find_vert_not(opp_fedges.front()->edge)->pos();
-        vec3 adj_opp_pos1 = adj_ffaces_vec[i].second->face->find_vert_not(opp_fedges.front()->edge)->pos();
-        vec3 adj_opp_proj0 = spt::project(adj_opp_pos0, opp_verts_l.first->pos(), opp_verts_l.second->pos());
-        vec3 adj_opp_proj1 = spt::project(adj_opp_pos1, opp_verts_l.first->pos(), opp_verts_l.second->pos());
+        vec3 adj_opp_pos0 = adj_ffaces_vec[i].first->x->find_vert_not(opp_fedges.front()->x)->pos();
+        vec3 adj_opp_pos1 = adj_ffaces_vec[i].second->x->find_vert_not(opp_fedges.front()->x)->pos();
+        vec3 adj_opp_proj0 = spt::project(adj_opp_pos0, l_opp_verts.first->pos(), l_opp_verts.second->pos());
+        vec3 adj_opp_proj1 = spt::project(adj_opp_pos1, l_opp_verts.first->pos(), l_opp_verts.second->pos());
         vec3 adj_vec0 = adj_opp_pos0 - adj_opp_proj0;
         vec3 adj_vec1 = adj_opp_pos1 - adj_opp_proj1;
         real_t cos0 = spt::cos(adj_vec0, main_vec);
@@ -120,11 +120,11 @@ pair_ff front::Edge::adj_ffaces() {
 }
 
 
-bool front::Edge::add_adj_fface(const front::Face* fFace) {
+bool front::Edge::add_adj_fface(const front::Face* fface) {
     if (!std::get<0>(m_adj_ffaces))
-        std::get<0>(m_adj_ffaces) = const_cast<front::Face*>(fFace);
+        std::get<0>(m_adj_ffaces) = const_cast<front::Face*>(fface);
     else if (!std::get<1>(m_adj_ffaces))
-        std::get<1>(m_adj_ffaces) = const_cast<front::Face*>(fFace);
+        std::get<1>(m_adj_ffaces) = const_cast<front::Face*>(fface);
     else
         return false;
 
@@ -132,10 +132,10 @@ bool front::Edge::add_adj_fface(const front::Face* fFace) {
 }
 
 
-bool front::Edge::remove_adj_fface(const front::Face* fFace) {
-    if (std::get<0>(m_adj_ffaces) == const_cast<front::Face*>(fFace))
+bool front::Edge::remove_adj_fface(const front::Face* fface) {
+    if (std::get<0>(m_adj_ffaces) == const_cast<front::Face*>(fface))
         std::get<0>(m_adj_ffaces) = nullptr;
-    else if (std::get<1>(m_adj_ffaces) == const_cast<front::Face*>(fFace))
+    else if (std::get<1>(m_adj_ffaces) == const_cast<front::Face*>(fface))
         std::get<1>(m_adj_ffaces) = nullptr;
     else
         return false;
@@ -144,9 +144,9 @@ bool front::Edge::remove_adj_fface(const front::Face* fFace) {
 }
 
 
-bool front::Edge::adj_ffaces_contains(const front::Face* fFace) const {
-    return std::get<0>(m_adj_ffaces) == const_cast<front::Face*>(fFace) ||
-        std::get<1>(m_adj_ffaces) == const_cast<front::Face*>(fFace);
+bool front::Edge::adj_ffaces_contains(const front::Face* fface) const {
+    return std::get<0>(m_adj_ffaces) == const_cast<front::Face*>(fface) ||
+        std::get<1>(m_adj_ffaces) == const_cast<front::Face*>(fface);
 }
 
 
@@ -159,7 +159,7 @@ void front::Edge::fill_adj_ffaces(const front::Face* fFace0, const front::Face* 
 
 
 front::Edge::Edge(const Polyhedron* related_polyhedron, const pmg::Edge* edge)
-    : edge(const_cast<pmg::Edge*>(edge)), m_related_polyhedron(const_cast<Polyhedron*>(related_polyhedron)) {}
+    : x(const_cast<pmg::Edge*>(edge)), m_related_polyhedron(const_cast<Polyhedron*>(related_polyhedron)) {}
 
 
 

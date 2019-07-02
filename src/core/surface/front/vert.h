@@ -17,7 +17,7 @@ class Vert {
 
 public:
     // TODO: maybe use std::reference_wrapper instead of pointer
-    pmg::Vert* vert;
+    pmg::Vert* x;
 
     void refresh_angle_data();
 
@@ -26,8 +26,8 @@ public:
     real_t compute_angle();
     real_t compute_complexity();
 
-    pair_ee findAdjEdges() const;
-    pair_vv opp_verts()     const;
+    pair_ee adj_edges() const;
+    pair_vv opp_verts() const;
 
     Vert(const surface::Face* relatedSurfaceFace, const pmg::Vert* vert);
 

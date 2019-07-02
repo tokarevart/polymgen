@@ -57,7 +57,7 @@ public:
 
     // TODO: make mesh output with PolyMesh method instead
     // TODO: make method taking meshes of all the polyhedrons and remeshing them into one
-    void output(FileType filetype = FileType::WavefrontObj, std::string_view filename = "_AUTO_", unsigned polyhedral_set_id = 1u);
+    void output(filetype filetype = filetype::wavefront_obj, std::string_view filename = "_AUTO_", unsigned polyhedral_set_id = 1u);
 
     PolyhedralSet() = delete;
     PolyhedralSet(const psg::PolyShell& poly_struct);
@@ -87,7 +87,7 @@ private:
     void output_lsdynakw_element_solid_section(std::ofstream& file, std::uint8_t PolyhedralSetId = 1u) const;
     void output_lsdynakw(const std::string& filename, std::uint8_t PolyhedralSetId = 1u) const;
 
-    std::string output_filename(FileType filetype, std::string_view filename) const;
+    std::string output_filename(filetype filetype, std::string_view filename) const;
 
     void set_poly_shell(std::string_view poly_struct_filename); // NOTE: deprecated
     void set_poly_shell(const psg::PolyShell& poly_struct);

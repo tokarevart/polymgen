@@ -1,7 +1,7 @@
 #include "relations.h"
 
 
-pmg::Edge* pmg::relations::adjacentByEdge(const pmg::Face* face0, const pmg::Face* face1) {
+pmg::Edge* pmg::relations::adjacent_by_edge(const pmg::Face* face0, const pmg::Face* face1) {
     std::size_t inters = 0;
     pmg::Edge* res = nullptr;
     for (auto& edge0 : face0->edges)

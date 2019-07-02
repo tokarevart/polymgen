@@ -73,7 +73,7 @@ void PolyhedralSet::output_obj(std::string_view filename) const {
 #ifdef DEV_DEBUG
     for (auto& polyhedr : m_polyhedrons) {
         for (auto& f_face : polyhedr->front_faces()) {
-            auto face = f_face->face;
+            auto face = f_face->x;
 
             std::vector<std::size_t> gl_nums;
             for (auto& edge : face->edges)
@@ -233,7 +233,7 @@ void PolyhedralSet::tetrahedralize(real_t preferred_length, genparams::Polyhedro
     try {
         triangulate_shell(gen_params.shell);
     } catch (std::logic_error error) {
-        output(FileType::WavefrontObj, "debug.obj");
+        output(filetype::wavefront_obj, "debug.obj");
         throw error;
     }
     auto shell_triang_stop = std::chrono::steady_clock::now();
@@ -246,7 +246,7 @@ void PolyhedralSet::tetrahedralize(real_t preferred_length, genparams::Polyhedro
         try {
             m_polyhedrons[i]->tetrahedralize(m_prefLen, gen_params.volume);
         } catch (std::logic_error error) {
-            output(FileType::WavefrontObj, "debug.obj");
+            output(filetype::wavefront_obj, "debug.obj");
             throw error;
         }
     }
@@ -511,7 +511,7 @@ void PolyhedralSet::set_poly_shell(const psg::PolyShell& poly_struct) {
 }
 
 
-std::string PolyhedralSet::output_filename(FileType filetype, std::string_view filename) const {
+std::string PolyhedralSet::output_filename(filetype filetype, std::string_view filename) const {
     if (filename != "_AUTO_")
         return filename.data();
 
@@ -523,25 +523,25 @@ std::string PolyhedralSet::output_filename(FileType filetype, std::string_view f
     av_nfe /= m_polyhedrons.size();
     ss << av_nfe << "_phfe";
     switch (filetype) {
-    case FileType::WavefrontObj:
+    case filetype::wavefront_obj:
         return ss.str() + ".obj";
 
-    case FileType::LsDynaKeyword:
+    case filetype::lsdyna_keyword:
         return ss.str() + ".kw";
     }
     throw std::exception();
 }
 
 
-void PolyhedralSet::output(FileType filetype, std::string_view filename, unsigned polyhedral_set_id) {
+void PolyhedralSet::output(filetype filetype, std::string_view filename, unsigned polyhedral_set_id) {
     auto start = std::chrono::steady_clock::now();
     switch (filetype) {
-    case FileType::WavefrontObj:
-        output_obj(output_filename(FileType::WavefrontObj, filename));
+    case filetype::wavefront_obj:
+        output_obj(output_filename(filetype::wavefront_obj, filename));
         break;
 
-    case FileType::LsDynaKeyword:
-        output_lsdynakw(output_filename(FileType::LsDynaKeyword, filename), polyhedral_set_id);
+    case filetype::lsdyna_keyword:
+        output_lsdynakw(output_filename(filetype::lsdyna_keyword, filename), polyhedral_set_id);
         break;
     }
     auto stop = std::chrono::steady_clock::now();

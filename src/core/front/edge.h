@@ -21,7 +21,7 @@ class Edge {
 
 public:
     // TODO: maybe use std::reference_wrapper instead of pointer
-    pmg::Edge* edge;
+    pmg::Edge* x;
 
     void refresh_angle_data();
 
@@ -40,9 +40,9 @@ public:
     // Adj means adjacent.
     pair_ff adj_ffaces();
 
-    bool add_adj_fface(const front::Face* fFace);
-    bool remove_adj_fface(const front::Face* fFace);
-    bool adj_ffaces_contains(const front::Face* fFace) const;
+    bool add_adj_fface(const front::Face* fface);
+    bool remove_adj_fface(const front::Face* fface);
+    bool adj_ffaces_contains(const front::Face* fface) const;
     void fill_adj_ffaces(const front::Face* fFace0, const front::Face* fFace1);
     // TODO: add method std::size_t nAdjFFaces() const;
 

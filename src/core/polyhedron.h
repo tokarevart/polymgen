@@ -97,96 +97,96 @@ private:
 
     // TODO: create and use Front class instead
     // TODO: add front::Vert class
-    std::vector<front::Face*> m_frontFaces; // TODO: use std::unordered_set
+    std::vector<front::Face*> m_front_faces; // TODO: use std::unordered_set
     std::vector<front::Edge*> m_front_edges; // TODO: use std::set sorting by angle (first larger) instead
 
     bool shell_contains(const pmg::Vert* vert) const;
 
     shell::Edge* find_shell_edge(const shell::Vert* v0, const shell::Vert* v1) const;
-    front::Face* findFrontFace(const pmg::Face* face) const;
-    std::vector<front::Edge*> findFEdge(const pmg::Vert* v0, const pmg::Vert* v1) const;
-    std::vector<front::Edge*> findFEdge(const pmg::Edge* edge) const;
+    front::Face* find_front_face(const pmg::Face* face) const;
+    std::vector<front::Edge*> find_front_edge(const pmg::Vert* v0, const pmg::Vert* v1) const;
+    std::vector<front::Edge*> find_front_edge(const pmg::Edge* edge) const;
 
     // Adds new front Face and corresponding Face.
-    front::Face* add_to_front(const pmg::Face* face, bool addInner = true);
-    front::Edge* add_to_front(const pmg::Edge* edge, bool addInner = true);
+    front::Face* add_to_front(const pmg::Face* face, bool add_inner = true);
+    front::Edge* add_to_front(const pmg::Edge* edge, bool add_inner = true);
 
-    void remove_from_front(front::Face* fFace);
-    void remove_from_front(front::Edge* front_edge);
+    void remove_from_front(front::Face* fface);
+    void remove_from_front(front::Edge* fedge);
 
     // This section is about various front intersection checks
     // TODO: move that and other methods to relations.h later
     // TODO: change methods names
     bool segmentIntersectMesh(const vec3& v0, const vec3& v1) const;
     bool segmentIntersectFront(const vec3& v0, const vec3& v1) const;
-    bool edgeIntersectFront(const pmg::Vert* v0, const vec3& v1) const;
-    bool edgeIntersectFront(const pmg::Vert* v0, const pmg::Vert* v1) const;
+    bool edge_intersect_front(const pmg::Vert* v0, const vec3& v1) const;
+    bool edge_intersect_front(const pmg::Vert* v0, const pmg::Vert* v1) const;
     bool edgeIntersectAnyFace(const pmg::Edge* edge) const;
-    bool potentialEdgeIntersectFront(front::Edge* front_edge) const;
-    bool anyEdgeIntersectFace(const pmg::Vert* v0, const pmg::Vert* v1, const vec3& v2) const;
-    bool anyEdgeIntersectFace(const pmg::Vert* v0, const pmg::Vert* v1, const pmg::Vert* v2) const;
-    bool anyEdgeIntersectPotentialFaces(front::Edge* front_edge) const;
-    bool anyVertInsidePotentialTetrCheck(front::Edge* front_edge) const;
-    bool parallelFacesCheck(front::Edge* front_edge) const;
+    bool potentialEdgeIntersectFront(front::Edge* fedge) const;
+    bool any_edge_intersect_face(const pmg::Vert* v0, const pmg::Vert* v1, const vec3& v2) const;
+    bool any_edge_intersect_face(const pmg::Vert* v0, const pmg::Vert* v1, const pmg::Vert* v2) const;
+    bool anyEdgeIntersectPotentialFaces(front::Edge* fedge) const;
+    bool anyVertInsidePotentialTetrCheck(front::Edge* fedge) const;
+    bool parallelFacesCheck(front::Edge* fedge) const;
     // TODO: add more proximity checks
-    bool doesFrontIntersectSphere(const vec3& center, real_t radius) const;
-    bool frontSplitCheck(front::Edge* front_edge, front::Edge* oppFEdge = nullptr) const;
-    bool frontCollapseCheck(front::Edge* front_edge, front::Edge* oppFEdge = nullptr) const;
+    bool does_front_intersect_sphere(const vec3& center, real_t radius) const;
+    bool frontSplitCheck(front::Edge* fedge, front::Edge* opp_fedge = nullptr) const;
+    bool frontCollapseCheck(front::Edge* fedge, front::Edge* opp_fedge = nullptr) const;
 
-    static pair_rr computeMinMaxEdgesLengths(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3);
-    static pair_rr computeMinMaxEdgesSqrLengths(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3);
-    static real_t  computeTetrSimpleQuality(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3);
-    static real_t  computeTetrSimpleSqrQuality(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3);
+    static pair_rr min_max_edges_lengths(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3);
+    static pair_rr min_max_edges_sqr_lengths(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3);
+    static real_t  tetr_simple_quality(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3);
+    static real_t  tetr_simple_sqr_quality(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3);
 
-    front::Edge* currentFrontEdge(real_t maxCompl) const; // TODO: use std::map::upper_bound(...) method instead
-    bool exhaustWithoutNewVertPriorityPredicate(front::Edge* front_edge);
-    bool exhaustWithNewVertPriorityPredicate(front::Edge* front_edge);
-    ExhaustType computeExhaustionTypeQualityPriority(
-        front::Edge* front_edge,
-        front::Face*& out_withNWFFace, vec3*& out_withNWNewVertPos);
+    front::Edge* current_front_edge(real_t maxCompl) const; // TODO: use std::map::upper_bound(...) method instead
+    bool exhaust_without_new_vert_priority_predicate(front::Edge* fedge);
+    bool exhaust_with_new_vert_priority_predicate(front::Edge* fedge);
+    ExhaustType exhaustion_type_quality_priority(
+        front::Edge* fedge,
+        front::Face*& out_withNWFFace, vec3*& out_with_nv_new_vert_pos);
 
-    vec3 computeNormalInTetr(const front::Face* fFace, const vec3& opp_vert_pos) const;
-    vec3 computeNormalInTetr(const front::Face* fFace, const pmg::Edge* one_of_remaining_edges) const;
+    vec3 computeNormalInTetr(const front::Face* fface, const vec3& opp_vert_pos) const;
+    vec3 computeNormalInTetr(const front::Face* fface, const pmg::Edge* one_of_remaining_edges) const;
     vec3 computeNormalInTetr(const vec3& fFacePos0, const vec3& fFacePos1, const vec3& fFacePos2, const vec3& opp_vert_pos) const;
 
     // TODO: add known neighbors initializations while creating new Tetr
-    void setFEdgesInFrontSplit(const front::Edge* front_edge, std::array<front::Edge*, 2> newOppFEdges, std::array<front::Face*, 2> newFFaces, pair_ff oppFFaces) const;
-    void exhaustFrontCollapse(front::Edge* front_edge, front::Edge* oppFEdge);
-    void exhaustFrontSplit(front::Edge* front_edge, front::Edge* oppFEdge);
-    void exhaustWithoutNewVertOppEdgeExists(front::Edge* front_edge, front::Edge* oppFEdge);
-    void exhaustWithoutNewVertOppEdgeDontExists(front::Edge* front_edge);
-    void exhaustWithoutNewVert(front::Edge* front_edge, bool doesOppEdgeExists = true, front::Edge* oppFEdge = nullptr);
+    void setFEdgesInFrontSplit(const front::Edge* fedge, std::array<front::Edge*, 2> newOppFEdges, std::array<front::Face*, 2> newFFaces, pair_ff oppFFaces) const;
+    void exhaustFrontCollapse(front::Edge* fedge, front::Edge* opp_fedge);
+    void exhaustFrontSplit(front::Edge* fedge, front::Edge* opp_fedge);
+    void exhaustWithoutNewVertOppEdgeExists(front::Edge* fedge, front::Edge* opp_fedge);
+    void exhaustWithoutNewVertOppEdgeDontExists(front::Edge* fedge);
+    void exhaust_without_new_vert(front::Edge* fedge, bool doesOppEdgeExists = true, front::Edge* opp_fedge = nullptr);
 
 
     bool tryComputeNewVertPosType3(
-        front::Face* fFace, vec3& out_pos);
-    bool tryComputeNewVertPosType2(
+        front::Face* fface, vec3& out_pos);
+    bool try_compute_new_vert_pos_type2(
         front::Face* frontFace, vec3& out_pos,
         std::size_t smallAngleIdx0, std::size_t smallAngleIdx1);
-    bool tryComputeNewVertPosType1(
-        front::Face* fFace, vec3& out_pos,
+    bool try_compute_new_vert_pos_type1(
+        front::Face* fface, vec3& out_pos,
         std::size_t smallAngleIdx);
-    bool tryComputeNewVertPosType0(
-        front::Face* fFace, vec3& out_pos);
-    bool tryComputeNewVertPos(front::Face* fFace, vec3& out_pos);
+    bool try_compute_new_vert_pos_type0(
+        front::Face* fface, vec3& out_pos);
+    bool try_compute_new_vert_pos(front::Face* fface, vec3& out_pos);
 
-    real_t sqr4FaceArea(const front::Face* fFace) const;
-    front::Face* chooseFaceForExhaustionWithNewVert(front::Edge* front_edge);
-    void         exhaustWithNewVert(front::Face* fFace, const vec3& vertPos);
+    real_t sqr4FaceArea(const front::Face* fface) const;
+    front::Face* chooseFaceForExhaustionWithNewVert(front::Edge* fedge);
+    void         exhaust_with_new_vert(front::Face* fface, const vec3& vertPos);
 
-    bool tryExhaustWithoutNewVert(front::Edge* front_edge);
-    bool tryExhaustWithNewVert(front::Edge* front_edge);
+    bool try_exhaust_without_new_vert(front::Edge* fedge);
+    bool try_exhaust_with_new_vert(front::Edge* fedge);
 
-    bool globalIntersectionCheck();
+    bool global_intersection();
 
     bool isFrontExhausted();
-    void processAngles();
+    void process_angles();
 
     void debug();
 
-    void computeFrontNormals();
-    void initializeFFaceFEdges(front::Face* fFace) const;
-    void initializeFront();
+    void compute_front_normals();
+    void initializeFFaceFEdges(front::Face* fface) const;
+    void initialize_front();
 };
 
 } // namespace pmg

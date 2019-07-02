@@ -22,13 +22,13 @@ class Vert {
 public:
     // TODO: use std::unordered_map where i need instead
     std::size_t global_idx;
-    real_t minAdjTetrVol = std::numeric_limits<real_t>::max();
-    real_t maxAdjTetrVol = std::numeric_limits<real_t>::min();
+    real_t min_adj_tetr_vol = std::numeric_limits<real_t>::max();
+    real_t max_adj_tetr_vol = std::numeric_limits<real_t>::min();
 
     // TODO: use std::unordered_map where i need instead
-    shell::Face* belongsToSFace = nullptr;
-    shell::Edge* belongsToSEdge = nullptr;
-    shell::Vert* belongsToSVert = nullptr;
+    shell::Face* belongs_to_sface = nullptr;
+    shell::Edge* belongs_to_sedge = nullptr;
+    shell::Vert* belongs_to_svert = nullptr;
 
     const vec3& pos() const {
         return *m_pos;

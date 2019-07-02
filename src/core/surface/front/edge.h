@@ -16,7 +16,7 @@ class Edge {
 
 public:
     // TODO: maybe use std::reference_wrapper instead of pointer
-    pmg::Edge* edge;
+    pmg::Edge* x;
     vec3 normal;
 
     vec3 compute_normal();
