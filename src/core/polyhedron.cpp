@@ -522,13 +522,13 @@ real_t Polyhedron::tetr_simple_sqr_quality(const vec3& p0, const vec3& p1, const
 }
 
 
-front::Edge* Polyhedron::current_front_edge(real_t maxCompl) const {
+front::Edge* Polyhedron::current_front_edge(real_t max_compl) const {
     real_t cur_max_compl = static_cast<real_t>(0.0);
     front::Edge* cur_max_f_edge = nullptr;
     for (auto& l_fedge : m_front_edges) {
         real_t cur_compl = l_fedge->complexity();
         if (cur_compl > cur_max_compl &&
-            cur_compl < maxCompl) {
+            cur_compl < max_compl) {
             cur_max_compl = cur_compl;
             cur_max_f_edge = l_fedge;
         }

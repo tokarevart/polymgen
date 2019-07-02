@@ -102,7 +102,7 @@ private:
 
     bool global_intersection() const;
 
-    front::Vert* current_front_vert(real_t maxCompl) const;
+    front::Vert* current_front_vert(real_t max_compl) const;
     bool exhaust_without_new_vert_priority_predicate(front::Vert* fedge);
     bool exhaust_with_new_vert_priority_predicate(front::Vert* fedge);
     ExhaustType exhaustion_type_quality_priority(

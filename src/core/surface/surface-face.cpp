@@ -152,6 +152,9 @@ sfront::Vert* surface::Face::add_to_front(const pmg::Vert* vert) {
 
 void surface::Face::remove_from_front(sfront::Edge* fedge) {
     m_front_edges.erase(std::find(m_front_edges.begin(), m_front_edges.end(), fedge));
+    //auto rem_iter = std::find(m_front_edges.begin(), m_front_edges.end(), fedge);
+    //*rem_iter = m_front_edges.back();
+    //m_front_edges.pop_back();
     delete fedge;
 }
 
@@ -414,19 +417,19 @@ bool surface::Face::try_exhaust_with_new_vert(sfront::Vert* fvert) {
 }
 
 
-sfront::Vert* surface::Face::current_front_vert(real_t maxCompl) const {
-    real_t cur_max_compl = 0.0;
-    sfront::Vert* cur_max_f_edge = nullptr;
-    for (auto& f_vert : m_front_verts) {
-        real_t cur_compl = f_vert->complexity();
-        if (cur_compl > cur_max_compl
-            && cur_compl < maxCompl) {
+sfront::Vert* surface::Face::current_front_vert(real_t max_compl) const {
+    real_t cur_max_compl = static_cast<real_t>(0);
+    sfront::Vert* cur_max_fvert = nullptr;
+    for (auto& l_fvert : m_front_verts) {
+        real_t cur_compl = l_fvert->complexity();
+        if (cur_compl > cur_max_compl && 
+            cur_compl < max_compl) {
             cur_max_compl = cur_compl;
-            cur_max_f_edge = f_vert;
+            cur_max_fvert = l_fvert;
         }
     }
 
-    return cur_max_f_edge;
+    return cur_max_fvert;
 }
 
 

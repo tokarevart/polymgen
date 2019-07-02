@@ -138,7 +138,7 @@ private:
     static real_t  tetr_simple_quality(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3);
     static real_t  tetr_simple_sqr_quality(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3);
 
-    front::Edge* current_front_edge(real_t maxCompl) const; // TODO: use std::map::upper_bound(...) method instead
+    front::Edge* current_front_edge(real_t max_compl) const; // TODO: use std::map::upper_bound(...) method instead
     bool exhaust_without_new_vert_priority_predicate(front::Edge* fedge);
     bool exhaust_with_new_vert_priority_predicate(front::Edge* fedge);
     ExhaustType exhaustion_type_quality_priority(
