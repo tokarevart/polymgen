@@ -1,6 +1,7 @@
 .vs
 x64
 out
+debug.obj
 polymori-obj/mesh-small.obj
 polymori-obj/mesh-big.obj
 polymori-obj/x64
