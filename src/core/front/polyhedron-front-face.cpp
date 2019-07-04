@@ -52,6 +52,14 @@ real_t front::Face::quality() {
 }
 
 
+front::Edge* front::Face::find_front_edge(const front::Vert* v0, const front::Vert* v1) const {
+    for (auto& l_fedge : front_edges)
+        if ((l_fedge->front_verts[0] == v0 && l_fedge->front_verts[1] == v1) ||
+            (l_fedge->front_verts[0] == v1 && l_fedge->front_verts[1] == v0))
+            return l_fedge;
+
+    return nullptr;
+}
 
 
 front::Edge* front::Face::find_front_edge(const pmg::Edge* edge) const {
@@ -68,6 +76,18 @@ front::Edge* front::Face::find_front_edge(const pmg::Vert* v0, const pmg::Vert* 
         if ((l_fedge->x->verts[0] == v0 && l_fedge->x->verts[1] == v1) ||
             (l_fedge->x->verts[0] == v1 && l_fedge->x->verts[1] == v0))
             return l_fedge;
+
+    return nullptr;
+}
+
+front::Vert* pmg::front::Face::find_front_vert_not(const front::Edge* fedge) const {
+    for (auto& fface_fedge : front_edges)
+        if (fedge != fface_fedge) {
+            if (!fedge->contains(fface_fedge->front_verts[0]))
+                return fface_fedge->front_verts[0];
+            else
+                return fface_fedge->front_verts[1];
+        }
 
     return nullptr;
 }
@@ -95,12 +115,11 @@ void front::Face::add_front_edge(const front::Edge* fedge) {
 
 
 void front::Face::remove_front_edge(const front::Edge* fedge) {
-    for (auto& l_fedge : front_edges) {
+    for (auto& l_fedge : front_edges)
         if (l_fedge == fedge) {
             l_fedge = nullptr;
             return;
         }
-    }
 
     throw std::logic_error("pmg::front::Face::remove_front_edge can't remove fedge because there is no one.");
 }
@@ -134,6 +153,15 @@ bool front::Face::contains(const pmg::Vert* vert) const {
 }
 
 
+
+
+pmg::front::Face::Face(const Polyhedron* related_polyhedron, const front::Edge* fedge0, const front::Edge* fedge1, const front::Edge* fedge2)
+    : m_related_polyhedron(const_cast<Polyhedron*>(related_polyhedron)) {
+    front_edges[0] = const_cast<front::Edge*>(fedge0);
+    front_edges[1] = const_cast<front::Edge*>(fedge1);
+    front_edges[2] = const_cast<front::Edge*>(fedge2);
+    x = new pmg::Face(fedge0->x, fedge1->x, fedge2->x);
+}
 
 
 front::Face::Face(const Polyhedron* related_polyhedron, const pmg::Face* face)

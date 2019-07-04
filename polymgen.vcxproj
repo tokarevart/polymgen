@@ -24,6 +24,7 @@
     <ClInclude Include="src\core\filetype.h" />
     <ClInclude Include="src\core\front\edge.h" />
     <ClInclude Include="src\core\front\face.h" />
+    <ClInclude Include="src\core\front\vert.h" />
     <ClInclude Include="src\core\genparams.h" />
     <ClInclude Include="src\core\polyhedral-set.h" />
     <ClInclude Include="src\core\polyhedron.h" />

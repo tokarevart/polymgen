@@ -17,6 +17,35 @@ using pair_ff = std::pair<front::Face*, front::Face*>;
 using vec3 = spt::vec<3, real_t>;
 
 
+void pmg::front::Edge::add_front_vert(const front::Vert* fvert) {
+    if(!front_verts[0])
+        front_verts[0] = const_cast<front::Vert*>(fvert);
+    else if (!front_verts[1])
+        front_verts[1] = const_cast<front::Vert*>(fvert);
+    else
+        throw std::logic_error("pmg::front::Edge::add_front_vert can't add fvert when front_edges already full.");
+}
+
+
+void pmg::front::Edge::remove_front_vert(const front::Vert* fvert) {
+    for (auto& l_fvert : front_verts)
+        if (l_fvert == fvert) {
+            l_fvert = nullptr;
+            return;
+        }
+
+    throw std::logic_error("pmg::front::Edge::remove_front_vert can't remove fvert because there is no one.");
+}
+
+
+bool pmg::front::Edge::front_verts_full() const {
+    if (front_verts[0] && front_verts[1])
+        return true;
+
+    return false;
+}
+
+
 void front::Edge::refresh_angle_data() {
     m_need_angle_processing = true;
     m_need_complexity_processing = true;
@@ -162,6 +191,18 @@ void front::Edge::fill_adj_ffaces(const front::Face* fFace0, const front::Face* 
 }
 
 
+
+
+bool pmg::front::Edge::contains(const front::Vert* fvert) const {
+    return front_verts[0] == fvert || front_verts[1] == fvert;
+}
+
+pmg::front::Edge::Edge(const Polyhedron* related_polyhedron, const front::Vert* fvert0, const front::Vert* fvert1)
+    : m_related_polyhedron(const_cast<Polyhedron*>(related_polyhedron)) {
+    front_verts[0] = const_cast<front::Vert*>(fvert0);
+    front_verts[1] = const_cast<front::Vert*>(fvert1);
+    x = new pmg::Edge(fvert0->x, fvert1->x);
+}
 
 
 front::Edge::Edge(const Polyhedron* related_polyhedron, const pmg::Edge* edge)

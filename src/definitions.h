@@ -19,6 +19,7 @@ class Vert;
 namespace pmg::front {
 class Face;
 class Edge;
+class Vert;
 } // namespace pmg::front
 
 namespace pmg::surface {

@@ -128,6 +128,9 @@
     <ClInclude Include="src\helpers\spatial\mat.h">
       <Filter>helpers\spatial</Filter>
     </ClInclude>
+    <ClInclude Include="src\core\front\vert.h">
+      <Filter>core\front</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\edge.cpp">

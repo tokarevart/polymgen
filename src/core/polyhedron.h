@@ -7,6 +7,7 @@
 #include <vector>
 #include "front/face.h"
 #include "front/edge.h"
+#include "front/vert.h"
 #include "shell/face.h"
 #include "shell/edge.h"
 #include "shell/vert.h"
@@ -52,7 +53,7 @@ public:
     const std::vector<front::Edge*>& front_edges() const;
 
     // Returns minimum and average tetrahedrons quality or absGrad.
-    pair_rr analyze_mesh_quality(std::vector<Tetr*>::iterator* out_minQualityTetr = nullptr);
+    pair_rr analyze_mesh_quality(std::vector<Tetr*>::iterator* out_min_quality_tetr = nullptr);
     pair_rr analyze_mesh_abs_grad();
     void tetrahedralize(real_t preferred_length, genparams::Volume gen_params = genparams::Volume());
     void smooth_mesh(std::size_t nIters);
@@ -99,6 +100,7 @@ private:
     // TODO: add front::Vert class
     std::vector<front::Face*> m_front_faces; // TODO: use std::unordered_set
     std::vector<front::Edge*> m_front_edges; // TODO: use std::set sorting by angle (first larger) instead
+    std::vector<front::Vert*> m_front_verts;
 
     bool shell_contains(const pmg::Vert* vert) const;
 
@@ -108,11 +110,15 @@ private:
     std::vector<front::Edge*> find_front_edge(const pmg::Edge* edge) const;
 
     // Adds new front Face and corresponding Face.
+    front::Face* add_to_front(const front::Face* fface, bool add_inner = true);
+    front::Edge* add_to_front(const front::Edge* fedge, bool add_inner = true);
     front::Face* add_to_front(const pmg::Face* face, bool add_inner = true);
     front::Edge* add_to_front(const pmg::Edge* edge, bool add_inner = true);
+    front::Vert* add_to_front(const pmg::Vert* vert, bool add_inner = true);
 
     void remove_from_front(front::Face* fface);
     void remove_from_front(front::Edge* fedge);
+    void remove_from_front(front::Vert* fvert);
 
     // This section is about various front intersection checks
     // TODO: move that and other methods to relations.h later
@@ -171,7 +177,7 @@ private:
     bool try_compute_new_vert_pos(front::Face* fface, vec3& out_pos);
 
     real_t sqr_face_4areas(const front::Face* fface) const;
-    front::Face* choose_face_for_exhaustion_with_new_vert(front::Edge* fedge);
+    front::Face* choose_fface_for_exhaustion_with_new_vert(front::Edge* fedge);
     void         exhaust_with_new_vert(front::Face* fface, const vec3& vert_pos);
 
     bool try_exhaust_without_new_vert(front::Edge* fedge);
@@ -186,6 +192,7 @@ private:
     void debug();
 
     void compute_front_normals();
+    void initialize_fedge_fverts(front::Edge* fedge) const;
     void initialize_fface_fedges(front::Face* fface) const;
     void initialize_front();
 };

@@ -29,8 +29,10 @@ public:
     vec3 center();
     real_t quality();
 
+    front::Edge* find_front_edge(const front::Vert* v0, const front::Vert* v1) const;
     front::Edge* find_front_edge(const pmg::Edge* edge) const;
     front::Edge* find_front_edge(const pmg::Vert* v0, const pmg::Vert* v1) const;
+    front::Vert* find_front_vert_not(const front::Edge* fedge) const;
     front::Edge* find_front_edge_not(const pmg::Vert* vert) const;
     void add_front_edge(const front::Edge* fedge);
     void remove_front_edge(const front::Edge* fedge);
@@ -40,6 +42,7 @@ public:
     bool contains(const   pmg::Edge* edge) const;
     bool contains(const   pmg::Vert* vert) const;
 
+    Face(const Polyhedron* related_polyhedron, const front::Edge* fedge0, const front::Edge* fedge1, const front::Edge* fedge2);
     Face(const Polyhedron* related_polyhedron, const pmg::Face* face);
 
 
