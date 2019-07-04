@@ -861,18 +861,27 @@ void Polyhedron::exhaust_front_split(front::Edge* fedge, front::Edge* opp_fedge)
 
 
 void Polyhedron::exhaust_without_new_vert_opp_edge_exists(front::Edge* fedge, front::Edge* opp_fedge) {
+    //
+    debug();
+    opp_fedge = fedge->find_opp_edge();
+    opp_fedge->clear_adj_ffaces();
+    //
     auto opp_ffaces = opp_fedge->adj_ffaces();
 
-    std::array<front::Face*, 3> main_ffaces;
     Vert* main_vert;
+    //
+    debug();
+    fedge->clear_adj_ffaces();
+    //
     auto fedge_adj_faces = fedge->adj_ffaces();
+    std::array<front::Face*, 3> main_ffaces;
     main_ffaces[0] = std::get<0>(fedge_adj_faces);
     main_ffaces[1] = std::get<1>(fedge_adj_faces);
 
     if (std::get<0>(opp_ffaces)->x->contains(fedge->x->verts[0])) {
         main_ffaces[2] = std::get<0>(opp_ffaces);
         main_vert = fedge->x->verts[0];
-    } else if (std::get<0>(opp_ffaces)->x->contains(fedge->x->verts[1])) {
+    } else if (std::get<0>(opp_ffaces)->x->contains(fedge->x->verts[1])) { //
         main_ffaces[2] = std::get<0>(opp_ffaces);
         main_vert = fedge->x->verts[1];
     } else if (std::get<1>(opp_ffaces)->x->contains(fedge->x->verts[0])) {
@@ -882,6 +891,18 @@ void Polyhedron::exhaust_without_new_vert_opp_edge_exists(front::Edge* fedge, fr
         main_ffaces[2] = std::get<1>(opp_ffaces);
         main_vert = fedge->x->verts[1];
     }
+
+    //
+    debug();
+    std::array<front::Edge*, 3> fedges_to_erase_deb;
+    std::size_t idx_deb = 0;
+    for (auto& l_fface : main_ffaces)
+        for (auto& l_fedge : l_fface->front_edges)
+            if (std::find(fedges_to_erase_deb.begin(), fedges_to_erase_deb.begin() + idx_deb, l_fedge) 
+                == fedges_to_erase_deb.begin() + idx_deb &&
+                l_fedge->x->contains(main_vert))
+                fedges_to_erase_deb[idx_deb++] = l_fedge;
+    //
 
     std::array<front::Edge*, 3> new_tetr_fedges;
     for (std::size_t i = 0; i < 3; i++) {
@@ -1521,7 +1542,7 @@ void Polyhedron::debug() {
         accum += fface->front_edges[2]->x->sqr_magnitude();
     }
     
-    std::cout << "\n{ " << accum << ', ' << sqrlen << " }";
+    std::cout << "\n{ " << accum + sqrlen << " }";
 
     for (auto& fedge : m_front_edges) {
         std::size_t count = 0;

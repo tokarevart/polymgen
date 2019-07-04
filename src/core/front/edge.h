@@ -42,6 +42,7 @@ public:
 
     bool add_adj_fface(const front::Face* fface);
     bool remove_adj_fface(const front::Face* fface);
+    void clear_adj_ffaces();
     bool adj_ffaces_contains(const front::Face* fface) const;
     void fill_adj_ffaces(const front::Face* fFace0, const front::Face* fFace1);
     // TODO: add method std::size_t nAdjFFaces() const;

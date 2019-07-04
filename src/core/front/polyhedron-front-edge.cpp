@@ -144,6 +144,12 @@ bool front::Edge::remove_adj_fface(const front::Face* fface) {
 }
 
 
+void pmg::front::Edge::clear_adj_ffaces() {
+    std::get<0>(m_adj_ffaces) = nullptr;
+    std::get<1>(m_adj_ffaces) = nullptr;
+}
+
+
 bool front::Edge::adj_ffaces_contains(const front::Face* fface) const {
     return std::get<0>(m_adj_ffaces) == const_cast<front::Face*>(fface) ||
         std::get<1>(m_adj_ffaces) == const_cast<front::Face*>(fface);
