@@ -12,7 +12,7 @@ template <
     template <typename... Args> typename Pointer, 
     typename ElemType, 
     template <typename Polytope> typename HowMany = spt::single>
-struct mesh_base;
+struct mesh_base; // TODO: maybe use tuple inheritance or composition or something like that
 
 template <typename ElemType, template <typename Polytope> typename HowMany = spt::single>
 using unique_mesh = mesh_base<std::unique_ptr, ElemType, HowMany>;
