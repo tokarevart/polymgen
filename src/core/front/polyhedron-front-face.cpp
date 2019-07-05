@@ -93,6 +93,15 @@ front::Vert* pmg::front::Face::find_front_vert_not(const front::Edge* fedge) con
 }
 
 
+front::Edge* front::Face::find_front_edge_not(const front::Vert* fvert) const {
+    for (auto& l_fedge : front_edges)
+        if (!l_fedge->contains(fvert))
+            return l_fedge;
+
+    return nullptr;
+}
+
+
 front::Edge* front::Face::find_front_edge_not(const pmg::Vert* vert) const {
     for (auto& l_fedge : front_edges)
         if (!l_fedge->x->contains(vert))
@@ -133,13 +142,19 @@ bool front::Face::front_edges_full() const {
 }
 
 
-bool front::Face::contains(const front::Edge* fedge) const {
-    if (front_edges[0] == fedge ||
-        front_edges[1] == fedge ||
-        front_edges[2] == fedge)
-        return true;
+bool front::Face::contains(const front::Vert* fvert) const {
+    return 
+        front_edges[0]->contains(fvert) ||
+        front_edges[1]->contains(fvert) ||
+        front_edges[2]->contains(fvert);
+}
 
-    return false;
+
+bool front::Face::contains(const front::Edge* fedge) const {
+    return 
+        front_edges[0] == fedge ||
+        front_edges[1] == fedge ||
+        front_edges[2] == fedge;
 }
 
 

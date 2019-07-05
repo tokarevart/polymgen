@@ -29,16 +29,18 @@ public:
     vec3 center();
     real_t quality();
 
+    front::Vert* find_front_vert_not(const front::Edge* fedge) const;
     front::Edge* find_front_edge(const front::Vert* v0, const front::Vert* v1) const;
     front::Edge* find_front_edge(const pmg::Edge* edge) const;
     front::Edge* find_front_edge(const pmg::Vert* v0, const pmg::Vert* v1) const;
-    front::Vert* find_front_vert_not(const front::Edge* fedge) const;
+    front::Edge* find_front_edge_not(const front::Vert* fvert) const;
     front::Edge* find_front_edge_not(const pmg::Vert* vert) const;
     void add_front_edge(const front::Edge* fedge);
     void remove_front_edge(const front::Edge* fedge);
     bool front_edges_full() const;
 
     bool contains(const front::Edge* fedge) const;
+    bool contains(const front::Vert* fvert) const;
     bool contains(const   pmg::Edge* edge) const;
     bool contains(const   pmg::Vert* vert) const;
 

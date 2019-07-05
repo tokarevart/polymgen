@@ -112,6 +112,7 @@ private:
     // Adds new front Face and corresponding Face.
     front::Face* add_to_front(const front::Face* fface, bool add_inner = true);
     front::Edge* add_to_front(const front::Edge* fedge, bool add_inner = true);
+    front::Vert* add_to_front(const front::Vert* fvert, bool add_inner = true);
     front::Face* add_to_front(const pmg::Face* face, bool add_inner = true);
     front::Edge* add_to_front(const pmg::Edge* edge, bool add_inner = true);
     front::Vert* add_to_front(const pmg::Vert* vert, bool add_inner = true);
