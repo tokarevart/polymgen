@@ -64,10 +64,10 @@ public:
 
 
 private:
-    enum class ExhaustType {
-        DontExhaust,
-        WithoutNewVert,
-        WithNewVert
+    enum class exhaust_type {
+        dont_exhaust,
+        without_new_vert,
+        with_new_vert
     };
 
     using pair_ff = std::pair<front::Face*, front::Face*>;
@@ -138,10 +138,9 @@ private:
     static real_t  tetr_simple_quality(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3);
     static real_t  tetr_simple_sqr_quality(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3);
 
-    front::Edge* current_front_edge(real_t max_compl) const; // TODO: use std::map::upper_bound(...) method instead
     bool exhaust_without_new_vert_priority_predicate(front::Edge* fedge);
     bool exhaust_with_new_vert_priority_predicate(front::Edge* fedge);
-    ExhaustType exhaustion_type_quality_priority(
+    exhaust_type exhaustion_type_quality_priority(
         front::Edge* fedge,
         front::Face*& out_withNWFFace, vec3*& out_with_nv_new_vert_pos);
 
@@ -156,9 +155,8 @@ private:
     void exhaust_front_collapse(front::Edge* fedge, front::Edge* opp_fedge);
     void exhaust_front_split(front::Edge* fedge, front::Edge* opp_fedge);
     void exhaust_without_new_vert_opp_edge_exists(front::Edge* fedge, front::Edge* opp_fedge);
-    void exhaust_without_new_vert_opp_edge_dont_exists(front::Edge* fedge);
+    void exhaust_without_new_vert_opp_edge_doesnt_exist(front::Edge* fedge);
     void exhaust_without_new_vert(front::Edge* fedge, bool does_opp_edge_exists = true, front::Edge* opp_fedge = nullptr);
-
 
     bool try_compute_new_vert_pos_type3(
         front::Face* fface, vec3& out_pos);
@@ -181,6 +179,7 @@ private:
 
     bool global_intersection();
 
+    front::Edge* current_front_edge(real_t max_compl) const; // TODO: use std::map::upper_bound(...) method instead
     bool front_exhausted();
     void process_angles();
 

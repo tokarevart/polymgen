@@ -564,16 +564,16 @@ bool Polyhedron::exhaust_with_new_vert_priority_predicate(front::Edge* current_f
 }
 
 
-Polyhedron::ExhaustType Polyhedron::exhaustion_type_quality_priority(
+Polyhedron::exhaust_type Polyhedron::exhaustion_type_quality_priority(
     front::Edge* current_fedge,
     front::Face*& out_with_nv_fface, vec3*& out_with_nv_new_vert_pos) {
     if (will_front_split(current_fedge))
-        return ExhaustType::WithoutNewVert;
+        return exhaust_type::without_new_vert;
 
     if (will_parallel_faces(current_fedge) || // TODO: replace later with check if front is close to potential element
         will_any_edge_intersect_faces(current_fedge) ||
         will_any_vert_inside_tetr(current_fedge))
-        return ExhaustType::WithNewVert;
+        return exhaust_type::with_new_vert;
 
     auto l_opp_verts = current_fedge->opp_verts();
     real_t without_nv_quality = tetr_simple_sqr_quality(
@@ -585,7 +585,7 @@ Polyhedron::ExhaustType Polyhedron::exhaustion_type_quality_priority(
     front::Face* fface = choose_face_for_exhaustion_with_new_vert(current_fedge);
     vec3 new_vert_pos;
     if (!try_compute_new_vert_pos(fface, new_vert_pos))
-        return ExhaustType::DontExhaust;
+        return exhaust_type::dont_exhaust;
 
     real_t with_nv_quality = tetr_simple_sqr_quality(
         fface->x->edges[0]->verts[0]->pos(),
@@ -594,11 +594,11 @@ Polyhedron::ExhaustType Polyhedron::exhaustion_type_quality_priority(
         new_vert_pos);
 
     if (without_nv_quality > with_nv_quality)
-        return ExhaustType::WithoutNewVert;
+        return exhaust_type::without_new_vert;
 
     out_with_nv_fface = fface;
     out_with_nv_new_vert_pos = new vec3(new_vert_pos);
-    return ExhaustType::WithNewVert;
+    return exhaust_type::with_new_vert;
 }
 
 
@@ -718,11 +718,7 @@ void Polyhedron::exhaust_front_collapse(front::Edge* fedge, front::Edge* opp_fed
                              opp_fedge->x->verts[0],
                              opp_fedge->x->verts[1]);
     m_inner_tetrs.push_back(new_tetr);
-
-//    if (new_tetr->quality() < 1e-2)
-//        m_polyhset->output(PolyhedralSet::filetype::wavefront_obj, "debug.obj");
-
-
+    
     std::vector<front::Edge*> fedges_to_erase;
     fedges_to_erase.reserve(4);
     for (auto& l_fedge : opp_ffaces.first->front_edges)
@@ -743,9 +739,8 @@ void Polyhedron::exhaust_front_collapse(front::Edge* fedge, front::Edge* opp_fed
     for (auto& l_fedge : fedges_to_erase)
         remove_from_front(l_fedge);
 
-#ifdef DEV_DEBUG
+    debug();
     std::cout << std::endl << "exhaust_front_collapse";
-#endif
 }
 
 
@@ -860,9 +855,8 @@ void Polyhedron::exhaust_front_split(front::Edge* fedge, front::Edge* opp_fedge)
     remove_from_front(adj_ffaces.second);
     remove_from_front(fedge);
 
-#ifdef DEV_DEBUG
+    debug();
     std::cout << std::endl << "exhaust_front_split";
-#endif
 }
 
 
@@ -915,32 +909,27 @@ void Polyhedron::exhaust_without_new_vert_opp_edge_exists(front::Edge* fedge, fr
                              opp_fedge->x->verts[0],
                              opp_fedge->x->verts[1]);
     m_inner_tetrs.push_back(new_tetr);
+        
+    std::array<front::Edge*, 3> fedges_to_erase;
+    std::size_t idx = 0;
+    for (auto& l_fface : main_ffaces)
+        for (auto& l_fedge : l_fface->front_edges)
+            if (std::find(fedges_to_erase.begin(), fedges_to_erase.begin() + idx, l_fedge) == fedges_to_erase.begin() + idx &&
+                l_fedge->x->contains(main_vert))
+                fedges_to_erase[idx++] = l_fedge;
 
-//    if (new_tetr->quality() < 1e-2)
-//        m_polyhset->output(PolyhedralSet::filetype::wavefront_obj, "debug.obj");
-
-    std::vector<front::Edge*> erased_fedges;
-    erased_fedges.reserve(3);
-    for (auto& l_fface : main_ffaces) {
-        for (auto& l_fedge : l_fface->front_edges) {
-            if (std::find(erased_fedges.begin(), erased_fedges.end(), l_fedge) == erased_fedges.end() &&
-                l_fedge->x->contains(main_vert)) {
-                remove_from_front(l_fedge);
-                erased_fedges.push_back(l_fedge);
-            }
-        }
-    }
+    for (auto& l_fedge : fedges_to_erase)
+        remove_from_front(l_fedge);
 
     for (auto& l_fface : main_ffaces)
         remove_from_front(l_fface);
 
-#ifdef DEV_DEBUG
+    debug();
     std::cout << std::endl << "exhaust_without_new_vert_opp_edge_exists";
-#endif
 }
 
 
-void Polyhedron::exhaust_without_new_vert_opp_edge_dont_exists(front::Edge* fedge) {
+void Polyhedron::exhaust_without_new_vert_opp_edge_doesnt_exist(front::Edge* fedge) {
     // HACK: this volatile helps to avoid computational error.
     volatile auto adj_ffaces = fedge->adj_ffaces();
 
@@ -1026,19 +1015,13 @@ void Polyhedron::exhaust_without_new_vert_opp_edge_dont_exists(front::Edge* fedg
                              l_opp_verts[0],
                              l_opp_verts[1]);
     m_inner_tetrs.push_back(new_tetr);
-
-//    std::cout << std::endl << fedge->x->magnitude() << ' ' << fedge->compute_angle() * 180.0 / M_PI;
-//    if (new_tetr->quality() < 1e-2)
-//        m_polyhset->output(PolyhedralSet::filetype::wavefront_obj, "debug.obj");
-
-
+    
     remove_from_front(adj_ffaces.first);
     remove_from_front(adj_ffaces.second);
     remove_from_front(fedge);
 
-#ifdef DEV_DEBUG
-    std::cout << std::endl << "exhaust_without_new_vert_opp_edge_dont_exists";
-#endif
+    debug();
+    std::cout << std::endl << "exhaust_without_new_vert_opp_edge_doesnt_exist";
 }
 
 
@@ -1059,7 +1042,7 @@ void Polyhedron::exhaust_without_new_vert(front::Edge* fedge, bool opp_edge_exis
         else
             exhaust_without_new_vert_opp_edge_exists(fedge, l_opp_fedge);
     } else {
-        exhaust_without_new_vert_opp_edge_dont_exists(fedge);
+        exhaust_without_new_vert_opp_edge_doesnt_exist(fedge);
     }
 }
 
@@ -1417,10 +1400,11 @@ void Polyhedron::exhaust_with_new_vert(front::Face* fface, const vec3& vert_pos)
                              new_tetr_fedges[5]->x->verts[0],
                              new_tetr_fedges[5]->x->verts[1]);
     m_inner_tetrs.push_back(new_tetr);
-//    if (new_tetr->quality() < 1e-2)
-//        m_polyhset->output(PolyhedralSet::filetype::wavefront_obj, "debug.obj");
 
     remove_from_front(fface);
+
+    debug();
+    std::cout << std::endl << "exhaust_with_new_vert";
 }
 
 
@@ -1465,9 +1449,7 @@ bool Polyhedron::front_exhausted() {
 
 
 void Polyhedron::process_angles() {
-#ifdef DEV_DEBUG
     int debug_i = 0;
-#endif
     real_t max_compl = std::numeric_limits<real_t>::max();
     for (front::Edge* cur_fedge = current_front_edge(max_compl);; cur_fedge = current_front_edge(max_compl)) {
         if (!cur_fedge)
@@ -1487,11 +1469,11 @@ void Polyhedron::process_angles() {
             front::Face* exhaust_from_fface = nullptr;
             vec3* new_vert_pos = nullptr;
             switch (exhaustion_type_quality_priority(cur_fedge, exhaust_from_fface, new_vert_pos)) {
-            case ExhaustType::WithoutNewVert:
+            case exhaust_type::without_new_vert:
                 exhaust_without_new_vert(cur_fedge);
                 break;
 
-            case ExhaustType::WithNewVert:
+            case exhaust_type::with_new_vert:
                 if (new_vert_pos) {
                     exhaust_with_new_vert(exhaust_from_fface, *new_vert_pos);
                     delete new_vert_pos;
@@ -1503,24 +1485,20 @@ void Polyhedron::process_angles() {
                 }
                 break;
 
-            case ExhaustType::DontExhaust:
+            case exhaust_type::dont_exhaust:
                 max_compl = cur_fedge->complexity();
-#ifdef DEV_DEBUG
-                std::cout << std::endl << "DontExhaust";
-#endif
+                #ifdef DEV_DEBUG
+                std::cout << std::endl << "dont_exhaust";
+                #endif
                 continue;
             }
         }
         max_compl = std::numeric_limits<real_t>::max();
-
-#ifdef DEV_DEBUG
-//        if (debug_i++ >= 1200)
-//        m_polyhset->output(PolyhedralSet::filetype::wavefront_obj, "debug.obj");
-//        if (debug_i++ >= 0)
-//            std::cout << std::endl << debug_i - 1;
-
-//        debug();
-#endif
+        
+        std::cout << std::endl << debug_i;
+        if (debug_i++ == 159)
+            m_polyhset->output(filetype::wavefront_obj, "debug.obj");
+        debug();
 
         if (front_exhausted())
             return;
@@ -1529,22 +1507,41 @@ void Polyhedron::process_angles() {
 
 
 void Polyhedron::debug() {
-    vec3 accum;
-    for (auto& vert : m_inner_verts)
-        accum += vert->pos();
+    real_t accum = static_cast<real_t>(0);
+    for (auto& fface : m_front_faces) {
+        accum += fface->front_edges[0]->angle();
+        accum += fface->front_edges[1]->angle();
+        accum += fface->front_edges[2]->angle();
+    }
 
-    for (auto& svert : m_shell_verts)
-        accum += svert->attached_vert->pos();
+    real_t sqrlen = static_cast<real_t>(0);
+    for (auto& fface : m_front_faces) {
+        accum += fface->front_edges[0]->x->sqr_magnitude();
+        accum += fface->front_edges[1]->x->sqr_magnitude();
+        accum += fface->front_edges[2]->x->sqr_magnitude();
+    }
+    
+    std::cout << "\n{ " << accum << ', ' << sqrlen << " }";
 
-    for (auto& sedge : m_shell_edges)
-        for (auto& vert : sedge->inner_verts())
-            accum += vert->pos();
+    for (auto& fedge : m_front_edges) {
+        std::size_t count = 0;
+        for (auto& fface : m_front_faces)
+            if (fface->contains(fedge))
+                count++;
 
-    for (auto& sface : m_shell_faces)
-        for (auto& vert : sface->inner_verts())
-            accum += vert->pos();
+        if (count != 2)
+            throw std::exception();
+    }
 
-    std::cout << "\n{ " << accum.x[0] + accum.x[1] + accum.x[2] << " }";
+    for (auto& fface : m_front_faces)
+        for (auto& fedge : fface->front_edges)
+            if (!fface->x->contains(fedge->x))
+                throw std::exception();
+
+    for (auto& fface : m_front_faces)
+        for (auto& edge : fface->x->edges)
+            if (!fface->find_front_edge(edge))
+                throw std::exception();
 }
 
 

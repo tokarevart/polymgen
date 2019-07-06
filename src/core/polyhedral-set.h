@@ -25,10 +25,8 @@
 
 #include "../definitions.h"
 
-// make STL naming in all the library
 namespace pmg {
 
-// refactor class
 class PolyhedralSet {
 public:
     struct Log {
@@ -55,8 +53,6 @@ public:
     Log log();
     std::string log_file_name() const;
 
-    // TODO: make mesh output with PolyMesh method instead
-    // TODO: make method taking meshes of all the polyhedrons and remeshing them into one
     void output(filetype filetype = filetype::wavefront_obj, std::string_view filename = "_AUTO_", unsigned polyhedral_set_id = 1u);
 
     PolyhedralSet() = delete;

@@ -13,7 +13,7 @@ using namespace pmg;
 using vec3 = spt::vec<3, real_t>;
 
 
-//#define DEV_DEBUG
+#define DEV_DEBUG
 
 
 shell::Edge* PolyhedralSet::find_shell_edge(const shell::Vert* v0, const shell::Vert* v1) const {

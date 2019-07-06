@@ -4,6 +4,7 @@
 #include "face.h"
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 #include "../../helpers/mathconsts.h"
 #include "../../helpers/spatial/algs.h"
 
@@ -458,10 +459,10 @@ bool surface::Face::exhaust_with_new_vert_priority_predicate(sfront::Vert* fedge
 }
 
 
-surface::Face::ExhaustType surface::Face::exhaustion_type_quality_priority(
+surface::Face::exhaust_type surface::Face::exhaustion_type_quality_priority(
     sfront::Vert* fvert, sfront::Edge*& out_with_nv_fedge, vec3*& out_with_nv_new_vert_pos) {
     if (any_vert_inside_potential_triangle_check(fvert))
-        return ExhaustType::WithNewVert;
+        return exhaust_type::with_new_vert;
 
     auto l_opp_verts = fvert->opp_verts();
     real_t without_nv_quality = triangle_simple_sqr_quality(
@@ -472,7 +473,7 @@ surface::Face::ExhaustType surface::Face::exhaustion_type_quality_priority(
     sfront::Edge* l_fedge = choose_edge_for_exhaustion_with_new_vert(fvert);
     vec3 new_vert_pos;
     if (!try_compute_new_vert_pos(l_fedge, new_vert_pos))
-        return ExhaustType::DontExhaust;
+        return exhaust_type::dont_exhaust;
 
     real_t with_nv_quality = triangle_simple_sqr_quality(
         l_fedge->x->verts[0]->pos(),
@@ -480,11 +481,11 @@ surface::Face::ExhaustType surface::Face::exhaustion_type_quality_priority(
         new_vert_pos);
 
     if (without_nv_quality > with_nv_quality)
-        return ExhaustType::WithoutNewVert;
+        return exhaust_type::without_new_vert;
 
     out_with_nv_fedge = l_fedge;
     out_with_nv_new_vert_pos = new vec3(new_vert_pos);
-    return ExhaustType::WithNewVert;
+    return exhaust_type::with_new_vert;
 }
 
 
@@ -534,11 +535,11 @@ void surface::Face::process_angles() {
             sfront::Edge* exhaust_from_f_edge = nullptr;
             vec3* new_vert_pos = nullptr;
             switch (exhaustion_type_quality_priority(cur_f_vert, exhaust_from_f_edge, new_vert_pos)) {
-            case ExhaustType::WithoutNewVert:
+            case exhaust_type::without_new_vert:
                 exhaust_without_new_vert(cur_f_vert);
                 break;
 
-            case ExhaustType::WithNewVert:
+            case exhaust_type::with_new_vert:
                 if (new_vert_pos) {
                     exhaust_with_new_vert(exhaust_from_f_edge, *new_vert_pos);
                     delete new_vert_pos;
@@ -550,7 +551,7 @@ void surface::Face::process_angles() {
                 }
                 break;
 
-            case ExhaustType::DontExhaust:
+            case exhaust_type::dont_exhaust:
                 max_compl = cur_f_vert->complexity();
                 continue;
             }
