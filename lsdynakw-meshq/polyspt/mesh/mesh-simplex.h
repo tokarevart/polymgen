@@ -24,20 +24,20 @@ struct mesh_base<Pointer, spt::simplex<N, Dim, Real>> {
         // ...
         facets = other.facets;
         elements = other.elements;
+        return *this;
     }
     mesh_base& operator=(mesh_base&& other) noexcept {
         vertices = std::move(other.vertices);
         // ...
         facets = std::move(other.facets);
         elements = std::move(other.elements);
+        return *this;
     }
 
     mesh_base() {}
-    mesh_base(const mesh_base& other) {
-        *this = other;
-    }
-    mesh_base(mesh_base&& other) noexcept {
-        *this = std::move(other);
+    template <typename MeshBase>
+    mesh_base(MeshBase&& other) {
+        *this = std::forward<MeshBase>(other);
     }
 };
 
@@ -65,12 +65,10 @@ struct mesh_base<Pointer, spt::simplex_v<N, Dim, Real>> {
     }
 
     mesh_base() {}
-    mesh_base(const mesh_base& other) {
-        *this = other;
-    }
-    mesh_base(mesh_base&& other) noexcept {
-        *this = std::move(other);
+    template <typename MeshBase>
+    mesh_base(MeshBase&& other) {
+        *this = std::forward<MeshBase>(other);
     }
 };
 
-} // namespace pmg
+} // namespace spt

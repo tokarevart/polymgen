@@ -34,12 +34,10 @@ struct mesh_base<Pointer, spt::polytope<N, Dim, Real>> {
     }
 
     mesh_base() {}
-    mesh_base(const mesh_base& other) {
-        *this = other;
-    }
-    mesh_base(mesh_base&& other) noexcept {
-        *this = std::move(other);
+    template <typename MeshBase>
+    mesh_base(MeshBase&& other) {
+        *this = std::forward<MeshBase>(other);
     }
 };
 
-} // namespace pmg
+} // namespace spt

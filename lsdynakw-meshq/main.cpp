@@ -168,6 +168,18 @@ std::pair<real_t, real_t> quality(const mesh_t& mesh) {
     return { min_q, av_q };
 }
 
+template <typename T, typename Y>
+auto move_if_rvalue(Y&& v) noexcept {
+    if constexpr (std::is_rvalue_reference_v<T>)
+        return std::move(v);
+    else
+        return v;
+} // it doesn't work
+
+template <typename String>
+void f(std::string& str0, String&& str1) {
+    str0 = move_if_rvalue<String>(str1);
+}
 
 int main() {
     std::ifstream kw_file("heat.k");
@@ -185,8 +197,12 @@ int main() {
     std::cout << spt::dot(spt::mat<3>::identity().inversed(), spt::mat<3>::identity().transposed() * 2)[1].magnitude() << std::endl;
 
     spt::raw_mesh<spt::polytope<2>> shell;
-    spt::raw_mesh<spt::simplex<2>, spt::multi> shell_mesh;
+    spt::raw_mesh<spt::simplex<2>, spt::aggregate> shell_mesh;
     pmg::mesher mesher(shell, shell_mesh);
+
+    std::string str0 = "kek", str1 = "lul";
+    f(str0, std::move(str1));
+    std::cout << std::endl << str1 << std::endl;
 
     return 0;
 }

@@ -19,10 +19,9 @@ using unique_mesh = mesh_base<std::unique_ptr, ElemType, HowMany>;
 
 template <typename ElemType, template <typename Polytope> typename HowMany = spt::single>
 using raw_mesh = mesh_base<raw_ptr, ElemType, HowMany>;
-
 template <template <typename... Args> typename Pointer, typename ElemType>
-struct mesh_base<Pointer, ElemType, spt::multi> {
+struct mesh_base<Pointer, ElemType, spt::aggregate> {
     std::vector<Pointer<mesh_base<Pointer, ElemType>>> meshes;
 };
 
-} // namespace pmg
+} // namespace spt
