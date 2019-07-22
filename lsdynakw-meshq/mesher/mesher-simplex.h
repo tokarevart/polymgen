@@ -22,32 +22,40 @@ public:
     void run(real_type preferred_length,
              const genparams<polytope_type>& gen_params = genparams<polytope_type>());
 
-    mesher(const shell_type& shell, const shell_mesh_type& mesh) {
-        m_shell = shell;
-        m_shell_mesh = mesh;
-    }
-    mesher(shell_type&& shell, shell_mesh_type&& mesh) noexcept {
-        m_shell = std::move(shell);
-        m_shell_mesh = std::move(mesh);
-    }
-    mesher(const shell_type& shell) {
-        m_shell = shell;
+    //mesher(const shell_type& shell, const shell_mesh_type& mesh) {
+    //    m_shell = shell;
+    //    m_shell_mesh = mesh;
+    //}
+    //mesher(shell_type&& shell, shell_mesh_type&& mesh) noexcept {
+    //    m_shell = std::move(shell);
+    //    m_shell_mesh = std::move(mesh);
+    //}
+    mesher(shell_type shell, shell_mesh_type mesh) 
+        : m_shell(std::move(shell)), m_shell_mesh(std::move(mesh)) {}
+    //mesher(const shell_type& shell) {
+    //    m_shell = shell;
+    //    mesher<spt::multi<facet_type>, spt::simplex> sh_mesher(shell);
+    //    // mesh the shell...
+    //    m_shell_mesh = std::move(/*mesh*/);
+    //}
+    //mesher(shell_type&& shell) noexcept {
+    //    m_shell = std::move(shell);
+    //    mesher<spt::multi<facet_type>, spt::simplex> sh_mesher(shell);
+    //    // mesh the shell...
+    //    m_shell_mesh = std::move(/*mesh*/);
+    //}
+    mesher(shell_type shell) : m_shell(std::move(shell)) {
         mesher<spt::multi<facet_type>, spt::simplex> sh_mesher(shell);
         // mesh the shell...
         m_shell_mesh = std::move(/*mesh*/);
     }
-    mesher(shell_type&& shell) noexcept {
-        m_shell = std::move(shell);
-        mesher<spt::multi<facet_type>, spt::simplex> sh_mesher(shell);
-        // mesh the shell...
-        m_shell_mesh = std::move(/*mesh*/);
-    }
-    mesher(const shell_mesh_type& mesh) {
-        m_shell_mesh = mesh;
-    }
-    mesher(shell_mesh_type&& mesh) {
-        m_shell_mesh = std::move(mesh);
-    }
+    //mesher(const shell_mesh_type& mesh) {
+    //    m_shell_mesh = mesh;
+    //}
+    //mesher(shell_mesh_type&& mesh) noexcept {
+    //    m_shell_mesh = std::move(mesh);
+    //}
+    mesher(shell_mesh_type mesh) : m_shell_mesh(std::move(mesh)) {}
 
 
 private:
@@ -81,29 +89,34 @@ public:
     void run(real_type preferred_length,
              const genparams<polytope_type>& gen_params = genparams<polytope_type>());
 
-    mesher(const shell_type& shell, const shell_mesh_type& mesh) {
-        m_shell = shell;
-        m_shell_mesh = mesh;
-    }
-    mesher(shell_type&& shell, shell_mesh_type&& mesh) noexcept {
-        m_shell = std::move(shell);
-        m_shell_mesh = std::move(mesh);
-    }
-    mesher(const shell_type& shell) {
-        m_shell = shell;
+    //mesher(const shell_type& shell, const shell_mesh_type& mesh) {
+    //    m_shell = shell;
+    //    m_shell_mesh = mesh;
+    //}
+    //mesher(shell_type&& shell, shell_mesh_type&& mesh) noexcept {
+    //    m_shell = std::move(shell);
+    //    m_shell_mesh = std::move(mesh);
+    //}
+    mesher(shell_type shell, shell_mesh_type mesh)
+        : m_shell(std::move(shell)), m_shell_mesh(std::move(mesh)) {}
+    //mesher(const shell_type& shell) {
+    //    m_shell = shell;
+    //    mesher<spt::multi<facet_type>, spt::simplex> sh_mesher(shell);
+    //    // mesh the shell...
+    //    m_shell_mesh = std::move(/*mesh*/);
+    //}
+    //mesher(shell_type&& shell) noexcept {
+    //    m_shell = std::move(shell);
+    //    mesher<spt::multi<facet_type>, spt::simplex> sh_mesher(shell);
+    //    // mesh the shell...
+    //    m_shell_mesh = std::move(/*mesh*/);
+    //}
+    mesher(shell_type shell) : m_shell(std::move(shell)) {
         mesher<spt::multi<facet_type>, spt::simplex> sh_mesher(shell);
         // mesh the shell...
         m_shell_mesh = std::move(/*mesh*/);
     }
-    mesher(shell_type&& shell) noexcept {
-        m_shell = std::move(shell);
-        mesher<spt::multi<facet_type>, spt::simplex> sh_mesher(shell);
-        // mesh the shell...
-        m_shell_mesh = std::move(/*mesh*/);
-    }
-    mesher(const shell_mesh_type& mesh) {
-        m_shell_mesh = mesh;
-    }
+    mesher(shell_mesh_type mesh) : m_shell_mesh(std::move(mesh)) {}
 
 
 private:
