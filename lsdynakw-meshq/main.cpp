@@ -159,7 +159,7 @@ mesh_t simplices_from_kw(std::istream& stream) {
 // Returns minimum and average quality.
 std::pair<real_t, real_t> quality(const mesh_t& mesh) {
     std::vector<real_t> qualities(mesh.elements.size());
-    std::transform(mesh.elements.begin(), mesh.elements.end(), qualities.begin(), 
+    std::transform(mesh.elements.begin(), mesh.elements.end(), qualities.begin(),
                    [](const auto& elem) { return pmg::quality(elem.get()); });
 
     real_t min_q = *std::min_element(qualities.begin(), qualities.end());
@@ -168,6 +168,18 @@ std::pair<real_t, real_t> quality(const mesh_t& mesh) {
     return { min_q, av_q };
 }
 
+template <typename T, typename Y>
+auto move_if_rvalue(Y&& v) noexcept {
+    if constexpr (std::is_rvalue_reference_v<T>)
+        return std::move(v);
+    else
+        return v;
+} // it doesn't work
+
+template <typename String>
+void f(std::string& str0, String&& str1) {
+    str0 = move_if_rvalue<String>(str1);
+}
 
 int main() {
     std::ifstream kw_file("heat.k");
@@ -179,14 +191,18 @@ int main() {
         << ">>  Minimum quality....>>  " << quality_min_av.first << std::endl
         << ">>  Average quality....>>  " << quality_min_av.second << std::endl
         << ">>  Elements number....>>  " << mesh.elements.size() << std::endl;
-        
+
     std::cout << spt::dot(spt::vec<3>(0, 1, 1), spt::vec<3>(0, 1, 2)) << std::endl;
     std::cout << spt::dot(spt::mat<3>::identity(), spt::vec<3>(0, 1, 2)).magnitude() << std::endl;
     std::cout << spt::dot(spt::mat<3>::identity().inversed(), spt::mat<3>::identity().transposed() * 2)[1].magnitude() << std::endl;
 
     spt::raw_mesh<spt::polytope<2>> shell;
-    spt::raw_mesh<spt::simplex<2>, spt::multi> shell_mesh;
+    spt::raw_mesh<spt::simplex<2>, spt::aggregate> shell_mesh;
     pmg::mesher mesher(shell, shell_mesh);
+
+    std::string str0 = "kek", str1 = "lul";
+    f(str0, std::move(str1));
+    std::cout << std::endl << str1 << std::endl;
 
     return 0;
 }
