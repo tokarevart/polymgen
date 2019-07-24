@@ -19,12 +19,15 @@ struct mesh_base<Pointer, spt::polytope<N, Dim, Real>> {
     std::vector<Pointer<facet_type>> facets;
     std::vector<Pointer<elem_type>> elements;
 
-    std::enable_if_t<std::is_same_v<std::unique_ptr<void>, Pointer<void>>, spt::raw_mesh<elem_type>> get() { 
+    auto get() {
+        static_assert(std::is_same_v<std::unique_ptr<void>, Pointer<void>>);
+        
         return spt::to_raw_mesh<elem_type>(*this);
     }
 
-    std::enable_if_t<!std::is_same_v<std::unique_ptr<void>, Pointer<void>>, mesh_base>& 
-    operator=(const mesh_base& other) {
+    mesh_base& operator=(const mesh_base& other) {
+        static_assert(!std::is_same_v<std::unique_ptr<void>, Pointer<void>>);
+
         vertices = other.vertices;
         // ...
         facets = other.facets;

@@ -20,11 +20,15 @@ struct mesh_base<Pointer, spt::simplex<N, Dim, Real>> {
     std::vector<Pointer<facet_type>> facets;
     std::vector<Pointer<elem_type>> elements;
 
-    std::enable_if_t<std::is_same_v<std::unique_ptr<void>, Pointer<void>>, spt::raw_mesh<elem_type>> get() { 
+    auto get() { 
+        static_assert(std::is_same_v<std::unique_ptr<void>, Pointer<void>>);
+
         return spt::to_raw_mesh<elem_type>(*this); 
     }
 
-    std::enable_if_t<!std::is_same_v<std::unique_ptr<void>, Pointer<void>>, mesh_base>& operator=(const mesh_base& other) {
+    mesh_base& operator=(const mesh_base& other) {
+        static_assert(!std::is_same_v<std::unique_ptr<void>, Pointer<void>>);
+
         vertices = other.vertices;
         // ...
         facets = other.facets;
@@ -58,11 +62,15 @@ struct mesh_base<Pointer, spt::simplex_v<N, Dim, Real>> {
     std::vector<Pointer<vertex_type>> vertices;
     std::vector<Pointer<elem_type>> elements;
 
-    template <typename = std::enable_if_t<std::is_same_v<std::unique_ptr<void>, Pointer<void>>>>
-    auto get() { return spt::to_raw_mesh(*this); }
+    auto get() { 
+        static_assert(std::is_same_v<std::unique_ptr<void>, Pointer<void>>);
 
-    template <typename = std::enable_if_t<!std::is_same_v<std::unique_ptr<void>, Pointer<void>>>>
+        return spt::to_raw_mesh(*this); 
+    }
+
     mesh_base& operator=(const mesh_base& other) {
+        static_assert(!std::is_same_v<std::unique_ptr<void>, Pointer<void>>);
+
         vertices = other.vertices;
         elements = other.elements;
         return *this;

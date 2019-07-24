@@ -199,7 +199,7 @@ int main() {
     spt::raw_mesh<spt::polytope<2>> shell;
     spt::raw_mesh<spt::simplex<2>, spt::amount::aggregate> shell_mesh;
     pmg::mesher mesher(shell, shell_mesh);
-
+    
     std::string str0 = "kek", str1 = "lul";
     f(str0, std::move(str1));
     std::cout << std::endl << str1 << std::endl;
