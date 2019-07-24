@@ -1,6 +1,7 @@
 #pragma once
 #include "mesh-base.h"
 #include "../simplex.h"
+#include "conversion.h"
 
 namespace spt {
 
@@ -19,7 +20,11 @@ struct mesh_base<Pointer, spt::simplex<N, Dim, Real>> {
     std::vector<Pointer<facet_type>> facets;
     std::vector<Pointer<elem_type>> elements;
 
-    mesh_base& operator=(const mesh_base& other) {
+    std::enable_if_t<std::is_same_v<std::unique_ptr<void>, Pointer<void>>, spt::raw_mesh<elem_type>> get() { 
+        return spt::to_raw_mesh<elem_type>(*this); 
+    }
+
+    std::enable_if_t<!std::is_same_v<std::unique_ptr<void>, Pointer<void>>, mesh_base>& operator=(const mesh_base& other) {
         vertices = other.vertices;
         // ...
         facets = other.facets;
@@ -53,6 +58,10 @@ struct mesh_base<Pointer, spt::simplex_v<N, Dim, Real>> {
     std::vector<Pointer<vertex_type>> vertices;
     std::vector<Pointer<elem_type>> elements;
 
+    template <typename = std::enable_if_t<std::is_same_v<std::unique_ptr<void>, Pointer<void>>>>
+    auto get() { return spt::to_raw_mesh(*this); }
+
+    template <typename = std::enable_if_t<!std::is_same_v<std::unique_ptr<void>, Pointer<void>>>>
     mesh_base& operator=(const mesh_base& other) {
         vertices = other.vertices;
         elements = other.elements;

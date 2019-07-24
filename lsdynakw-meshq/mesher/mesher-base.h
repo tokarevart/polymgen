@@ -8,7 +8,8 @@ namespace pmg {
 template <
     typename Polytope, 
     template <std::size_t N, std::size_t Dim, typename Real> typename ElemType,
-    template <typename... Args> typename Pointer>
+    template <typename... Args> typename Pointer,
+    spt::amount PolytopesAmount = spt::amount::single>
 class mesher;
 
 } // namespace pmg

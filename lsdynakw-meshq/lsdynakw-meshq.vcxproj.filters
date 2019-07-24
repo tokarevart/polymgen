@@ -126,5 +126,8 @@
     <ClInclude Include="polyspt\triangle.h">
       <Filter>polyspt</Filter>
     </ClInclude>
+    <ClInclude Include="polyspt\mesh\conversion.h">
+      <Filter>polyspt\mesh</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

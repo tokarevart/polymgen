@@ -16,6 +16,9 @@ struct simplex<3, Dim, Real> {
 
     std::array<face_type*, 4> faces = { nullptr, nullptr, nullptr, nullptr, };
 
+    auto& facets() { return faces; }
+    auto& facets() const { return facets(); }
+
     real_type volume() const {
         auto verts = all_of<vertex_type>();
         return static_cast<real_type>(1.0 / 6.0) *

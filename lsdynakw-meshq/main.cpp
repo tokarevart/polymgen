@@ -184,7 +184,7 @@ void f(std::string& str0, String&& str1) {
 int main() {
     std::ifstream kw_file("heat.k");
 
-    auto mesh = simplices_from_kw(kw_file);
+    mesh_t mesh(simplices_from_kw(kw_file));
     auto quality_min_av = quality(mesh);
 
     std::cout
@@ -197,7 +197,7 @@ int main() {
     std::cout << spt::dot(spt::mat<3>::identity().inversed(), spt::mat<3>::identity().transposed() * 2)[1].magnitude() << std::endl;
 
     spt::raw_mesh<spt::polytope<2>> shell;
-    spt::raw_mesh<spt::simplex<2>, spt::aggregate> shell_mesh;
+    spt::raw_mesh<spt::simplex<2>, spt::amount::aggregate> shell_mesh;
     pmg::mesher mesher(shell, shell_mesh);
 
     std::string str0 = "kek", str1 = "lul";

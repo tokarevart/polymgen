@@ -14,6 +14,9 @@ struct simplex<2, Dim, Real> {
 
     std::array<edge_type*, 3> edges{ nullptr, nullptr, nullptr };
 
+    auto& facets() { return edges; }
+    auto& facets() const { return facets(); }
+
     template <typename SubSimplex>
     auto all_of() const {
         static_assert(std::is_same<edge_type, SubSimplex>() || std::is_same<vertex_type, SubSimplex>());
