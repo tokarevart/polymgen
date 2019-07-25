@@ -76,7 +76,7 @@ bool pmg::Edge::flip_if_needed(std::list<pmg::Edge*>& edgesList, std::list<pmg::
     real_t alpha = std::acos(spt::cos(verts[0]->pos() - opp_nodes[0]->pos(), verts[1]->pos() - opp_nodes[0]->pos()));
     real_t beta = std::acos(spt::cos(verts[0]->pos() - opp_nodes[1]->pos(), verts[1]->pos() - opp_nodes[1]->pos()));
 
-    if (alpha + beta <= PI)
+    if (alpha + beta <= mathconsts::PI)
         return false;
 
 
@@ -166,7 +166,7 @@ bool pmg::Edge::need_to_flip(const std::list<pmg::Face*>& facesList) {
     real_t alpha = std::acos(spt::cos(verts[0]->pos() - opp_nodes[0]->pos(), verts[1]->pos() - opp_nodes[0]->pos()));
     real_t beta = std::acos(spt::cos(verts[0]->pos() - opp_nodes[1]->pos(), verts[1]->pos() - opp_nodes[1]->pos()));
 
-    if (alpha + beta <= PI)
+    if (alpha + beta <= mathconsts::PI)
         return true;
 
     return false;

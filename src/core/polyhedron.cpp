@@ -42,7 +42,7 @@ using vec3 = spt::vec<3, real_t>;
 
 template <typename T>
 constexpr real_t degToRad(T value) {
-    return value * DEG_IN_RAD;
+    return value * mathconsts::DEG_IN_RAD;
 }
 
 
@@ -1211,7 +1211,7 @@ bool Polyhedron::try_compute_new_vert_pos_type2(front::Face* fface, vec3& out_po
         any_edge_intersect_face(v1, v2, new_pos)) {
         // NOTE: do i really need it?
 
-        new_pos = new_pos = v2_pos + e * av_magn;
+        new_pos = v2_pos + e * av_magn;
         if (edge_intersect_front(v0, new_pos) ||
             edge_intersect_front(v1, new_pos) ||
             edge_intersect_front(v2, new_pos) ||

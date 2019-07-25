@@ -30,7 +30,7 @@ using vec3 = spt::vec<3, real_t>;
 
 template <typename T>
 constexpr real_t degToRad(T value) {
-    return value * DEG_IN_RAD;
+    return value * mathconsts::DEG_IN_RAD;
 }
 
 
@@ -613,7 +613,7 @@ bool surface::Face::flip_if_needed(pmg::Edge* edge) {
     real_t alpha = std::acos(spt::cos(edge->verts[0]->pos() - opp_nodes[0]->pos(), edge->verts[1]->pos() - opp_nodes[0]->pos()));
     real_t beta = std::acos(spt::cos(edge->verts[0]->pos() - opp_nodes[1]->pos(), edge->verts[1]->pos() - opp_nodes[1]->pos()));
 
-    if (alpha + beta <= PI)
+    if (alpha + beta <= mathconsts::PI)
         return false;
 
 
