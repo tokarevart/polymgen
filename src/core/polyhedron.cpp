@@ -33,11 +33,11 @@ using vec3 = spt::vec<3, real_t>;
 #define SQRT_2_3             static_cast<real_t>(0.8164965809277260)
 #define ONE_PLUS_SQRT2_SQRT3 static_cast<real_t>(1.3938468501173517)
 
-#define C_MIN_DIS              static_cast<real_t>(2e-1)
+#define C_MIN_DIS           static_cast<real_t>(2.45e-1) // 2e-1
 #define C_EDGES_INTERS_DIST static_cast<real_t>(4e-3)
 
-#define C_MAXD static_cast<real_t>(0.3)
-#define C_D    static_cast<real_t>(0.4)
+#define C_MAXD static_cast<real_t>(0.1475) // 0.2
+#define C_D    static_cast<real_t>(0.3) // 0.3
 
 
 template <typename T>
@@ -46,7 +46,7 @@ constexpr real_t degToRad(T value) {
 }
 
 
-//#define DEV_DEBUG
+//#define DEBUG
 
 
 void Polyhedron::initialize_fface_fedges(front::Face* fface) const {
@@ -739,8 +739,10 @@ void Polyhedron::exhaust_front_collapse(front::Edge* fedge, front::Edge* opp_fed
     for (auto& l_fedge : fedges_to_erase)
         remove_from_front(l_fedge);
 
+    #ifdef DEBUG
     debug();
     std::cout << std::endl << "exhaust_front_collapse";
+    #endif // DEBUG
 }
 
 
@@ -855,24 +857,28 @@ void Polyhedron::exhaust_front_split(front::Edge* fedge, front::Edge* opp_fedge)
     remove_from_front(adj_ffaces.second);
     remove_from_front(fedge);
 
+    #ifdef DEBUG
     debug();
     std::cout << std::endl << "exhaust_front_split";
+    #endif // DEBUG
 }
 
 
 void Polyhedron::exhaust_without_new_vert_opp_edge_exists(front::Edge* fedge, front::Edge* opp_fedge) {
-    //
+    #ifdef DEBUG
     debug();
     opp_fedge = fedge->find_opp_edge();
     opp_fedge->clear_adj_ffaces();
-    //
+    #endif // DEBUG
+    
     auto opp_ffaces = opp_fedge->adj_ffaces();
 
     Vert* main_vert;
-    //
+    #ifdef DEBUG
     debug();
     fedge->clear_adj_ffaces();
-    //
+    #endif // DEBUG
+    
     auto fedge_adj_faces = fedge->adj_ffaces();
     std::array<front::Face*, 3> main_ffaces;
     main_ffaces[0] = std::get<0>(fedge_adj_faces);
@@ -892,7 +898,7 @@ void Polyhedron::exhaust_without_new_vert_opp_edge_exists(front::Edge* fedge, fr
         main_vert = fedge->x->verts[1];
     }
 
-    //
+    #ifdef DEBUG
     debug();
     std::array<front::Edge*, 3> fedges_to_erase_deb;
     std::size_t idx_deb = 0;
@@ -902,7 +908,7 @@ void Polyhedron::exhaust_without_new_vert_opp_edge_exists(front::Edge* fedge, fr
                 == fedges_to_erase_deb.begin() + idx_deb &&
                 l_fedge->x->contains(main_vert))
                 fedges_to_erase_deb[idx_deb++] = l_fedge;
-    //
+    #endif // DEBUG
 
     std::array<front::Edge*, 3> new_tetr_fedges;
     for (std::size_t i = 0; i < 3; i++) {
@@ -945,8 +951,10 @@ void Polyhedron::exhaust_without_new_vert_opp_edge_exists(front::Edge* fedge, fr
     for (auto& l_fface : main_ffaces)
         remove_from_front(l_fface);
 
+    #ifdef DEBUG
     debug();
     std::cout << std::endl << "exhaust_without_new_vert_opp_edge_exists";
+    #endif // DEBUG
 }
 
 
@@ -1041,8 +1049,10 @@ void Polyhedron::exhaust_without_new_vert_opp_edge_doesnt_exist(front::Edge* fed
     remove_from_front(adj_ffaces.second);
     remove_from_front(fedge);
 
+    #ifdef DEBUG
     debug();
     std::cout << std::endl << "exhaust_without_new_vert_opp_edge_doesnt_exist";
+    #endif // DEBUG
 }
 
 
@@ -1360,8 +1370,8 @@ front::Face* Polyhedron::choose_face_for_exhaustion_with_new_vert(front::Edge* f
 
     return sqr_face_4areas(std::get<0>(adj_ffaces)) < sqr_face_4areas(std::get<1>(adj_ffaces)) ?
 //    return std::get<0>(adj_ffaces)->quality() < std::get<1>(adj_ffaces)->quality() ?
-std::get<0>(adj_ffaces) :
-    std::get<1>(adj_ffaces);
+        std::get<0>(adj_ffaces) :
+        std::get<1>(adj_ffaces);
 }
 
 
@@ -1424,8 +1434,10 @@ void Polyhedron::exhaust_with_new_vert(front::Face* fface, const vec3& vert_pos)
 
     remove_from_front(fface);
 
+    #ifdef DEBUG
     debug();
     std::cout << std::endl << "exhaust_with_new_vert";
+    #endif // DEBUG
 }
 
 
@@ -1508,7 +1520,7 @@ void Polyhedron::process_angles() {
 
             case exhaust_type::dont_exhaust:
                 max_compl = cur_fedge->complexity();
-                #ifdef DEV_DEBUG
+                #ifdef DEBUG
                 std::cout << std::endl << "dont_exhaust";
                 #endif
                 continue;
@@ -1516,10 +1528,12 @@ void Polyhedron::process_angles() {
         }
         max_compl = std::numeric_limits<real_t>::max();
         
+        #ifdef DEBUG
         std::cout << std::endl << debug_i;
         if (debug_i++ == 159)
             m_polyhset->output(filetype::wavefront_obj, "debug.obj");
         debug();
+        #endif // DEBUG
 
         if (front_exhausted())
             return;

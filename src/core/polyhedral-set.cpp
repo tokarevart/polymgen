@@ -13,7 +13,7 @@ using namespace pmg;
 using vec3 = spt::vec<3, real_t>;
 
 
-#define DEV_DEBUG
+//#define DEBUG
 
 
 shell::Edge* PolyhedralSet::find_shell_edge(const shell::Vert* v0, const shell::Vert* v1) const {
@@ -70,7 +70,7 @@ void PolyhedralSet::output_obj(std::string_view filename) const {
         }
     }
 
-#ifdef DEV_DEBUG
+#ifdef DEBUG
     for (auto& polyhedr : m_polyhedrons) {
         for (auto& f_face : polyhedr->front_faces()) {
             auto face = f_face->x;

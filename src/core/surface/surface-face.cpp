@@ -21,11 +21,11 @@ using vec3 = spt::vec<3, real_t>;
 #define SIXTEEN_DIV_NINE static_cast<real_t>(1.7777777777777777)
 #define SQRT3_2          static_cast<real_t>(0.8660254037844386)
 
-#define K_MIN_DIS              static_cast<real_t>(2e-1)
+#define K_MIN_DIS           static_cast<real_t>(2e-1)
 #define C_EDGES_INTERS_DIST static_cast<real_t>(1e-4)
 
-#define K_MAXD static_cast<real_t>(0.3)
-#define K_D    static_cast<real_t>(0.5)
+#define K_MAXD static_cast<real_t>(0.2)
+#define K_D    static_cast<real_t>(0.3)
 
 
 template <typename T>
@@ -162,18 +162,17 @@ void surface::Face::remove_from_front(sfront::Edge* fedge) {
 
 
 void surface::Face::remove_from_front(sfront::Vert* fvert) {
-    //m_front_verts.erase(std::find(m_front_verts.begin(), m_front_verts.end(), fvert));
-    auto rem_iter = std::find(m_front_verts.begin(), m_front_verts.end(), fvert);
-    *rem_iter = m_front_verts.back();
-    m_front_verts.pop_back();
+    m_front_verts.erase(std::find(m_front_verts.begin(), m_front_verts.end(), fvert));
+    //auto rem_iter = std::find(m_front_verts.begin(), m_front_verts.end(), fvert);
+    //*rem_iter = m_front_verts.back();
+    //m_front_verts.pop_back();
     delete fvert;
 }
 
 
 bool surface::Face::any_vert_inside_potential_triangle_check(sfront::Vert* fvert) const {
     auto l_opp_verts = fvert->opp_verts();
-    std::array<pmg::Vert*, 3> tr
-    {
+    std::array<pmg::Vert*, 3> tr {
         fvert->x,
         l_opp_verts.first,
         l_opp_verts.second
@@ -274,8 +273,8 @@ bool surface::Face::try_compute_new_vert_pos_type1(sfront::Edge* fedge, vec3& ou
 
     vec3 v0_to_np = new_pos - main_vert->pos();
     vec3 v1_to_np = new_pos - sec_vert->pos();
-    if (does_segment_intersects_with_front(main_vert->pos(), new_pos + v0_to_np * K_MIN_DIS) ||
-        does_segment_intersects_with_front(sec_vert->pos(), new_pos + v1_to_np * K_MIN_DIS))
+    if (does_segment_intersects_with_front(main_vert, new_pos + v0_to_np * K_MIN_DIS) ||
+        does_segment_intersects_with_front(sec_vert, new_pos + v1_to_np * K_MIN_DIS))
         return false;
 
     out_pos = new_pos;
@@ -306,8 +305,7 @@ bool surface::Face::try_compute_new_vert_pos_type0(sfront::Edge* fedge, vec3& ou
 
 
 bool surface::Face::try_compute_new_vert_pos(sfront::Edge* fedge, vec3& out_pos) {
-    std::array<real_t, 2> angs
-    {
+    std::array<real_t, 2> angs {
         find_front_vert(fedge->x->verts[0])->angle(),
         find_front_vert(fedge->x->verts[1])->angle()
     };
