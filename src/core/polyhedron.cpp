@@ -33,10 +33,10 @@ using vec3 = spt::vec<3, real_t>;
 #define SQRT_2_3             static_cast<real_t>(0.8164965809277260)
 #define ONE_PLUS_SQRT2_SQRT3 static_cast<real_t>(1.3938468501173517)
 
-#define C_MIN_DIS           static_cast<real_t>(2.45e-1) // 2e-1
+#define C_MIN_DIS           static_cast<real_t>(2e-1) // 2e-1
 #define C_EDGES_INTERS_DIST static_cast<real_t>(4e-3)
 
-#define C_MAXD static_cast<real_t>(0.1475) // 0.3
+#define C_MAXD static_cast<real_t>(0.14) // 0.3
 #define C_D    static_cast<real_t>(0.3) // 0.4
 
 
@@ -272,8 +272,7 @@ bool Polyhedron::will_edge_intersect_front(front::Edge* fedge) const {
 
     for (auto& l_fedge : m_front_edges) {
         Vert* vert_buf;
-        std::array<bool, 2> contains =
-        {
+        std::array<bool, 2> contains{
             l_fedge->x->contains(std::get<0>(l_opp_verts)),
             l_fedge->x->contains(std::get<1>(l_opp_verts))
         };
@@ -296,8 +295,8 @@ bool Polyhedron::will_edge_intersect_front(front::Edge* fedge) const {
                 return true;
         } else {
             if (spt::segments_distance(
-                std::get<0>(l_opp_verts)->pos(), std::get<1>(l_opp_verts)->pos(),
-                l_fedge->x->verts[0]->pos(), l_fedge->x->verts[1]->pos()) < C_EDGES_INTERS_DIST * m_prefLen)
+                    std::get<0>(l_opp_verts)->pos(), std::get<1>(l_opp_verts)->pos(),
+                    l_fedge->x->verts[0]->pos(), l_fedge->x->verts[1]->pos()) < C_EDGES_INTERS_DIST * m_prefLen)
                 return true;
         }
     }
@@ -308,8 +307,7 @@ bool Polyhedron::will_edge_intersect_front(front::Edge* fedge) const {
 
 bool Polyhedron::any_edge_intersect_face(const Vert* v0, const Vert* v1, const vec3& v2) const {
     for (auto& l_fedge : m_front_edges) {
-        std::array<bool, 2> contains =
-        {
+        std::array<bool, 2> contains{
             l_fedge->x->contains(v0),
             l_fedge->x->contains(v1)
         };
@@ -336,8 +334,8 @@ bool Polyhedron::any_edge_intersect_face(const Vert* v0, const Vert* v1, const V
             continue;
 
         if (spt::does_segment_intersect_triangle(
-            l_fedge->x->verts[0]->pos(), l_fedge->x->verts[1]->pos(),
-            v0->pos(), v1->pos(), v1->pos()))
+                l_fedge->x->verts[0]->pos(), l_fedge->x->verts[1]->pos(),
+                v0->pos(), v1->pos(), v2->pos()))
             return true;
     }
 
