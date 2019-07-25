@@ -43,7 +43,7 @@ real_t front::Vert::compute_complexity() {
     auto l_adj_edges = adj_edges();
     real_t adj_edges_av_len = static_cast<real_t>(0.5) * (std::get<0>(l_adj_edges)->x->magnitude()
                                                           + std::get<1>(l_adj_edges)->x->magnitude());
-    return m_complexity = m_related_surface_face->preferred_length() / adj_edges_av_len + K_ALPHA * PI / compute_angle();
+    return m_complexity = m_related_surface_face->preferred_length() / adj_edges_av_len + K_ALPHA * mathconsts::PI / compute_angle();
 }
 
 
@@ -55,7 +55,7 @@ real_t front::Vert::compute_angle() {
     return m_angle = spt::cpa_time(
         std::get<0>(l_adj_edges)->center(), std::get<0>(l_adj_edges)->normal,
         std::get<1>(l_adj_edges)->center(), std::get<1>(l_adj_edges)->normal) < static_cast<real_t>(1e-6) ?
-        std::acos(normals_cos) + PI :
+        std::acos(normals_cos) + mathconsts::PI :
         std::acos(-normals_cos);
 }
 

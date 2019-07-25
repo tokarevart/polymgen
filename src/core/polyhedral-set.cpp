@@ -232,7 +232,7 @@ void PolyhedralSet::tetrahedralize(real_t preferred_length, genparams::Polyhedro
     auto shell_triang_start = std::chrono::steady_clock::now();
     try {
         triangulate_shell(gen_params.shell);
-    } catch (std::logic_error error) {
+    } catch (std::logic_error& error) {
         output(filetype::wavefront_obj, "debug.obj");
         throw error;
     }
@@ -245,7 +245,7 @@ void PolyhedralSet::tetrahedralize(real_t preferred_length, genparams::Polyhedro
     for (std::size_t i = 0; i < n_polyhs; i++) {
         try {
             m_polyhedrons[i]->tetrahedralize(m_prefLen, gen_params.volume);
-        } catch (std::logic_error error) {
+        } catch (std::logic_error& error) {
             output(filetype::wavefront_obj, "debug.obj");
             throw error;
         }

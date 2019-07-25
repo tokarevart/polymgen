@@ -70,7 +70,7 @@ real_t front::Edge::angle() {
 
 real_t front::Edge::compute_complexity() {
     m_need_complexity_processing = false;
-    return m_complexity = m_related_polyhedron->preferred_length() / x->magnitude() + K_ALPHA * PI / angle();
+    return m_complexity = m_related_polyhedron->preferred_length() / x->magnitude() + K_ALPHA * mathconsts::PI / angle();
 }
 
 
@@ -82,7 +82,7 @@ real_t front::Edge::compute_angle() {
     return m_angle = spt::cpa_time(
         std::get<0>(adj_faces)->center(), std::get<0>(adj_faces)->normal,
         std::get<1>(adj_faces)->center(), std::get<1>(adj_faces)->normal) < static_cast<real_t>(1e-6) ?
-        std::acos(normals_cos) + PI :
+        std::acos(normals_cos) + mathconsts::PI :
         std::acos(-normals_cos);
 }
 
