@@ -33,7 +33,7 @@ using vec3 = spt::vec<3, real_t>;
 #define SQRT_2_3             static_cast<real_t>(0.8164965809277260)
 #define ONE_PLUS_SQRT2_SQRT3 static_cast<real_t>(1.3938468501173517)
 
-#define C_MIN_DIS              static_cast<real_t>(2e-1)
+#define C_MIN_DIS           static_cast<real_t>(2e-1)
 #define C_EDGES_INTERS_DIST static_cast<real_t>(4e-3)
 
 #define C_MAXD static_cast<real_t>(0.3)
@@ -115,23 +115,21 @@ void pmg::Polyhedron::initialize_fedge_fverts(front::Edge* fedge) const {
 
 
 shell::Edge* Polyhedron::find_shell_edge(const shell::Vert* v0, const shell::Vert* v1) const {
-    for (auto& sedge : m_shell_edges) {
+    for (auto& sedge : m_shell_edges)
         if ((sedge->verts[0] == v0 &&
              sedge->verts[1] == v1) ||
              (sedge->verts[1] == v0 &&
               sedge->verts[0] == v1))
             return sedge;
-    }
 
     return nullptr;
 }
 
 
 front::Face* Polyhedron::find_front_face(const Face* face) const {
-    for (auto& fface : m_front_faces) {
+    for (auto& fface : m_front_faces)
         if (fface->x == face)
             return fface;
-    }
 
     return nullptr;
 }
@@ -139,14 +137,12 @@ front::Face* Polyhedron::find_front_face(const Face* face) const {
 
 std::vector<front::Edge*> Polyhedron::find_front_edge(const Vert* v0, const Vert* v1) const {
     std::vector<front::Edge*> res;
-    for (auto& l_fedge : m_front_edges) {
+    for (auto& l_fedge : m_front_edges)
         if (((l_fedge->x->verts[0] == v0 &&
               l_fedge->x->verts[1] == v1) ||
               (l_fedge->x->verts[1] == v0 &&
-               l_fedge->x->verts[0] == v1))) {
+               l_fedge->x->verts[0] == v1)))
             res.push_back(l_fedge);
-        }
-    }
 
     return res;
 }
@@ -154,11 +150,9 @@ std::vector<front::Edge*> Polyhedron::find_front_edge(const Vert* v0, const Vert
 
 std::vector<front::Edge*> Polyhedron::find_front_edge(const Edge* edge) const {
     std::vector<front::Edge*> res;
-    for (auto& l_fedge : m_front_edges) {
-        if (l_fedge->x == edge) {
+    for (auto& l_fedge : m_front_edges)
+        if (l_fedge->x == edge)
             res.push_back(l_fedge);
-        }
-    }
 
     return res;
 }
@@ -237,28 +231,26 @@ void pmg::Polyhedron::remove_from_front(front::Vert* fvert) {
 
 
 bool Polyhedron::segmentIntersectMesh(const vec3& v0, const vec3& v1) const {
-    for (auto& face : m_inner_faces) {
+    for (auto& face : m_inner_faces) 
         if (spt::does_segment_intersect_triangle(
-            v0, v1,
-            face->edges[0]->verts[0]->pos(),
-            face->edges[0]->verts[1]->pos(),
-            face->find_vert_not(face->edges[0])->pos()))
+                v0, v1,
+                face->edges[0]->verts[0]->pos(),
+                face->edges[0]->verts[1]->pos(),
+                face->find_vert_not(face->edges[0])->pos()))
             return true;
-    }
 
     return false;
 }
 
 
 bool Polyhedron::segmentIntersectFront(const vec3& v0, const vec3& v1) const {
-    for (auto& fface : m_front_faces) {
+    for (auto& fface : m_front_faces)
         if (spt::does_segment_intersect_triangle(
-            v0, v1,
-            fface->x->edges[0]->verts[0]->pos(),
-            fface->x->edges[0]->verts[1]->pos(),
-            fface->x->find_vert_not(fface->x->edges[0])->pos()))
+                v0, v1,
+                fface->x->edges[0]->verts[0]->pos(),
+                fface->x->edges[0]->verts[1]->pos(),
+                fface->x->find_vert_not(fface->x->edges[0])->pos()))
             return true;
-    }
 
     return false;
 }
@@ -270,10 +262,10 @@ bool Polyhedron::edge_intersect_front(const Vert* v0, const vec3& v1) const {
             continue;
 
         if (spt::does_segment_intersect_triangle(
-            v0->pos(), v1,
-            fface->x->edges[0]->verts[0]->pos(),
-            fface->x->edges[0]->verts[1]->pos(),
-            fface->x->find_vert_not(fface->x->edges[0])->pos()))
+                v0->pos(), v1,
+                fface->x->edges[0]->verts[0]->pos(),
+                fface->x->edges[0]->verts[1]->pos(),
+                fface->x->find_vert_not(fface->x->edges[0])->pos()))
             return true;
     }
 
@@ -288,10 +280,10 @@ bool Polyhedron::edge_intersect_front(const Vert* v0, const Vert* v1) const {
             continue;
 
         if (spt::does_segment_intersect_triangle(
-            v0->pos(), v1->pos(),
-            fface->x->edges[0]->verts[0]->pos(),
-            fface->x->edges[0]->verts[1]->pos(),
-            fface->x->find_vert_not(fface->x->edges[0])->pos()))
+                v0->pos(), v1->pos(),
+                fface->x->edges[0]->verts[0]->pos(),
+                fface->x->edges[0]->verts[1]->pos(),
+                fface->x->find_vert_not(fface->x->edges[0])->pos()))
             return true;
     }
 
@@ -306,10 +298,10 @@ bool Polyhedron::edge_intersect_any_face(const Edge* edge) const {
             continue;
 
         if (spt::does_segment_intersect_triangle(
-            edge->verts[0]->pos(), edge->verts[1]->pos(),
-            face->edges[0]->verts[0]->pos(),
-            face->edges[0]->verts[1]->pos(),
-            face->find_vert_not(face->edges[0])->pos()))
+                edge->verts[0]->pos(), edge->verts[1]->pos(),
+                face->edges[0]->verts[0]->pos(),
+                face->edges[0]->verts[1]->pos(),
+                face->find_vert_not(face->edges[0])->pos()))
             return true;
     }
 
@@ -335,8 +327,7 @@ bool Polyhedron::will_edge_intersect_front(front::Edge* fedge) const {
 
     for (auto& l_fedge : m_front_edges) {
         Vert* vert_buf;
-        std::array<bool, 2> contains =
-        {
+        std::array<bool, 2> contains{
             l_fedge->x->contains(std::get<0>(l_opp_verts)),
             l_fedge->x->contains(std::get<1>(l_opp_verts))
         };
@@ -359,8 +350,8 @@ bool Polyhedron::will_edge_intersect_front(front::Edge* fedge) const {
                 return true;
         } else {
             if (spt::segments_distance(
-                std::get<0>(l_opp_verts)->pos(), std::get<1>(l_opp_verts)->pos(),
-                l_fedge->x->verts[0]->pos(), l_fedge->x->verts[1]->pos()) < C_EDGES_INTERS_DIST * m_prefLen)
+                    std::get<0>(l_opp_verts)->pos(), std::get<1>(l_opp_verts)->pos(),
+                    l_fedge->x->verts[0]->pos(), l_fedge->x->verts[1]->pos()) < C_EDGES_INTERS_DIST * m_prefLen)
                 return true;
         }
     }
@@ -371,8 +362,7 @@ bool Polyhedron::will_edge_intersect_front(front::Edge* fedge) const {
 
 bool Polyhedron::any_edge_intersect_face(const Vert* v0, const Vert* v1, const vec3& v2) const {
     for (auto& l_fedge : m_front_edges) {
-        std::array<bool, 2> contains =
-        {
+        std::array<bool, 2> contains{
             l_fedge->x->contains(v0),
             l_fedge->x->contains(v1)
         };
@@ -382,8 +372,8 @@ bool Polyhedron::any_edge_intersect_face(const Vert* v0, const Vert* v1, const v
 
         auto cur_verts = l_fedge->x->verts;
         if (spt::does_segment_intersect_triangle(
-            cur_verts[0]->pos(), cur_verts[1]->pos(),
-            v0->pos(), v1->pos(), v2))
+                cur_verts[0]->pos(), cur_verts[1]->pos(),
+                v0->pos(), v1->pos(), v2))
             return true;
     }
 
@@ -399,8 +389,8 @@ bool Polyhedron::any_edge_intersect_face(const Vert* v0, const Vert* v1, const V
             continue;
 
         if (spt::does_segment_intersect_triangle(
-            l_fedge->x->verts[0]->pos(), l_fedge->x->verts[1]->pos(),
-            v0->pos(), v1->pos(), v1->pos()))
+                l_fedge->x->verts[0]->pos(), l_fedge->x->verts[1]->pos(),
+                v0->pos(), v1->pos(), v2->pos()))
             return true;
     }
 
