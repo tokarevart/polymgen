@@ -710,12 +710,6 @@ void Polyhedron::exhaust_front_collapse(front::Edge* fedge, front::Edge* opp_fed
         fedge->x->verts[1],
         opp_fedge->x->verts[0],
         opp_fedge->x->verts[1]));
-
-    auto new_tetr = new Tetr(fedge->x->verts[0],
-                             fedge->x->verts[1],
-                             opp_fedge->x->verts[0],
-                             opp_fedge->x->verts[1]);
-    m_inner_tetrs.push_back(new_tetr);
     
     std::vector<front::Edge*> fedges_to_erase;
     fedges_to_erase.reserve(4);
@@ -1575,6 +1569,13 @@ void Polyhedron::debug() {
         for (auto& edge : fface->x->edges)
             if (!fface->find_front_edge(edge))
                 throw std::exception();
+}
+
+real_t Polyhedron::exhausted_volume() const {
+    real_t vol = 0;
+    for (auto& tetr : m_inner_tetrs)
+        vol += tetr->volume();
+    return vol;
 }
 
 

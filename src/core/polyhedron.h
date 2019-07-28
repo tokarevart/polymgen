@@ -184,6 +184,7 @@ private:
     void process_angles();
 
     void debug();
+    real_t exhausted_volume() const;
 
     void compute_front_normals();
     void initialize_fface_fedges(front::Face* fface) const;
