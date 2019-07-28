@@ -13,7 +13,7 @@ using namespace pmg;
 using vec3 = spt::vec<3, real_t>;
 
 
-#define DEV_DEBUG
+#define DEBUG
 
 
 shell::Edge* PolyhedralSet::find_shell_edge(const shell::Vert* v0, const shell::Vert* v1) const {
@@ -36,7 +36,7 @@ void PolyhedralSet::triangulate_shell(genparams::Shell gen_params) {
         sedge->segmentize(m_prefLen);
 
     std::size_t n_shell_faces = m_shell_faces.size();
-#pragma omp parallel for
+    #pragma omp parallel for
     for (std::size_t i = 0; i < n_shell_faces; i++)
         m_shell_faces[i]->triangulate(m_prefLen, gen_params);
 }
@@ -70,7 +70,7 @@ void PolyhedralSet::output_obj(std::string_view filename) const {
         }
     }
 
-#ifdef DEV_DEBUG
+    #ifdef DEBUG
     for (auto& polyhedr : m_polyhedrons) {
         for (auto& f_face : polyhedr->front_faces()) {
             auto face = f_face->x;
@@ -84,7 +84,7 @@ void PolyhedralSet::output_obj(std::string_view filename) const {
             file << "f " << gl_nums[0] << ' ' << gl_nums[1] << ' ' << gl_nums[2] << '\n';
         }
     }
-#else
+    #else
     for (auto& sface : m_shell_faces) {
         for (auto& face : sface->inner_faces()) {
             std::vector<std::size_t> gl_nums;
@@ -108,7 +108,7 @@ void PolyhedralSet::output_obj(std::string_view filename) const {
             file << "f " << gl_nums[0] << ' ' << gl_nums[1] << ' ' << gl_nums[2] << '\n';
         }
     }
-#endif
+    #endif
 
     file.close();
 }
@@ -241,7 +241,7 @@ void PolyhedralSet::tetrahedralize(real_t preferred_length, genparams::Polyhedro
 
     auto volume_exh_start = std::chrono::steady_clock::now();
     std::size_t n_polyhs = m_polyhedrons.size();
-#pragma omp parallel for
+    #pragma omp parallel for
     for (std::size_t i = 0; i < n_polyhs; i++) {
         try {
             m_polyhedrons[i]->tetrahedralize(m_prefLen, gen_params.volume);
@@ -263,12 +263,12 @@ void PolyhedralSet::tetrahedralize(real_t preferred_length, genparams::Polyhedro
 
 void PolyhedralSet::smooth_mesh(std::size_t nItersVolume, std::size_t nItersShell) {
     std::size_t n_sfaces = m_shell_faces.size();
-#pragma omp parallel for
+    #pragma omp parallel for
     for (std::size_t i = 0; i < n_sfaces; i++)
         m_shell_faces[i]->smooth_mesh(nItersShell);
 
     std::size_t n_polyhs = m_polyhedrons.size();
-#pragma omp parallel for
+    #pragma omp parallel for
     for (std::size_t i = 0; i < n_polyhs; i++)
         m_polyhedrons[i]->smooth_mesh(nItersVolume);
 
@@ -278,7 +278,7 @@ void PolyhedralSet::smooth_mesh(std::size_t nItersVolume, std::size_t nItersShel
 
 void PolyhedralSet::shell_delaunay_postp() {
     std::size_t n_sfaces = m_shell_faces.size();
-#pragma omp parallel for
+    #pragma omp parallel for
     for (std::size_t i = 0; i < n_sfaces; i++)
         m_shell_faces[i]->delaunay_postp();
 
