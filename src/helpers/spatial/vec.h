@@ -115,7 +115,7 @@ struct vec<3, ValueType> {
         x = other.x;
     }
     vec(const std::array<value_type, 3> & x)
-        : x(x) {}
+        : x{ x } {}
     vec(value_type x0, value_type x1, value_type x2)
         : x{ x0, x1, x2 } {}
 };
@@ -203,7 +203,7 @@ struct vec<2, Real> {
         x = other.x;
     }
     vec(const std::array<value_type, 2> & x)
-        : x(x) {}
+        : x{ x } {}
     vec(value_type x0, value_type x1)
         : x{ x0, x1 } {}
 };
