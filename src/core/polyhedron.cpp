@@ -327,7 +327,7 @@ bool Polyhedron::will_edge_intersect_front(front::Edge* fedge) const {
 
     for (auto& l_fedge : m_front_edges) {
         Vert* vert_buf;
-        std::array<bool, 2> contains{
+        std::array contains{
             l_fedge->x->contains(std::get<0>(l_opp_verts)),
             l_fedge->x->contains(std::get<1>(l_opp_verts))
         };
@@ -362,7 +362,7 @@ bool Polyhedron::will_edge_intersect_front(front::Edge* fedge) const {
 
 bool Polyhedron::any_edge_intersect_face(const Vert* v0, const Vert* v1, const vec3& v2) const {
     for (auto& l_fedge : m_front_edges) {
-        std::array<bool, 2> contains{
+        std::array contains{
             l_fedge->x->contains(v0),
             l_fedge->x->contains(v1)
         };
@@ -412,11 +412,12 @@ bool Polyhedron::will_any_edge_intersect_faces(front::Edge* fedge) const {
 bool Polyhedron::will_any_vert_inside_tetr(front::Edge* fedge) const {
     auto l_opp_verts = fedge->opp_verts();
 
-    std::array<vec3, 4> points;
-    points[0] = std::get<0>(l_opp_verts)->pos();
-    points[1] = std::get<1>(l_opp_verts)->pos();
-    points[2] = fedge->x->verts[0]->pos();
-    points[3] = fedge->x->verts[1]->pos();
+    std::array points{
+        std::get<0>(l_opp_verts)->pos(),
+        std::get<1>(l_opp_verts)->pos(),
+        fedge->x->verts[0]->pos(),
+        fedge->x->verts[1]->pos()
+    };
     for (auto& vert : m_inner_verts) {
         if (vert != std::get<0>(l_opp_verts) &&
             vert != std::get<1>(l_opp_verts) &&
@@ -469,17 +470,20 @@ bool Polyhedron::will_front_collapse(front::Edge* fedge, front::Edge* opp_fedge)
 bool Polyhedron::will_parallel_faces(front::Edge* fedge) const {
     auto adj_ffaces = fedge->adj_ffaces();
 
-    std::array<Vert*, 2> l_opp_verts;
-    l_opp_verts[0] = std::get<0>(adj_ffaces)->x->find_vert_not(fedge->x);
-    l_opp_verts[1] = std::get<1>(adj_ffaces)->x->find_vert_not(fedge->x);
+    std::array l_opp_verts{
+        std::get<0>(adj_ffaces)->x->find_vert_not(fedge->x),
+        std::get<1>(adj_ffaces)->x->find_vert_not(fedge->x)
+    };
 
-    std::array<vec3, 2> plane0;
-    plane0[0] = l_opp_verts[0]->pos() - fedge->x->verts[0]->pos();
-    plane0[1] = l_opp_verts[1]->pos() - fedge->x->verts[0]->pos();
+    std::array plane0{
+        l_opp_verts[0]->pos() - fedge->x->verts[0]->pos(),
+        l_opp_verts[1]->pos() - fedge->x->verts[0]->pos()
+    };
     vec3 normal0 = spt::cross(plane0[0], plane0[1]).normalize();
-    std::array<vec3, 2> plane1;
-    plane1[0] = l_opp_verts[0]->pos() - fedge->x->verts[1]->pos();
-    plane1[1] = l_opp_verts[1]->pos() - fedge->x->verts[1]->pos();
+    std::array plane1{
+        l_opp_verts[0]->pos() - fedge->x->verts[1]->pos(),
+        l_opp_verts[1]->pos() - fedge->x->verts[1]->pos()
+    };
     vec3 normal1 = spt::cross(plane1[0], plane1[1]).normalize();
 
     for (auto& fface : m_front_faces) {
@@ -491,23 +495,26 @@ bool Polyhedron::will_parallel_faces(front::Edge* fedge) const {
             if (!XOR(static_cast<bool>(inters_reses[0]), static_cast<bool>(inters_reses[1])))
                 continue;
 
-            std::array<Vert*, 2> fface_to_verts;
-            fface_to_verts[0] = fface->x->edges[0]->verts[0];
-            fface_to_verts[1] = fface->x->edges[0]->verts[1];
+            std::array fface_to_verts{
+                fface->x->edges[0]->verts[0],
+                fface->x->edges[0]->verts[1]
+            };
             Vert* fface_from_vert = fface->x->find_vert_not(fface->x->edges[0]);
 
-            std::array<vec3, 2> f_plane;
-            f_plane[0] = fface_to_verts[0]->pos() - fface_from_vert->pos();
-            f_plane[1] = fface_to_verts[1]->pos() - fface_from_vert->pos();
+            std::array f_plane{
+                fface_to_verts[0]->pos() - fface_from_vert->pos(),
+                fface_to_verts[1]->pos() - fface_from_vert->pos()
+            };
             vec3 f_normal = spt::cross(f_plane[0], f_plane[1]).normalize();
 
             if (std::abs(std::abs(spt::dot(f_normal, normal0)) - static_cast<real_t>(1.0)) < static_cast<real_t>(1e-6) ||
                 std::abs(std::abs(spt::dot(f_normal, normal1)) - static_cast<real_t>(1.0)) < static_cast<real_t>(1e-6)) {
                 std::size_t i = inters_reses[0] ? 0 : 1;
 
-                std::array<vec3, 2> border_verts;
-                border_verts[0] = inters_reses[i]->verts[0]->pos();
-                border_verts[1] = inters_reses[i]->verts[1]->pos();
+                std::array border_verts{
+                    inters_reses[i]->verts[0]->pos(),
+                    inters_reses[i]->verts[1]->pos()
+                };
 
                 vec3 main_face_3rd_vert;
                 if (inters_reses[i]->contains(l_opp_verts[0]))
@@ -531,10 +538,11 @@ bool Polyhedron::will_parallel_faces(front::Edge* fedge) const {
 
 bool Polyhedron::does_front_intersect_sphere(const vec3& center, real_t radius) const {
     for (auto& fface : m_front_faces) {
-        std::array<vec3, 3> triangle;
-        triangle[0] = fface->x->edges[0]->verts[0]->pos();
-        triangle[1] = fface->x->edges[0]->verts[1]->pos();
-        triangle[2] = fface->x->find_vert_not(fface->x->edges[0])->pos();
+        std::array triangle{
+            fface->x->edges[0]->verts[0]->pos(),
+            fface->x->edges[0]->verts[1]->pos(),
+            fface->x->find_vert_not(fface->x->edges[0])->pos()
+        };
         if (spt::does_triangle_intersect_sphere(triangle[0], triangle[1], triangle[2], center, radius))
             return true;
     }
@@ -552,13 +560,14 @@ std::pair<real_t, real_t> Polyhedron::min_max_edges_lengths(const vec3& p0, cons
 
 
 std::pair<real_t, real_t> Polyhedron::min_max_edges_sqr_lengths(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3) {
-    std::array<real_t, 6> sqr_magns;
-    sqr_magns[0] = (p1 - p0).sqr_magnitude();
-    sqr_magns[1] = (p2 - p0).sqr_magnitude();
-    sqr_magns[2] = (p3 - p0).sqr_magnitude();
-    sqr_magns[3] = (p2 - p1).sqr_magnitude();
-    sqr_magns[4] = (p3 - p1).sqr_magnitude();
-    sqr_magns[5] = (p3 - p2).sqr_magnitude();
+    std::array sqr_magns{
+        (p1 - p0).sqr_magnitude(),
+        (p2 - p0).sqr_magnitude(),
+        (p3 - p0).sqr_magnitude(),
+        (p2 - p1).sqr_magnitude(),
+        (p3 - p1).sqr_magnitude(),
+        (p3 - p2).sqr_magnitude()
+    };
     return std::minmax({ sqr_magns[0], sqr_magns[1], sqr_magns[2], sqr_magns[3], sqr_magns[4], sqr_magns[5] });
 }
 
@@ -685,30 +694,26 @@ vec3 Polyhedron::compute_normal_in_tetr(const vec3& fface_pos0, const vec3& ffac
 
 void Polyhedron::set_front_edges_in_front_split(const front::Edge* fedge, std::array<front::Edge*, 2> new_opp_fedges, std::array<front::Face*, 2> new_ffaces, pair_ff opp_ffaces) const {
     pmg::Edge* opp_edge = new_opp_fedges[0]->x;
-    std::array<vec3, 2> opp_verts_poses;
-    opp_verts_poses[0] = opp_edge->verts[0]->pos();
-    opp_verts_poses[1] = opp_edge->verts[1]->pos();
     vec3 main_vert0_pos = new_ffaces[0]->x->contains(fedge->x->verts[0]) ?
         fedge->x->verts[0]->pos() : fedge->x->verts[1]->pos();
     vec3 main_vert1_pos = new_ffaces[1]->x->contains(fedge->x->verts[0]) ?
         fedge->x->verts[0]->pos() : fedge->x->verts[1]->pos();
-    vec3 main_vert0_proj = spt::project(main_vert0_pos, opp_verts_poses[0], opp_verts_poses[1]);
-    vec3 main_vert1_proj = spt::project(main_vert1_pos, opp_verts_poses[0], opp_verts_poses[1]);
+    vec3 main_vert0_proj = spt::project(main_vert0_pos, opp_edge->verts[0]->pos(), opp_edge->verts[1]->pos());
+    vec3 main_vert1_proj = spt::project(main_vert1_pos, opp_edge->verts[0]->pos(), opp_edge->verts[1]->pos());
     vec3 main_vec0 = main_vert0_pos - main_vert0_proj;
     vec3 main_vec1 = main_vert1_pos - main_vert1_proj;
 
     vec3 adj_opp_pos0 = opp_ffaces.first->x->find_vert_not(opp_edge)->pos();
     vec3 adj_opp_pos1 = opp_ffaces.second->x->find_vert_not(opp_edge)->pos();
-    vec3 adj_opp_proj0 = spt::project(adj_opp_pos0, opp_verts_poses[0], opp_verts_poses[1]);
-    vec3 adj_opp_proj1 = spt::project(adj_opp_pos1, opp_verts_poses[0], opp_verts_poses[1]);
+    vec3 adj_opp_proj0 = spt::project(adj_opp_pos0, opp_edge->verts[0]->pos(), opp_edge->verts[1]->pos());
+    vec3 adj_opp_proj1 = spt::project(adj_opp_pos1, opp_edge->verts[0]->pos(), opp_edge->verts[1]->pos());
     vec3 adj_vec0 = adj_opp_pos0 - adj_opp_proj0;
     vec3 adj_vec1 = adj_opp_pos1 - adj_opp_proj1;
 
-    std::array<std::array<real_t, 2>, 2> coses;
-    coses[0][0] = spt::cos(main_vec0, adj_vec0);
-    coses[0][1] = spt::cos(main_vec0, adj_vec1);
-    coses[1][0] = spt::cos(main_vec1, adj_vec0);
-    coses[1][1] = spt::cos(main_vec1, adj_vec1);
+    std::array coses{
+        std::array{ spt::cos(main_vec0, adj_vec0), spt::cos(main_vec0, adj_vec1) },
+        std::array{ spt::cos(main_vec1, adj_vec0), spt::cos(main_vec1, adj_vec1) }
+    };
 
     if (coses[0][0] > coses[0][1] && coses[1][1] > coses[1][0]) {
         new_opp_fedges[0]->fill_adj_ffaces(new_ffaces[0], opp_ffaces.first);
