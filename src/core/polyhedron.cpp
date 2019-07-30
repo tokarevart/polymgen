@@ -272,7 +272,7 @@ bool Polyhedron::will_edge_intersect_front(front::Edge* fedge) const {
 
     for (auto& l_fedge : m_front_edges) {
         Vert* vert_buf;
-        std::array<bool, 2> contains{
+        std::array contains{
             l_fedge->x->contains(std::get<0>(l_opp_verts)),
             l_fedge->x->contains(std::get<1>(l_opp_verts))
         };
@@ -307,7 +307,7 @@ bool Polyhedron::will_edge_intersect_front(front::Edge* fedge) const {
 
 bool Polyhedron::any_edge_intersect_face(const Vert* v0, const Vert* v1, const vec3& v2) const {
     for (auto& l_fedge : m_front_edges) {
-        std::array<bool, 2> contains{
+        std::array contains{
             l_fedge->x->contains(v0),
             l_fedge->x->contains(v1)
         };
@@ -357,11 +357,12 @@ bool Polyhedron::will_any_edge_intersect_faces(front::Edge* fedge) const {
 bool Polyhedron::will_any_vert_inside_tetr(front::Edge* fedge) const {
     auto l_opp_verts = fedge->opp_verts();
 
-    std::array<vec3, 4> points;
-    points[0] = std::get<0>(l_opp_verts)->pos();
-    points[1] = std::get<1>(l_opp_verts)->pos();
-    points[2] = fedge->x->verts[0]->pos();
-    points[3] = fedge->x->verts[1]->pos();
+    std::array points{
+        std::get<0>(l_opp_verts)->pos(),
+        std::get<1>(l_opp_verts)->pos(),
+        fedge->x->verts[0]->pos(),
+        fedge->x->verts[1]->pos()
+    };
     for (auto& vert : m_inner_verts) {
         if (vert != std::get<0>(l_opp_verts) &&
             vert != std::get<1>(l_opp_verts) &&
@@ -414,9 +415,10 @@ bool Polyhedron::will_front_collapse(front::Edge* fedge, front::Edge* opp_fedge)
 bool Polyhedron::will_parallel_faces(front::Edge* fedge) const {
     auto adj_ffaces = fedge->adj_ffaces();
 
-    std::array<Vert*, 2> l_opp_verts;
-    l_opp_verts[0] = std::get<0>(adj_ffaces)->x->find_vert_not(fedge->x);
-    l_opp_verts[1] = std::get<1>(adj_ffaces)->x->find_vert_not(fedge->x);
+    std::array l_opp_verts{
+        std::get<0>(adj_ffaces)->x->find_vert_not(fedge->x),
+        std::get<1>(adj_ffaces)->x->find_vert_not(fedge->x)
+    };
 
     std::array<vec3, 2> plane0;
     plane0[0] = l_opp_verts[0]->pos() - fedge->x->verts[0]->pos();

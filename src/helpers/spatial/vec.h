@@ -208,4 +208,9 @@ struct vec<2, Real> {
         : x{ x0, x1 } {}
 };
 
+template <std::size_t N, typename ValueType>
+vec<N, ValueType> operator*(ValueType scalar, const vec<N, ValueType>& v) {
+    return v * scalar;
+}
+
 } // namespace spt
