@@ -229,19 +229,20 @@ std::string PolyhedralSet::log_file_name() const {
 void PolyhedralSet::tetrahedralize(real_t preferred_length, genparams::Polyhedron gen_params) {
     m_prefLen = preferred_length;
 
-    auto shell_triang_start = std::chrono::steady_clock::now();
+    using namespace std::chrono;
+    auto shell_triang_start = steady_clock::now();
     try {
         triangulate_shell(gen_params.shell);
     } catch (std::logic_error& error) {
         output(filetype::wavefront_obj, "debug.obj");
         throw error;
     }
-    auto shell_triang_stop = std::chrono::steady_clock::now();
-    std::chrono::duration<double> shell_triang_elapsed = shell_triang_stop - shell_triang_start;
+    auto shell_triang_stop = steady_clock::now();
+    duration<double> shell_triang_elapsed = shell_triang_stop - shell_triang_start;
 
-    auto volume_exh_start = std::chrono::steady_clock::now();
+    auto volume_exh_start = steady_clock::now();
     std::size_t n_polyhs = m_polyhedrons.size();
-#pragma omp parallel for
+    #pragma omp parallel for
     for (std::size_t i = 0; i < n_polyhs; i++) {
         try {
             m_polyhedrons[i]->tetrahedralize(m_prefLen, gen_params.volume);
@@ -250,8 +251,8 @@ void PolyhedralSet::tetrahedralize(real_t preferred_length, genparams::Polyhedro
             throw error;
         }
     }
-    auto volume_exh_stop = std::chrono::steady_clock::now();
-    std::chrono::duration<double> volume_exh_elapsed = volume_exh_stop - volume_exh_start;
+    auto volume_exh_stop = steady_clock::now();
+    duration<double> volume_exh_elapsed = volume_exh_stop - volume_exh_start;
 
     m_log.n_polyhs = m_polyhedrons.size();
     m_log.pref_len = m_prefLen;
@@ -534,7 +535,8 @@ std::string PolyhedralSet::output_filename(filetype filetype, std::string_view f
 
 
 void PolyhedralSet::output(filetype filetype, std::string_view filename, unsigned polyhedral_set_id) {
-    auto start = std::chrono::steady_clock::now();
+    using namespace std::chrono;
+    auto start = steady_clock::now();
     switch (filetype) {
     case filetype::wavefront_obj:
         output_obj(output_filename(filetype::wavefront_obj, filename));
@@ -544,8 +546,8 @@ void PolyhedralSet::output(filetype filetype, std::string_view filename, unsigne
         output_lsdynakw(output_filename(filetype::lsdyna_keyword, filename), polyhedral_set_id);
         break;
     }
-    auto stop = std::chrono::steady_clock::now();
-    std::chrono::duration<double> elapsed = stop - start;
+    auto stop = steady_clock::now();
+    duration<double> elapsed = stop - start;
 
     m_log.mesh_file_writing_time = elapsed.count();
 }

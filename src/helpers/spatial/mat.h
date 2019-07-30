@@ -102,7 +102,7 @@ struct mat<3, ValueType> {
         x = other.x;
     }
     mat(const std::array<line_type, 3>& x)
-        : x(x) {}
+        : x{ x } {}
     mat(const std::array<value_type, 9>& x) {
         this->x[0] = line_type(x[0], x[1], x[2]);
         this->x[1] = line_type(x[3], x[4], x[5]);
