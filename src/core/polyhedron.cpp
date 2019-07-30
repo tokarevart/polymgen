@@ -425,15 +425,15 @@ bool Polyhedron::will_parallel_faces(front::Edge* fedge) const {
         l_opp_verts[1]->pos() - fedge->x->verts[1]->pos()
     };
     vec3 normal1 = spt::cross(plane1[0], plane1[1]).normalize();
-
-    auto xor = [](bool b0, bool b1) { return (b0 || b1) && !(b0 && b1); };
+    
+    auto l_xor = [](bool b0, bool b1) { return (b0 || b1) && !(b0 && b1); };
     for (auto& fface : m_front_faces) {
         std::array<Edge*, 2> inters_reses;
         if ((fface != std::get<0>(adj_ffaces)) &&
             (fface != std::get<1>(adj_ffaces))) {
             inters_reses[0] = relations::adjacent_by_edge(fface->x, std::get<0>(adj_ffaces)->x);
             inters_reses[1] = relations::adjacent_by_edge(fface->x, std::get<1>(adj_ffaces)->x);
-            if (!xor(static_cast<bool>(inters_reses[0]), static_cast<bool>(inters_reses[1])))
+            if (!l_xor(static_cast<bool>(inters_reses[0]), static_cast<bool>(inters_reses[1])))
                 continue;
 
             std::array fface_to_verts{
