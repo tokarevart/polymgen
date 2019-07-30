@@ -24,7 +24,7 @@ std::string rabbit() {
         res += line + '\n';
     return res;
 }
-
+#include "src/helpers/spatial/algs.h"
 int main() {
     std::cout << rabbit() << std::endl;
 
