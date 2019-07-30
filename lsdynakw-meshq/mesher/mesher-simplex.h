@@ -23,12 +23,8 @@ public:
              const genparams<polytope_type>& gen_params = genparams<polytope_type>());
 
     mesher(shell_type shell, shell_mesh_type mesh) 
-        //: m_shell(std::move(shell)), m_shell_mesh(std::move(mesh)) {}
-    {
-        m_shell = std::move(shell);
-        m_shell_mesh = std::move(mesh);
-    }
-    mesher(shell_type shell) : m_shell(std::move(shell)) {
+        : m_shell{ std::move(shell) }, m_shell_mesh{ std::move(mesh) } {}
+    mesher(shell_type shell) : m_shell{ std::move(shell) } {
         spt::unique_mesh<facet_type> l_shell;
         if constexpr (std::is_same_v<std::unique_ptr, Pointer>)
             ;
@@ -38,7 +34,7 @@ public:
         // mesh the shell...
         m_shell_mesh = std::move(/*mesh*/);
     }
-    mesher(shell_mesh_type mesh) : m_shell_mesh(std::move(mesh)) {}
+    mesher(shell_mesh_type mesh) : m_shell_mesh{ std::move(mesh) } {}
 
 
 private:
@@ -73,8 +69,8 @@ public:
              const genparams<polytope_type>& gen_params = genparams<polytope_type>());
 
     mesher(shell_type shell, shell_mesh_type mesh)
-        : m_shell(std::move(shell)), m_shell_mesh(std::move(mesh)) {}
-    mesher(shell_type shell) : m_shell(std::move(shell)) {
+        : m_shell{ std::move(shell) }, m_shell_mesh{ std::move(mesh) } {}
+    mesher(shell_type shell) : m_shell{ std::move(shell) } {
         spt::unique_mesh<facet_type> l_shell;
         if constexpr (std::is_same_v<std::unique_ptr, Pointer>)
             ;
@@ -84,7 +80,7 @@ public:
         // mesh the shell...
         m_shell_mesh = std::move(/*mesh*/);
     }
-    mesher(shell_mesh_type mesh) : m_shell_mesh(std::move(mesh)) {}
+    mesher(shell_mesh_type mesh) : m_shell_mesh{ std::move(mesh) } {}
 
 
 private:
