@@ -1,7 +1,7 @@
 // Copyright © 2018-2019 Tokarev Artem Alekseevich. All rights reserved.
 // Licensed under the MIT License.
 
-// With help of GeomAlgorithms.com website.
+// With help of David Eberly's and Dan Sunday's works.
 
 #pragma once
 #include <cmath>
@@ -15,18 +15,19 @@
 namespace spt {
 
 template <typename T>
-bool between(T boundary0, T boundary1, T value) {
+bool weak_between(T boundary0, T boundary1, T value) {
+    auto l_eps = std::numeric_limits<T>::epsilon() * std::abs(value);
     return
-        (value > std::min(boundary0, boundary1) - std::numeric_limits<T>::epsilon()) &&
-        (value < std::max(boundary0, boundary1) + std::numeric_limits<T>::epsilon());
+        (value > std::min(boundary0, boundary1) - l_eps) &&
+        (value < std::max(boundary0, boundary1) + l_eps);
 }
 
 template <typename T>
-bool in_cuboid(T corner0, T corner1, T point) {
+bool weak_in_cuboid(T corner0, T corner1, T point) {
     return
-        between(corner0.x[0], corner1.x[0], point.x[0]) &&
-        between(corner0.x[1], corner1.x[1], point.x[1]) &&
-        between(corner0.x[2], corner1.x[2], point.x[2]);
+        weak_between(corner0.x[0], corner1.x[0], point.x[0]) &&
+        weak_between(corner0.x[1], corner1.x[1], point.x[1]) &&
+        weak_between(corner0.x[2], corner1.x[2], point.x[2]);
 }
 
 template <typename Real>
@@ -58,10 +59,10 @@ Real dot(const vec<2, Real>& vec0, const vec<2, Real>& vec1) {
 
 template <typename Real>
 vec<3, Real> cross(const vec<3, Real>& vec0, const vec<3, Real>& vec1) {
-    return vec<3, Real>(
+    return {
         vec0.x[1] * vec1.x[2] - vec0.x[2] * vec1.x[1],
         vec0.x[2] * vec1.x[0] - vec0.x[0] * vec1.x[2],
-        vec0.x[0] * vec1.x[1] - vec0.x[1] * vec1.x[0]);
+        vec0.x[0] * vec1.x[1] - vec0.x[1] * vec1.x[0] };
 }
 
 template <typename Real>
@@ -98,7 +99,7 @@ bool project(
     const vec<3, Real>& point,
     const vec<3, Real>& segm_p0, const vec<3, Real>& segm_p1) {
 
-    vec<3, Real> res = segm_p0 + (point - segm_p0).project(segm_p1 - segm_p0);
+    auto res = segm_p0 + (point - segm_p0).project(segm_p1 - segm_p0);
 
     if (in_cuboid(segm_p0, segm_p1, res)) {
         out = res;
@@ -121,8 +122,7 @@ bool does_ray_intersect_plane(
     const vec<3, Real>& dir,
     const vec<3, Real>& pl_p0, const vec<3, Real>& pl_p1, const vec<3, Real>& pl_p2) {
 
-    using real_t = Real;
-    std::array<vec<3, Real>, 2> edges = { pl_p1 - pl_p0, pl_p2 - pl_p0 };
+    std::array edges{ pl_p1 - pl_p0, pl_p2 - pl_p0 };
 
     auto pvec = spt::cross(dir, edges[1]);
     auto det = spt::dot(edges[0], pvec);
@@ -136,8 +136,7 @@ bool ray_intersect_plane(
     const vec<3, Real>& origin, const vec<3, Real>& dir,
     const vec<3, Real>& pl_p0, const vec<3, Real>& pl_p1, const vec<3, Real>& pl_p2) {
 
-    using real_t = Real;
-    std::array<vec<3, Real>, 2> edges = { pl_p1 - pl_p0, pl_p2 - pl_p0 };
+    std::array edges{ pl_p1 - pl_p0, pl_p2 - pl_p0 };
 
     auto pvec = spt::cross(dir, edges[1]);
     auto det = spt::dot(edges[0], pvec);
@@ -149,7 +148,7 @@ bool ray_intersect_plane(
 
     auto t = spt::dot(edges[1], qvec) / det;
     out_intersect_point = origin + dir * t;
-    return t > static_cast<real_t>(0);
+    return t > static_cast<Real>(0);
 }
 
 template <typename Real>
@@ -157,28 +156,27 @@ bool does_ray_intersect_triangle(
     const vec<3, Real>& origin, const vec<3, Real>& dir,
     const vec<3, Real>& tr_p0, const vec<3, Real>& tr_p1, const vec<3, Real>& tr_p2) {
 
-    using real_t = Real;
-    std::array<vec<3, Real>, 2> edges = { tr_p1 - tr_p0, tr_p2 - tr_p0 };
+    std::array edges{ tr_p1 - tr_p0, tr_p2 - tr_p0 };
 
     auto pvec = spt::cross(dir, edges[1]);
     auto det = spt::dot(edges[0], pvec);
     if (std::abs(det) <= std::numeric_limits<Real>::epsilon())
         return false;
 
-    auto inv_det = static_cast<real_t>(1) / det;
+    auto inv_det = static_cast<Real>(1) / det;
 
     auto tvec = origin - tr_p0;
     auto u = spt::dot(tvec, pvec) * inv_det;
-    if (u < static_cast<real_t>(0) || u > static_cast<real_t>(1))
+    if (u < static_cast<Real>(0) || u > static_cast<Real>(1))
         return false;
 
     auto qvec = spt::cross(tvec, edges[0]);
     auto v = spt::dot(dir, qvec) * inv_det;
-    if (v < static_cast<real_t>(0) || u + v > static_cast<real_t>(1))
+    if (v < static_cast<Real>(0) || u + v > static_cast<Real>(1))
         return false;
 
     auto t = spt::dot(edges[1], qvec) * inv_det;
-    return t >= static_cast<real_t>(0);
+    return t >= static_cast<Real>(0);
 }
 
 // TODO: return std::optional<vec<3>>
@@ -188,8 +186,7 @@ bool line_intersect_plane(
     const vec<3, Real>& line_point, const vec<3, Real>& line_dir,
     const vec<3, Real>& plane_p0, const vec<3, Real>& plane_p1, const vec<3, Real>& plane_p2) {
 
-    using real_t = Real;
-    std::array<vec<3, Real>, 2> edges = { plane_p1 - plane_p0, plane_p2 - plane_p0 };
+    std::array edges{ plane_p1 - plane_p0, plane_p2 - plane_p0 };
 
     auto pvec = spt::cross(line_dir, edges[1]);
     auto det = spt::dot(edges[0], pvec);
@@ -209,7 +206,7 @@ vec<3, Real> line_intersect_plane(
     const vec<3, Real>& line_point, const vec<3, Real>& line_dir,
     const vec<3, Real>& plane_p0, const vec<3, Real>& plane_p1, const vec<3, Real>& plane_p2) {
 
-    std::array<vec<3, Real>, 2> edges = { plane_p1 - plane_p0, plane_p2 - plane_p0 };
+    std::array edges{ plane_p1 - plane_p0, plane_p2 - plane_p0 };
 
     auto pvec = spt::cross(line_dir, edges[1]);
     auto tvec = line_point - plane_p0;
@@ -224,30 +221,29 @@ bool does_segment_intersect_triangle(
     const vec<3, Real>& segm_p0, const vec<3, Real>& segm_p1,
     const vec<3, Real>& tr_p0, const vec<3, Real>& tr_p1, const vec<3, Real>& tr_p2) {
 
-    using real_t = Real;
     const auto dir = segm_p1 - segm_p0;
 
-    std::array<vec<3, Real>, 2> edges = { tr_p1 - tr_p0, tr_p2 - tr_p0 };
+    std::array edges{ tr_p1 - tr_p0, tr_p2 - tr_p0 };
 
     auto pvec = spt::cross(dir, edges[1]);
     auto det = spt::dot(edges[0], pvec);
     if (std::abs(det) <= std::numeric_limits<Real>::epsilon())
         return false;
 
-    auto inv_det = static_cast<real_t>(1) / det;
+    auto inv_det = static_cast<Real>(1) / det;
 
     auto tvec = segm_p0 - tr_p0;
     auto u = spt::dot(tvec, pvec) * inv_det;
-    if (u < static_cast<real_t>(0) || u > static_cast<real_t>(1))
+    if (u < static_cast<Real>(0) || u > static_cast<Real>(1))
         return false;
 
     auto qvec = spt::cross(tvec, edges[0]);
     auto v = spt::dot(dir, qvec) * inv_det;
-    if (v < static_cast<real_t>(0) || u + v > static_cast<real_t>(1))
+    if (v < static_cast<Real>(0) || u + v > static_cast<Real>(1))
         return false;
 
     auto t = spt::dot(edges[1], qvec) * inv_det;
-    return t <= static_cast<real_t>(1) && t >= static_cast<real_t>(0);
+    return t <= static_cast<Real>(1) && t >= static_cast<Real>(0);
 }
 
 // TODO: return std::optional<vec<3>>
@@ -257,10 +253,9 @@ bool segment_intersect_plane(
     const vec<3, Real>& p0, const vec<3, Real>& p1,
     const vec<3, Real>& pl_p0, const vec<3, Real>& pl_p1, const vec<3, Real>& pl_p2) {
 
-    using real_t = Real;
     const auto dir = p1 - p0;
 
-    std::array<vec<3, Real>, 2> edges = { pl_p1 - pl_p0, pl_p2 - pl_p0 };
+    std::array edges{ pl_p1 - pl_p0, pl_p2 - pl_p0 };
 
     auto pvec = spt::cross(dir, edges[1]);
     auto det = spt::dot(edges[0], pvec);
@@ -272,7 +267,7 @@ bool segment_intersect_plane(
 
     auto t = spt::dot(edges[1], qvec) / det;
     out_intersect_point = p0 + dir * t;
-    return t <= static_cast<real_t>(1) && t >= static_cast<real_t>(0);
+    return t <= static_cast<Real>(1) && t >= static_cast<Real>(0);
 }
 
 template <typename Real>
@@ -296,11 +291,11 @@ Real sqrs_sum(
     const vec<3, Real>& point,
     const vec<3, Real>& trngl_p0, const vec<3, Real>& trngl_p1, const vec<3, Real>& trngl_p2) {
 
-    using real_t = Real;
-    std::array<real_t, 3> sqrs;
-    sqrs[0] = (trngl_p0 - point).sqr_magnitude();
-    sqrs[1] = (trngl_p1 - point).sqr_magnitude();
-    sqrs[2] = (trngl_p2 - point).sqr_magnitude();
+    std::array sqrs{
+        (trngl_p0 - point).sqr_magnitude(),
+        (trngl_p1 - point).sqr_magnitude(),
+        (trngl_p2 - point).sqr_magnitude()
+    };
     return sqrs[0] + sqrs[1] + sqrs[2];
 }
 
@@ -308,11 +303,11 @@ template <typename Real>
 Real max_sqrs_sum(
     const vec<3, Real>& trngl_p0, const vec<3, Real>& trngl_p1, const vec<3, Real>& trngl_p2) {
 
-    using real_t = Real;
-    std::array<real_t, 3> sqrs;
-    sqrs[0] = (trngl_p1 - trngl_p0).sqr_magnitude();
-    sqrs[1] = (trngl_p2 - trngl_p1).sqr_magnitude();
-    sqrs[2] = (trngl_p0 - trngl_p2).sqr_magnitude();
+    std::array sqrs{
+        (trngl_p1 - trngl_p0).sqr_magnitude(),
+        (trngl_p2 - trngl_p1).sqr_magnitude(),
+        (trngl_p0 - trngl_p2).sqr_magnitude()
+    };
 
     std::array<std::size_t, 2> max_inds;
     if (sqrs[0] < sqrs[1]) {
@@ -337,7 +332,6 @@ bool is_point_on_triangle(
     const vec<3, Real>& point,
     const vec<3, Real>& trngl_p0, const vec<3, Real>& trngl_p1, const vec<3, Real>& trngl_p2) {
 
-    using real_t = Real;
     auto s0 = spt::cross(trngl_p0 - point, trngl_p1 - point).magnitude();
     auto s1 = spt::cross(trngl_p0 - point, trngl_p2 - point).magnitude();
     auto s2 = spt::cross(trngl_p1 - point, trngl_p2 - point).magnitude();
@@ -365,18 +359,18 @@ bool is_point_in_tetrahedron(
     const vec<3, Real>& tetr_p0, const vec<3, Real>& tetr_p1,
     const vec<3, Real>& tetr_p2, const vec<3, Real>& tetr_p3) {
 
-    using real_t = Real;
     auto vert_to_p0 = tetr_p0 - point;
     auto vert_to_p1 = tetr_p1 - point;
     auto vert_to_p2 = tetr_p2 - point;
     auto vert_to_p3 = tetr_p3 - point;
 
-    std::array<real_t, 5> abs_mixed_prods;
-    abs_mixed_prods[0] = std::abs(spt::mixed(vert_to_p0, vert_to_p2, vert_to_p3));
-    abs_mixed_prods[1] = std::abs(spt::mixed(vert_to_p0, vert_to_p1, vert_to_p2));
-    abs_mixed_prods[2] = std::abs(spt::mixed(vert_to_p0, vert_to_p1, vert_to_p3));
-    abs_mixed_prods[3] = std::abs(spt::mixed(vert_to_p1, vert_to_p2, vert_to_p3));
-    abs_mixed_prods[4] = std::abs(spt::mixed(tetr_p1 - tetr_p0, tetr_p2 - tetr_p0, tetr_p3 - tetr_p0));
+    std::array abs_mixed_prods{
+        std::abs(spt::mixed(vert_to_p0, vert_to_p2, vert_to_p3)),
+        std::abs(spt::mixed(vert_to_p0, vert_to_p1, vert_to_p2)),
+        std::abs(spt::mixed(vert_to_p0, vert_to_p1, vert_to_p3)),
+        std::abs(spt::mixed(vert_to_p1, vert_to_p2, vert_to_p3)),
+        std::abs(spt::mixed(tetr_p1 - tetr_p0, tetr_p2 - tetr_p0, tetr_p3 - tetr_p0))
+    };
 
     return abs_mixed_prods[0] + abs_mixed_prods[1] + abs_mixed_prods[2] + abs_mixed_prods[3] < abs_mixed_prods[4];
 }
@@ -386,13 +380,11 @@ vec<3, Real> closest_segment_point_to_point(
     const vec<3, Real>& point,
     const vec<3, Real>& segm_p0, const vec<3, Real>& segm_p1) {
 
-    using real_t = vec<3>::value_type;
     auto proj = project(point, segm_p0, segm_p1);
 
-    if (in_cuboid(segm_p0, segm_p1, proj)) {
+    if (weak_in_cuboid(segm_p0, segm_p1, proj)) {
         return proj;
-    } else if (std::array<real_t, 2> sqr_magns{ (segm_p0 - point).sqr_magnitude(),
-                                                (segm_p1 - point).sqr_magnitude() };
+    } else if (std::array sqr_magns{ (segm_p0 - point).sqr_magnitude(), (segm_p1 - point).sqr_magnitude() };
                sqr_magns[0] < sqr_magns[1]) {
         return segm_p0;
     } else {
@@ -405,16 +397,17 @@ vec<3, Real> closest_triangle_point_to_point_on_plane(
     const vec<3, Real>& point,
     const vec<3, Real>& trngl_p0, const vec<3, Real>& trngl_p1, const vec<3, Real>& trngl_p2) {
 
-    using real_t = Real;
-    std::array<vec<3>, 3> closest_points;
-    closest_points[0] = closest_segment_point_to_point(point, trngl_p0, trngl_p1);
-    closest_points[1] = closest_segment_point_to_point(point, trngl_p1, trngl_p2);
-    closest_points[2] = closest_segment_point_to_point(point, trngl_p2, trngl_p0);
+    std::array closest_points{
+        closest_segment_point_to_point(point, trngl_p0, trngl_p1),
+        closest_segment_point_to_point(point, trngl_p1, trngl_p2),
+        closest_segment_point_to_point(point, trngl_p2, trngl_p0)
+    };
 
-    std::array<real_t, 3> sqrs;
-    sqrs[0] = (closest_points[0] - point).sqr_magnitude();
-    sqrs[1] = (closest_points[1] - point).sqr_magnitude();
-    sqrs[2] = (closest_points[2] - point).sqr_magnitude();
+    std::array sqrs{
+        (closest_points[0] - point).sqr_magnitude(),
+        (closest_points[1] - point).sqr_magnitude(),
+        (closest_points[2] - point).sqr_magnitude()
+    };
 
     std::size_t min_i;
     if (sqrs[0] < sqrs[1]) {
@@ -445,12 +438,11 @@ Real distance_point_to_segment(
     const vec<3, Real>& point,
     const vec<3, Real>& segm_p0, const vec<3, Real>& segm_p1) {
 
-    using real_t = Real;
     auto proj = project(point, segm_p0, segm_p1);
 
-    if (in_cuboid(segm_p0, segm_p1, proj)) {
+    if (weak_in_cuboid(segm_p0, segm_p1, proj)) {
         return (proj - point).magnitude();
-    } else if (std::array<real_t, 2> sqr_magns{ (segm_p0 - point).sqr_magnitude(), (segm_p1 - point).sqr_magnitude() };
+    } else if (std::array sqr_magns{ (segm_p0 - point).sqr_magnitude(), (segm_p1 - point).sqr_magnitude() };
                sqr_magns[0] < sqr_magns[1]) {
         return std::sqrt(sqr_magns[0]);
     } else {
@@ -463,18 +455,57 @@ Real distance_point_to_triangle_on_plane(
     const vec<3, Real>& point,
     const vec<3, Real>& trngl_p0, const vec<3, Real>& trngl_p1, const vec<3, Real>& trngl_p2) {
 
-    using real_t = Real;
-    std::array<vec<3>, 3> closest_points;
-    closest_points[0] = closest_segment_point_to_point(point, trngl_p0, trngl_p1);
-    closest_points[1] = closest_segment_point_to_point(point, trngl_p1, trngl_p2);
-    closest_points[2] = closest_segment_point_to_point(point, trngl_p2, trngl_p0);
+    std::array closest_points{
+        closest_segment_point_to_point(point, trngl_p0, trngl_p1),
+        closest_segment_point_to_point(point, trngl_p1, trngl_p2),
+        closest_segment_point_to_point(point, trngl_p2, trngl_p0)
+    };
 
-    std::array<real_t, 3> sqrs;
-    sqrs[0] = (closest_points[0] - point).sqr_magnitude();
-    sqrs[1] = (closest_points[1] - point).sqr_magnitude();
-    sqrs[2] = (closest_points[2] - point).sqr_magnitude();
+    std::array sqrs{
+        (closest_points[0] - point).sqr_magnitude(),
+        (closest_points[1] - point).sqr_magnitude(),
+        (closest_points[2] - point).sqr_magnitude()
+    };
 
     return std::min({ sqrs[0], sqrs[1], sqrs[2] });
+}
+
+template <typename Real>
+std::pair<vec<3, Real>, vec<3, Real>> lines_closest_points(
+    const vec<3, Real>& line0_p0, const vec<3, Real>& line0_p1,
+    const vec<3, Real>& line1_p0, const vec<3, Real>& line1_p1) {
+
+    auto u = line0_p1 - line0_p0;
+    auto v = line1_p1 - line1_p0;
+    auto w = line0_p0 - line1_p0;
+    auto a = spt::dot(u, u); // always >= 0
+    auto b = spt::dot(u, v);
+    auto c = spt::dot(v, v); // always >= 0
+    auto d = spt::dot(u, w);
+    auto e = spt::dot(v, w);
+    auto D = a * c - b * b; // always >= 0
+
+    Real sc, sN, sD = D; // sc = sN / sD, default sD = D >= 0
+    Real tc, tN, tD = D; // tc = tN / tD, default tD = D >= 0
+    // compute the line parameters of the two closest points
+    if (D <= std::numeric_limits<Real>::epsilon()) { // the lines are almost parallel
+        sN = static_cast<Real>(0); // force using point P0 on segment S1
+        sD = static_cast<Real>(1); // to prevent possible division by 0.0 later
+        tN = e;
+        tD = c;
+    } else { // get the closest points on the infinite lines
+        sN = b * e - c * d;
+        tN = a * e - b * d;
+    }
+
+    // finally do the division to get sc and tc
+    sc = std::abs(sN) <= std::numeric_limits<Real>::epsilon() ? static_cast<Real>(0) : sN / sD;
+    tc = std::abs(tN) <= std::numeric_limits<Real>::epsilon() ? static_cast<Real>(0) : tN / tD;
+
+    return {
+        (static_cast<Real>(1) - sc) * line0_p0 + sc * line0_p1,
+        (static_cast<Real>(1) - tc) * line1_p0 + tc * line1_p1
+    };
 }
 
 template <typename Real>
@@ -482,28 +513,8 @@ vec<3, Real> lines_closest_point(
     const vec<3, Real>& line0_p0, const vec<3, Real>& line0_p1,
     const vec<3, Real>& line1_p0, const vec<3, Real>& line1_p1) {
 
-    using real_t = Real;
-    auto u = line0_p1 - line0_p0;
-    auto v = line1_p1 - line1_p0;
-    auto w = line0_p0 - line1_p0;
-    auto a = spt::dot(u, u); // >= 0
-    auto b = spt::dot(u, v);
-    auto c = spt::dot(v, v); // >= 0
-    auto d = spt::dot(u, w);
-    auto e = spt::dot(v, w);
-    auto det = a * c - b * b; // >= 0
-
-    real_t sc, tc;
-    if (det <= std::numeric_limits<Real>::epsilon()) {
-        sc = static_cast<real_t>(0);
-        tc = b > c ? d / b : e / c;
-    } else {
-        auto inv_det = static_cast<real_t>(1) / det;
-        sc = (b * e - c * d) * inv_det;
-        tc = (a * e - b * d) * inv_det;
-    }
-
-    return (line0_p0 + u * sc + line1_p0 + v * tc) * static_cast<real_t>(0.5);
+    auto closest = lines_closest_points(line0_p0, line0_p1, line1_p0, line1_p1);
+    return (std::get<0>(closest) + std::get<1>(closest)) * static_cast<Real>(0.5);
 }
 
 template <typename Real>
@@ -511,29 +522,88 @@ Real lines_distance(
     const vec<3, Real>& line0_p0, const vec<3, Real>& line0_p1,
     const vec<3, Real>& line1_p0, const vec<3, Real>& line1_p1) {
 
-    using real_t = Real;
-    auto u = line0_p1 - line0_p0;
-    auto v = line1_p1 - line1_p0;
-    auto w = line0_p0 - line1_p0;
-    auto a = spt::dot(u, u); // >= 0
-    auto b = spt::dot(u, v);
-    auto c = spt::dot(v, v); // >= 0
-    auto d = spt::dot(u, w);
-    auto e = spt::dot(v, w);
-    auto det = a * c - b * b; // >= 0
+    auto closest = lines_closest_points(line0_p0, line0_p1, line1_p0, line1_p1);
+    auto diff = std::get<0>(closest) - std::get<1>(closest);
+    return diff.magnitude();
+}
 
-    real_t sc, tc;
-    if (det <= std::numeric_limits<Real>::epsilon()) {
-        sc = static_cast<real_t>(0);
-        tc = b > c ? d / b : e / c;
-    } else {
-        auto inv_det = static_cast<real_t>(1) / det;
-        sc = (b * e - c * d) * inv_det;
-        tc = (a * e - b * d) * inv_det;
+template <typename Real>
+std::pair<vec<3, Real>, vec<3, Real>> segments_closest_points(
+    const vec<3, Real>& segm0_p0, const vec<3, Real>& segm0_p1,
+    const vec<3, Real>& segm1_p0, const vec<3, Real>& segm1_p1) {
+
+    auto u = segm0_p1 - segm0_p0;
+    auto v = segm1_p1 - segm1_p0;
+    auto w = segm0_p0 - segm1_p0;
+    auto a = dot(u, u); // always >= 0
+    auto b = dot(u, v);
+    auto c = dot(v, v); // always >= 0
+    auto d = dot(u, w);
+    auto e = dot(v, w);
+    auto D = a * c - b * b; // always >= 0
+    Real sc, sN, sD = D; // sc = sN / sD, default sD = D >= 0
+    Real tc, tN, tD = D; // tc = tN / tD, default tD = D >= 0
+
+    // compute the line parameters of the two closest points
+    if (D <= std::numeric_limits<Real>::epsilon()) { // the lines are almost parallel
+        sN = static_cast<Real>(0); // force using point P0 on segment S1
+        sD = static_cast<Real>(1); // to prevent possible division by 0.0 later
+        tN = e;
+        tD = c;
+    } else { // get the closest points on the infinite lines
+        sN = b * e - c * d;
+        tN = a * e - b * d;
+        if (sN < static_cast<Real>(0)) { // sc < 0 => the s=0 edge is visible
+            sN = static_cast<Real>(0);
+            tN = e;
+            tD = c;
+        } else if (sN > sD) {  // sc > 1  => the s=1 edge is visible
+            sN = sD;
+            tN = e + b;
+            tD = c;
+        }
     }
 
-    auto diff_p = w + (u * sc) - (v * tc);
-    return diff_p.magnitude();
+    if (tN < static_cast<Real>(0)) { // tc < 0 => the t=0 edge is visible
+        tN = static_cast<Real>(0);
+        // recompute sc for this edge
+        if (-d < static_cast<Real>(0))
+            sN = static_cast<Real>(0);
+        else if (-d > a)
+            sN = sD;
+        else {
+            sN = -d;
+            sD = a;
+        }
+    } else if (tN > tD) { // tc > 1  => the t=1 edge is visible
+        tN = tD;
+        // recompute sc for this edge
+        if (-d + b < static_cast<Real>(0))
+            sN = static_cast<Real>(0);
+        else if (-d + b > a)
+            sN = sD;
+        else {
+            sN = -d + b;
+            sD = a;
+        }
+    }
+    // finally do the division to get sc and tc
+    sc = std::abs(sN) <= std::numeric_limits<Real>::epsilon() ? static_cast<Real>(0) : sN / sD;
+    tc = std::abs(tN) <= std::numeric_limits<Real>::epsilon() ? static_cast<Real>(0) : tN / tD;
+
+    return {
+        (static_cast<Real>(1) - sc) * segm0_p0 + sc * segm0_p1,
+        (static_cast<Real>(1) - tc) * segm1_p0 + tc * segm1_p1
+    };
+}
+
+template <typename Real>
+vec<3, Real> segments_closest_point(
+    const vec<3, Real>& segm0_p0, const vec<3, Real>& segm0_p1,
+    const vec<3, Real>& segm1_p0, const vec<3, Real>& segm1_p1) {
+
+    auto closest = segments_closest_points(segm0_p0, segm0_p1, segm1_p0, segm1_p1);
+    return (std::get<0>(closest) + std::get<1>(closest)) * static_cast<Real>(0.5);
 }
 
 template <typename Real>
@@ -541,68 +611,9 @@ Real segments_distance(
     const vec<3, Real>& segm0_p0, const vec<3, Real>& segm0_p1,
     const vec<3, Real>& segm1_p0, const vec<3, Real>& segm1_p1) {
 
-    using real_t = Real;
-    auto u = segm0_p1 - segm0_p0;
-    auto v = segm1_p1 - segm1_p0;
-    auto w = segm0_p0 - segm1_p0;
-    auto a = spt::dot(u, u); // >= 0
-    auto b = spt::dot(u, v);
-    auto c = spt::dot(v, v); // >= 0
-    auto d = spt::dot(u, w);
-    auto e = spt::dot(v, w);
-    auto det = a * c - b * b; // >= 0
-    real_t sc, sn, sd = det;
-    real_t tc, tn, td = det;
-
-    if (det <= std::numeric_limits<Real>::epsilon()) {
-        sn = static_cast<real_t>(0);
-        sd = static_cast<real_t>(1);
-        tn = e;
-        td = c;
-    } else {
-        sn = (b * e - c * d);
-        tn = (a * e - b * d);
-
-        if (sn < static_cast<real_t>(0)) {
-            sn = static_cast<real_t>(0);
-            tn = e;
-            td = c;
-        } else if (sn > sd) {
-            sn = sd;
-            tn = e + b;
-            td = c;
-        }
-    }
-
-    if (tn < static_cast<real_t>(0)) {
-        tn = static_cast<real_t>(0);
-
-        if (-d < static_cast<real_t>(0)) {
-            sn = static_cast<real_t>(0);
-        } else if (-d > a) {
-            sn = sd;
-        } else {
-            sn = -d;
-            sd = a;
-        }
-    } else if (tn > td) {
-        tn = td;
-
-        if (b - d < static_cast<real_t>(0)) {
-            sn = static_cast<real_t>(0);
-        } else if (b - d > a) {
-            sn = sd;
-        } else {
-            sn = b - d;
-            sd = a;
-        }
-    }
-
-    sc = std::abs(sn) <= std::numeric_limits<Real>::epsilon() ? static_cast<real_t>(0) : sn / sd;
-    tc = std::abs(tn) <= std::numeric_limits<Real>::epsilon() ? static_cast<real_t>(0) : tn / td;
-
-    auto diff_p = w + (u * sc) - (v * tc);
-    return diff_p.magnitude();
+    auto closest = segments_closest_points(segm0_p0, segm0_p1, segm1_p0, segm1_p1);
+    auto diff = std::get<0>(closest) - std::get<1>(closest);
+    return diff.magnitude();
 }
 
 // CPA - Closest Point of Approach.
@@ -611,11 +622,10 @@ Real cpa_time(
     const vec<3, Real>& start0, const vec<3, Real>& vel0,
     const vec<3, Real>& start1, const vec<3, Real>& vel1) {
 
-    using real_t = vec<3>::value_type;
     auto dv = vel0 - vel1;
     auto dv2 = spt::dot(dv, dv);
     if (dv2 <= std::numeric_limits<Real>::epsilon())
-        return static_cast<real_t>(0);
+        return static_cast<Real>(0);
 
     auto w0 = start0 - start1;
     return -spt::dot(w0, dv) / dv2;
