@@ -1331,16 +1331,16 @@ bool Polyhedron::try_compute_new_vert_pos_type0(front::Face* fface, vec3& out_po
 
 
 bool Polyhedron::try_compute_new_vert_pos(front::Face* fface, vec3& out_pos) {
-    std::array<real_t, 3> angs {
+    std::array<real_t, 3> angles {
         fface->front_edges[0]->angle(),
         fface->front_edges[1]->angle(),
         fface->front_edges[2]->angle()
     };
     std::array<std::size_t, 3> idces;
     std::size_t n_small_angs = 0;
-    if (angs[0] < degToRad(140)) idces[n_small_angs++] = 0;
-    if (angs[1] < degToRad(140)) idces[n_small_angs++] = 1;
-    if (angs[2] < degToRad(140)) idces[n_small_angs++] = 2;
+    if (angles[0] < degToRad(140)) idces[n_small_angs++] = 0;
+    if (angles[1] < degToRad(140)) idces[n_small_angs++] = 1;
+    if (angles[2] < degToRad(140)) idces[n_small_angs++] = 2;
 
     switch (n_small_angs) {
     case 0: return try_compute_new_vert_pos_type0(fface, out_pos);
@@ -1371,17 +1371,19 @@ front::Face* Polyhedron::choose_face_for_exhaustion_with_new_vert(front::Edge* f
 
 
 void Polyhedron::exhaust_with_new_vert(front::Face* fface, const vec3& vert_pos) {
-    Vert* new_vert = new Vert(vert_pos);
+    auto* new_vert = new Vert(vert_pos);
     m_inner_verts.push_back(new_vert);
 
-    std::array<front::Edge*, 6> new_tetr_fedges;
-    new_tetr_fedges[0] = fface->front_edges[0];
-    auto far_vert = fface->x->find_vert_not(new_tetr_fedges[0]->x);
-    new_tetr_fedges[1] = fface->find_front_edge(new_tetr_fedges[0]->x->verts[1], far_vert);
-    new_tetr_fedges[2] = fface->find_front_edge(new_tetr_fedges[0]->x->verts[0], far_vert);
-    new_tetr_fedges[3] = add_to_front(new Edge(new_tetr_fedges[0]->x->verts[0], new_vert));
-    new_tetr_fedges[4] = add_to_front(new Edge(new_tetr_fedges[0]->x->verts[1], new_vert));
-    new_tetr_fedges[5] = add_to_front(new Edge(far_vert, new_vert));
+    auto new_tetr_main_fedge = fface->front_edges[0];
+    auto far_vert = fface->x->find_vert_not(new_tetr_main_fedge->x);
+    std::array new_tetr_fedges{
+        new_tetr_main_fedge,
+        fface->find_front_edge(new_tetr_main_fedge->x->verts[1], far_vert),
+        fface->find_front_edge(new_tetr_main_fedge->x->verts[0], far_vert),
+        add_to_front(new Edge(new_tetr_main_fedge->x->verts[0], new_vert)),
+        add_to_front(new Edge(new_tetr_main_fedge->x->verts[1], new_vert)),
+        add_to_front(new Edge(far_vert, new_vert))
+    };
 
     new_tetr_fedges[0]->refresh_angle_data();
     new_tetr_fedges[1]->refresh_angle_data();
@@ -1414,18 +1416,12 @@ void Polyhedron::exhaust_with_new_vert(front::Face* fface, const vec3& vert_pos)
     new_fface->add_front_edge(new_tetr_fedges[4]);
     new_fface->add_front_edge(new_tetr_fedges[5]);
     new_fface->normal = compute_normal_in_tetr(new_fface, new_tetr_fedges[0]->x->verts[0]->pos());
-
-//    m_inner_tetrs.push_back(new Tetr(
-//        new_tetr_fedges[0]->x->verts[0],
-//        new_tetr_fedges[0]->x->verts[1],
-//        new_tetr_fedges[5]->x->verts[0],
-//        new_tetr_fedges[5]->x->verts[1]));
-
-    auto new_tetr = new Tetr(new_tetr_fedges[0]->x->verts[0],
-                             new_tetr_fedges[0]->x->verts[1],
-                             new_tetr_fedges[5]->x->verts[0],
-                             new_tetr_fedges[5]->x->verts[1]);
-    m_inner_tetrs.push_back(new_tetr);
+    
+    m_inner_tetrs.push_back(new Tetr(
+        new_tetr_fedges[0]->x->verts[0],
+        new_tetr_fedges[0]->x->verts[1],
+        new_tetr_fedges[5]->x->verts[0],
+        new_tetr_fedges[5]->x->verts[1]));
 
     remove_from_front(fface);
 
