@@ -642,4 +642,4 @@ Real cpa_distance(
     return (p1 - p0).magnitude();
 }
 
-} // namespace spt::algs
+} // namespace spt
