@@ -55,7 +55,7 @@ struct polytope<2, Dim, Real> {
         edges = std::move(poly.edges);
     }
     polytope(const std::vector<edge_type*>& edges)
-        : edges(edges) {}
+        : edges{ edges } {}
     template <typename... Edges>
     polytope(Edges... edges)
         : edges{ const_cast<edge_type*>(edges)... } {}

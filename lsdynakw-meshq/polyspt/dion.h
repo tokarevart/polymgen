@@ -34,7 +34,7 @@ struct polytope<1, Dim, Real> {
         vertices = poly.vertices;
     }
     polytope(const std::array<vertex_type*, 2>& vertices)
-        : vertices(vertices) {}
+        : vertices{ vertices } {}
     template <typename... Vertices>
     polytope(Vertices... verts)
         : vertices{ const_cast<vertex_type*>(verts)... } {}

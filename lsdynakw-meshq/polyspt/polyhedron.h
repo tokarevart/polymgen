@@ -67,7 +67,7 @@ struct polytope<3, Dim, Real> {
         faces = std::move(poly.faces);
     }
     polytope(const std::vector<face_type*>& faces)
-        : faces(faces) {}
+        : faces{ faces } {}
     template <typename... Faces>
     polytope(Faces... faces)
         : faces{ const_cast<face_type*>(faces)... } {}

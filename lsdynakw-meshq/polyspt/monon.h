@@ -16,9 +16,9 @@ struct polytope<0, Dim, Real> {
     spt::vec<Dim, Real> pos;
 
     polytope(const polytope& other)
-        : pos(other.pos) {}
+        : pos{ other.pos } {}
     polytope(const spt::vec<Dim, Real>& pos)
-        : pos(pos) {}
+        : pos{ pos } {}
 };
 
 } // namespace spt

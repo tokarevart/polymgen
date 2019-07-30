@@ -88,7 +88,7 @@ struct simplex<3, Dim, Real> {
         faces = simp.faces;
     }
     simplex(const std::array<face_type*, 4>& faces)
-        : faces(faces) {}
+        : faces{ faces } {}
     template <typename... Faces>
     simplex(Faces... faces)
         : faces{ const_cast<face_type*>(faces)... } {}
@@ -124,7 +124,7 @@ struct simplex_v<3, Dim, Real> {
         vertices = other.vertices;
     }
     simplex_v(const std::array<vertex_type*, 4> & verts)
-        : vertices(vertices) {}
+        : vertices{ vertices } {}
     template <typename... Vertices>
     simplex_v(Vertices... verts)
         : vertices{ const_cast<vertex_type*>(verts)... } {}
