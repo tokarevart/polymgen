@@ -1447,10 +1447,11 @@ void Polyhedron::exhaust_with_new_vert(front::Face* fface, const vec3& vert_pos)
                                                    new_tetr_fedges[5]));
     new_fface->normal = compute_normal_in_tetr(new_fface, new_tetr_fedges[0]->front_verts[0]->x->pos());
     
-    m_inner_tetrs.push_back(new Tetr(new_tetr_fedges[0]->front_verts[0]->x,
-                                     new_tetr_fedges[0]->front_verts[1]->x,
-                                     new_tetr_fedges[5]->front_verts[0]->x,
-                                     new_tetr_fedges[5]->front_verts[1]->x));
+    m_inner_tetrs.push_back(new Tetr(
+        new_tetr_fedges[0]->front_verts[0]->x,
+        new_tetr_fedges[0]->front_verts[1]->x,
+        new_tetr_fedges[5]->front_verts[0]->x,
+        new_tetr_fedges[5]->front_verts[1]->x));
 
     remove_from_front(fface);
     delete fface;
