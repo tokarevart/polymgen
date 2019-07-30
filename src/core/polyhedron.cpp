@@ -1371,7 +1371,7 @@ front::Face* Polyhedron::choose_face_for_exhaustion_with_new_vert(front::Edge* f
 
 
 void Polyhedron::exhaust_with_new_vert(front::Face* fface, const vec3& vert_pos) {
-    auto* new_vert = new Vert(vert_pos);
+    auto new_vert = new Vert(vert_pos);
     m_inner_verts.push_back(new_vert);
 
     auto new_tetr_main_fedge = fface->front_edges[0];

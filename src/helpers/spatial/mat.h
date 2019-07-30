@@ -19,9 +19,10 @@ struct mat<3, ValueType> {
     }
 
     mat transposed() const {
-        return mat(x[0][0], x[1][0], x[2][0], 
-                   x[0][1], x[1][1], x[2][1], 
-                   x[0][2], x[1][2], x[2][2]);
+        return {
+            x[0][0], x[1][0], x[2][0],
+            x[0][1], x[1][1], x[2][1],
+            x[0][2], x[1][2], x[2][2] };
     }
     mat inversed() const {
         auto a00 = x[0][0], a01 = x[0][1], a02 = x[0][2];
@@ -34,9 +35,9 @@ struct mat<3, ValueType> {
 
         auto det = a00 * b01 + a01 * b11 + a02 * b21;
 
-        return mat(b01, (-a22 * a01 + a02 * a21), (a12 * a01 - a02 * a11),
-                   b11, (a22 * a00 - a02 * a20), (-a12 * a00 + a02 * a10),
-                   b21, (-a21 * a00 + a01 * a20), (a11 * a00 - a01 * a10)) / det;
+        return mat{ b01, (-a22 * a01 + a02 * a21), (a12 * a01 - a02 * a11),
+                    b11, (a22 * a00 - a02 * a20), (-a12 * a00 + a02 * a10),
+                    b21, (-a21 * a00 + a01 * a20), (a11 * a00 - a01 * a10) } / det;
     }
 
     mat& operator=(const mat& right) {
@@ -44,27 +45,31 @@ struct mat<3, ValueType> {
         return *this;
     }
     mat operator-() const {
-        return mat(-x[0], -x[1], -x[2]);
+        return { -x[0], -x[1], -x[2] };
     }
     mat operator+(const mat& right) const {
-        return mat(x[0] + right.x[0],
-                   x[1] + right.x[1],
-                   x[2] + right.x[2]);
+        return {
+            x[0] + right.x[0],
+            x[1] + right.x[1],
+            x[2] + right.x[2] };
     }
     mat operator-(const mat& right) const {
-        return mat(x[0] - right.x[0],
-                   x[1] - right.x[1],
-                   x[2] - right.x[2]);
+        return {
+            x[0] - right.x[0],
+            x[1] - right.x[1],
+            x[2] - right.x[2] };
     }
     mat operator*(value_type scalar) const {
-        return mat(x[0] * scalar,
-                   x[1] * scalar,
-                   x[2] * scalar);
+        return {
+            x[0] * scalar,
+            x[1] * scalar,
+            x[2] * scalar };
     }
     mat operator/(value_type scalar) const {
-        return mat(x[0] / scalar,
-                   x[1] / scalar,
-                   x[2] / scalar);
+        return {
+            x[0] / scalar,
+            x[1] / scalar,
+            x[2] / scalar };
     }
     mat& operator+=(const mat& right) {
         x[0] += right.x[0];

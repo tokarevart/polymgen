@@ -4,8 +4,6 @@
 #pragma once
 #include <cmath>
 #include <cstdint>
-#include <numeric>
-#include <utility>
 #include <array>
 
 namespace spt {
@@ -33,7 +31,7 @@ struct vec<3, ValueType> {
     }
 
     vec& normalize() {
-        value_type inv_magn = static_cast<value_type>(1) / magnitude();
+        auto inv_magn = static_cast<value_type>(1) / magnitude();
         x[0] *= inv_magn;
         x[1] *= inv_magn;
         x[2] *= inv_magn;
@@ -57,27 +55,31 @@ struct vec<3, ValueType> {
         return *this;
     }
     vec operator-() const {
-        return vec(-x[0], -x[1], -x[2]);
+        return { -x[0], -x[1], -x[2] };
     }
     vec operator+(const vec& right) const {
-        return vec(x[0] + right.x[0],
-                   x[1] + right.x[1],
-                   x[2] + right.x[2]);
+        return {
+            x[0] + right.x[0],
+            x[1] + right.x[1],
+            x[2] + right.x[2] };
     }
     vec operator-(const vec& right) const {
-        return vec(x[0] - right.x[0],
-                   x[1] - right.x[1],
-                   x[2] - right.x[2]);
+        return {
+            x[0] - right.x[0],
+            x[1] - right.x[1],
+            x[2] - right.x[2] };
     }
     vec operator*(value_type scalar) const {
-        return vec(x[0] * scalar,
-                   x[1] * scalar,
-                   x[2] * scalar);
+        return {
+            x[0] * scalar,
+            x[1] * scalar,
+            x[2] * scalar };
     }
     vec operator/(value_type scalar) const {
-        return vec(x[0] / scalar,
-                   x[1] / scalar,
-                   x[2] / scalar);
+        return {
+            x[0] / scalar,
+            x[1] / scalar,
+            x[2] / scalar };
     }
     vec& operator+=(const vec& right) {
         x[0] += right.x[0];
@@ -139,7 +141,7 @@ struct vec<2, Real> {
     }
 
     vec& normalize() {
-        value_type inv_magn = static_cast<value_type>(1.0) / magnitude();
+        auto inv_magn = static_cast<value_type>(1.0) / magnitude();
         x[0] *= inv_magn;
         x[1] *= inv_magn;
         return *this;
@@ -156,20 +158,19 @@ struct vec<2, Real> {
         return *this;
     }
     vec operator-() const {
-        return vec(-x[0], -x[1]);
+        return { -x[0], -x[1] };
     }
     vec operator+(const vec& right) const {
-        return vec(x[0] + right.x[0], x[1] + right.x[1]);
+        return { x[0] + right.x[0], x[1] + right.x[1] };
     }
     vec operator-(const vec& right) const {
-        return vec(x[0] - right.x[0], x[1] - right.x[1]);
+        return { x[0] - right.x[0], x[1] - right.x[1] };
     }
     vec operator*(value_type scalar) const {
-        return vec(x[0] * scalar, x[1] * scalar);
+        return { x[0] * scalar, x[1] * scalar };
     }
     vec operator/(value_type scalar) const {
-        value_type inv_scalar = static_cast<value_type>(1) / scalar;
-        return vec(x[0] * inv_scalar, x[1] * inv_scalar);
+        return { x[0] / scalar, x[1] / scalar };
     }
     vec& operator+=(const vec& right) {
         x[0] += right.x[0];
