@@ -553,9 +553,7 @@ bool Polyhedron::does_front_intersect_sphere(const vec3& center, real_t radius) 
 
 std::pair<real_t, real_t> Polyhedron::min_max_edges_lengths(const vec3& p0, const vec3& p1, const vec3& p2, const vec3& p3) {
     auto min_max = min_max_edges_sqr_lengths(p0, p1, p2, p3);
-    min_max.first = std::sqrt(min_max.first);
-    min_max.second = std::sqrt(min_max.second);
-    return min_max;
+    return { std::sqrt(min_max.first), std::sqrt(min_max.second) };
 }
 
 
