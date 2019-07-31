@@ -808,21 +808,44 @@ void Polyhedron::exhaust_front_split(front::Edge* fedge, front::Edge* opp_fedge)
     // HACK: this volatile helps to avoid computational error
     volatile auto adj_ffaces = fedge->adj_ffaces();
 
-    std::array l_opp_fverts{
-        adj_ffaces.first->find_front_vert_not(fedge),
-        adj_ffaces.second->find_front_vert_not(fedge)
-    };
-    
     auto opp_ffaces = opp_fedge->adj_ffaces();
     opp_ffaces.first->remove_front_edge(opp_fedge);
     opp_ffaces.second->remove_front_edge(opp_fedge);
+
+    std::array opp_fverts{
+        opp_fedge->front_verts[0],
+        opp_fedge->front_verts[1]
+    };
+    auto opp_edge = opp_fedge->x;
+    std::array opp_verts{
+        opp_edge->verts[0],
+        opp_edge->verts[1]
+    };
+    remove_from_front(opp_fverts[0]);
+    delete opp_fverts[0];
+    remove_from_front(opp_fverts[1]);
+    delete opp_fverts[1];
     remove_from_front(opp_fedge);
+    delete opp_fedge;
+
+
+
+
+    auto main_edge = fedge->x;
+    std::array main_fverts{
+        fedge->front_verts[0],
+        fedge->front_verts[1]
+    };
+    remove_from_front(fedge);
+    delete fedge;
+
+    std::array main_adj_fedges;
 
     std::array new_opp_fverts{
-        std::array{ add_to_front(new front::Vert(opp_fedge->x->verts[0]), false),
-                    add_to_front(new front::Vert(opp_fedge->x->verts[1]), false) },
-        std::array{ add_to_front(new front::Vert(opp_fedge->x->verts[0]), false),
-                    add_to_front(new front::Vert(opp_fedge->x->verts[1]), false) }
+        std::array{ add_to_front(new front::Vert(opp_edge->verts[0]), false),
+                    add_to_front(new front::Vert(opp_edge->verts[1]), false) },
+        std::array{ add_to_front(new front::Vert(opp_edge->verts[0]), false),
+                    add_to_front(new front::Vert(opp_edge->verts[1]), false) }
     };
 
     std::array new_opp_fedges{
@@ -830,16 +853,17 @@ void Polyhedron::exhaust_front_split(front::Edge* fedge, front::Edge* opp_fedge)
         add_to_front(new front::Edge(this, new_opp_fverts[1][0], new_opp_fverts[1][1]), false)
     };
 
-    ////////
+    opp_ffaces.first->add_front_edge(new_opp_fedges[0]);
+    opp_ffaces.second->add_front_edge(new_opp_fedges[1]);
 
     std::array<front::Edge*, 3> new_fface_fedges;
     std::array<front::Face*, 2> new_ffaces;
 
     new_fface_fedges[2] = new_opp_fedges[0];
     for (auto& l_fedge : adj_ffaces.first->front_edges) {
-        if (l_fedge->contains(fedge->front_verts[0]) &&
-            (l_fedge->contains(opp_fedge->front_verts[0]) ||
-             l_fedge->contains(opp_fedge->front_verts[1]))) {
+        if (l_fedge->contains(main_fverts[0]) &&
+            (l_fedge->contains(opp_fverts[0]) ||
+             l_fedge->contains(opp_fverts[1]))) {
             new_fface_fedges[0] = l_fedge;
             l_fedge->refresh_angle_data();
             l_fedge->remove_adj_fface(adj_ffaces.first);
@@ -848,9 +872,9 @@ void Polyhedron::exhaust_front_split(front::Edge* fedge, front::Edge* opp_fedge)
         }
     }
     for (auto& l_fedge : adj_ffaces.second->front_edges) {
-        if (l_fedge->contains(fedge->front_verts[0]) &&
-            (l_fedge->contains(opp_fedge->front_verts[0]) ||
-             l_fedge->contains(opp_fedge->front_verts[1]))) {
+        if (l_fedge->contains(main_fverts[0]) &&
+            (l_fedge->contains(opp_fverts[0]) ||
+             l_fedge->contains(opp_fverts[1]))) {
             new_fface_fedges[1] = l_fedge;
             l_fedge->refresh_angle_data();
             l_fedge->remove_adj_fface(adj_ffaces.first);
@@ -858,17 +882,18 @@ void Polyhedron::exhaust_front_split(front::Edge* fedge, front::Edge* opp_fedge)
             break;
         }
     }
-    new_ffaces[0] = add_to_front(new front::Face(this, new_fface_fedges[0],
-                                                       new_fface_fedges[1],
-                                                       new_fface_fedges[2]));
-    new_ffaces[0]->normal = compute_normal_in_tetr(new_ffaces[0], fedge->x);
+    new_ffaces[0] = add_to_front(new front::Face(this, 
+                                                 new_fface_fedges[0],
+                                                 new_fface_fedges[1],
+                                                 new_fface_fedges[2]));
+    new_ffaces[0]->normal = compute_normal_in_tetr(new_ffaces[0], main_edge);
 
 
     new_fface_fedges[2] = new_opp_fedges[1];
     for (auto& l_fedge : adj_ffaces.first->front_edges) {
-        if (l_fedge->contains(fedge->front_verts[1]) &&
-            (l_fedge->contains(opp_fedge->front_verts[0]) ||
-             l_fedge->contains(opp_fedge->front_verts[1]))) {
+        if (l_fedge->contains(main_fverts[1]) &&
+            (l_fedge->contains(opp_fverts[0]) ||
+             l_fedge->contains(opp_fverts[1]))) {
             new_fface_fedges[0] = l_fedge;
             l_fedge->refresh_angle_data();
             l_fedge->remove_adj_fface(adj_ffaces.first);
@@ -877,9 +902,9 @@ void Polyhedron::exhaust_front_split(front::Edge* fedge, front::Edge* opp_fedge)
         }
     }
     for (auto& l_fedge : adj_ffaces.second->front_edges) {
-        if (l_fedge->contains(fedge->front_verts[1]) &&
-            (l_fedge->contains(opp_fedge->front_verts[0]) ||
-             l_fedge->contains(opp_fedge->front_verts[1]))) {
+        if (l_fedge->contains(main_fverts[1]) &&
+            (l_fedge->contains(opp_fverts[0]) ||
+             l_fedge->contains(opp_fverts[1]))) {
             new_fface_fedges[1] = l_fedge;
             l_fedge->refresh_angle_data();
             l_fedge->remove_adj_fface(adj_ffaces.first);
@@ -887,27 +912,24 @@ void Polyhedron::exhaust_front_split(front::Edge* fedge, front::Edge* opp_fedge)
             break;
         }
     }
-    new_ffaces[1] = add_to_front(new front::Face(this, new_fface_fedges[0],
-                                                       new_fface_fedges[1],
-                                                       new_fface_fedges[2]));
-    new_ffaces[1]->normal = compute_normal_in_tetr(new_ffaces[1], fedge->x);
+    new_ffaces[1] = add_to_front(new front::Face(this, 
+                                                 new_fface_fedges[0],
+                                                 new_fface_fedges[1],
+                                                 new_fface_fedges[2]));
+    new_ffaces[1]->normal = compute_normal_in_tetr(new_ffaces[1], main_edge);
 
-
-    set_front_edges_in_front_split(fedge, { new_opp_fedges[0], new_opp_fedges[1] }, { new_ffaces[0], new_ffaces[1] }, opp_ffaces);
-    
-    m_inner_tetrs.push_back(new Tetr(fedge->front_verts[0]->x,
-                                     fedge->front_verts[1]->x,
-                                     l_opp_fverts[0]->x,
-                                     l_opp_fverts[1]->x));
-    
-
-    delete opp_fedge;
     remove_from_front(adj_ffaces.first);
     delete adj_ffaces.first;
     remove_from_front(adj_ffaces.second);
-    delete adj_ffaces.second;
-    remove_from_front(fedge);
-    delete fedge;
+    delete adj_ffaces.second;    
+
+    ////////
+
+    m_inner_tetrs.push_back(new Tetr(
+        main_fverts[0]->x,
+        main_fverts[1]->x,
+        opp_verts[0],
+        opp_verts[1]));
 
     #ifdef DEBUG
     debug();
