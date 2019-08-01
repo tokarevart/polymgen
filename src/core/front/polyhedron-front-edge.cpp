@@ -165,7 +165,7 @@ void front::Edge::fill_adj_ffaces(const front::Face* fFace0, const front::Face* 
 
 
 front::Edge::Edge(const Polyhedron* related_polyhedron, const pmg::Edge* edge)
-    : x(const_cast<pmg::Edge*>(edge)), m_related_polyhedron(const_cast<Polyhedron*>(related_polyhedron)) {}
+    : x{ const_cast<pmg::Edge*>(edge) }, m_related_polyhedron{ const_cast<Polyhedron*>(related_polyhedron) } {}
 
 
 

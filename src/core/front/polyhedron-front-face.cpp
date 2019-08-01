@@ -137,4 +137,4 @@ bool front::Face::contains(const pmg::Vert* vert) const {
 
 
 front::Face::Face(const Polyhedron* related_polyhedron, const pmg::Face* face)
-    : x(const_cast<pmg::Face*>(face)), m_related_polyhedron(const_cast<Polyhedron*>(related_polyhedron)) {}
+    : x{ const_cast<pmg::Face*>(face) }, m_related_polyhedron{ const_cast<Polyhedron*>(related_polyhedron) } {}
