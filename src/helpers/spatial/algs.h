@@ -527,6 +527,7 @@ Real lines_distance(
     return diff.magnitude();
 }
 
+// TODO: pair -> array
 template <typename Real>
 std::pair<vec<3, Real>, vec<3, Real>> segments_closest_points(
     const vec<3, Real>& segm0_p0, const vec<3, Real>& segm0_p1,

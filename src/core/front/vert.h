@@ -10,9 +10,7 @@ class Vert {
 public:
     pmg::Vert* x;
 
-    Vert(const pmg::Vert* vert) {
-        x = const_cast<pmg::Vert*>(vert);
-    }
+    Vert(const pmg::Vert* vert) : x{ const_cast<pmg::Vert*>(vert) } {}
 };
 
 } // namespace pmg::front

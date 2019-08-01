@@ -17,6 +17,7 @@
 namespace pmg::front {
 
 class Edge {
+    // TODO: pair -> array
     using pair_vv = std::pair<pmg::Vert*, pmg::Vert*>;
     using pair_ff = std::pair<front::Face*, front::Face*>;
 

@@ -198,15 +198,13 @@ bool pmg::front::Edge::contains(const front::Vert* fvert) const {
 }
 
 pmg::front::Edge::Edge(const Polyhedron* related_polyhedron, const front::Vert* fvert0, const front::Vert* fvert1)
-    : m_related_polyhedron(const_cast<Polyhedron*>(related_polyhedron)) {
-    front_verts[0] = const_cast<front::Vert*>(fvert0);
-    front_verts[1] = const_cast<front::Vert*>(fvert1);
-    x = new pmg::Edge(fvert0->x, fvert1->x);
-}
+    : m_related_polyhedron{ const_cast<Polyhedron*>(related_polyhedron) },
+      front_verts{ const_cast<front::Vert*>(fvert0), const_cast<front::Vert*>(fvert1) },
+      x{ new pmg::Edge(fvert0->x, fvert1->x) } {}
 
 
 front::Edge::Edge(const Polyhedron* related_polyhedron, const pmg::Edge* edge)
-    : x(const_cast<pmg::Edge*>(edge)), m_related_polyhedron(const_cast<Polyhedron*>(related_polyhedron)) {}
+    : x{ const_cast<pmg::Edge*>(edge) }, m_related_polyhedron{ const_cast<Polyhedron*>(related_polyhedron) } {}
 
 
 

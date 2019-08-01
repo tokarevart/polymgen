@@ -828,18 +828,33 @@ void Polyhedron::exhaust_front_split(front::Edge* fedge, front::Edge* opp_fedge)
     remove_from_front(opp_fedge);
     delete opp_fedge;
 
-
-
-
     auto main_edge = fedge->x;
     std::array main_fverts{
         fedge->front_verts[0],
         fedge->front_verts[1]
     };
     remove_from_front(fedge);
-    delete fedge;
 
-    std::array main_adj_fedges;
+    std::array<std::array<front::Edge*, 2>, 2> main_adj_fedges;
+    std::size_t idx0 = 0, idx1 = 0;
+    // TODO: refactor all similar to this blocks of code after pair -> array
+    for (auto& l_fedge : adj_ffaces.first->front_edges) {
+        if (l_fedge->contains(main_fverts[0]) &&
+            !l_fedge->contains(main_fverts[1]))
+            main_adj_fedges[0][idx0++] = l_fedge;
+        else if (l_fedge->contains(main_fverts[1]) &&
+                 !l_fedge->contains(main_fverts[0]))
+            main_adj_fedges[1][idx1++] = l_fedge;
+    }
+    for (auto& l_fedge : adj_ffaces.second->front_edges) {
+        if (l_fedge->contains(main_fverts[0]) &&
+            !l_fedge->contains(main_fverts[1]))
+            main_adj_fedges[0][idx0++] = l_fedge;
+        else if (l_fedge->contains(main_fverts[1]) &&
+                 !l_fedge->contains(main_fverts[0]))
+            main_adj_fedges[1][idx1++] = l_fedge;
+    }
+    delete fedge;
 
     std::array new_opp_fverts{
         std::array{ add_to_front(new front::Vert(opp_edge->verts[0]), false),
