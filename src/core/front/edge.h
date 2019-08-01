@@ -61,8 +61,8 @@ private:
     Polyhedron* m_related_polyhedron; // TODO: it's not good to store it
     pair_ff m_adj_ffaces = { nullptr, nullptr };
 
-    real_t m_angle = static_cast<real_t>(0.0);
-    real_t m_complexity = static_cast<real_t>(0.0);
+    real_t m_angle = static_cast<real_t>(0);
+    real_t m_complexity = static_cast<real_t>(0);
 
     bool m_need_angle_processing = true;
     bool m_need_complexity_processing = true;

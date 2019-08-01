@@ -338,7 +338,7 @@ bool Polyhedron::will_edge_intersect_front(front::Edge* fedge) const {
             else
                 vert_buf = l_fedge->x->verts[0];
 
-            if (spt::distance_point_to_segment(vert_buf->pos(), std::get<0>(l_opp_verts)->pos(), std::get<1>(l_opp_verts)->pos()) < C_EDGES_INTERS_DIST * m_prefLen)
+            if (spt::distance_point_to_segment(vert_buf->pos(), std::get<0>(l_opp_verts)->pos(), std::get<1>(l_opp_verts)->pos()) < C_EDGES_INTERS_DIST * m_pref_len)
                 return true;
         } else if (contains[1]) {
             if (l_fedge->x->verts[0] == std::get<1>(l_opp_verts))
@@ -346,12 +346,12 @@ bool Polyhedron::will_edge_intersect_front(front::Edge* fedge) const {
             else
                 vert_buf = l_fedge->x->verts[0];
 
-            if (spt::distance_point_to_segment(vert_buf->pos(), std::get<0>(l_opp_verts)->pos(), std::get<1>(l_opp_verts)->pos()) < C_EDGES_INTERS_DIST * m_prefLen)
+            if (spt::distance_point_to_segment(vert_buf->pos(), std::get<0>(l_opp_verts)->pos(), std::get<1>(l_opp_verts)->pos()) < C_EDGES_INTERS_DIST * m_pref_len)
                 return true;
         } else {
             if (spt::segments_distance(
                     std::get<0>(l_opp_verts)->pos(), std::get<1>(l_opp_verts)->pos(),
-                    l_fedge->x->verts[0]->pos(), l_fedge->x->verts[1]->pos()) < C_EDGES_INTERS_DIST * m_prefLen)
+                    l_fedge->x->verts[0]->pos(), l_fedge->x->verts[1]->pos()) < C_EDGES_INTERS_DIST * m_pref_len)
                 return true;
         }
     }
@@ -606,7 +606,7 @@ bool Polyhedron::exhaust_without_new_vert_priority_predicate(front::Edge* curFEd
     if (curFEdge->find_opp_edge() ||
         (curFEdge->angle() > degToRad(70) &&
          curFEdge->angle() < degToRad(100) &&
-         (std::get<1>(l_opp_verts)->pos() - std::get<0>(l_opp_verts)->pos()).sqr_magnitude() <= m_prefLen * m_prefLen))
+         (std::get<1>(l_opp_verts)->pos() - std::get<0>(l_opp_verts)->pos()).sqr_magnitude() <= m_pref_len * m_pref_len))
         return true;
 
     if (will_front_split(curFEdge))
@@ -1275,7 +1275,7 @@ bool Polyhedron::try_compute_new_vert_pos_type2(front::Face* fface, vec3& out_po
     real_t l3 = (vn1_pos - v1_pos).magnitude();
     real_t l4 = (vn1_pos - v2_pos).magnitude();
     real_t av_magn = (lm0 + lm1 + l0 + l1 + l2 + l3 + l4) / static_cast<real_t>(7.0);
-    real_t raw_deform = C_D * (m_prefLen - av_magn);
+    real_t raw_deform = C_D * (m_pref_len - av_magn);
     real_t deform = raw_deform < av_magn * C_MAXD ? raw_deform : av_magn * C_MAXD;
     real_t magn_d = av_magn + deform;
     vec3 new_pos = v2_pos + e * magn_d;
@@ -1336,7 +1336,7 @@ bool Polyhedron::try_compute_new_vert_pos_type1(front::Face* fface, vec3& out_po
     real_t l3 = (vn_pos - v1_pos).magnitude();
     real_t av_magn = static_cast<real_t>(0.2) * (me_magn + l0 + l1 + l2 + l3);
     real_t v0_c_dist = (c - v0_pos).magnitude();
-    real_t raw_deform = C_D * (m_prefLen - av_magn);
+    real_t raw_deform = C_D * (m_pref_len - av_magn);
     real_t deform = raw_deform < av_magn * C_MAXD ? raw_deform : av_magn * C_MAXD;
     real_t magn_d = av_magn + deform;
     vec3 new_pos = c + e * std::sqrt(magn_d * magn_d - v0_c_dist * v0_c_dist);
@@ -1372,7 +1372,7 @@ bool Polyhedron::try_compute_new_vert_pos_type0(front::Face* fface, vec3& out_po
     real_t av_magn = ONE_3 * (fface->x->edges[0]->magnitude()
                               + fface->x->edges[1]->magnitude()
                               + fface->x->edges[2]->magnitude());
-    real_t raw_deform = C_D * (m_prefLen - av_magn);
+    real_t raw_deform = C_D * (m_pref_len - av_magn);
     real_t deform = raw_deform < av_magn * C_MAXD ? raw_deform : av_magn * C_MAXD;
     real_t magn_d = av_magn + deform;
     vec3 new_pos = fface->center() + fface->normal * std::sqrt(magn_d * magn_d - ONE_3 * av_magn * av_magn);
@@ -1642,15 +1642,15 @@ void Polyhedron::debug() {
 #endif // DEBUG
 
 
-void Polyhedron::tetrahedralize(real_t preferredLen, genparams::Volume gen_params) {
-    m_prefLen = preferredLen;
+void Polyhedron::tetrahedralize(real_t preferred_len, genparams::Volume gen_params) {
+    m_pref_len = preferred_len;
     initialize_front();
     compute_front_normals();
     process_angles();
 //    if (global_intersection())
 //        throw std::logic_error("Intersection error.\npmg::Polyhedron::global_intersection returned true.");
 
-    smooth_mesh(gen_params.nSmoothIters);
+    smooth_mesh(gen_params.n_smooth_iters);
 }
 
 
@@ -1751,7 +1751,7 @@ Polyhedron::~Polyhedron() {
 
 
 real_t Polyhedron::preferred_length() const {
-    return m_prefLen;
+    return m_pref_len;
 }
 
 

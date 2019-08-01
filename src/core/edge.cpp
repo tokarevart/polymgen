@@ -175,7 +175,5 @@ bool pmg::Edge::need_to_flip(const std::list<pmg::Face*>& facesList) {
 
 
 
-pmg::Edge::Edge(const pmg::Vert* vert0, const pmg::Vert* vert1) {
-    verts[0] = const_cast<pmg::Vert*>(vert0);
-    verts[1] = const_cast<pmg::Vert*>(vert1);
-}
+pmg::Edge::Edge(const pmg::Vert* vert0, const pmg::Vert* vert1)
+    : verts{ const_cast<pmg::Vert*>(vert0), const_cast<pmg::Vert*>(vert1) } {}

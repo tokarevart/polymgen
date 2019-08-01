@@ -35,7 +35,7 @@ constexpr real_t degToRad(T value) {
 
 
 real_t surface::Face::preferred_length() const {
-    return m_prefLen;
+    return m_pref_len;
 }
 
 
@@ -82,15 +82,15 @@ surface::Edge* surface::Face::find_surface_edge_containing(const pmg::Edge* edge
 }
 
 
-void surface::Face::triangulate(real_t preferredLen, genparams::Surface gen_params) {
-    m_prefLen = preferredLen;
+void surface::Face::triangulate(real_t preferred_len, genparams::Surface gen_params) {
+    m_pref_len = preferred_len;
     initialize_front();
     compute_front_normals();
     process_angles();
 //    if (global_intersection())
 //        throw std::logic_error("Intersection error.\npmg::surface::Face::global_intersection returned true.");
 
-    optimize_mesh(gen_params.nSmoothIters, gen_params.nDelaunaySmoothIters);
+    optimize_mesh(gen_params.n_smooth_iters, gen_params.n_delaunay_smooth_iters);
 }
 
 
@@ -191,7 +191,7 @@ bool surface::Face::does_segment_intersects_with_front(const vec3& v0, const vec
     for (auto& l_fedge : m_front_edges)
         if (spt::segments_distance(
             l_fedge->x->verts[0]->pos(), l_fedge->x->verts[1]->pos(),
-            v0, v1) < C_EDGES_INTERS_DIST * m_prefLen)
+            v0, v1) < C_EDGES_INTERS_DIST * m_pref_len)
             return true;
 
     return false;
@@ -205,7 +205,7 @@ bool surface::Face::does_segment_intersects_with_front(const pmg::Vert* v0, cons
 
         if (spt::segments_distance(
             l_fedge->x->verts[0]->pos(), l_fedge->x->verts[1]->pos(),
-            v0->pos(), v1) < C_EDGES_INTERS_DIST * m_prefLen)
+            v0->pos(), v1) < C_EDGES_INTERS_DIST * m_pref_len)
             return true;
     }
 
@@ -264,7 +264,7 @@ bool surface::Face::try_compute_new_vert_pos_type1(sfront::Edge* fedge, vec3& ou
     vec3 e = (sec_vert->pos() - main_vert->pos() * static_cast<real_t>(2.0) + vn->pos()).normalize();
 
     real_t av_magn = static_cast<real_t>(0.5) * (fedge->x->magnitude() + en->x->magnitude());
-    real_t raw_deform = K_D * (m_prefLen - av_magn);
+    real_t raw_deform = K_D * (m_pref_len - av_magn);
     real_t deform = raw_deform < av_magn * K_MAXD ? raw_deform : av_magn * K_MAXD;
     real_t magn_d = av_magn + deform;
     vec3 new_pos = main_vert->pos() + e * magn_d;
@@ -284,12 +284,12 @@ bool surface::Face::try_compute_new_vert_pos_type1(sfront::Edge* fedge, vec3& ou
 
 bool surface::Face::try_compute_new_vert_pos_type0(sfront::Edge* fedge, vec3& out_pos) {
     real_t magn = fedge->x->magnitude();
-    real_t raw_deform = K_D * (m_prefLen - magn);
+    real_t raw_deform = K_D * (m_pref_len - magn);
     real_t deform = raw_deform < magn * K_MAXD ? raw_deform : magn * K_MAXD;
     real_t magn_d = magn + deform;
     vec3 new_pos = fedge->center() + fedge->normal * (static_cast<real_t>(0.5) * std::sqrt(static_cast<real_t>(4.0) * magn_d * magn_d - magn * magn));
 
-//    vec3 new_pos = fedge->center() + fedge->normal * m_prefLen * SQRT3_2;
+//    vec3 new_pos = fedge->center() + fedge->normal * m_pref_len * SQRT3_2;
 
     auto v0 = fedge->x->verts[0];
     auto v1 = fedge->x->verts[1];
@@ -649,10 +649,10 @@ void surface::Face::delaunay_postp() {
 }
 
 
-void surface::Face::optimize_mesh(std::size_t nSmoothIters, std::size_t nDelaunaySmoothIters) {
-    for (std::size_t i = 0; i < nDelaunaySmoothIters; i++) {
+void surface::Face::optimize_mesh(std::size_t n_smooth_iters, std::size_t n_delaunay_smooth_iters) {
+    for (std::size_t i = 0; i < n_delaunay_smooth_iters; i++) {
         delaunay_postp();
-        smooth_mesh(nSmoothIters);
+        smooth_mesh(n_smooth_iters);
     }
 }
 

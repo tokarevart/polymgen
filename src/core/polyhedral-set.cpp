@@ -33,12 +33,12 @@ void PolyhedralSet::triangulate_shell(genparams::Shell gen_params) {
         svert->attached_vert = new pmg::Vert(svert->pos());
 
     for (auto& sedge : m_shell_edges)
-        sedge->segmentize(m_prefLen);
+        sedge->segmentize(m_pref_len);
 
     std::size_t n_shell_faces = m_shell_faces.size();
     #pragma omp parallel for
     for (std::size_t i = 0; i < n_shell_faces; i++)
-        m_shell_faces[i]->triangulate(m_prefLen, gen_params);
+        m_shell_faces[i]->triangulate(m_pref_len, gen_params);
 }
 
 
@@ -227,7 +227,7 @@ std::string PolyhedralSet::log_file_name() const {
 
 
 void PolyhedralSet::tetrahedralize(real_t preferred_length, genparams::Polyhedron gen_params) {
-    m_prefLen = preferred_length;
+    m_pref_len = preferred_length;
 
     using namespace std::chrono;
     auto shell_triang_start = steady_clock::now();
@@ -245,7 +245,7 @@ void PolyhedralSet::tetrahedralize(real_t preferred_length, genparams::Polyhedro
     #pragma omp parallel for
     for (std::size_t i = 0; i < n_polyhs; i++) {
         try {
-            m_polyhedrons[i]->tetrahedralize(m_prefLen, gen_params.volume);
+            m_polyhedrons[i]->tetrahedralize(m_pref_len, gen_params.volume);
         } catch (std::logic_error& error) {
             output(filetype::wavefront_obj, "debug.obj");
             throw error;
@@ -255,23 +255,23 @@ void PolyhedralSet::tetrahedralize(real_t preferred_length, genparams::Polyhedro
     duration<double> volume_exh_elapsed = volume_exh_stop - volume_exh_start;
 
     m_log.n_polyhs = m_polyhedrons.size();
-    m_log.pref_len = m_prefLen;
+    m_log.pref_len = m_pref_len;
     m_log.shell_tr_time = shell_triang_elapsed.count();
     m_log.volume_exh_time = volume_exh_elapsed.count();
     m_is_logged = false;
 }
 
 
-void PolyhedralSet::smooth_mesh(std::size_t nItersVolume, std::size_t nItersShell) {
+void PolyhedralSet::smooth_mesh(std::size_t n_iters_volume, std::size_t n_iters_shell) {
     std::size_t n_sfaces = m_shell_faces.size();
     #pragma omp parallel for
     for (std::size_t i = 0; i < n_sfaces; i++)
-        m_shell_faces[i]->smooth_mesh(nItersShell);
+        m_shell_faces[i]->smooth_mesh(n_iters_shell);
 
     std::size_t n_polyhs = m_polyhedrons.size();
     #pragma omp parallel for
     for (std::size_t i = 0; i < n_polyhs; i++)
-        m_polyhedrons[i]->smooth_mesh(nItersVolume);
+        m_polyhedrons[i]->smooth_mesh(n_iters_volume);
 
     m_is_logged = false;
 }

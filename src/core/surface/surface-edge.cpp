@@ -20,8 +20,8 @@ const std::vector<Vert*>& surface::Edge::inner_verts() const {
 }
 
 
-void surface::Edge::segmentize(real_t preferredLen) {
-    std::size_t n_inner_verts = static_cast<std::size_t>(std::round(magnitude() / preferredLen)) - 1;
+void surface::Edge::segmentize(real_t preferred_len) {
+    std::size_t n_inner_verts = static_cast<std::size_t>(std::round(magnitude() / preferred_len)) - 1;
     if (n_inner_verts == 0) {
         m_inner_edges.push_back(new pmg::Edge(verts[0]->attached_vert, verts[1]->attached_vert));
         return;
@@ -55,9 +55,9 @@ real_t surface::Edge::sqr_magnitude() const {
 }
 
 
-bool surface::Edge::contains(const surface::Vert* sVert) const {
-    if (verts[0] == sVert ||
-        verts[1] == sVert)
+bool surface::Edge::contains(const surface::Vert* svert) const {
+    if (verts[0] == svert ||
+        verts[1] == svert)
         return true;
 
     return false;

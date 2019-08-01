@@ -30,22 +30,22 @@ namespace pmg {
 class PolyhedralSet {
 public:
     struct Log {
-        real_t min_quality = static_cast<real_t>(-1.0);
-        real_t av_quality = static_cast<real_t>(-1.0);
-        real_t min_mesh_abs_grad = static_cast<real_t>(-1.0);
-        real_t av_mesh_abs_grad = static_cast<real_t>(-1.0);
+        real_t min_quality = static_cast<real_t>(-1);
+        real_t av_quality = static_cast<real_t>(-1);
+        real_t min_mesh_abs_grad = static_cast<real_t>(-1);
+        real_t av_mesh_abs_grad = static_cast<real_t>(-1);
         std::size_t n_polyhs = 0;
         std::size_t n_elems = 0;
-        real_t pref_len = static_cast<real_t>(-1.0);
-        double shell_tr_time = -1.0;
-        double volume_exh_time = -1.0;
-        double mesh_file_writing_time = -1.0;
+        real_t pref_len = static_cast<real_t>(-1);
+        double shell_tr_time = -1;
+        double volume_exh_time = -1;
+        double mesh_file_writing_time = -1;
 
         void write(std::ostream& stream) const;
     };
 
     void tetrahedralize(real_t preferred_length, genparams::Polyhedron gen_params = genparams::Polyhedron());
-    void smooth_mesh(std::size_t nItersVolume = 1, std::size_t nItersShell = 1);
+    void smooth_mesh(std::size_t n_iters_volume = 1, std::size_t n_iters_shell = 1);
     void shell_delaunay_postp();
 
     PolyMesh mesh() const;
@@ -64,7 +64,7 @@ private:
     Log m_log;
     bool m_is_logged = false;
 
-    real_t m_prefLen;
+    real_t m_pref_len;
 
     std::vector<Polyhedron*> m_polyhedrons;
 

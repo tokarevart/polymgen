@@ -32,17 +32,17 @@ public:
 
     const std::list<front::Edge*>& front_edges() const;
 
-    surface::Vert* find_vert_not(const surface::Edge* sEdge) const;
+    surface::Vert* find_vert_not(const surface::Edge* sedge) const;
     surface::Edge* find_surface_edge_containing(const pmg::Edge* edge) const;
 
     // Needs surface edges to be already segmentized.
-    void triangulate(real_t preferredLen, genparams::Surface gen_params = genparams::Surface());
+    void triangulate(real_t preferred_len, genparams::Surface gen_params = genparams::Surface());
     void smooth_mesh(std::size_t nIters);
     void delaunay_postp();
-    void optimize_mesh(std::size_t nSmoothIters = 20, std::size_t nDelaunaySmoothIters = 3);
+    void optimize_mesh(std::size_t n_smooth_iters = 20, std::size_t n_delaunay_smooth_iters = 3);
 
-    bool contains(const surface::Edge* sEdge) const;
-    bool contains(const surface::Vert* sVert) const;
+    bool contains(const surface::Edge* sedge) const;
+    bool contains(const surface::Vert* svert) const;
 
     Face(const surface::Edge* sEdge0, const surface::Edge* sEdge1, const surface::Edge* sEdge2);
 
@@ -59,7 +59,7 @@ private:
     using pair_ee = std::pair<pmg::Edge*, pmg::Edge*>;
     using vec3 = spt::vec<3, real_t>;
 
-    real_t m_prefLen = static_cast<real_t>(0.0);
+    real_t m_pref_len = static_cast<real_t>(0);
 
     std::list<pmg::Face*> m_inner_faces;
     std::list<pmg::Edge*> m_inner_edges;

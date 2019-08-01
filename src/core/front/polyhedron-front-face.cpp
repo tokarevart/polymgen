@@ -171,13 +171,11 @@ bool front::Face::contains(const pmg::Vert* vert) const {
 
 
 pmg::front::Face::Face(const Polyhedron* related_polyhedron, const front::Edge* fedge0, const front::Edge* fedge1, const front::Edge* fedge2)
-    : m_related_polyhedron(const_cast<Polyhedron*>(related_polyhedron)) {
-    front_edges[0] = const_cast<front::Edge*>(fedge0);
-    front_edges[1] = const_cast<front::Edge*>(fedge1);
-    front_edges[2] = const_cast<front::Edge*>(fedge2);
-    x = new pmg::Face(fedge0->x, fedge1->x, fedge2->x);
-}
+    : m_related_polyhedron(const_cast<Polyhedron*>(related_polyhedron)),
+      front_edges{ const_cast<front::Edge*>(fedge0), const_cast<front::Edge*>(fedge1), const_cast<front::Edge*>(fedge2) },
+      x{ new pmg::Face(fedge0->x, fedge1->x, fedge2->x) } {}
 
 
 front::Face::Face(const Polyhedron* related_polyhedron, const pmg::Face* face)
-    : x(const_cast<pmg::Face*>(face)), m_related_polyhedron(const_cast<Polyhedron*>(related_polyhedron)) {}
+    : x{ const_cast<pmg::Face*>(face) }, 
+      m_related_polyhedron{ const_cast<Polyhedron*>(related_polyhedron) } {}

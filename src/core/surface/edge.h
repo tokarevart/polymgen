@@ -20,12 +20,12 @@ public:
     const std::vector<pmg::Edge*>& inner_edges() const;
     const std::vector<pmg::Vert*>& inner_verts() const;
 
-    void segmentize(real_t preferredLen);
+    void segmentize(real_t preferred_len);
 
     real_t magnitude()    const;
     real_t sqr_magnitude() const;
 
-    bool contains(const surface::Vert* sVert) const;
+    bool contains(const surface::Vert* svert) const;
     bool contains(const     pmg::Edge* edge)  const;
     bool contains(const     pmg::Vert* vert)  const;
 

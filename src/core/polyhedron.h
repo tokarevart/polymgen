@@ -79,7 +79,7 @@ private:
     pair_rr m_meshQuality;
     pair_rr m_meshAbsGrad;
 
-    real_t m_prefLen = static_cast<real_t>(0.0);
+    real_t m_pref_len = static_cast<real_t>(0.0);
 
     // TODO: create and use separate Mesher (maybe template <std::size_t Dim>)
     // TODO: replace raw pointers with smart pointers and then make benchmark
