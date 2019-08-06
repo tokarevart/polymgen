@@ -4,9 +4,15 @@
 
 namespace spt {
 
-template <std::size_t Dim = 3, typename Real = typename spt::vec<Dim>::value_type>
+template <std::size_t Dim, typename Real = typename spt::vec<Dim>::value_type>
 using dion = polytope<1, Dim, Real>;
 
+template <typename Real> using dion2 = dion<2, Real>;
+using dion2f = dion2<float>;
+using dion2d = dion2<double>;
+template <typename Real> using dion3 = dion<3, Real>;
+using dion3f = dion3<float>;
+using dion3d = dion3<double>;
 
 template <std::size_t Dim, typename Real>
 struct polytope<1, Dim, Real> {

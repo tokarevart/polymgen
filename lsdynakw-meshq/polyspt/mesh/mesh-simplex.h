@@ -23,7 +23,7 @@ struct mesh_base<Pointer, spt::simplex<N, Dim, Real>> {
     auto get() { 
         static_assert(std::is_same_v<std::unique_ptr<void>, Pointer<void>>);
 
-        return spt::to_raw_mesh<elem_type>(*this); 
+        return spt::make_raw_mesh<elem_type>(*this); 
     }
 
     mesh_base& operator=(const mesh_base& other) {
@@ -62,11 +62,6 @@ struct mesh_base<Pointer, spt::simplex_v<N, Dim, Real>> {
     std::vector<Pointer<vertex_type>> vertices;
     std::vector<Pointer<elem_type>> elements;
 
-    auto get() { 
-        static_assert(std::is_same_v<std::unique_ptr<void>, Pointer<void>>);
-
-        return spt::to_raw_mesh(*this); 
-    }
 
     mesh_base& operator=(const mesh_base& other) {
         static_assert(!std::is_same_v<std::unique_ptr<void>, Pointer<void>>);

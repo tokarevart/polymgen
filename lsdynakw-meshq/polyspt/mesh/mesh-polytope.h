@@ -18,12 +18,7 @@ struct mesh_base<Pointer, spt::polytope<N, Dim, Real>> {
     // ...
     std::vector<Pointer<facet_type>> facets;
     std::vector<Pointer<elem_type>> elements;
-
-    auto get() {
-        static_assert(std::is_same_v<std::unique_ptr<void>, Pointer<void>>);
-        
-        return spt::to_raw_mesh<elem_type>(*this);
-    }
+    
 
     mesh_base& operator=(const mesh_base& other) {
         static_assert(!std::is_same_v<std::unique_ptr<void>, Pointer<void>>);
@@ -45,7 +40,7 @@ struct mesh_base<Pointer, spt::polytope<N, Dim, Real>> {
     mesh_base() {}
     template <typename MeshBase>
     mesh_base(MeshBase&& other) {
-        *this = std::/*move*/forward<MeshBase>(other);
+        *this = std::forward<MeshBase>(other);
     }
 };
 

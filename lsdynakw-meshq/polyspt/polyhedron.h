@@ -3,8 +3,15 @@
 
 namespace spt {
 
-template <std::size_t Dim = 3, typename Real = typename spt::vec<Dim>::value_type>
+template <std::size_t Dim, typename Real = typename spt::vec<Dim>::value_type>
 using polyhedron = polytope<3, Dim, Real>;
+
+template <typename Real> using polyhedron2 = polyhedron<2, Real>;
+using polyhedron2f = polyhedron2<float>;
+using polyhedron2d = polyhedron2<double>;
+template <typename Real> using polyhedron3 = polyhedron<3, Real>;
+using polyhedron3f = polyhedron3<float>;
+using polyhedron3d = polyhedron3<double>;
 
 template <std::size_t Dim, typename Real>
 struct polytope<3, Dim, Real> {

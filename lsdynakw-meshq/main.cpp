@@ -9,6 +9,7 @@
 #include <tuple>
 #include <optional>
 #include <memory>
+#include <numeric>
 #include "polyspt/polyhedron.h"
 #include "polyspt/simplex.h"
 #include "polyspt/mesh.h"
@@ -16,14 +17,13 @@
 #include "mesher/algs.h"
 
 using real_t = double;
-using coordinate_t = real_t;
-using vec_t = spt::vec<3, coordinate_t>;
+using vec_t = spt::vec3<real_t>;
 using nid_t = std::size_t;
 using eid_t = std::size_t;
 using pid_t = std::size_t;
-using vertex_t = spt::vertex<3, coordinate_t>;
+using vertex_t = spt::vertex3<real_t>;
 using node_t = std::pair<nid_t, std::unique_ptr<vertex_t>>;
-using tetrahedron_t = spt::tetrahedron_v<3, coordinate_t>;
+using tetrahedron_t = spt::tetrahedron3_v<real_t>;
 using element_solid_t = std::tuple<eid_t, pid_t, std::array<nid_t, 4>>;
 using mesh_t = spt::unique_mesh<tetrahedron_t>;
 
@@ -163,7 +163,7 @@ std::pair<real_t, real_t> quality(const mesh_t& mesh) {
                    [](const auto& elem) { return pmg::quality(elem.get()); });
 
     real_t min_q = *std::min_element(qualities.begin(), qualities.end());
-    real_t sum_q = std::accumulate(qualities.begin(), qualities.end(), static_cast<real_t>(0.0));
+    real_t sum_q = std::accumulate(qualities.begin(), qualities.end(), static_cast<real_t>(0));
     real_t av_q = sum_q / qualities.size();
     return { min_q, av_q };
 }
