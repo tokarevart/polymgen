@@ -10,20 +10,18 @@
 
 // TODO: try pass by classes-containers instead of reference and make benchmark
 // TODO: try vectorization (SIMD) and make benchmark
-// TODO: try refactor functions
-// https://en.cppreference.com/w/cpp/types/numeric_limits/std::numeric_limits<T>::epsilon()
 namespace spt {
 
-template <typename T>
-bool weak_between(T boundary0, T boundary1, T value) {
-    auto l_eps = std::numeric_limits<T>::epsilon() * std::abs(value);
+template <typename Real>
+bool weak_between(Real boundary0, Real boundary1, Real value) {
+    auto l_eps = std::numeric_limits<Real>::epsilon() * std::abs(value);
     return
-        (value > std::min(boundary0, boundary1) - l_eps) &&
-        (value < std::max(boundary0, boundary1) + l_eps);
+        (value >= std::min(boundary0, boundary1) - l_eps) &&
+        (value <= std::max(boundary0, boundary1) + l_eps);
 }
 
-template <typename T>
-bool weak_in_cuboid(T corner0, T corner1, T point) {
+template <typename Real>
+bool weak_in_cuboid(const vec<3, Real>& corner0, const vec<3, Real>& corner1, const vec<3, Real>& point) {
     return
         weak_between(corner0.x[0], corner1.x[0], point.x[0]) &&
         weak_between(corner0.x[1], corner1.x[1], point.x[1]) &&
@@ -338,7 +336,7 @@ bool is_point_on_triangle(
     auto s = spt::cross(trngl_p0 - trngl_p2, trngl_p1 - trngl_p2).magnitude();
 
     auto expr = s - s0 - s1 - s2;
-    return std::abs(expr) <= std::numeric_limits<Real>::epsilon();
+    return std::abs(expr) <= std::numeric_limits<Real>::epsilon() * (s + s0 + s1 + s2);
 }
 
 template <typename Real>
@@ -527,7 +525,6 @@ Real lines_distance(
     return diff.magnitude();
 }
 
-// TODO: pair -> array
 template <typename Real>
 std::pair<vec<3, Real>, vec<3, Real>> segments_closest_points(
     const vec<3, Real>& segm0_p0, const vec<3, Real>& segm0_p1,
