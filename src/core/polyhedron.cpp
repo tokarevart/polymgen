@@ -33,10 +33,10 @@ using vec3 = spt::vec<3, real_t>;
 #define SQRT_2_3             static_cast<real_t>(0.8164965809277260)
 #define ONE_PLUS_SQRT2_SQRT3 static_cast<real_t>(1.3938468501173517)
 
-#define C_MIN_DIS           static_cast<real_t>(2e-1) // 2e-1
-#define C_EDGES_INTERS_DIST static_cast<real_t>(2e-2) // 4e-3
+#define C_MIN_DIS           static_cast<real_t>(2.3e-1) // 2e-1 2.3e-1
+#define C_EDGES_INTERS_DIST static_cast<real_t>(4e-2) // 4e-3 4e-2
 
-#define C_MAXD static_cast<real_t>(0.2) // 0.2
+#define C_MAXD static_cast<real_t>(0.16) // 0.2 0.16
 #define C_D    static_cast<real_t>(0.3) // 0.3
 
 
