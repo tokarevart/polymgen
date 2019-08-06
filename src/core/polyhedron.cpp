@@ -34,10 +34,10 @@ using vec3 = spt::vec<3, real_t>;
 #define ONE_PLUS_SQRT2_SQRT3 static_cast<real_t>(1.3938468501173517)
 
 #define C_MIN_DIS           static_cast<real_t>(2e-1) // 2e-1
-#define C_EDGES_INTERS_DIST static_cast<real_t>(4e-3)
+#define C_EDGES_INTERS_DIST static_cast<real_t>(2e-2) // 4e-3
 
-#define C_MAXD static_cast<real_t>(0.14) // 0.3
-#define C_D    static_cast<real_t>(0.3) // 0.4
+#define C_MAXD static_cast<real_t>(0.2) // 0.2
+#define C_D    static_cast<real_t>(0.3) // 0.3
 
 
 template <typename T>
@@ -256,7 +256,7 @@ bool Polyhedron::edge_intersect_any_face(const Edge* edge) const {
 
 bool Polyhedron::will_edge_intersect_front(front::Edge* fedge) const {
     auto l_opp_verts = fedge->opp_verts();
-
+    
     if (edge_intersect_front(std::get<0>(l_opp_verts), std::get<1>(l_opp_verts)))
         return true;
 
@@ -264,7 +264,7 @@ bool Polyhedron::will_edge_intersect_front(front::Edge* fedge) const {
         if (l_fedge->x->contains(std::get<0>(l_opp_verts)) &&
             l_fedge->x->contains(std::get<1>(l_opp_verts)))
             return false;
-
+    
     for (auto& l_fedge : m_front_edges) {
         Vert* vert_buf;
         std::array contains{
@@ -572,6 +572,7 @@ Polyhedron::exhaust_type Polyhedron::exhaustion_type_quality_priority(
         return exhaust_type::without_new_vert;
 
     if (will_parallel_faces(current_fedge) || // TODO: replace later with check if front is close to potential element
+        will_edge_intersect_front(current_fedge) ||
         will_any_edge_intersect_faces(current_fedge) ||
         will_any_vert_inside_tetr(current_fedge))
         return exhaust_type::with_new_vert;
@@ -1435,6 +1436,7 @@ void Polyhedron::exhaust_with_new_vert(front::Face* fface, const vec3& vert_pos)
 bool Polyhedron::try_exhaust_without_new_vert(front::Edge* fedge) {
     // TODO: improve that checks
     if (will_parallel_faces(fedge) || // TODO: replace later with check if front is close to potential element
+        will_edge_intersect_front(fedge) ||
         will_any_edge_intersect_faces(fedge) ||
         will_any_vert_inside_tetr(fedge))
         return false;

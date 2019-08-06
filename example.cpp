@@ -28,10 +28,10 @@ std::string rabbit() {
 int main() {
     std::cout << rabbit() << std::endl;
 
-    real_t preferred_length = static_cast<real_t>(0.29);
+    real_t preferred_length = static_cast<real_t>(0.17);
 
     std::cout << "Generating PolyShell...";
-    std::size_t n = 7;
+    std::size_t n = 4;
     psg::PolyShell shell = psg::cuboids(n, n, n);
     std::cout << std::string(7, ' ') + "done." << std::endl;
 

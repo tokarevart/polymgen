@@ -24,8 +24,8 @@ using vec3 = spt::vec<3, real_t>;
 #define K_MIN_DIS           static_cast<real_t>(2e-1)
 #define C_EDGES_INTERS_DIST static_cast<real_t>(1e-4)
 
-#define K_MAXD static_cast<real_t>(0.2)
-#define K_D    static_cast<real_t>(0.3)
+#define K_MAXD static_cast<real_t>(0.3)
+#define K_D    static_cast<real_t>(0.4)
 
 
 template <typename T>
