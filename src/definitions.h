@@ -3,10 +3,6 @@
 
 #pragma once
 
-namespace spt {
-struct vec3;
-} // namespace spt
-
 namespace pmg {
 class PolyhedralSet;
 class Polyhedron;
