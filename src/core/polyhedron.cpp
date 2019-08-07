@@ -1210,6 +1210,7 @@ bool Polyhedron::try_compute_new_vert_pos_type3(front::Face* fface, vec3& out_po
         edge_intersect_front(v1, new_pos) ||
         edge_intersect_front(v2, new_pos) ||
         does_front_intersect_sphere(new_pos, C_MIN_DIS * av_magn) ||
+        // TODO: replace that 3 checks with check if any fvert placed inside new tetr
         any_edge_intersect_face(v0, v1, new_pos) ||
         any_edge_intersect_face(v0, v2, new_pos) ||
         any_edge_intersect_face(v1, v2, new_pos))
@@ -1284,6 +1285,7 @@ bool Polyhedron::try_compute_new_vert_pos_type2(front::Face* fface, vec3& out_po
         edge_intersect_front(v1, new_pos) ||
         edge_intersect_front(v2, new_pos) ||
         does_front_intersect_sphere(new_pos, C_MIN_DIS * magn_d) ||
+        // TODO: replace that 3 checks with check if any fvert placed inside new tetr
         any_edge_intersect_face(v0, v1, new_pos) ||
         any_edge_intersect_face(v0, v2, new_pos) ||
         any_edge_intersect_face(v1, v2, new_pos)) {
@@ -1294,6 +1296,7 @@ bool Polyhedron::try_compute_new_vert_pos_type2(front::Face* fface, vec3& out_po
             edge_intersect_front(v1, new_pos) ||
             edge_intersect_front(v2, new_pos) ||
             does_front_intersect_sphere(new_pos, C_MIN_DIS * av_magn) ||
+            // TODO: replace that 3 checks with check if any fvert placed inside new tetr
             any_edge_intersect_face(v0, v1, new_pos) ||
             any_edge_intersect_face(v0, v2, new_pos) ||
             any_edge_intersect_face(v1, v2, new_pos))
@@ -1345,6 +1348,7 @@ bool Polyhedron::try_compute_new_vert_pos_type1(front::Face* fface, vec3& out_po
         edge_intersect_front(v1, new_pos) ||
         edge_intersect_front(v2, new_pos) ||
         does_front_intersect_sphere(new_pos, C_MIN_DIS * magn_d) ||
+        // TODO: replace that 3 checks with check if any fvert placed inside new tetr
         any_edge_intersect_face(v0, v1, new_pos) ||
         any_edge_intersect_face(v0, v2, new_pos) ||
         any_edge_intersect_face(v1, v2, new_pos)) {
@@ -1355,6 +1359,7 @@ bool Polyhedron::try_compute_new_vert_pos_type1(front::Face* fface, vec3& out_po
             edge_intersect_front(v1, new_pos) ||
             edge_intersect_front(v2, new_pos) ||
             does_front_intersect_sphere(new_pos, C_MIN_DIS * av_magn) ||
+            // TODO: replace that 3 checks with check if any fvert placed inside new tetr
             any_edge_intersect_face(v0, v1, new_pos) ||
             any_edge_intersect_face(v0, v2, new_pos) ||
             any_edge_intersect_face(v1, v2, new_pos))
@@ -1385,6 +1390,7 @@ bool Polyhedron::try_compute_new_vert_pos_type0(front::Face* fface, vec3& out_po
         edge_intersect_front(v1, new_pos) ||
         edge_intersect_front(v2, new_pos) ||
         does_front_intersect_sphere(new_pos, C_MIN_DIS * magn_d) ||
+        // TODO: replace that 3 checks with check if any fvert placed inside new tetr
         any_edge_intersect_face(v0, v1, new_pos) ||
         any_edge_intersect_face(v0, v2, new_pos) ||
         any_edge_intersect_face(v1, v2, new_pos)) {
@@ -1395,6 +1401,7 @@ bool Polyhedron::try_compute_new_vert_pos_type0(front::Face* fface, vec3& out_po
             edge_intersect_front(v1, new_pos) ||
             edge_intersect_front(v2, new_pos) ||
             does_front_intersect_sphere(new_pos, C_MIN_DIS * av_magn) ||
+            // TODO: replace that 3 checks with check if any fvert placed inside new tetr
             any_edge_intersect_face(v0, v1, new_pos) ||
             any_edge_intersect_face(v0, v2, new_pos) ||
             any_edge_intersect_face(v1, v2, new_pos))
