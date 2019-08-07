@@ -188,11 +188,17 @@ bool surface::Face::any_vert_inside_potential_triangle_check(sfront::Vert* fvert
 
 
 bool surface::Face::does_segment_intersects_with_front(const vec3& v0, const vec3& v1) const {
-    for (auto& l_fedge : m_front_edges)
+    for (auto& l_fedge : m_front_edges) {
+        auto l_eps = std::numeric_limits<real_t>::epsilon() * (
+            l_fedge->x->verts[0]->pos().magnitude() +
+            l_fedge->x->verts[1]->pos().magnitude() +
+            v0.magnitude() +
+            v1.magnitude());
         if (spt::segments_distance(
             l_fedge->x->verts[0]->pos(), l_fedge->x->verts[1]->pos(),
-            v0, v1) < C_EDGES_INTERS_DIST * m_prefLen)
+            v0, v1) < l_eps /*C_EDGES_INTERS_DIST * m_prefLen*/)
             return true;
+    }
 
     return false;
 }
@@ -202,10 +208,14 @@ bool surface::Face::does_segment_intersects_with_front(const pmg::Vert* v0, cons
     for (auto& l_fedge : m_front_edges) {
         if (l_fedge->x->contains(v0))
             continue;
-
+        auto l_eps = std::numeric_limits<real_t>::epsilon() * (
+            l_fedge->x->verts[0]->pos().magnitude() +
+            l_fedge->x->verts[1]->pos().magnitude() + 
+            v0->pos().magnitude() +
+            v1.magnitude());
         if (spt::segments_distance(
             l_fedge->x->verts[0]->pos(), l_fedge->x->verts[1]->pos(),
-            v0->pos(), v1) < C_EDGES_INTERS_DIST * m_prefLen)
+            v0->pos(), v1) <= l_eps /*C_EDGES_INTERS_DIST * m_prefLen*/)
             return true;
     }
 
@@ -243,8 +253,8 @@ bool surface::Face::try_compute_new_vert_pos_type2(sfront::Edge* fedge, vec3& ou
 
     vec3 v0_to_np = new_pos - v0->pos();
     vec3 v1_to_np = new_pos - v1->pos();
-    if (does_segment_intersects_with_front(v0, new_pos + v0_to_np * K_MIN_DIS) ||
-        does_segment_intersects_with_front(v1, new_pos + v1_to_np * K_MIN_DIS))
+    if (does_segment_intersects_with_front(v0, new_pos /*+ v0_to_np * K_MIN_DIS*/) ||
+        does_segment_intersects_with_front(v1, new_pos /*+ v1_to_np * K_MIN_DIS*/))
         return false;
 
     out_pos = new_pos;
@@ -273,8 +283,8 @@ bool surface::Face::try_compute_new_vert_pos_type1(sfront::Edge* fedge, vec3& ou
 
     vec3 v0_to_np = new_pos - main_vert->pos();
     vec3 v1_to_np = new_pos - sec_vert->pos();
-    if (does_segment_intersects_with_front(main_vert, new_pos + v0_to_np * K_MIN_DIS) ||
-        does_segment_intersects_with_front(sec_vert, new_pos + v1_to_np * K_MIN_DIS))
+    if (does_segment_intersects_with_front(main_vert, new_pos /*+ v0_to_np * K_MIN_DIS*/) ||
+        does_segment_intersects_with_front(sec_vert, new_pos /*+ v1_to_np * K_MIN_DIS*/))
         return false;
 
     out_pos = new_pos;
@@ -295,8 +305,8 @@ bool surface::Face::try_compute_new_vert_pos_type0(sfront::Edge* fedge, vec3& ou
     auto v1 = fedge->x->verts[1];
     vec3 v_to_np0 = (new_pos - v0->pos());
     vec3 v_to_np1 = (new_pos - v1->pos());
-    if (does_segment_intersects_with_front(v0, new_pos + v_to_np0 * K_MIN_DIS) ||
-        does_segment_intersects_with_front(v1, new_pos + v_to_np1 * K_MIN_DIS))
+    if (does_segment_intersects_with_front(v0, new_pos /*+ v_to_np0 * K_MIN_DIS*/) ||
+        does_segment_intersects_with_front(v1, new_pos /*+ v_to_np1 * K_MIN_DIS*/))
         return false;
 
     out_pos = new_pos;

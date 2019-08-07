@@ -28,10 +28,10 @@ std::string rabbit() {
 int main() {
     std::cout << rabbit() << std::endl;
 
-    real_t preferred_length = static_cast<real_t>(0.18);
+    real_t preferred_length = static_cast<real_t>(0.3);
 
     std::cout << "Generating PolyShell...";
-    std::size_t n = 1;
+    std::size_t n = 4;
     psg::PolyShell shell = psg::cuboids(n, n, n);
     std::cout << std::string(7, ' ') + "done." << std::endl;
 
@@ -43,9 +43,7 @@ int main() {
     std::cout << "Generating mesh...";
     polyhset.tetrahedralize(preferred_length);
     std::cout << std::string(12, ' ') + "done." << std::endl;
-
-    //std::cout << std::endl << polyhset.log_file_name();
-
+    
     namespace fs = std::filesystem;
     std::cout << "Outputting data to file...";
 

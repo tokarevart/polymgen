@@ -9,6 +9,8 @@
 namespace psg {
 
 PolyShell cuboids(std::size_t nX, std::size_t nY, std::size_t nZ,
-                          real_t dX = 1.0, real_t dY = 1.0, real_t dZ = 1.0);
+                  real_t dX = static_cast<real_t>(1), 
+                  real_t dY = static_cast<real_t>(1), 
+                  real_t dZ = static_cast<real_t>(1));
 
 } // namespace polygen
