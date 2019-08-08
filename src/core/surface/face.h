@@ -59,6 +59,7 @@ private:
     using pair_ee = std::pair<pmg::Edge*, pmg::Edge*>;
     using vec3 = spt::vec<3, real_t>;
 
+    // TODO: make dynamic pref_len instead
     real_t m_pref_len = static_cast<real_t>(0);
 
     std::list<pmg::Face*> m_inner_faces;
