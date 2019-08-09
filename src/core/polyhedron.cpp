@@ -33,10 +33,10 @@ using vec3 = spt::vec<3, real_t>;
 #define SQRT_2_3             static_cast<real_t>(0.8164965809277260)
 #define ONE_PLUS_SQRT2_SQRT3 static_cast<real_t>(1.3938468501173517)
 
-#define C_MIN_DIS           static_cast<real_t>(2.3e-1) // 2e-1 2.3e-1
-#define C_EDGES_INTERS_DIST static_cast<real_t>(4e-2) // 4e-3 4e-2
+#define C_MIN_DIS           static_cast<real_t>(2e-1) // 2e-1
+#define C_EDGES_INTERS_DIST static_cast<real_t>(4e-3) // 4e-2
 
-#define C_MAXD static_cast<real_t>(0.16) // 0.2 0.16
+#define C_MAXD static_cast<real_t>(0.2) // 0.2
 #define C_D    static_cast<real_t>(0.3) // 0.3
 
 
@@ -47,6 +47,7 @@ constexpr real_t degToRad(T value) {
 
 
 //#define DEBUG
+#define OUTDATED
 
 
 void Polyhedron::initialize_fface_fedges(front::Face* fface) const {
@@ -254,6 +255,7 @@ bool Polyhedron::edge_intersect_any_face(const Edge* edge) const {
 }
 
 
+#ifdef OUTDATED
 bool Polyhedron::will_edge_intersect_front(front::Edge* fedge) const {
     auto l_opp_verts = fedge->opp_verts();
     
@@ -298,6 +300,7 @@ bool Polyhedron::will_edge_intersect_front(front::Edge* fedge) const {
 
     return false;
 }
+#endif // OUTDATED
 
 
 bool Polyhedron::any_edge_intersect_face(const Vert* v0, const Vert* v1, const vec3& v2) const {
@@ -571,8 +574,11 @@ Polyhedron::exhaust_type Polyhedron::exhaustion_type_quality_priority(
     if (will_front_split(current_fedge))
         return exhaust_type::without_new_vert;
 
-    if (//will_parallel_faces(current_fedge) || // TODO: replace later with check if front is close to potential element
-        //will_edge_intersect_front(current_fedge) ||
+    if (
+        #ifdef OUTDATED
+        will_parallel_faces(current_fedge) || // TODO: replace later with check if front is close to potential element
+        will_edge_intersect_front(current_fedge) ||
+        #endif // OUTDATED
         will_any_edge_intersect_faces(current_fedge) ||
         will_any_vert_inside_tetr(current_fedge))
         return exhaust_type::with_new_vert;
@@ -1132,7 +1138,9 @@ bool Polyhedron::try_compute_new_vert_pos_type3(front::Face* fface, vec3& out_po
     if (edge_intersect_front(v0, new_pos) ||
         edge_intersect_front(v1, new_pos) ||
         edge_intersect_front(v2, new_pos) ||
-        //does_front_intersect_sphere(new_pos, C_MIN_DIS * av_magn) ||
+        #ifdef OUTDATED
+        does_front_intersect_sphere(new_pos, C_MIN_DIS * av_magn) ||
+        #endif // OUTDATED
         // TODO: replace that 3 checks with check if any fvert placed inside new tetr
         any_edge_intersect_face(v0, v1, new_pos) ||
         any_edge_intersect_face(v0, v2, new_pos) ||
@@ -1207,7 +1215,9 @@ bool Polyhedron::try_compute_new_vert_pos_type2(front::Face* fface, vec3& out_po
     if (edge_intersect_front(v0, new_pos) ||
         edge_intersect_front(v1, new_pos) ||
         edge_intersect_front(v2, new_pos) ||
-        //does_front_intersect_sphere(new_pos, C_MIN_DIS * magn_d) ||
+        #ifdef OUTDATED
+        does_front_intersect_sphere(new_pos, C_MIN_DIS * magn_d) ||
+        #endif // OUTDATED
         // TODO: replace that 3 checks with check if any fvert placed inside new tetr
         any_edge_intersect_face(v0, v1, new_pos) || 
         any_edge_intersect_face(v0, v2, new_pos) ||
@@ -1218,7 +1228,9 @@ bool Polyhedron::try_compute_new_vert_pos_type2(front::Face* fface, vec3& out_po
         if (edge_intersect_front(v0, new_pos) ||
             edge_intersect_front(v1, new_pos) ||
             edge_intersect_front(v2, new_pos) ||
-            //does_front_intersect_sphere(new_pos, C_MIN_DIS * av_magn) ||
+            #ifdef OUTDATED
+            does_front_intersect_sphere(new_pos, C_MIN_DIS * av_magn) ||
+            #endif // OUTDATED
             // TODO: replace that 3 checks with check if any fvert placed inside new tetr
             any_edge_intersect_face(v0, v1, new_pos) ||
             any_edge_intersect_face(v0, v2, new_pos) ||
@@ -1270,7 +1282,9 @@ bool Polyhedron::try_compute_new_vert_pos_type1(front::Face* fface, vec3& out_po
     if (edge_intersect_front(v0, new_pos) ||
         edge_intersect_front(v1, new_pos) ||
         edge_intersect_front(v2, new_pos) ||
-        //does_front_intersect_sphere(new_pos, C_MIN_DIS * magn_d) ||
+        #ifdef OUTDATED
+        does_front_intersect_sphere(new_pos, C_MIN_DIS * magn_d) ||
+        #endif // OUTDATED
         // TODO: replace that 3 checks with check if any fvert placed inside new tetr
         any_edge_intersect_face(v0, v1, new_pos) ||
         any_edge_intersect_face(v0, v2, new_pos) ||
@@ -1281,7 +1295,9 @@ bool Polyhedron::try_compute_new_vert_pos_type1(front::Face* fface, vec3& out_po
         if (edge_intersect_front(v0, new_pos) ||
             edge_intersect_front(v1, new_pos) ||
             edge_intersect_front(v2, new_pos) ||
-            //does_front_intersect_sphere(new_pos, C_MIN_DIS * av_magn) ||
+            #ifdef OUTDATED
+            does_front_intersect_sphere(new_pos, C_MIN_DIS * av_magn) ||
+            #endif // OUTDATED
             // TODO: replace that 3 checks with check if any fvert placed inside new tetr
             any_edge_intersect_face(v0, v1, new_pos) ||
             any_edge_intersect_face(v0, v2, new_pos) ||
@@ -1312,7 +1328,9 @@ bool Polyhedron::try_compute_new_vert_pos_type0(front::Face* fface, vec3& out_po
     if (edge_intersect_front(v0, new_pos) ||
         edge_intersect_front(v1, new_pos) ||
         edge_intersect_front(v2, new_pos) ||
-        //does_front_intersect_sphere(new_pos, C_MIN_DIS * magn_d) ||
+        #ifdef OUTDATED
+        does_front_intersect_sphere(new_pos, C_MIN_DIS * magn_d) ||
+        #endif // OUTDATED
         // TODO: replace that 3 checks with check if any fvert placed inside new tetr
         any_edge_intersect_face(v0, v1, new_pos) ||
         any_edge_intersect_face(v0, v2, new_pos) ||
@@ -1323,7 +1341,9 @@ bool Polyhedron::try_compute_new_vert_pos_type0(front::Face* fface, vec3& out_po
         if (edge_intersect_front(v0, new_pos) ||
             edge_intersect_front(v1, new_pos) ||
             edge_intersect_front(v2, new_pos) ||
-            //does_front_intersect_sphere(new_pos, C_MIN_DIS * av_magn) ||
+            #ifdef OUTDATED
+            does_front_intersect_sphere(new_pos, C_MIN_DIS * av_magn) ||
+            #endif // OUTDATED
             // TODO: replace that 3 checks with check if any fvert placed inside new tetr
             any_edge_intersect_face(v0, v1, new_pos) ||
             any_edge_intersect_face(v0, v2, new_pos) ||
@@ -1442,8 +1462,11 @@ void Polyhedron::exhaust_with_new_vert(front::Face* fface, const vec3& vert_pos)
 
 bool Polyhedron::try_exhaust_without_new_vert(front::Edge* fedge) {
     // TODO: improve that checks
-    if (//will_parallel_faces(fedge) || // TODO: replace later with check if front is close to potential element
-        //will_edge_intersect_front(fedge) ||
+    if (
+        #ifdef OUTDATED
+        will_parallel_faces(fedge) || // TODO: replace later with check if front is close to potential element
+        will_edge_intersect_front(fedge) ||
+        #endif // OUTDATED
         will_any_edge_intersect_faces(fedge) ||
         will_any_vert_inside_tetr(fedge))
         return false;
@@ -1454,10 +1477,6 @@ bool Polyhedron::try_exhaust_without_new_vert(front::Edge* fedge) {
 
 
 bool Polyhedron::try_exhaust_with_new_vert(front::Edge* frontEdge) {
-    // TODO: replace later with check if front is close to potential element
-    //if (will_parallel_faces(frontEdge))
-    //    return false;
-
     auto exhaust_fface = choose_face_for_exhaustion_with_new_vert(frontEdge);
     vec3 new_vert_pos;
     if (!try_compute_new_vert_pos(exhaust_fface, new_vert_pos))
@@ -1482,7 +1501,9 @@ bool Polyhedron::front_exhausted() {
 
 
 void Polyhedron::process_angles() {
+    #ifdef DEBUG
     int debug_i = 0;
+    #endif
     real_t max_compl = std::numeric_limits<real_t>::max();
     for (front::Edge* cur_fedge = current_front_edge(max_compl);; cur_fedge = current_front_edge(max_compl)) {
         if (!cur_fedge)
@@ -1592,10 +1613,78 @@ void Polyhedron::tetrahedralize(real_t preferredLen, genparams::Volume gen_param
     initialize_front();
     compute_front_normals();
     process_angles();
-//    if (global_intersection())
-//        throw std::logic_error("Intersection error.\npmg::Polyhedron::global_intersection returned true.");
+    //if (global_intersection()) {
+    //    std::cout << std::endl << "Intersection error. pmg::Polyhedron::global_intersection returned true.";
+    //    throw std::logic_error("Intersection error.\npmg::Polyhedron::global_intersection returned true.");
+    //}
 
     smooth_mesh(gen_params.nSmoothIters);
+
+    //auto smooth_mesh_without_edge = [this](const pmg::Edge* edge) {
+    //    for (std::size_t i = 0; i < 10; i++) {
+    //        for (auto& vert : m_inner_verts) {
+    //            if (vert == edge->verts[0] ||
+    //                vert == edge->verts[1])
+    //                continue;
+    //
+    //            vec3 shift;
+    //            std::size_t n_delta_shifts = 0;
+    //            for (auto& l_edge : this->m_inner_edges) {
+    //                if (vert == l_edge->verts[0]) {
+    //                    shift += l_edge->verts[1]->pos() - vert->pos();
+    //                    n_delta_shifts++;
+    //                } else if (vert == l_edge->verts[1]) {
+    //                    shift += l_edge->verts[0]->pos() - vert->pos();
+    //                    n_delta_shifts++;
+    //                }
+    //            }
+    //            shift /= n_delta_shifts;
+    //            vert->pos() = vert->pos() + shift;
+    //        }
+    //    }
+    //};
+    //for (auto& l_edge : m_inner_edges) {
+    //    if (l_edge->magnitude() * 5 < m_prefLen) {
+    //        std::cout << std::endl << "Short edge";
+    //        auto center = 0.5 * (l_edge->verts[0]->pos() + l_edge->verts[1]->pos());
+    //        auto half_f_to_s = 0.5 * (l_edge->verts[1]->pos() - l_edge->verts[0]->pos());
+    //        auto delta = (half_f_to_s / half_f_to_s.magnitude()) * (0.2 * m_prefLen);
+    //        l_edge->verts[0]->pos() -= delta;
+    //        l_edge->verts[1]->pos() += delta;
+    //        smooth_mesh_without_edge(l_edge);
+    //        if (global_intersection()) {
+    //            l_edge->verts[0]->pos() += delta * 2;
+    //            l_edge->verts[1]->pos() -= delta * 2;
+    //            smooth_mesh_without_edge(l_edge);
+    //        }
+    //        if (global_intersection()) {
+    //            std::cout << std::endl << "Intersection error [inside]. pmg::Polyhedron::global_intersection returned true.";
+    //            throw std::logic_error("Intersection error.\npmg::Polyhedron::global_intersection returned true.");
+    //        }
+    //    }
+    //    if (l_edge->magnitude() > m_prefLen * 2) {
+    //        std::cout << std::endl << "Long edge";
+    //        auto center = 0.5 * (l_edge->verts[0]->pos() + l_edge->verts[1]->pos());
+    //        auto half_f_to_s = 0.5 * (l_edge->verts[1]->pos() - l_edge->verts[0]->pos());
+    //        auto delta = (half_f_to_s / half_f_to_s.magnitude()) * (0.5 * m_prefLen);
+    //        l_edge->verts[0]->pos() -= delta;
+    //        l_edge->verts[1]->pos() += delta;
+    //        smooth_mesh_without_edge(l_edge);
+    //        if (global_intersection()) {
+    //            l_edge->verts[0]->pos() += delta * 2;
+    //            l_edge->verts[1]->pos() -= delta * 2;
+    //            smooth_mesh_without_edge(l_edge);
+    //        }
+    //        if (global_intersection()) {
+    //            std::cout << std::endl << "Intersection error [inside]. pmg::Polyhedron::global_intersection returned true.";
+    //            throw std::logic_error("Intersection error.\npmg::Polyhedron::global_intersection returned true.");
+    //        }
+    //    }
+    //}
+    //if (global_intersection()) {
+    //    std::cout << std::endl << "Intersection error [outside]. pmg::Polyhedron::global_intersection returned true.";
+    //    throw std::logic_error("Intersection error.\npmg::Polyhedron::global_intersection returned true.");
+    //}
 }
 
 

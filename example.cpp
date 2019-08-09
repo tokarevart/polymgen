@@ -28,7 +28,7 @@ std::string rabbit() {
 int main() {
     std::cout << rabbit() << std::endl;
 
-    real_t preferred_length = static_cast<real_t>(0.3);
+    real_t preferred_length = static_cast<real_t>(0.15);
 
     std::cout << "Generating PolyShell...";
     std::size_t n = 4;
